@@ -255,10 +255,10 @@ public class CollisionBox implements CuinaMask
 //	}
 	
 	@Override
-	public boolean move(float dx, float dy, boolean useTrigger)
+	public boolean move(float x, float y, boolean useTrigger)
 	{
 		impactObject = null;
-		setTempPosition((int) (object.getX() + dx), (int) (object.getY() + dy));
+		setTempPosition((int) x, (int) y);
 		Rectangle rect = getBox();
 		
 		GameMap map = GameMap.getInstance();
@@ -270,13 +270,15 @@ public class CollisionBox implements CuinaMask
 		else
 		{
 			impactObject = map.getCollisionSystem().testCollision(object);
-			CollisionBox targetBox = (CollisionBox) impactObject.getExtension(EXTENSION_KEY);
-			moveToRectangle(targetBox.getBox(), dx, dy);
-			if (useTrigger && impactObject != null)
+			if (impactObject != null)
 			{
-				impactObject.testTriggers(GameMap.TOUCHED_BY_OBJECT, object.getID(), impactObject, object);
-				object.testTriggers(GameMap.OBJECT_TOUCH, impactObject.getID(), object, impactObject);
-				
+				CollisionBox targetBox = (CollisionBox) impactObject.getExtension(EXTENSION_KEY);
+	//			moveToRectangle(targetBox.getBox(), dx, dy);
+				if (useTrigger)
+				{
+					impactObject.testTriggers(GameMap.TOUCHED_BY_OBJECT, object.getID(), impactObject, object);
+					object.testTriggers(GameMap.OBJECT_TOUCH, impactObject.getID(), object, impactObject);
+				}
 				if (!through && !targetBox.isThrough())
 				{
 					clearTempPosition();
@@ -297,33 +299,33 @@ public class CollisionBox implements CuinaMask
 		return true;
 	}
 	
-	private void moveToRectangle(Rectangle target, float dx, float dy)
-	{
-		int newX = (int) (object.getX() + dx);
-		int newY = (int) (object.getY() + dy);
-		if (dx > 0)
-		{
-			float dif = target.x - (box.x + box.width);
-			if (dif < 0) newX = target.x - bounds.width;
-		}
-		else if (dx < 0)
-		{
-			float dif = box.x - (target.x + target.width);
-			if (dif < 0) newX = target.x + target.width - bounds.x;
-		}
-		if (dy > 0)
-		{
-			float dif = target.y - (box.y + box.height);
-			if (dif < 0) newY = target.y - bounds.height;
-		}
-		else if (dy < 0)
-		{
-			float dif = box.y - (target.y + target.height);
-			if (dif < 0) newY = target.y + target.height - bounds.y;
-		}
-		object.setX(newX);
-		object.setY(newY);
-	}
+//	private void moveToRectangle(Rectangle target, float dx, float dy)
+//	{
+//		int newX = (int) (object.getX() + dx);
+//		int newY = (int) (object.getY() + dy);
+//		if (dx > 0)
+//		{
+//			float dif = target.x - (box.x + box.width);
+//			if (dif < 0) newX = target.x - bounds.width;
+//		}
+//		else if (dx < 0)
+//		{
+//			float dif = box.x - (target.x + target.width);
+//			if (dif < 0) newX = target.x + target.width - bounds.x;
+//		}
+//		if (dy > 0)
+//		{
+//			float dif = target.y - (box.y + box.height);
+//			if (dif < 0) newY = target.y - bounds.height;
+//		}
+//		else if (dy < 0)
+//		{
+//			float dif = box.y - (target.y + target.height);
+//			if (dif < 0) newY = target.y + target.height - bounds.y;
+//		}
+//		object.setX(newX);
+//		object.setY(newY);
+//	}
 	
 	public CuinaObject testRelativePosition(int x, int y)
 	{
