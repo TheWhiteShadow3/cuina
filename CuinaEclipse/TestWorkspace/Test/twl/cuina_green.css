@@ -1,0 +1,24 @@
+/* Farben */
+.red {color: #f00;}
+.green {color: #0f0;}
+.blue {color: #00f;}
+.yellow {color: #ff0;}
+.blue {color: #00f;}
+.aqua {color: #0ff;}
+.orange {color: #f80;}
+.pink {color: #f0f;}
+.rosa {color: #f8f;}
+.white {color: #fff;}
+.light_grey {color: #ccc;}
+.grey {color: #888;}
+.dark_grey {color: #444;}
+.black {color: #000;}
+
+/* Links */
+a {color: #ffc;}
+a.hover {text-decoration: underline;}
+
+.font_default {font-family: default;}
+.font_default_b {font-family: default.bold;}
+.font_default_i {font-family: default.italic;}
+.font_default_z {font-family: default.z;}

@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="DatabaseEditor" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="DatabaseEditor" id="cuina.databases" name="Cuina Database"/>
+      </appinfo>
+      <documentation>
+         Dieser Erweiterungpunkt ermöglicht das Hinzufügen von Objekt-Typen zur Cuina Datenbank.
+Die Datenbank ermöglicht das serialisieren von Java-Objekten im Dateisystem.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+         <documentation>
+            Erweiterung für einen Datenbank Objekt-Typen.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="database"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="database">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="TreeContentProvider"/>
+         </choice>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Der Name einer Klasse die cuina.database.DatabaseObject implementiert.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":cuina.editor.database.DatabaseObject"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="editor" type="string">
+            <annotation>
+               <documentation>
+                  Der Editor, der für den entsprechenden Objekt-Typen verwedet werden soll.
+Die Klasse muss cuina.database.ui.DataEditorPage implementieren.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":cuina.editor.database.DataEditorPage"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Der einmalige Name des Datenbank-Typen. Der Name wird zur Identifizierung der Datenbank-Tabelle benutzt.
+Geeignet ist z.B. der vollständige Klaseenname.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="image" type="string">
+            <annotation>
+               <documentation>
+                  Ein Bild, das den Objekt-Typen beschreibt.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="TreeContentProvider">
+      <annotation>
+         <documentation>
+            Erweiterung der Baumansicht vom Editor.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Ein ContentProvider, der das Element in der Baumansicht beschreibt.
+Dies ist Sinnvoll, wenn das Element wiederum die Wurzel einer Baumstruktur darstellt.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":ITreeContentProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

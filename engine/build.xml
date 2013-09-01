@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Build-File für die Cuina-Engine -->
+
+<project name="CuinaEngine" basedir="." default="main">
+	
+	<!-- Properties definieren -->
+	<property name="target" value="1.7"/>
+	<property name="source" value="1.7"/>
+	
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="build"/>
+	<property name="deploy.dir" value="deploy"/>
+	
+	<fileset id="lib_set" dir="lib" includes="**/*.jar"/>
+	<pathconvert refid="lib_set" property="lib_files" pathsep=" " dirsep="/">
+		<regexpmapper from="^(.*)/lib/(.*)$$" to="lib/\2" handledirsep="true" />
+	</pathconvert>
+	
+	<echo>Class-Path: ${lib_files}</echo>
+	
+    <path id="CuinaEngine.classpath">
+        <pathelement location="build"/>
+    	<fileset refid="lib_set" />
+    </path>
+	
+	<target name="setup_files">
+		<delete dir="${build.dir}" />
+		<delete dir="${deploy.dir}" excludes="*.bat, *.sh" />
+		
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${deploy.dir}"/>
+		
+		<!-- Kopiere Icons -->
+		<copy todir="${build.dir}" >
+			<fileset dir="." includes="CE_Icon16.png, CE_Icon32.png" />
+		</copy>
+		
+		<!-- Kopiere Libraries -->
+		<copy todir="${deploy.dir}/lib" >
+			<fileset dir="lib" excludes="*.zip" />
+		</copy>
+	</target>
+	
+	<target name="build_engine" depends="setup_files">
+		<javac debug="on" srcdir="${src.dir}" destdir="${build.dir}" classpathref="CuinaEngine.classpath" includeantruntime="false" />
+
+		<jar destfile="${deploy.dir}\cuina.engine.jar" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Created-By" value="Cuina Team" />
+				<attribute name="Class-Path" value=". ${lib_files}" />
+				<attribute name="Main-Class" value="cuina.Game" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="build_plugins" depends="build_engine">
+		<ant antfile="plug/plugin_build.xml" inheritall="false" inheritrefs="true" />
+	</target>
+	
+	<target name="main" depends="build_engine, build_plugins">
+		<description>Cuina Engine Deployment</description>
+	</target>
+</project>

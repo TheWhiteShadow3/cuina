@@ -1,0 +1,50 @@
+<!--DOCTYPE desc SYSTEM "func-desc.dtd"-->
+<!-- Map.rb functions -->
+<desc>
+	<class id="Map" label="Karte">
+		<function id="load_map" label="lade Karte">
+			<text>Lade Karte %map_key</text>
+			<help>Ladet eine Karte.</help>
+			<param id="map_key" label="Karte" type="key:MapInfo"/>
+			<return>cuina.map.GameMap</return>
+		</function>
+		
+		<function id="get_object" label="Objekt von ID">
+			<text>Object: %obj_id</text>
+			<help>Gibt das Objekt zur ID zurück.</help>
+			<param id="obj_id" label="Objekt-ID" type="int"/>
+			<return>cuina.map.MapObject</return>
+		</function>
+		
+		<attribut id="scrolltarget" label="Scroll-Ziel" type="cuina.map.MapObject">
+			<text>Scroll-Ziel = %obj_id</text>
+			<help>Setzt das Scroll-Ziel der Karte.</help>
+			<param id="obj_id" label="Objekt-ID" type="cuina.map.MapObject"/>
+		</attribut>
+		
+		<function id="create_panorama" label="Panorama erstellen">
+			<text>erstelle Panorama(%id): %image zoom(%zoomX, %zoomY) speed(%speedX, %speedY) alpha(%alpha)</text>
+			<help>Erstellt ein Parallax-Panorama.</help>
+			<param id="id" label="Panorama-ID" type="int"/>
+			<param id="image" label="Bild" type="string"/>
+			<param id="zoomX" label="Zoom-X" type="float"/>
+			<param id="zoomY" label="Zoom-Y" type="float"/>
+			<param id="speedX" label="Speed-X" type="int"/>
+			<param id="speedY" label="Speed-Y" type="int"/>
+			<param id="alpha" label="Alpha" type="float"/>
+			<return>cuina.graphics.Panorama</return>
+		</function>
+		
+		<function id="create_weather" label="erstelle Wettereffekt">
+			<text>Wetter: %weather_type(%wind, %intensity)</text>
+			<help>Setzt einen Wettereffekt auf der Karte.</help>
+			<param id="weather_type" label="Typ" type="string">
+				<filter>
+					<values>rain, show</values>
+				</filter>
+			</param>
+			<param id="intensity" label="Stärke" type="float"/>
+			<param id="wind" label="Wind" type="float"/>
+		</function>
+	</class>
+</desc>

@@ -1,0 +1,32 @@
+<cuina.database.DataTable>
+  <name>Script</name>
+  <clazz>cuina.script.Script</clazz>
+  <data>
+    <entry>
+      <string>main</string>
+      <cuina.script.Script>
+        <key>main</key>
+        <name>main</name>
+        <interfaceClass>cuina.script.MainScript</interfaceClass>
+        <code>class Script_main
+	include Cuina::MainScript
+	def start
+		puts(&quot;Hello Cuina!&quot;)
+	end
+	def loadGame(game)
+	end
+	def newGame(game)
+	end
+	def saveGame(game)
+	end
+	def endGame(game)
+	end
+	def close
+	end
+end
+Script_main::new
+</code>
+      </cuina.script.Script>
+    </entry>
+  </data>
+</cuina.database.DataTable>

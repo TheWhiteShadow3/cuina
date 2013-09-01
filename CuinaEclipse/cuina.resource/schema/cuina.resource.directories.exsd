@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="cuina.editor.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="cuina.editor.core" id="cuina.resource.directories" name="Cuina Resource-Directories"/>
+      </appinfo>
+      <documentation>
+         Definiert Ordner für die Projekt-Struktur.
+      </documentation>
+   </annotation>
+ 
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="directory" minOccurs="1" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+ 
+   <element name="directory">
+      <annotation>
+         <documentation>
+            Projekt-Ordner.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="directory" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Eindeutige ID des Ordners.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Ordner-Name
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="create" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Gibt an ob der Ordner beim erstellen eines neuen Projekts angelegt werden soll.
+Damit der Ordner angelegt wird, müssen außerdem alle übergeordnete Ordner erstellt werden.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="keep-Reference" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Gibt an, ob eine Pfad-Referenz zum Ordner in der Ini unter der angegebene Ordner-ID abgelegt werden soll.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  ID des Übergeordneten Ordners.
+Wenn nicht angegeben wird die Extensionpoint-Hirarchie benutzt beginnend mit dem Projektordner als Wurzel-Element.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="cuina.resource.directories/directory/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+ 
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+ 
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+ 
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+ 
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+</schema>

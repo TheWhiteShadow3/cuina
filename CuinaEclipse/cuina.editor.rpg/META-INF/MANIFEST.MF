@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Object
+Bundle-SymbolicName: cuina.editor.rpg;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Cuina
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: cuina.database,
+ cuina.editor.model,
+ cuina.editor.movement
+Export-Package: cuina.rpg,
+ cuina.rpg.actor,
+ cuina.rpg.inventory

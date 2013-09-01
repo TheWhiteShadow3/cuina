@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Buildins
+Bundle-SymbolicName: cuina.buildins;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Cuina
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: cuina.resource
+Export-Package: cuina.event,
+ cuina.world

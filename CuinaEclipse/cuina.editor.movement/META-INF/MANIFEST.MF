@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Movement
+Bundle-SymbolicName: cuina.editor.movement;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Cuina
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: cuina.editor.object,
+ cuina.resource,
+ org.eclipse.ui,
+ org.eclipse.core.runtime
+Export-Package: cuina.map.movement
+Bundle-ActivationPolicy: lazy

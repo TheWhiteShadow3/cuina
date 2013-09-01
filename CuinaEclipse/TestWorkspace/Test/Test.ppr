@@ -1,0 +1,42 @@
+[Config]
+Compilator.Run=G:\Projekte\Java\CuinaProjekt\CuinaEclipse\TestWorkspace\Test\game.bat
+Compilator.DefaultDir=G:\Projekte\Java\CuinaProjekt\CuinaEclipse\TestWorkspace\Test
+Compilator.SaveAll=1
+Compilator.Capture=0
+Compilator.HideOutput=0
+Compilator.LogType=0
+Prog1=Startskript,G:\Projekte\Java\CuinaProjekt\CuinaEclipse\TestWorkspace\Test\game.bat§
+DefaultDir=G:\Projekte\Java\CuinaProjekt\CuinaEclipse\TestWorkspace\Test
+DefaultCPIndex=7
+LogtoEnd=1
+DontOpen=1
+AbsolutePath=0
+FileFormat=0
+ProjectFilesOnly=0
+[Project tree]
+Cuina Testprojekt
+	+Test
+		-maps
+			maps\schule.cxm
+		-data
+			data\Widget.cxd
+			data\Tileset.xml
+			data\Template.cxd
+			data\Script.cxd
+			data\meta.xml
+			data\MapInfo.cxd
+			data\Item.cxd
+			data\Event.cxd
+			data\Enemy.cxd
+			data\BattleScene.cxd
+			data\BattleGround.cxd
+		cuina.cfg
+		game.bat
+[Open project files]
+0=Neu1.html
+[Selected Project Files]
+Main=game.bat
+Selected=Neu1.html
+[Neu1.html]
+TopLine=39
+Caret=23,50

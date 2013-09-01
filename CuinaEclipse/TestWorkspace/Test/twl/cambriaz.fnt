@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="UTF8" standalone="yes"?>
+<!--Created by TWL Theme Editor-->
+<font>
+  <info face="Cambria,Bold Italic" size="20" bold="1" italic="1" charset="" unicode="1" stretchH="100" smooth="0" aa="1" padding="0,0,0,0" spacing="1,1" />
+  <common lineHeight="23" base="16" scaleW="256" scaleH="256" pages="1" packed="0" />
+  <pages>
+    <page id="0" file="cambriaz_00.png" />
+  </pages>
+  <chars count="322">
+    <char id="0" x="133" y="0" width="0" height="0" xoffset="0" yoffset="16" xadvance="0" page="0" chnl="0" />
+    <char id="13" x="132" y="0" width="0" height="0" xoffset="0" yoffset="16" xadvance="4" page="0" chnl="0" />
+    <char id="32" x="131" y="0" width="0" height="0" xoffset="0" yoffset="16" xadvance="4" page="0" chnl="0" />
+    <char id="33" x="150" y="216" width="6" height="13" xoffset="1" yoffset="3" xadvance="7" page="0" chnl="0" />
+    <char id="34" x="218" y="239" width="7" height="6" xoffset="2" yoffset="2" xadvance="8" page="0" chnl="0" />
+    <char id="35" x="208" y="202" width="11" height="13" xoffset="1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="36" x="231" y="94" width="12" height="17" xoffset="0" yoffset="1" xadvance="10" page="0" chnl="0" />
+    <char id="37" x="103" y="143" width="16" height="14" xoffset="2" yoffset="3" xadvance="19" page="0" chnl="0" />
+    <char id="38" x="14" y="206" width="13" height="13" xoffset="1" yoffset="3" xadvance="14" page="0" chnl="0" />
+    <char id="39" x="195" y="240" width="3" height="5" xoffset="3" yoffset="2" xadvance="5" page="0" chnl="0" />
+    <char id="40" x="204" y="57" width="9" height="18" xoffset="1" yoffset="2" xadvance="8" page="0" chnl="0" />
+    <char id="41" x="194" y="57" width="9" height="18" xoffset="-2" yoffset="2" xadvance="8" page="0" chnl="0" />
+    <char id="42" x="202" y="230" width="8" height="8" xoffset="2" yoffset="2" xadvance="9" page="0" chnl="0" />
+    <char id="43" x="150" y="230" width="9" height="10" xoffset="1" yoffset="5" xadvance="11" page="0" chnl="0" />
+    <char id="44" x="206" y="239" width="4" height="6" xoffset="-1" yoffset="13" xadvance="5" page="0" chnl="0" />
+    <char id="45" x="141" y="240" width="5" height="2" xoffset="1" yoffset="10" xadvance="7" page="0" chnl="0" />
+    <char id="46" x="167" y="241" width="4" height="3" xoffset="0" yoffset="13" xadvance="5" page="0" chnl="0" />
+    <char id="47" x="112" y="38" width="13" height="18" xoffset="-1" yoffset="2" xadvance="10" page="0" chnl="0" />
+    <char id="48" x="220" y="202" width="11" height="13" xoffset="1" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="49" x="191" y="216" width="9" height="13" xoffset="1" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="50" x="232" y="202" width="11" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="51" x="244" y="202" width="11" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="52" x="134" y="202" width="12" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="53" x="192" y="159" width="12" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="54" x="212" y="216" width="10" height="13" xoffset="1" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="55" x="245" y="216" width="11" height="13" xoffset="2" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="56" x="147" y="202" width="12" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="57" x="201" y="216" width="10" height="13" xoffset="1" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="58" x="176" y="230" width="5" height="10" xoffset="0" yoffset="6" xadvance="5" page="0" chnl="0" />
+    <char id="59" x="157" y="216" width="7" height="13" xoffset="-1" yoffset="6" xadvance="5" page="0" chnl="0" />
+    <char id="60" x="128" y="230" width="10" height="10" xoffset="1" yoffset="5" xadvance="11" page="0" chnl="0" />
+    <char id="61" x="236" y="239" width="10" height="6" xoffset="1" yoffset="7" xadvance="11" page="0" chnl="0" />
+    <char id="62" x="139" y="229" width="10" height="10" xoffset="0" yoffset="5" xadvance="11" page="0" chnl="0" />
+    <char id="63" x="173" y="216" width="8" height="13" xoffset="2" yoffset="3" xadvance="9" page="0" chnl="0" />
+    <char id="64" x="63" y="111" width="15" height="15" xoffset="2" yoffset="3" xadvance="18" page="0" chnl="0" />
+    <char id="65" x="121" y="189" width="13" height="13" xoffset="-1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="66" x="107" y="189" width="13" height="13" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="67" x="56" y="202" width="12" height="13" xoffset="1" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="68" x="210" y="188" width="14" height="13" xoffset="0" yoffset="3" xadvance="14" page="0" chnl="0" />
+    <char id="69" x="93" y="188" width="13" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="70" x="69" y="202" width="12" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="71" x="82" y="202" width="12" height="13" xoffset="1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="72" x="225" y="174" width="15" height="13" xoffset="0" yoffset="3" xadvance="14" page="0" chnl="0" />
+    <char id="73" x="182" y="216" width="8" height="13" xoffset="0" yoffset="3" xadvance="7" page="0" chnl="0" />
+    <char id="74" x="219" y="94" width="11" height="17" xoffset="-3" yoffset="3" xadvance="7" page="0" chnl="0" />
+    <char id="75" x="241" y="174" width="15" height="13" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="76" x="234" y="216" width="10" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="77" x="189" y="174" width="18" height="13" xoffset="0" yoffset="3" xadvance="16" page="0" chnl="0" />
+    <char id="78" x="241" y="188" width="15" height="13" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="79" x="79" y="188" width="13" height="13" xoffset="1" yoffset="3" xadvance="14" page="0" chnl="0" />
+    <char id="80" x="65" y="188" width="13" height="13" xoffset="0" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="81" x="0" y="78" width="13" height="17" xoffset="1" yoffset="3" xadvance="14" page="0" chnl="0" />
+    <char id="82" x="51" y="188" width="13" height="13" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="83" x="95" y="202" width="12" height="13" xoffset="-1" yoffset="3" xadvance="10" page="0" chnl="0" />
+    <char id="84" x="37" y="192" width="13" height="13" xoffset="1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="85" x="195" y="188" width="14" height="13" xoffset="1" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="86" x="23" y="192" width="13" height="13" xoffset="1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="87" x="148" y="174" width="20" height="13" xoffset="1" yoffset="3" xadvance="19" page="0" chnl="0" />
+    <char id="88" x="225" y="188" width="15" height="13" xoffset="-1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="89" x="9" y="192" width="13" height="13" xoffset="1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="90" x="0" y="206" width="13" height="13" xoffset="-1" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="91" x="184" y="57" width="9" height="18" xoffset="0" yoffset="2" xadvance="7" page="0" chnl="0" />
+    <char id="92" x="130" y="57" width="4" height="18" xoffset="3" yoffset="2" xadvance="10" page="0" chnl="0" />
+    <char id="93" x="224" y="57" width="10" height="18" xoffset="-2" yoffset="2" xadvance="7" page="0" chnl="0" />
+    <char id="94" x="247" y="239" width="9" height="7" xoffset="2" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="95" x="154" y="241" width="8" height="2" xoffset="-2" yoffset="17" xadvance="7" page="0" chnl="0" />
+    <char id="96" x="172" y="241" width="4" height="4" xoffset="3" yoffset="2" xadvance="5" page="0" chnl="0" />
+    <char id="97" x="0" y="231" width="11" height="10" xoffset="0" yoffset="6" xadvance="11" page="0" chnl="0" />
+    <char id="98" x="180" y="159" width="11" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="99" x="84" y="227" width="10" height="10" xoffset="0" yoffset="6" xadvance="9" page="0" chnl="0" />
+    <char id="100" x="208" y="144" width="12" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="101" x="95" y="228" width="10" height="10" xoffset="0" yoffset="6" xadvance="10" page="0" chnl="0" />
+    <char id="102" x="42" y="39" width="13" height="18" xoffset="-3" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="103" x="167" y="144" width="13" height="14" xoffset="-2" yoffset="6" xadvance="11" page="0" chnl="0" />
+    <char id="104" x="168" y="159" width="11" height="14" xoffset="0" yoffset="2" xadvance="12" page="0" chnl="0" />
+    <char id="105" x="88" y="173" width="7" height="14" xoffset="0" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="106" x="235" y="57" width="10" height="18" xoffset="-3" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="107" x="221" y="144" width="12" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="108" x="96" y="173" width="7" height="14" xoffset="0" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="109" x="79" y="216" width="17" height="10" xoffset="0" yoffset="6" xadvance="17" page="0" chnl="0" />
+    <char id="110" x="12" y="231" width="11" height="10" xoffset="0" yoffset="6" xadvance="12" page="0" chnl="0" />
+    <char id="111" x="24" y="231" width="11" height="10" xoffset="0" yoffset="6" xadvance="11" page="0" chnl="0" />
+    <char id="112" x="234" y="144" width="12" height="14" xoffset="-1" yoffset="6" xadvance="11" page="0" chnl="0" />
+    <char id="113" x="156" y="159" width="11" height="14" xoffset="0" yoffset="6" xadvance="11" page="0" chnl="0" />
+    <char id="114" x="106" y="230" width="10" height="10" xoffset="0" yoffset="6" xadvance="9" page="0" chnl="0" />
+    <char id="115" x="117" y="230" width="10" height="10" xoffset="-1" yoffset="6" xadvance="9" page="0" chnl="0" />
+    <char id="116" x="109" y="217" width="7" height="12" xoffset="1" yoffset="4" xadvance="7" page="0" chnl="0" />
+    <char id="117" x="36" y="231" width="11" height="10" xoffset="1" yoffset="6" xadvance="12" page="0" chnl="0" />
+    <char id="118" x="48" y="231" width="11" height="10" xoffset="0" yoffset="6" xadvance="10" page="0" chnl="0" />
+    <char id="119" x="62" y="216" width="16" height="10" xoffset="0" yoffset="6" xadvance="15" page="0" chnl="0" />
+    <char id="120" x="18" y="220" width="12" height="10" xoffset="-1" yoffset="6" xadvance="10" page="0" chnl="0" />
+    <char id="121" x="152" y="144" width="14" height="14" xoffset="-3" yoffset="6" xadvance="10" page="0" chnl="0" />
+    <char id="122" x="60" y="231" width="11" height="10" xoffset="-1" yoffset="6" xadvance="9" page="0" chnl="0" />
+    <char id="123" x="156" y="57" width="8" height="18" xoffset="1" yoffset="2" xadvance="7" page="0" chnl="0" />
+    <char id="124" x="142" y="57" width="6" height="18" xoffset="0" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="125" x="174" y="57" width="9" height="18" xoffset="-1" yoffset="2" xadvance="7" page="0" chnl="0" />
+    <char id="126" x="183" y="240" width="11" height="4" xoffset="1" yoffset="8" xadvance="11" page="0" chnl="0" />
+    <char id="160" x="131" y="0" width="0" height="0" xoffset="0" yoffset="16" xadvance="4" page="0" chnl="0" />
+    <char id="161" x="119" y="174" width="6" height="14" xoffset="0" yoffset="6" xadvance="7" page="0" chnl="0" />
+    <char id="162" x="79" y="173" width="8" height="14" xoffset="1" yoffset="4" xadvance="9" page="0" chnl="0" />
+    <char id="163" x="28" y="206" width="13" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="164" x="97" y="216" width="11" height="11" xoffset="0" yoffset="4" xadvance="12" page="0" chnl="0" />
+    <char id="165" x="42" y="206" width="13" height="13" xoffset="1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="166" x="135" y="57" width="6" height="18" xoffset="0" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="167" x="172" y="94" width="10" height="17" xoffset="0" yoffset="2" xadvance="10" page="0" chnl="0" />
+    <char id="168" x="147" y="241" width="6" height="2" xoffset="1" yoffset="2" xadvance="5" page="0" chnl="0" />
+    <char id="169" x="120" y="144" width="15" height="14" xoffset="1" yoffset="3" xadvance="17" page="0" chnl="0" />
+    <char id="170" x="211" y="230" width="8" height="8" xoffset="1" yoffset="3" xadvance="8" page="0" chnl="0" />
+    <char id="171" x="182" y="230" width="9" height="9" xoffset="1" yoffset="6" xadvance="10" page="0" chnl="0" />
+    <char id="172" x="226" y="239" width="9" height="6" xoffset="2" yoffset="7" xadvance="11" page="0" chnl="0" />
+    <char id="173" x="141" y="240" width="5" height="2" xoffset="1" yoffset="10" xadvance="7" page="0" chnl="0" />
+    <char id="174" x="136" y="144" width="15" height="14" xoffset="1" yoffset="3" xadvance="17" page="0" chnl="0" />
+    <char id="175" x="134" y="241" width="6" height="1" xoffset="2" yoffset="3" xadvance="5" page="0" chnl="0" />
+    <char id="176" x="211" y="239" width="6" height="6" xoffset="2" yoffset="3" xadvance="8" page="0" chnl="0" />
+    <char id="177" x="126" y="217" width="10" height="12" xoffset="0" yoffset="4" xadvance="11" page="0" chnl="0" />
+    <char id="178" x="245" y="230" width="7" height="8" xoffset="2" yoffset="0" xadvance="9" page="0" chnl="0" />
+    <char id="179" x="220" y="230" width="8" height="8" xoffset="2" yoffset="0" xadvance="9" page="0" chnl="0" />
+    <char id="180" x="177" y="241" width="5" height="4" xoffset="2" yoffset="2" xadvance="5" page="0" chnl="0" />
+    <char id="181" x="181" y="144" width="13" height="14" xoffset="0" yoffset="6" xadvance="12" page="0" chnl="0" />
+    <char id="182" x="195" y="94" width="11" height="17" xoffset="2" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="183" x="163" y="241" width="3" height="3" xoffset="1" yoffset="8" xadvance="5" page="0" chnl="0" />
+    <char id="184" x="199" y="240" width="6" height="5" xoffset="-1" yoffset="15" xadvance="5" page="0" chnl="0" />
+    <char id="185" x="237" y="230" width="7" height="8" xoffset="2" yoffset="0" xadvance="9" page="0" chnl="0" />
+    <char id="186" x="229" y="230" width="7" height="8" xoffset="1" yoffset="3" xadvance="8" page="0" chnl="0" />
+    <char id="187" x="192" y="230" width="9" height="9" xoffset="0" yoffset="6" xadvance="10" page="0" chnl="0" />
+    <char id="188" x="30" y="144" width="18" height="14" xoffset="1" yoffset="3" xadvance="19" page="0" chnl="0" />
+    <char id="189" x="68" y="143" width="17" height="14" xoffset="1" yoffset="3" xadvance="19" page="0" chnl="0" />
+    <char id="190" x="49" y="143" width="18" height="14" xoffset="1" yoffset="3" xadvance="19" page="0" chnl="0" />
+    <char id="191" x="42" y="174" width="9" height="14" xoffset="-1" yoffset="6" xadvance="9" page="0" chnl="0" />
+    <char id="192" x="168" y="19" width="13" height="18" xoffset="-1" yoffset="-2" xadvance="12" page="0" chnl="0" />
+    <char id="193" x="185" y="0" width="14" height="18" xoffset="-1" yoffset="-2" xadvance="12" page="0" chnl="0" />
+    <char id="194" x="14" y="76" width="13" height="17" xoffset="-1" yoffset="-1" xadvance="12" page="0" chnl="0" />
+    <char id="195" x="200" y="0" width="14" height="18" xoffset="-1" yoffset="-2" xadvance="12" page="0" chnl="0" />
+    <char id="196" x="88" y="94" width="13" height="16" xoffset="-1" yoffset="0" xadvance="12" page="0" chnl="0" />
+    <char id="197" x="154" y="19" width="13" height="18" xoffset="-1" yoffset="-2" xadvance="12" page="0" chnl="0" />
+    <char id="198" x="126" y="174" width="21" height="13" xoffset="-2" yoffset="3" xadvance="17" page="0" chnl="0" />
+    <char id="199" x="193" y="76" width="12" height="17" xoffset="1" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="200" x="140" y="19" width="13" height="18" xoffset="0" yoffset="-2" xadvance="11" page="0" chnl="0" />
+    <char id="201" x="126" y="19" width="13" height="18" xoffset="0" yoffset="-2" xadvance="11" page="0" chnl="0" />
+    <char id="202" x="42" y="76" width="13" height="17" xoffset="0" yoffset="-1" xadvance="11" page="0" chnl="0" />
+    <char id="203" x="60" y="94" width="13" height="16" xoffset="0" yoffset="0" xadvance="11" page="0" chnl="0" />
+    <char id="204" x="165" y="57" width="8" height="18" xoffset="0" yoffset="-2" xadvance="7" page="0" chnl="0" />
+    <char id="205" x="228" y="38" width="10" height="18" xoffset="0" yoffset="-2" xadvance="7" page="0" chnl="0" />
+    <char id="206" x="162" y="94" width="9" height="17" xoffset="0" yoffset="-1" xadvance="7" page="0" chnl="0" />
+    <char id="207" x="0" y="113" width="9" height="16" xoffset="0" yoffset="0" xadvance="7" page="0" chnl="0" />
+    <char id="208" x="150" y="188" width="14" height="13" xoffset="0" yoffset="3" xadvance="14" page="0" chnl="0" />
+    <char id="209" x="137" y="0" width="15" height="18" xoffset="0" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="210" x="98" y="20" width="13" height="18" xoffset="1" yoffset="-2" xadvance="14" page="0" chnl="0" />
+    <char id="211" x="84" y="20" width="13" height="18" xoffset="1" yoffset="-2" xadvance="14" page="0" chnl="0" />
+    <char id="212" x="98" y="76" width="13" height="17" xoffset="1" yoffset="-1" xadvance="14" page="0" chnl="0" />
+    <char id="213" x="70" y="20" width="13" height="18" xoffset="1" yoffset="-2" xadvance="14" page="0" chnl="0" />
+    <char id="214" x="32" y="94" width="13" height="16" xoffset="1" yoffset="0" xadvance="14" page="0" chnl="0" />
+    <char id="215" x="5" y="220" width="12" height="10" xoffset="0" yoffset="6" xadvance="11" page="0" chnl="0" />
+    <char id="216" x="47" y="111" width="15" height="15" xoffset="0" yoffset="2" xadvance="14" page="0" chnl="0" />
+    <char id="217" x="230" y="0" width="14" height="18" xoffset="1" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="218" x="242" y="19" width="14" height="18" xoffset="1" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="219" x="30" y="58" width="14" height="17" xoffset="1" yoffset="-1" xadvance="13" page="0" chnl="0" />
+    <char id="220" x="117" y="94" width="14" height="16" xoffset="1" yoffset="0" xadvance="13" page="0" chnl="0" />
+    <char id="221" x="0" y="41" width="13" height="18" xoffset="1" yoffset="-2" xadvance="12" page="0" chnl="0" />
+    <char id="222" x="121" y="203" width="12" height="13" xoffset="0" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="223" x="169" y="0" width="15" height="18" xoffset="-2" yoffset="2" xadvance="13" page="0" chnl="0" />
+    <char id="224" x="105" y="111" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="225" x="117" y="111" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="226" x="129" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="227" x="141" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="228" x="144" y="159" width="11" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="229" x="153" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="230" x="31" y="220" width="14" height="10" xoffset="0" yoffset="6" xadvance="15" page="0" chnl="0" />
+    <char id="231" x="52" y="173" width="8" height="14" xoffset="1" yoffset="6" xadvance="9" page="0" chnl="0" />
+    <char id="232" x="81" y="127" width="10" height="15" xoffset="0" yoffset="1" xadvance="10" page="0" chnl="0" />
+    <char id="233" x="70" y="127" width="10" height="15" xoffset="0" yoffset="1" xadvance="10" page="0" chnl="0" />
+    <char id="234" x="59" y="127" width="10" height="15" xoffset="0" yoffset="1" xadvance="10" page="0" chnl="0" />
+    <char id="235" x="27" y="162" width="10" height="14" xoffset="0" yoffset="2" xadvance="10" page="0" chnl="0" />
+    <char id="236" x="16" y="146" width="6" height="15" xoffset="1" yoffset="1" xadvance="6" page="0" chnl="0" />
+    <char id="237" x="0" y="146" width="7" height="15" xoffset="1" yoffset="1" xadvance="6" page="0" chnl="0" />
+    <char id="238" x="23" y="146" width="6" height="15" xoffset="1" yoffset="1" xadvance="6" page="0" chnl="0" />
+    <char id="239" x="112" y="173" width="6" height="14" xoffset="1" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="240" x="11" y="177" width="10" height="14" xoffset="1" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="241" x="189" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="242" x="213" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="243" x="225" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="244" x="237" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="245" x="245" y="128" width="11" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="246" x="108" y="158" width="11" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="247" x="160" y="230" width="9" height="10" xoffset="1" yoffset="5" xadvance="11" page="0" chnl="0" />
+    <char id="248" x="137" y="216" width="12" height="12" xoffset="0" yoffset="5" xadvance="11" page="0" chnl="0" />
+    <char id="249" x="221" y="128" width="11" height="15" xoffset="1" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="250" x="209" y="128" width="11" height="15" xoffset="1" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="251" x="197" y="128" width="11" height="15" xoffset="1" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="252" x="84" y="158" width="11" height="14" xoffset="1" yoffset="2" xadvance="12" page="0" chnl="0" />
+    <char id="253" x="13" y="0" width="14" height="19" xoffset="-3" yoffset="1" xadvance="10" page="0" chnl="0" />
+    <char id="254" x="216" y="38" width="11" height="18" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="255" x="182" y="19" width="14" height="18" xoffset="-3" yoffset="2" xadvance="10" page="0" chnl="0" />
+    <char id="256" x="74" y="94" width="13" height="16" xoffset="-1" yoffset="0" xadvance="12" page="0" chnl="0" />
+    <char id="257" x="172" y="202" width="11" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="258" x="28" y="76" width="13" height="17" xoffset="-1" yoffset="-1" xadvance="12" page="0" chnl="0" />
+    <char id="259" x="132" y="159" width="11" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="260" x="154" y="76" width="12" height="17" xoffset="-1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="261" x="49" y="158" width="10" height="14" xoffset="1" yoffset="6" xadvance="11" page="0" chnl="0" />
+    <char id="262" x="126" y="38" width="12" height="18" xoffset="1" yoffset="-2" xadvance="11" page="0" chnl="0" />
+    <char id="263" x="114" y="127" width="10" height="15" xoffset="0" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="264" x="167" y="76" width="12" height="17" xoffset="1" yoffset="-1" xadvance="11" page="0" chnl="0" />
+    <char id="265" x="103" y="127" width="10" height="15" xoffset="0" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="266" x="180" y="76" width="12" height="17" xoffset="1" yoffset="-1" xadvance="11" page="0" chnl="0" />
+    <char id="267" x="38" y="159" width="10" height="14" xoffset="0" yoffset="2" xadvance="9" page="0" chnl="0" />
+    <char id="268" x="139" y="38" width="12" height="18" xoffset="1" yoffset="-2" xadvance="11" page="0" chnl="0" />
+    <char id="269" x="92" y="127" width="10" height="15" xoffset="0" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="270" x="215" y="0" width="14" height="18" xoffset="0" yoffset="-2" xadvance="14" page="0" chnl="0" />
+    <char id="271" x="86" y="143" width="16" height="14" xoffset="0" yoffset="2" xadvance="14" page="0" chnl="0" />
+    <char id="272" x="180" y="188" width="14" height="13" xoffset="0" yoffset="3" xadvance="14" page="0" chnl="0" />
+    <char id="273" x="244" y="159" width="12" height="14" xoffset="1" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="274" x="46" y="94" width="13" height="16" xoffset="0" yoffset="0" xadvance="11" page="0" chnl="0" />
+    <char id="275" x="223" y="216" width="10" height="13" xoffset="0" yoffset="3" xadvance="10" page="0" chnl="0" />
+    <char id="276" x="56" y="76" width="13" height="17" xoffset="0" yoffset="-1" xadvance="11" page="0" chnl="0" />
+    <char id="277" x="16" y="162" width="10" height="14" xoffset="0" yoffset="2" xadvance="10" page="0" chnl="0" />
+    <char id="278" x="70" y="76" width="13" height="17" xoffset="0" yoffset="-1" xadvance="11" page="0" chnl="0" />
+    <char id="279" x="5" y="162" width="10" height="14" xoffset="0" yoffset="2" xadvance="10" page="0" chnl="0" />
+    <char id="280" x="84" y="76" width="13" height="17" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="281" x="22" y="177" width="9" height="14" xoffset="1" yoffset="6" xadvance="10" page="0" chnl="0" />
+    <char id="282" x="112" y="19" width="13" height="18" xoffset="0" yoffset="-2" xadvance="11" page="0" chnl="0" />
+    <char id="283" x="48" y="127" width="10" height="15" xoffset="0" yoffset="1" xadvance="10" page="0" chnl="0" />
+    <char id="284" x="206" y="76" width="12" height="17" xoffset="1" yoffset="-1" xadvance="12" page="0" chnl="0" />
+    <char id="285" x="43" y="0" width="13" height="19" xoffset="-2" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="286" x="219" y="76" width="12" height="17" xoffset="1" yoffset="-1" xadvance="12" page="0" chnl="0" />
+    <char id="287" x="56" y="39" width="13" height="18" xoffset="-2" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="288" x="232" y="76" width="12" height="17" xoffset="1" yoffset="-1" xadvance="12" page="0" chnl="0" />
+    <char id="289" x="70" y="39" width="13" height="18" xoffset="-2" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="290" x="152" y="38" width="12" height="18" xoffset="1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="291" x="57" y="0" width="13" height="19" xoffset="-2" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="292" x="93" y="58" width="15" height="17" xoffset="0" yoffset="-1" xadvance="14" page="0" chnl="0" />
+    <char id="293" x="204" y="38" width="11" height="18" xoffset="0" yoffset="-2" xadvance="12" page="0" chnl="0" />
+    <char id="294" x="208" y="174" width="16" height="13" xoffset="0" yoffset="3" xadvance="14" page="0" chnl="0" />
+    <char id="295" x="120" y="159" width="11" height="14" xoffset="1" yoffset="2" xadvance="12" page="0" chnl="0" />
+    <char id="296" x="239" y="38" width="10" height="18" xoffset="0" yoffset="-2" xadvance="7" page="0" chnl="0" />
+    <char id="297" x="8" y="146" width="7" height="15" xoffset="1" yoffset="1" xadvance="6" page="0" chnl="0" />
+    <char id="298" x="10" y="113" width="9" height="16" xoffset="0" yoffset="0" xadvance="7" page="0" chnl="0" />
+    <char id="299" x="165" y="216" width="7" height="13" xoffset="1" yoffset="3" xadvance="6" page="0" chnl="0" />
+    <char id="300" x="152" y="94" width="9" height="17" xoffset="0" yoffset="-1" xadvance="7" page="0" chnl="0" />
+    <char id="301" x="104" y="173" width="7" height="14" xoffset="1" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="302" x="132" y="94" width="9" height="17" xoffset="0" yoffset="3" xadvance="7" page="0" chnl="0" />
+    <char id="303" x="149" y="57" width="6" height="18" xoffset="1" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="304" x="142" y="94" width="9" height="17" xoffset="0" yoffset="-1" xadvance="7" page="0" chnl="0" />
+    <char id="305" x="170" y="230" width="5" height="10" xoffset="1" yoffset="6" xadvance="6" page="0" chnl="0" />
+    <char id="306" x="77" y="58" width="15" height="17" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="307" x="84" y="39" width="13" height="18" xoffset="0" yoffset="2" xadvance="12" page="0" chnl="0" />
+    <char id="308" x="0" y="0" width="12" height="21" xoffset="-3" yoffset="-1" xadvance="7" page="0" chnl="0" />
+    <char id="309" x="84" y="0" width="10" height="19" xoffset="-3" yoffset="1" xadvance="6" page="0" chnl="0" />
+    <char id="310" x="105" y="0" width="15" height="18" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="311" x="71" y="0" width="12" height="19" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="312" x="72" y="227" width="11" height="10" xoffset="1" yoffset="6" xadvance="11" page="0" chnl="0" />
+    <char id="313" x="165" y="38" width="12" height="18" xoffset="0" yoffset="-2" xadvance="11" page="0" chnl="0" />
+    <char id="314" x="214" y="57" width="9" height="18" xoffset="0" yoffset="-2" xadvance="6" page="0" chnl="0" />
+    <char id="315" x="246" y="57" width="10" height="18" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="316" x="95" y="0" width="9" height="19" xoffset="-2" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="317" x="195" y="144" width="12" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="318" x="0" y="177" width="10" height="14" xoffset="0" yoffset="2" xadvance="9" page="0" chnl="0" />
+    <char id="319" x="165" y="188" width="14" height="13" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="320" x="70" y="173" width="8" height="14" xoffset="1" yoffset="2" xadvance="8" page="0" chnl="0" />
+    <char id="321" x="160" y="202" width="11" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="322" x="61" y="173" width="8" height="14" xoffset="0" yoffset="2" xadvance="7" page="0" chnl="0" />
+    <char id="323" x="61" y="58" width="15" height="17" xoffset="0" yoffset="-1" xadvance="13" page="0" chnl="0" />
+    <char id="324" x="165" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="325" x="153" y="0" width="15" height="18" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="326" x="201" y="112" width="11" height="15" xoffset="0" yoffset="6" xadvance="12" page="0" chnl="0" />
+    <char id="327" x="121" y="0" width="15" height="18" xoffset="0" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="328" x="177" y="112" width="11" height="15" xoffset="0" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="329" x="231" y="159" width="12" height="14" xoffset="2" yoffset="2" xadvance="15" page="0" chnl="0" />
+    <char id="330" x="45" y="58" width="15" height="17" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="331" x="125" y="128" width="11" height="15" xoffset="0" yoffset="6" xadvance="12" page="0" chnl="0" />
+    <char id="332" x="18" y="94" width="13" height="16" xoffset="1" yoffset="0" xadvance="14" page="0" chnl="0" />
+    <char id="333" x="184" y="202" width="11" height="13" xoffset="0" yoffset="3" xadvance="11" page="0" chnl="0" />
+    <char id="334" x="112" y="76" width="13" height="17" xoffset="1" yoffset="-1" xadvance="14" page="0" chnl="0" />
+    <char id="335" x="96" y="158" width="11" height="14" xoffset="0" yoffset="2" xadvance="11" page="0" chnl="0" />
+    <char id="336" x="56" y="20" width="13" height="18" xoffset="1" yoffset="-2" xadvance="14" page="0" chnl="0" />
+    <char id="337" x="79" y="111" width="12" height="15" xoffset="0" yoffset="1" xadvance="11" page="0" chnl="0" />
+    <char id="338" x="169" y="174" width="19" height="13" xoffset="1" yoffset="3" xadvance="18" page="0" chnl="0" />
+    <char id="339" x="46" y="220" width="15" height="10" xoffset="1" yoffset="6" xadvance="16" page="0" chnl="0" />
+    <char id="340" x="42" y="20" width="13" height="18" xoffset="0" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="341" x="37" y="127" width="10" height="15" xoffset="0" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="342" x="14" y="20" width="13" height="18" xoffset="0" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="343" x="92" y="111" width="12" height="15" xoffset="-2" yoffset="6" xadvance="9" page="0" chnl="0" />
+    <char id="344" x="28" y="20" width="13" height="18" xoffset="0" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="345" x="26" y="128" width="10" height="15" xoffset="0" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="346" x="178" y="38" width="12" height="18" xoffset="-1" yoffset="-2" xadvance="10" page="0" chnl="0" />
+    <char id="347" x="15" y="130" width="10" height="15" xoffset="-1" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="348" x="244" y="76" width="12" height="17" xoffset="-1" yoffset="-1" xadvance="10" page="0" chnl="0" />
+    <char id="349" x="4" y="130" width="10" height="15" xoffset="-1" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="350" x="207" y="94" width="11" height="17" xoffset="0" yoffset="3" xadvance="10" page="0" chnl="0" />
+    <char id="351" x="32" y="177" width="9" height="14" xoffset="0" yoffset="6" xadvance="9" page="0" chnl="0" />
+    <char id="352" x="191" y="38" width="12" height="18" xoffset="-1" yoffset="-2" xadvance="10" page="0" chnl="0" />
+    <char id="353" x="233" y="128" width="11" height="15" xoffset="-1" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="354" x="183" y="94" width="11" height="17" xoffset="2" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="355" x="20" y="111" width="9" height="16" xoffset="-1" yoffset="4" xadvance="7" page="0" chnl="0" />
+    <char id="356" x="0" y="22" width="13" height="18" xoffset="1" yoffset="-2" xadvance="12" page="0" chnl="0" />
+    <char id="357" x="218" y="159" width="12" height="14" xoffset="0" yoffset="2" xadvance="10" page="0" chnl="0" />
+    <char id="358" x="108" y="203" width="12" height="13" xoffset="2" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="359" x="117" y="217" width="8" height="12" xoffset="1" yoffset="4" xadvance="8" page="0" chnl="0" />
+    <char id="360" x="227" y="19" width="14" height="18" xoffset="1" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="361" x="185" y="128" width="11" height="15" xoffset="1" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="362" x="102" y="94" width="14" height="16" xoffset="1" yoffset="0" xadvance="13" page="0" chnl="0" />
+    <char id="363" x="196" y="202" width="11" height="13" xoffset="1" yoffset="3" xadvance="12" page="0" chnl="0" />
+    <char id="364" x="15" y="58" width="14" height="17" xoffset="1" yoffset="-1" xadvance="13" page="0" chnl="0" />
+    <char id="365" x="72" y="158" width="11" height="14" xoffset="1" yoffset="2" xadvance="12" page="0" chnl="0" />
+    <char id="366" x="212" y="19" width="14" height="18" xoffset="1" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="367" x="173" y="128" width="11" height="15" xoffset="1" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="368" x="197" y="19" width="14" height="18" xoffset="1" yoffset="-2" xadvance="13" page="0" chnl="0" />
+    <char id="369" x="161" y="128" width="11" height="15" xoffset="1" yoffset="1" xadvance="12" page="0" chnl="0" />
+    <char id="370" x="0" y="60" width="14" height="17" xoffset="1" yoffset="3" xadvance="13" page="0" chnl="0" />
+    <char id="371" x="205" y="159" width="12" height="14" xoffset="0" yoffset="6" xadvance="12" page="0" chnl="0" />
+    <char id="372" x="109" y="58" width="20" height="17" xoffset="1" yoffset="-1" xadvance="19" page="0" chnl="0" />
+    <char id="373" x="30" y="111" width="16" height="15" xoffset="0" yoffset="1" xadvance="15" page="0" chnl="0" />
+    <char id="374" x="126" y="76" width="13" height="17" xoffset="1" yoffset="-1" xadvance="12" page="0" chnl="0" />
+    <char id="375" x="28" y="0" width="14" height="19" xoffset="-3" yoffset="1" xadvance="10" page="0" chnl="0" />
+    <char id="376" x="4" y="96" width="13" height="16" xoffset="1" yoffset="0" xadvance="12" page="0" chnl="0" />
+    <char id="377" x="14" y="39" width="13" height="18" xoffset="-1" yoffset="-2" xadvance="11" page="0" chnl="0" />
+    <char id="378" x="149" y="128" width="11" height="15" xoffset="-1" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="379" x="140" y="76" width="13" height="17" xoffset="-1" yoffset="-1" xadvance="11" page="0" chnl="0" />
+    <char id="380" x="60" y="158" width="11" height="14" xoffset="-1" yoffset="2" xadvance="9" page="0" chnl="0" />
+    <char id="381" x="28" y="39" width="13" height="18" xoffset="-1" yoffset="-2" xadvance="11" page="0" chnl="0" />
+    <char id="382" x="137" y="128" width="11" height="15" xoffset="-1" yoffset="1" xadvance="9" page="0" chnl="0" />
+    <char id="383" x="98" y="39" width="13" height="18" xoffset="-2" yoffset="2" xadvance="6" page="0" chnl="0" />
+    <char id="8364" x="135" y="188" width="14" height="13" xoffset="0" yoffset="3" xadvance="12" page="0" chnl="0" />
+  </chars>
+  <kernings count="558">
+    <kerning first="65" second="67" amount="-2" /><!-- 'A' to 'C' -->
+    <kerning first="65" second="71" amount="-2" /><!-- 'A' to 'G' -->
+    <kerning first="65" second="79" amount="-2" /><!-- 'A' to 'O' -->
+    <kerning first="65" second="81" amount="-2" /><!-- 'A' to 'Q' -->
+    <kerning first="65" second="84" amount="-2" /><!-- 'A' to 'T' -->
+    <kerning first="65" second="85" amount="-2" /><!-- 'A' to 'U' -->
+    <kerning first="65" second="86" amount="-2" /><!-- 'A' to 'V' -->
+    <kerning first="65" second="87" amount="-2" /><!-- 'A' to 'W' -->
+    <kerning first="65" second="89" amount="-2" /><!-- 'A' to 'Y' -->
+    <kerning first="65" second="262" amount="-2" /><!-- 'A' to 'Ć' -->
+    <kerning first="65" second="264" amount="-2" /><!-- 'A' to 'Ĉ' -->
+    <kerning first="65" second="268" amount="-2" /><!-- 'A' to 'Č' -->
+    <kerning first="65" second="266" amount="-2" /><!-- 'A' to 'Ċ' -->
+    <kerning first="65" second="199" amount="-2" /><!-- 'A' to 'Ç' -->
+    <kerning first="65" second="284" amount="-2" /><!-- 'A' to 'Ĝ' -->
+    <kerning first="65" second="286" amount="-2" /><!-- 'A' to 'Ğ' -->
+    <kerning first="65" second="288" amount="-2" /><!-- 'A' to 'Ġ' -->
+    <kerning first="65" second="290" amount="-2" /><!-- 'A' to 'Ģ' -->
+    <kerning first="65" second="210" amount="-2" /><!-- 'A' to 'Ò' -->
+    <kerning first="65" second="211" amount="-2" /><!-- 'A' to 'Ó' -->
+    <kerning first="65" second="212" amount="-2" /><!-- 'A' to 'Ô' -->
+    <kerning first="65" second="213" amount="-2" /><!-- 'A' to 'Õ' -->
+    <kerning first="65" second="214" amount="-2" /><!-- 'A' to 'Ö' -->
+    <kerning first="65" second="332" amount="-2" /><!-- 'A' to 'Ō' -->
+    <kerning first="65" second="334" amount="-2" /><!-- 'A' to 'Ŏ' -->
+    <kerning first="65" second="336" amount="-2" /><!-- 'A' to 'Ő' -->
+    <kerning first="65" second="216" amount="-2" /><!-- 'A' to 'Ø' -->
+    <kerning first="65" second="338" amount="-2" /><!-- 'A' to 'Œ' -->
+    <kerning first="65" second="356" amount="-2" /><!-- 'A' to 'Ť' -->
+    <kerning first="65" second="358" amount="-2" /><!-- 'A' to 'Ŧ' -->
+    <kerning first="65" second="217" amount="-2" /><!-- 'A' to 'Ù' -->
+    <kerning first="65" second="218" amount="-2" /><!-- 'A' to 'Ú' -->
+    <kerning first="65" second="219" amount="-2" /><!-- 'A' to 'Û' -->
+    <kerning first="65" second="360" amount="-2" /><!-- 'A' to 'Ũ' -->
+    <kerning first="65" second="220" amount="-2" /><!-- 'A' to 'Ü' -->
+    <kerning first="65" second="362" amount="-2" /><!-- 'A' to 'Ū' -->
+    <kerning first="65" second="364" amount="-2" /><!-- 'A' to 'Ŭ' -->
+    <kerning first="65" second="366" amount="-2" /><!-- 'A' to 'Ů' -->
+    <kerning first="65" second="368" amount="-2" /><!-- 'A' to 'Ű' -->
+    <kerning first="65" second="370" amount="-2" /><!-- 'A' to 'Ų' -->
+    <kerning first="65" second="372" amount="-2" /><!-- 'A' to 'Ŵ' -->
+    <kerning first="65" second="221" amount="-2" /><!-- 'A' to 'Ý' -->
+    <kerning first="65" second="374" amount="-2" /><!-- 'A' to 'Ŷ' -->
+    <kerning first="65" second="376" amount="-2" /><!-- 'A' to 'Ÿ' -->
+    <kerning first="65" second="118" amount="-2" /><!-- 'A' to 'v' -->
+    <kerning first="65" second="119" amount="-2" /><!-- 'A' to 'w' -->
+    <kerning first="65" second="121" amount="-2" /><!-- 'A' to 'y' -->
+    <kerning first="65" second="329" amount="-3" /><!-- 'A' to 'ŉ' -->
+    <kerning first="65" second="373" amount="-2" /><!-- 'A' to 'ŵ' -->
+    <kerning first="65" second="253" amount="-2" /><!-- 'A' to 'ý' -->
+    <kerning first="65" second="375" amount="-2" /><!-- 'A' to 'ŷ' -->
+    <kerning first="65" second="255" amount="-2" /><!-- 'A' to 'ÿ' -->
+    <kerning first="65" second="45" amount="-2" /><!-- 'A' to '-' -->
+    <kerning first="65" second="173" amount="-2" /><!-- 'A' to '­' -->
+    <kerning first="65" second="42" amount="-2" /><!-- 'A' to '*' -->
+    <kerning first="65" second="39" amount="-2" /><!-- 'A' to ''' -->
+    <kerning first="65" second="34" amount="-2" /><!-- 'A' to '"' -->
+    <kerning first="65" second="170" amount="-2" /><!-- 'A' to 'ª' -->
+    <kerning first="65" second="186" amount="-2" /><!-- 'A' to 'º' -->
+    <kerning first="65" second="354" amount="-2" /><!-- 'A' to 'Ţ' -->
+    <kerning first="68" second="84" amount="-2" /><!-- 'D' to 'T' -->
+    <kerning first="68" second="87" amount="-2" /><!-- 'D' to 'W' -->
+    <kerning first="68" second="89" amount="-2" /><!-- 'D' to 'Y' -->
+    <kerning first="68" second="198" amount="-2" /><!-- 'D' to 'Æ' -->
+    <kerning first="68" second="356" amount="-2" /><!-- 'D' to 'Ť' -->
+    <kerning first="68" second="358" amount="-2" /><!-- 'D' to 'Ŧ' -->
+    <kerning first="68" second="372" amount="-2" /><!-- 'D' to 'Ŵ' -->
+    <kerning first="68" second="221" amount="-2" /><!-- 'D' to 'Ý' -->
+    <kerning first="68" second="374" amount="-2" /><!-- 'D' to 'Ŷ' -->
+    <kerning first="68" second="376" amount="-2" /><!-- 'D' to 'Ÿ' -->
+    <kerning first="68" second="354" amount="-2" /><!-- 'D' to 'Ţ' -->
+    <kerning first="70" second="65" amount="-2" /><!-- 'F' to 'A' -->
+    <kerning first="70" second="192" amount="-2" /><!-- 'F' to 'À' -->
+    <kerning first="70" second="193" amount="-2" /><!-- 'F' to 'Á' -->
+    <kerning first="70" second="194" amount="-2" /><!-- 'F' to 'Â' -->
+    <kerning first="70" second="195" amount="-2" /><!-- 'F' to 'Ã' -->
+    <kerning first="70" second="196" amount="-2" /><!-- 'F' to 'Ä' -->
+    <kerning first="70" second="256" amount="-2" /><!-- 'F' to 'Ā' -->
+    <kerning first="70" second="258" amount="-2" /><!-- 'F' to 'Ă' -->
+    <kerning first="70" second="197" amount="-2" /><!-- 'F' to 'Å' -->
+    <kerning first="70" second="260" amount="-2" /><!-- 'F' to 'Ą' -->
+    <kerning first="70" second="198" amount="-3" /><!-- 'F' to 'Æ' -->
+    <kerning first="70" second="97" amount="-2" /><!-- 'F' to 'a' -->
+    <kerning first="70" second="99" amount="-2" /><!-- 'F' to 'c' -->
+    <kerning first="70" second="100" amount="-2" /><!-- 'F' to 'd' -->
+    <kerning first="70" second="101" amount="-2" /><!-- 'F' to 'e' -->
+    <kerning first="70" second="103" amount="-2" /><!-- 'F' to 'g' -->
+    <kerning first="70" second="111" amount="-2" /><!-- 'F' to 'o' -->
+    <kerning first="70" second="113" amount="-2" /><!-- 'F' to 'q' -->
+    <kerning first="70" second="225" amount="-2" /><!-- 'F' to 'á' -->
+    <kerning first="70" second="261" amount="-2" /><!-- 'F' to 'ą' -->
+    <kerning first="70" second="230" amount="-2" /><!-- 'F' to 'æ' -->
+    <kerning first="70" second="263" amount="-2" /><!-- 'F' to 'ć' -->
+    <kerning first="70" second="267" amount="-2" /><!-- 'F' to 'ċ' -->
+    <kerning first="70" second="231" amount="-2" /><!-- 'F' to 'ç' -->
+    <kerning first="70" second="271" amount="-2" /><!-- 'F' to 'ď' -->
+    <kerning first="70" second="273" amount="-2" /><!-- 'F' to 'đ' -->
+    <kerning first="70" second="233" amount="-2" /><!-- 'F' to 'é' -->
+    <kerning first="70" second="279" amount="-2" /><!-- 'F' to 'ė' -->
+    <kerning first="70" second="281" amount="-2" /><!-- 'F' to 'ę' -->
+    <kerning first="70" second="289" amount="-2" /><!-- 'F' to 'ġ' -->
+    <kerning first="70" second="291" amount="-2" /><!-- 'F' to 'ģ' -->
+    <kerning first="70" second="243" amount="-2" /><!-- 'F' to 'ó' -->
+    <kerning first="70" second="337" amount="-2" /><!-- 'F' to 'ő' -->
+    <kerning first="70" second="248" amount="-2" /><!-- 'F' to 'ø' -->
+    <kerning first="70" second="339" amount="-2" /><!-- 'F' to 'œ' -->
+    <kerning first="70" second="44" amount="-3" /><!-- 'F' to ',' -->
+    <kerning first="70" second="46" amount="-3" /><!-- 'F' to '.' -->
+    <kerning first="70" second="171" amount="-2" /><!-- 'F' to '«' -->
+    <kerning first="71" second="84" amount="-2" /><!-- 'G' to 'T' -->
+    <kerning first="71" second="89" amount="-2" /><!-- 'G' to 'Y' -->
+    <kerning first="71" second="356" amount="-2" /><!-- 'G' to 'Ť' -->
+    <kerning first="71" second="358" amount="-2" /><!-- 'G' to 'Ŧ' -->
+    <kerning first="71" second="221" amount="-2" /><!-- 'G' to 'Ý' -->
+    <kerning first="71" second="374" amount="-2" /><!-- 'G' to 'Ŷ' -->
+    <kerning first="71" second="376" amount="-2" /><!-- 'G' to 'Ÿ' -->
+    <kerning first="71" second="354" amount="-2" /><!-- 'G' to 'Ţ' -->
+    <kerning first="75" second="67" amount="-2" /><!-- 'K' to 'C' -->
+    <kerning first="75" second="71" amount="-2" /><!-- 'K' to 'G' -->
+    <kerning first="75" second="79" amount="-2" /><!-- 'K' to 'O' -->
+    <kerning first="75" second="81" amount="-2" /><!-- 'K' to 'Q' -->
+    <kerning first="75" second="262" amount="-2" /><!-- 'K' to 'Ć' -->
+    <kerning first="75" second="264" amount="-2" /><!-- 'K' to 'Ĉ' -->
+    <kerning first="75" second="268" amount="-2" /><!-- 'K' to 'Č' -->
+    <kerning first="75" second="266" amount="-2" /><!-- 'K' to 'Ċ' -->
+    <kerning first="75" second="199" amount="-2" /><!-- 'K' to 'Ç' -->
+    <kerning first="75" second="284" amount="-2" /><!-- 'K' to 'Ĝ' -->
+    <kerning first="75" second="286" amount="-2" /><!-- 'K' to 'Ğ' -->
+    <kerning first="75" second="288" amount="-2" /><!-- 'K' to 'Ġ' -->
+    <kerning first="75" second="290" amount="-2" /><!-- 'K' to 'Ģ' -->
+    <kerning first="75" second="210" amount="-2" /><!-- 'K' to 'Ò' -->
+    <kerning first="75" second="211" amount="-2" /><!-- 'K' to 'Ó' -->
+    <kerning first="75" second="212" amount="-2" /><!-- 'K' to 'Ô' -->
+    <kerning first="75" second="213" amount="-2" /><!-- 'K' to 'Õ' -->
+    <kerning first="75" second="214" amount="-2" /><!-- 'K' to 'Ö' -->
+    <kerning first="75" second="332" amount="-2" /><!-- 'K' to 'Ō' -->
+    <kerning first="75" second="334" amount="-2" /><!-- 'K' to 'Ŏ' -->
+    <kerning first="75" second="336" amount="-2" /><!-- 'K' to 'Ő' -->
+    <kerning first="75" second="216" amount="-2" /><!-- 'K' to 'Ø' -->
+    <kerning first="75" second="338" amount="-2" /><!-- 'K' to 'Œ' -->
+    <kerning first="75" second="117" amount="-2" /><!-- 'K' to 'u' -->
+    <kerning first="75" second="118" amount="-2" /><!-- 'K' to 'v' -->
+    <kerning first="75" second="119" amount="-2" /><!-- 'K' to 'w' -->
+    <kerning first="75" second="121" amount="-2" /><!-- 'K' to 'y' -->
+    <kerning first="75" second="236" amount="1" /><!-- 'K' to 'ì' -->
+    <kerning first="75" second="238" amount="1" /><!-- 'K' to 'î' -->
+    <kerning first="75" second="297" amount="1" /><!-- 'K' to 'ĩ' -->
+    <kerning first="75" second="239" amount="1" /><!-- 'K' to 'ï' -->
+    <kerning first="75" second="299" amount="1" /><!-- 'K' to 'ī' -->
+    <kerning first="75" second="301" amount="1" /><!-- 'K' to 'ĭ' -->
+    <kerning first="75" second="309" amount="1" /><!-- 'K' to 'ĵ' -->
+    <kerning first="75" second="250" amount="-2" /><!-- 'K' to 'ú' -->
+    <kerning first="75" second="369" amount="-2" /><!-- 'K' to 'ű' -->
+    <kerning first="75" second="371" amount="-2" /><!-- 'K' to 'ų' -->
+    <kerning first="75" second="373" amount="-2" /><!-- 'K' to 'ŵ' -->
+    <kerning first="75" second="253" amount="-2" /><!-- 'K' to 'ý' -->
+    <kerning first="75" second="45" amount="-2" /><!-- 'K' to '-' -->
+    <kerning first="75" second="173" amount="-2" /><!-- 'K' to '­' -->
+    <kerning first="75" second="171" amount="-2" /><!-- 'K' to '«' -->
+    <kerning first="76" second="84" amount="-3" /><!-- 'L' to 'T' -->
+    <kerning first="76" second="85" amount="-2" /><!-- 'L' to 'U' -->
+    <kerning first="76" second="86" amount="-3" /><!-- 'L' to 'V' -->
+    <kerning first="76" second="87" amount="-3" /><!-- 'L' to 'W' -->
+    <kerning first="76" second="89" amount="-3" /><!-- 'L' to 'Y' -->
+    <kerning first="76" second="356" amount="-3" /><!-- 'L' to 'Ť' -->
+    <kerning first="76" second="358" amount="-3" /><!-- 'L' to 'Ŧ' -->
+    <kerning first="76" second="217" amount="-2" /><!-- 'L' to 'Ù' -->
+    <kerning first="76" second="218" amount="-2" /><!-- 'L' to 'Ú' -->
+    <kerning first="76" second="219" amount="-2" /><!-- 'L' to 'Û' -->
+    <kerning first="76" second="360" amount="-2" /><!-- 'L' to 'Ũ' -->
+    <kerning first="76" second="220" amount="-2" /><!-- 'L' to 'Ü' -->
+    <kerning first="76" second="362" amount="-2" /><!-- 'L' to 'Ū' -->
+    <kerning first="76" second="364" amount="-2" /><!-- 'L' to 'Ŭ' -->
+    <kerning first="76" second="366" amount="-2" /><!-- 'L' to 'Ů' -->
+    <kerning first="76" second="368" amount="-2" /><!-- 'L' to 'Ű' -->
+    <kerning first="76" second="370" amount="-2" /><!-- 'L' to 'Ų' -->
+    <kerning first="76" second="372" amount="-3" /><!-- 'L' to 'Ŵ' -->
+    <kerning first="76" second="221" amount="-3" /><!-- 'L' to 'Ý' -->
+    <kerning first="76" second="374" amount="-3" /><!-- 'L' to 'Ŷ' -->
+    <kerning first="76" second="376" amount="-3" /><!-- 'L' to 'Ÿ' -->
+    <kerning first="76" second="118" amount="-2" /><!-- 'L' to 'v' -->
+    <kerning first="76" second="119" amount="-2" /><!-- 'L' to 'w' -->
+    <kerning first="76" second="121" amount="-2" /><!-- 'L' to 'y' -->
+    <kerning first="76" second="329" amount="-3" /><!-- 'L' to 'ŉ' -->
+    <kerning first="76" second="373" amount="-2" /><!-- 'L' to 'ŵ' -->
+    <kerning first="76" second="253" amount="-2" /><!-- 'L' to 'ý' -->
+    <kerning first="76" second="375" amount="-2" /><!-- 'L' to 'ŷ' -->
+    <kerning first="76" second="255" amount="-2" /><!-- 'L' to 'ÿ' -->
+    <kerning first="76" second="42" amount="-2" /><!-- 'L' to '*' -->
+    <kerning first="76" second="39" amount="-3" /><!-- 'L' to ''' -->
+    <kerning first="76" second="34" amount="-3" /><!-- 'L' to '"' -->
+    <kerning first="76" second="170" amount="-2" /><!-- 'L' to 'ª' -->
+    <kerning first="76" second="186" amount="-2" /><!-- 'L' to 'º' -->
+    <kerning first="76" second="354" amount="-3" /><!-- 'L' to 'Ţ' -->
+    <kerning first="79" second="84" amount="-2" /><!-- 'O' to 'T' -->
+    <kerning first="79" second="87" amount="-2" /><!-- 'O' to 'W' -->
+    <kerning first="79" second="89" amount="-2" /><!-- 'O' to 'Y' -->
+    <kerning first="79" second="198" amount="-2" /><!-- 'O' to 'Æ' -->
+    <kerning first="79" second="356" amount="-2" /><!-- 'O' to 'Ť' -->
+    <kerning first="79" second="358" amount="-2" /><!-- 'O' to 'Ŧ' -->
+    <kerning first="79" second="372" amount="-2" /><!-- 'O' to 'Ŵ' -->
+    <kerning first="79" second="221" amount="-2" /><!-- 'O' to 'Ý' -->
+    <kerning first="79" second="374" amount="-2" /><!-- 'O' to 'Ŷ' -->
+    <kerning first="79" second="376" amount="-2" /><!-- 'O' to 'Ÿ' -->
+    <kerning first="79" second="354" amount="-2" /><!-- 'O' to 'Ţ' -->
+    <kerning first="80" second="65" amount="-2" /><!-- 'P' to 'A' -->
+    <kerning first="80" second="192" amount="-2" /><!-- 'P' to 'À' -->
+    <kerning first="80" second="193" amount="-2" /><!-- 'P' to 'Á' -->
+    <kerning first="80" second="194" amount="-2" /><!-- 'P' to 'Â' -->
+    <kerning first="80" second="195" amount="-2" /><!-- 'P' to 'Ã' -->
+    <kerning first="80" second="196" amount="-2" /><!-- 'P' to 'Ä' -->
+    <kerning first="80" second="256" amount="-2" /><!-- 'P' to 'Ā' -->
+    <kerning first="80" second="258" amount="-2" /><!-- 'P' to 'Ă' -->
+    <kerning first="80" second="197" amount="-2" /><!-- 'P' to 'Å' -->
+    <kerning first="80" second="260" amount="-2" /><!-- 'P' to 'Ą' -->
+    <kerning first="80" second="198" amount="-2" /><!-- 'P' to 'Æ' -->
+    <kerning first="80" second="44" amount="-3" /><!-- 'P' to ',' -->
+    <kerning first="80" second="46" amount="-3" /><!-- 'P' to '.' -->
+    <kerning first="80" second="45" amount="-2" /><!-- 'P' to '-' -->
+    <kerning first="80" second="173" amount="-2" /><!-- 'P' to '­' -->
+    <kerning first="81" second="84" amount="-2" /><!-- 'Q' to 'T' -->
+    <kerning first="81" second="87" amount="-2" /><!-- 'Q' to 'W' -->
+    <kerning first="81" second="89" amount="-2" /><!-- 'Q' to 'Y' -->
+    <kerning first="81" second="198" amount="-2" /><!-- 'Q' to 'Æ' -->
+    <kerning first="81" second="356" amount="-2" /><!-- 'Q' to 'Ť' -->
+    <kerning first="81" second="358" amount="-2" /><!-- 'Q' to 'Ŧ' -->
+    <kerning first="81" second="372" amount="-2" /><!-- 'Q' to 'Ŵ' -->
+    <kerning first="81" second="221" amount="-2" /><!-- 'Q' to 'Ý' -->
+    <kerning first="81" second="374" amount="-2" /><!-- 'Q' to 'Ŷ' -->
+    <kerning first="81" second="376" amount="-2" /><!-- 'Q' to 'Ÿ' -->
+    <kerning first="81" second="354" amount="-2" /><!-- 'Q' to 'Ţ' -->
+    <kerning first="82" second="84" amount="-2" /><!-- 'R' to 'T' -->
+    <kerning first="82" second="85" amount="-2" /><!-- 'R' to 'U' -->
+    <kerning first="82" second="86" amount="-2" /><!-- 'R' to 'V' -->
+    <kerning first="82" second="87" amount="-2" /><!-- 'R' to 'W' -->
+    <kerning first="82" second="89" amount="-2" /><!-- 'R' to 'Y' -->
+    <kerning first="82" second="356" amount="-2" /><!-- 'R' to 'Ť' -->
+    <kerning first="82" second="358" amount="-2" /><!-- 'R' to 'Ŧ' -->
+    <kerning first="82" second="217" amount="-2" /><!-- 'R' to 'Ù' -->
+    <kerning first="82" second="218" amount="-2" /><!-- 'R' to 'Ú' -->
+    <kerning first="82" second="219" amount="-2" /><!-- 'R' to 'Û' -->
+    <kerning first="82" second="360" amount="-2" /><!-- 'R' to 'Ũ' -->
+    <kerning first="82" second="220" amount="-2" /><!-- 'R' to 'Ü' -->
+    <kerning first="82" second="362" amount="-2" /><!-- 'R' to 'Ū' -->
+    <kerning first="82" second="364" amount="-2" /><!-- 'R' to 'Ŭ' -->
+    <kerning first="82" second="366" amount="-2" /><!-- 'R' to 'Ů' -->
+    <kerning first="82" second="368" amount="-2" /><!-- 'R' to 'Ű' -->
+    <kerning first="82" second="370" amount="-2" /><!-- 'R' to 'Ų' -->
+    <kerning first="82" second="372" amount="-2" /><!-- 'R' to 'Ŵ' -->
+    <kerning first="82" second="221" amount="-2" /><!-- 'R' to 'Ý' -->
+    <kerning first="82" second="374" amount="-2" /><!-- 'R' to 'Ŷ' -->
+    <kerning first="82" second="376" amount="-2" /><!-- 'R' to 'Ÿ' -->
+    <kerning first="82" second="39" amount="-2" /><!-- 'R' to ''' -->
+    <kerning first="82" second="34" amount="-2" /><!-- 'R' to '"' -->
+    <kerning first="82" second="354" amount="-2" /><!-- 'R' to 'Ţ' -->
+    <kerning first="84" second="65" amount="-2" /><!-- 'T' to 'A' -->
+    <kerning first="84" second="192" amount="-2" /><!-- 'T' to 'À' -->
+    <kerning first="84" second="193" amount="-2" /><!-- 'T' to 'Á' -->
+    <kerning first="84" second="194" amount="-2" /><!-- 'T' to 'Â' -->
+    <kerning first="84" second="195" amount="-2" /><!-- 'T' to 'Ã' -->
+    <kerning first="84" second="196" amount="-2" /><!-- 'T' to 'Ä' -->
+    <kerning first="84" second="256" amount="-2" /><!-- 'T' to 'Ā' -->
+    <kerning first="84" second="258" amount="-2" /><!-- 'T' to 'Ă' -->
+    <kerning first="84" second="197" amount="-2" /><!-- 'T' to 'Å' -->
+    <kerning first="84" second="260" amount="-2" /><!-- 'T' to 'Ą' -->
+    <kerning first="84" second="198" amount="-3" /><!-- 'T' to 'Æ' -->
+    <kerning first="84" second="97" amount="-2" /><!-- 'T' to 'a' -->
+    <kerning first="84" second="99" amount="-2" /><!-- 'T' to 'c' -->
+    <kerning first="84" second="100" amount="-2" /><!-- 'T' to 'd' -->
+    <kerning first="84" second="101" amount="-2" /><!-- 'T' to 'e' -->
+    <kerning first="84" second="103" amount="-2" /><!-- 'T' to 'g' -->
+    <kerning first="84" second="111" amount="-2" /><!-- 'T' to 'o' -->
+    <kerning first="84" second="113" amount="-2" /><!-- 'T' to 'q' -->
+    <kerning first="84" second="115" amount="-2" /><!-- 'T' to 's' -->
+    <kerning first="84" second="122" amount="-2" /><!-- 'T' to 'z' -->
+    <kerning first="84" second="224" amount="-2" /><!-- 'T' to 'à' -->
+    <kerning first="84" second="225" amount="-2" /><!-- 'T' to 'á' -->
+    <kerning first="84" second="226" amount="-2" /><!-- 'T' to 'â' -->
+    <kerning first="84" second="227" amount="-2" /><!-- 'T' to 'ã' -->
+    <kerning first="84" second="228" amount="-2" /><!-- 'T' to 'ä' -->
+    <kerning first="84" second="257" amount="-2" /><!-- 'T' to 'ā' -->
+    <kerning first="84" second="259" amount="-2" /><!-- 'T' to 'ă' -->
+    <kerning first="84" second="229" amount="-2" /><!-- 'T' to 'å' -->
+    <kerning first="84" second="261" amount="-2" /><!-- 'T' to 'ą' -->
+    <kerning first="84" second="230" amount="-2" /><!-- 'T' to 'æ' -->
+    <kerning first="84" second="263" amount="-2" /><!-- 'T' to 'ć' -->
+    <kerning first="84" second="265" amount="-2" /><!-- 'T' to 'ĉ' -->
+    <kerning first="84" second="269" amount="-2" /><!-- 'T' to 'č' -->
+    <kerning first="84" second="267" amount="-2" /><!-- 'T' to 'ċ' -->
+    <kerning first="84" second="231" amount="-2" /><!-- 'T' to 'ç' -->
+    <kerning first="84" second="271" amount="-2" /><!-- 'T' to 'ď' -->
+    <kerning first="84" second="273" amount="-2" /><!-- 'T' to 'đ' -->
+    <kerning first="84" second="232" amount="-2" /><!-- 'T' to 'è' -->
+    <kerning first="84" second="233" amount="-2" /><!-- 'T' to 'é' -->
+    <kerning first="84" second="234" amount="-2" /><!-- 'T' to 'ê' -->
+    <kerning first="84" second="283" amount="-2" /><!-- 'T' to 'ě' -->
+    <kerning first="84" second="235" amount="-2" /><!-- 'T' to 'ë' -->
+    <kerning first="84" second="275" amount="-2" /><!-- 'T' to 'ē' -->
+    <kerning first="84" second="277" amount="-2" /><!-- 'T' to 'ĕ' -->
+    <kerning first="84" second="279" amount="-2" /><!-- 'T' to 'ė' -->
+    <kerning first="84" second="281" amount="-2" /><!-- 'T' to 'ę' -->
+    <kerning first="84" second="285" amount="-2" /><!-- 'T' to 'ĝ' -->
+    <kerning first="84" second="287" amount="-2" /><!-- 'T' to 'ğ' -->
+    <kerning first="84" second="289" amount="-2" /><!-- 'T' to 'ġ' -->
+    <kerning first="84" second="291" amount="-2" /><!-- 'T' to 'ģ' -->
+    <kerning first="84" second="242" amount="-2" /><!-- 'T' to 'ò' -->
+    <kerning first="84" second="243" amount="-2" /><!-- 'T' to 'ó' -->
+    <kerning first="84" second="244" amount="-2" /><!-- 'T' to 'ô' -->
+    <kerning first="84" second="245" amount="-2" /><!-- 'T' to 'õ' -->
+    <kerning first="84" second="246" amount="-2" /><!-- 'T' to 'ö' -->
+    <kerning first="84" second="333" amount="-2" /><!-- 'T' to 'ō' -->
+    <kerning first="84" second="335" amount="-2" /><!-- 'T' to 'ŏ' -->
+    <kerning first="84" second="337" amount="-2" /><!-- 'T' to 'ő' -->
+    <kerning first="84" second="248" amount="-2" /><!-- 'T' to 'ø' -->
+    <kerning first="84" second="339" amount="-2" /><!-- 'T' to 'œ' -->
+    <kerning first="84" second="347" amount="-2" /><!-- 'T' to 'ś' -->
+    <kerning first="84" second="351" amount="-2" /><!-- 'T' to 'ş' -->
+    <kerning first="84" second="378" amount="-2" /><!-- 'T' to 'ź' -->
+    <kerning first="84" second="382" amount="-2" /><!-- 'T' to 'ž' -->
+    <kerning first="84" second="380" amount="-2" /><!-- 'T' to 'ż' -->
+    <kerning first="84" second="240" amount="-2" /><!-- 'T' to 'ð' -->
+    <kerning first="84" second="44" amount="-3" /><!-- 'T' to ',' -->
+    <kerning first="84" second="46" amount="-3" /><!-- 'T' to '.' -->
+    <kerning first="84" second="45" amount="-3" /><!-- 'T' to '-' -->
+    <kerning first="84" second="173" amount="-3" /><!-- 'T' to '­' -->
+    <kerning first="84" second="171" amount="-2" /><!-- 'T' to '«' -->
+    <kerning first="85" second="198" amount="-2" /><!-- 'U' to 'Æ' -->
+    <kerning first="86" second="65" amount="-2" /><!-- 'V' to 'A' -->
+    <kerning first="86" second="192" amount="-2" /><!-- 'V' to 'À' -->
+    <kerning first="86" second="193" amount="-2" /><!-- 'V' to 'Á' -->
+    <kerning first="86" second="194" amount="-2" /><!-- 'V' to 'Â' -->
+    <kerning first="86" second="195" amount="-2" /><!-- 'V' to 'Ã' -->
+    <kerning first="86" second="196" amount="-2" /><!-- 'V' to 'Ä' -->
+    <kerning first="86" second="256" amount="-2" /><!-- 'V' to 'Ā' -->
+    <kerning first="86" second="258" amount="-2" /><!-- 'V' to 'Ă' -->
+    <kerning first="86" second="197" amount="-2" /><!-- 'V' to 'Å' -->
+    <kerning first="86" second="260" amount="-2" /><!-- 'V' to 'Ą' -->
+    <kerning first="86" second="198" amount="-3" /><!-- 'V' to 'Æ' -->
+    <kerning first="86" second="97" amount="-2" /><!-- 'V' to 'a' -->
+    <kerning first="86" second="99" amount="-2" /><!-- 'V' to 'c' -->
+    <kerning first="86" second="100" amount="-2" /><!-- 'V' to 'd' -->
+    <kerning first="86" second="101" amount="-2" /><!-- 'V' to 'e' -->
+    <kerning first="86" second="103" amount="-2" /><!-- 'V' to 'g' -->
+    <kerning first="86" second="109" amount="-2" /><!-- 'V' to 'm' -->
+    <kerning first="86" second="110" amount="-2" /><!-- 'V' to 'n' -->
+    <kerning first="86" second="111" amount="-2" /><!-- 'V' to 'o' -->
+    <kerning first="86" second="112" amount="-2" /><!-- 'V' to 'p' -->
+    <kerning first="86" second="113" amount="-2" /><!-- 'V' to 'q' -->
+    <kerning first="86" second="114" amount="-2" /><!-- 'V' to 'r' -->
+    <kerning first="86" second="115" amount="-2" /><!-- 'V' to 's' -->
+    <kerning first="86" second="117" amount="-2" /><!-- 'V' to 'u' -->
+    <kerning first="86" second="120" amount="-2" /><!-- 'V' to 'x' -->
+    <kerning first="86" second="122" amount="-2" /><!-- 'V' to 'z' -->
+    <kerning first="86" second="224" amount="-2" /><!-- 'V' to 'à' -->
+    <kerning first="86" second="225" amount="-2" /><!-- 'V' to 'á' -->
+    <kerning first="86" second="226" amount="-2" /><!-- 'V' to 'â' -->
+    <kerning first="86" second="227" amount="-2" /><!-- 'V' to 'ã' -->
+    <kerning first="86" second="228" amount="-2" /><!-- 'V' to 'ä' -->
+    <kerning first="86" second="257" amount="-2" /><!-- 'V' to 'ā' -->
+    <kerning first="86" second="259" amount="-2" /><!-- 'V' to 'ă' -->
+    <kerning first="86" second="229" amount="-2" /><!-- 'V' to 'å' -->
+    <kerning first="86" second="261" amount="-2" /><!-- 'V' to 'ą' -->
+    <kerning first="86" second="230" amount="-2" /><!-- 'V' to 'æ' -->
+    <kerning first="86" second="263" amount="-2" /><!-- 'V' to 'ć' -->
+    <kerning first="86" second="265" amount="-2" /><!-- 'V' to 'ĉ' -->
+    <kerning first="86" second="269" amount="-2" /><!-- 'V' to 'č' -->
+    <kerning first="86" second="267" amount="-2" /><!-- 'V' to 'ċ' -->
+    <kerning first="86" second="231" amount="-2" /><!-- 'V' to 'ç' -->
+    <kerning first="86" second="271" amount="-2" /><!-- 'V' to 'ď' -->
+    <kerning first="86" second="273" amount="-2" /><!-- 'V' to 'đ' -->
+    <kerning first="86" second="232" amount="-2" /><!-- 'V' to 'è' -->
+    <kerning first="86" second="233" amount="-2" /><!-- 'V' to 'é' -->
+    <kerning first="86" second="234" amount="-2" /><!-- 'V' to 'ê' -->
+    <kerning first="86" second="283" amount="-2" /><!-- 'V' to 'ě' -->
+    <kerning first="86" second="235" amount="-2" /><!-- 'V' to 'ë' -->
+    <kerning first="86" second="275" amount="-2" /><!-- 'V' to 'ē' -->
+    <kerning first="86" second="277" amount="-2" /><!-- 'V' to 'ĕ' -->
+    <kerning first="86" second="279" amount="-2" /><!-- 'V' to 'ė' -->
+    <kerning first="86" second="281" amount="-2" /><!-- 'V' to 'ę' -->
+    <kerning first="86" second="285" amount="-2" /><!-- 'V' to 'ĝ' -->
+    <kerning first="86" second="287" amount="-2" /><!-- 'V' to 'ğ' -->
+    <kerning first="86" second="289" amount="-2" /><!-- 'V' to 'ġ' -->
+    <kerning first="86" second="291" amount="-2" /><!-- 'V' to 'ģ' -->
+    <kerning first="86" second="236" amount="1" /><!-- 'V' to 'ì' -->
+    <kerning first="86" second="238" amount="1" /><!-- 'V' to 'î' -->
+    <kerning first="86" second="297" amount="1" /><!-- 'V' to 'ĩ' -->
+    <kerning first="86" second="239" amount="1" /><!-- 'V' to 'ï' -->
+    <kerning first="86" second="299" amount="1" /><!-- 'V' to 'ī' -->
+    <kerning first="86" second="301" amount="1" /><!-- 'V' to 'ĭ' -->
+    <kerning first="86" second="305" amount="-2" /><!-- 'V' to 'ı' -->
+    <kerning first="86" second="309" amount="1" /><!-- 'V' to 'ĵ' -->
+    <kerning first="86" second="312" amount="-2" /><!-- 'V' to 'ĸ' -->
+    <kerning first="86" second="324" amount="-2" /><!-- 'V' to 'ń' -->
+    <kerning first="86" second="328" amount="-2" /><!-- 'V' to 'ň' -->
+    <kerning first="86" second="241" amount="-2" /><!-- 'V' to 'ñ' -->
+    <kerning first="86" second="326" amount="-2" /><!-- 'V' to 'ņ' -->
+    <kerning first="86" second="242" amount="-2" /><!-- 'V' to 'ò' -->
+    <kerning first="86" second="243" amount="-2" /><!-- 'V' to 'ó' -->
+    <kerning first="86" second="244" amount="-2" /><!-- 'V' to 'ô' -->
+    <kerning first="86" second="245" amount="-2" /><!-- 'V' to 'õ' -->
+    <kerning first="86" second="246" amount="-2" /><!-- 'V' to 'ö' -->
+    <kerning first="86" second="333" amount="-2" /><!-- 'V' to 'ō' -->
+    <kerning first="86" second="335" amount="-2" /><!-- 'V' to 'ŏ' -->
+    <kerning first="86" second="337" amount="-2" /><!-- 'V' to 'ő' -->
+    <kerning first="86" second="248" amount="-2" /><!-- 'V' to 'ø' -->
+    <kerning first="86" second="339" amount="-2" /><!-- 'V' to 'œ' -->
+    <kerning first="86" second="341" amount="-2" /><!-- 'V' to 'ŕ' -->
+    <kerning first="86" second="343" amount="-2" /><!-- 'V' to 'ŗ' -->
+    <kerning first="86" second="347" amount="-2" /><!-- 'V' to 'ś' -->
+    <kerning first="86" second="351" amount="-2" /><!-- 'V' to 'ş' -->
+    <kerning first="86" second="250" amount="-2" /><!-- 'V' to 'ú' -->
+    <kerning first="86" second="369" amount="-2" /><!-- 'V' to 'ű' -->
+    <kerning first="86" second="371" amount="-2" /><!-- 'V' to 'ų' -->
+    <kerning first="86" second="378" amount="-2" /><!-- 'V' to 'ź' -->
+    <kerning first="86" second="382" amount="-2" /><!-- 'V' to 'ž' -->
+    <kerning first="86" second="380" amount="-2" /><!-- 'V' to 'ż' -->
+    <kerning first="86" second="331" amount="-2" /><!-- 'V' to 'ŋ' -->
+    <kerning first="86" second="240" amount="-2" /><!-- 'V' to 'ð' -->
+    <kerning first="86" second="44" amount="-3" /><!-- 'V' to ',' -->
+    <kerning first="86" second="59" amount="-2" /><!-- 'V' to ';' -->
+    <kerning first="86" second="58" amount="-2" /><!-- 'V' to ':' -->
+    <kerning first="86" second="46" amount="-3" /><!-- 'V' to '.' -->
+    <kerning first="86" second="45" amount="-2" /><!-- 'V' to '-' -->
+    <kerning first="86" second="173" amount="-2" /><!-- 'V' to '­' -->
+    <kerning first="86" second="171" amount="-2" /><!-- 'V' to '«' -->
+    <kerning first="86" second="187" amount="-2" /><!-- 'V' to '»' -->
+    <kerning first="87" second="65" amount="-2" /><!-- 'W' to 'A' -->
+    <kerning first="87" second="192" amount="-2" /><!-- 'W' to 'À' -->
+    <kerning first="87" second="193" amount="-2" /><!-- 'W' to 'Á' -->
+    <kerning first="87" second="194" amount="-2" /><!-- 'W' to 'Â' -->
+    <kerning first="87" second="195" amount="-2" /><!-- 'W' to 'Ã' -->
+    <kerning first="87" second="196" amount="-2" /><!-- 'W' to 'Ä' -->
+    <kerning first="87" second="256" amount="-2" /><!-- 'W' to 'Ā' -->
+    <kerning first="87" second="258" amount="-2" /><!-- 'W' to 'Ă' -->
+    <kerning first="87" second="197" amount="-2" /><!-- 'W' to 'Å' -->
+    <kerning first="87" second="260" amount="-2" /><!-- 'W' to 'Ą' -->
+    <kerning first="87" second="198" amount="-2" /><!-- 'W' to 'Æ' -->
+    <kerning first="87" second="97" amount="-2" /><!-- 'W' to 'a' -->
+    <kerning first="87" second="99" amount="-2" /><!-- 'W' to 'c' -->
+    <kerning first="87" second="100" amount="-2" /><!-- 'W' to 'd' -->
+    <kerning first="87" second="101" amount="-2" /><!-- 'W' to 'e' -->
+    <kerning first="87" second="103" amount="-2" /><!-- 'W' to 'g' -->
+    <kerning first="87" second="109" amount="-2" /><!-- 'W' to 'm' -->
+    <kerning first="87" second="110" amount="-2" /><!-- 'W' to 'n' -->
+    <kerning first="87" second="111" amount="-2" /><!-- 'W' to 'o' -->
+    <kerning first="87" second="112" amount="-2" /><!-- 'W' to 'p' -->
+    <kerning first="87" second="113" amount="-2" /><!-- 'W' to 'q' -->
+    <kerning first="87" second="114" amount="-2" /><!-- 'W' to 'r' -->
+    <kerning first="87" second="115" amount="-2" /><!-- 'W' to 's' -->
+    <kerning first="87" second="117" amount="-2" /><!-- 'W' to 'u' -->
+    <kerning first="87" second="120" amount="-2" /><!-- 'W' to 'x' -->
+    <kerning first="87" second="122" amount="-2" /><!-- 'W' to 'z' -->
+    <kerning first="87" second="224" amount="-2" /><!-- 'W' to 'à' -->
+    <kerning first="87" second="225" amount="-2" /><!-- 'W' to 'á' -->
+    <kerning first="87" second="226" amount="-2" /><!-- 'W' to 'â' -->
+    <kerning first="87" second="227" amount="-2" /><!-- 'W' to 'ã' -->
+    <kerning first="87" second="228" amount="-2" /><!-- 'W' to 'ä' -->
+    <kerning first="87" second="257" amount="-2" /><!-- 'W' to 'ā' -->
+    <kerning first="87" second="259" amount="-2" /><!-- 'W' to 'ă' -->
+    <kerning first="87" second="229" amount="-2" /><!-- 'W' to 'å' -->
+    <kerning first="87" second="261" amount="-2" /><!-- 'W' to 'ą' -->
+    <kerning first="87" second="230" amount="-2" /><!-- 'W' to 'æ' -->
+    <kerning first="87" second="263" amount="-2" /><!-- 'W' to 'ć' -->
+    <kerning first="87" second="265" amount="-2" /><!-- 'W' to 'ĉ' -->
+    <kerning first="87" second="269" amount="-2" /><!-- 'W' to 'č' -->
+    <kerning first="87" second="267" amount="-2" /><!-- 'W' to 'ċ' -->
+    <kerning first="87" second="231" amount="-2" /><!-- 'W' to 'ç' -->
+    <kerning first="87" second="271" amount="-2" /><!-- 'W' to 'ď' -->
+    <kerning first="87" second="273" amount="-2" /><!-- 'W' to 'đ' -->
+    <kerning first="87" second="232" amount="-2" /><!-- 'W' to 'è' -->
+    <kerning first="87" second="233" amount="-2" /><!-- 'W' to 'é' -->
+    <kerning first="87" second="234" amount="-2" /><!-- 'W' to 'ê' -->
+    <kerning first="87" second="283" amount="-2" /><!-- 'W' to 'ě' -->
+    <kerning first="87" second="235" amount="-2" /><!-- 'W' to 'ë' -->
+    <kerning first="87" second="275" amount="-2" /><!-- 'W' to 'ē' -->
+    <kerning first="87" second="277" amount="-2" /><!-- 'W' to 'ĕ' -->
+    <kerning first="87" second="279" amount="-2" /><!-- 'W' to 'ė' -->
+    <kerning first="87" second="281" amount="-2" /><!-- 'W' to 'ę' -->
+    <kerning first="87" second="285" amount="-2" /><!-- 'W' to 'ĝ' -->
+    <kerning first="87" second="287" amount="-2" /><!-- 'W' to 'ğ' -->
+    <kerning first="87" second="289" amount="-2" /><!-- 'W' to 'ġ' -->
+    <kerning first="87" second="291" amount="-2" /><!-- 'W' to 'ģ' -->
+    <kerning first="87" second="236" amount="1" /><!-- 'W' to 'ì' -->
+    <kerning first="87" second="238" amount="1" /><!-- 'W' to 'î' -->
+    <kerning first="87" second="297" amount="1" /><!-- 'W' to 'ĩ' -->
+    <kerning first="87" second="239" amount="1" /><!-- 'W' to 'ï' -->
+    <kerning first="87" second="299" amount="1" /><!-- 'W' to 'ī' -->
+    <kerning first="87" second="301" amount="1" /><!-- 'W' to 'ĭ' -->
+    <kerning first="87" second="305" amount="-2" /><!-- 'W' to 'ı' -->
+    <kerning first="87" second="309" amount="1" /><!-- 'W' to 'ĵ' -->
+    <kerning first="87" second="312" amount="-2" /><!-- 'W' to 'ĸ' -->
+    <kerning first="87" second="324" amount="-2" /><!-- 'W' to 'ń' -->
+    <kerning first="87" second="328" amount="-2" /><!-- 'W' to 'ň' -->
+    <kerning first="87" second="241" amount="-2" /><!-- 'W' to 'ñ' -->
+    <kerning first="87" second="326" amount="-2" /><!-- 'W' to 'ņ' -->
+    <kerning first="87" second="242" amount="-2" /><!-- 'W' to 'ò' -->
+    <kerning first="87" second="243" amount="-2" /><!-- 'W' to 'ó' -->
+    <kerning first="87" second="244" amount="-2" /><!-- 'W' to 'ô' -->
+    <kerning first="87" second="245" amount="-2" /><!-- 'W' to 'õ' -->
+    <kerning first="87" second="246" amount="-2" /><!-- 'W' to 'ö' -->
+    <kerning first="87" second="333" amount="-2" /><!-- 'W' to 'ō' -->
+    <kerning first="87" second="335" amount="-2" /><!-- 'W' to 'ŏ' -->
+    <kerning first="87" second="337" amount="-2" /><!-- 'W' to 'ő' -->
+    <kerning first="87" second="248" amount="-2" /><!-- 'W' to 'ø' -->
+    <kerning first="87" second="339" amount="-2" /><!-- 'W' to 'œ' -->
+    <kerning first="87" second="341" amount="-2" /><!-- 'W' to 'ŕ' -->
+    <kerning first="87" second="343" amount="-2" /><!-- 'W' to 'ŗ' -->
+    <kerning first="87" second="347" amount="-2" /><!-- 'W' to 'ś' -->
+    <kerning first="87" second="351" amount="-2" /><!-- 'W' to 'ş' -->
+    <kerning first="87" second="250" amount="-2" /><!-- 'W' to 'ú' -->
+    <kerning first="87" second="369" amount="-2" /><!-- 'W' to 'ű' -->
+    <kerning first="87" second="371" amount="-2" /><!-- 'W' to 'ų' -->
+    <kerning first="87" second="378" amount="-2" /><!-- 'W' to 'ź' -->
+    <kerning first="87" second="380" amount="-2" /><!-- 'W' to 'ż' -->
+    <kerning first="87" second="331" amount="-2" /><!-- 'W' to 'ŋ' -->
+    <kerning first="87" second="240" amount="-2" /><!-- 'W' to 'ð' -->
+    <kerning first="87" second="44" amount="-3" /><!-- 'W' to ',' -->
+    <kerning first="87" second="46" amount="-3" /><!-- 'W' to '.' -->
+    <kerning first="87" second="45" amount="-2" /><!-- 'W' to '-' -->
+    <kerning first="87" second="173" amount="-2" /><!-- 'W' to '­' -->
+    <kerning first="87" second="171" amount="-2" /><!-- 'W' to '«' -->
+    <kerning first="87" second="187" amount="-2" /><!-- 'W' to '»' -->
+    <kerning first="88" second="67" amount="-2" /><!-- 'X' to 'C' -->
+    <kerning first="88" second="71" amount="-2" /><!-- 'X' to 'G' -->
+    <kerning first="88" second="79" amount="-2" /><!-- 'X' to 'O' -->
+    <kerning first="88" second="81" amount="-2" /><!-- 'X' to 'Q' -->
+    <kerning first="88" second="262" amount="-2" /><!-- 'X' to 'Ć' -->
+    <kerning first="88" second="264" amount="-2" /><!-- 'X' to 'Ĉ' -->
+    <kerning first="88" second="268" amount="-2" /><!-- 'X' to 'Č' -->
+    <kerning first="88" second="266" amount="-2" /><!-- 'X' to 'Ċ' -->
+    <kerning first="88" second="199" amount="-2" /><!-- 'X' to 'Ç' -->
+    <kerning first="88" second="284" amount="-2" /><!-- 'X' to 'Ĝ' -->
+    <kerning first="88" second="286" amount="-2" /><!-- 'X' to 'Ğ' -->
+    <kerning first="88" second="288" amount="-2" /><!-- 'X' to 'Ġ' -->
+    <kerning first="88" second="290" amount="-2" /><!-- 'X' to 'Ģ' -->
+    <kerning first="88" second="210" amount="-2" /><!-- 'X' to 'Ò' -->
+    <kerning first="88" second="211" amount="-2" /><!-- 'X' to 'Ó' -->
+    <kerning first="88" second="212" amount="-2" /><!-- 'X' to 'Ô' -->
+    <kerning first="88" second="213" amount="-2" /><!-- 'X' to 'Õ' -->
+    <kerning first="88" second="214" amount="-2" /><!-- 'X' to 'Ö' -->
+    <kerning first="88" second="332" amount="-2" /><!-- 'X' to 'Ō' -->
+    <kerning first="88" second="334" amount="-2" /><!-- 'X' to 'Ŏ' -->
+    <kerning first="88" second="336" amount="-2" /><!-- 'X' to 'Ő' -->
+    <kerning first="88" second="216" amount="-2" /><!-- 'X' to 'Ø' -->
+    <kerning first="88" second="338" amount="-2" /><!-- 'X' to 'Œ' -->
+    <kerning first="88" second="117" amount="-2" /><!-- 'X' to 'u' -->
+    <kerning first="88" second="249" amount="-2" /><!-- 'X' to 'ù' -->
+    <kerning first="88" second="250" amount="-2" /><!-- 'X' to 'ú' -->
+    <kerning first="88" second="251" amount="-2" /><!-- 'X' to 'û' -->
+    <kerning first="88" second="361" amount="-2" /><!-- 'X' to 'ũ' -->
+    <kerning first="88" second="252" amount="-2" /><!-- 'X' to 'ü' -->
+    <kerning first="88" second="363" amount="-2" /><!-- 'X' to 'ū' -->
+    <kerning first="88" second="365" amount="-2" /><!-- 'X' to 'ŭ' -->
+    <kerning first="88" second="367" amount="-2" /><!-- 'X' to 'ů' -->
+    <kerning first="88" second="369" amount="-2" /><!-- 'X' to 'ű' -->
+    <kerning first="88" second="371" amount="-2" /><!-- 'X' to 'ų' -->
+    <kerning first="88" second="45" amount="-2" /><!-- 'X' to '-' -->
+    <kerning first="88" second="173" amount="-2" /><!-- 'X' to '­' -->
+  </kernings>
+</font>

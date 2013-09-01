@@ -1,0 +1,78 @@
+<cuina.database.DataTable>
+  <name>Script</name>
+  <clazz>cuina.script.Script</clazz>
+  <data>
+    <entry>
+      <string>Foo</string>
+      <cuina.script.Script>
+        <key>Foo</key>
+        <name>Foo</name>
+        <interfaceClass>cuina.map.MapEvent</interfaceClass>
+        <code>class Script_Foo
+	include cuina.map.MapEvent
+	attr_accessor(:a)
+	def run(trigger, map, this, other)
+		puts(&quot;pantsu wa kawaii desu yo.&quot;)
+		a = 2 * -3 
+		case map
+			when 1: puts(&quot;1&quot;)
+			when 2: puts(&quot;2&quot;)
+			else
+				puts(&quot;other&quot;)
+		end
+		if  a &gt; 0  then
+			puts(&quot;größer&quot;)
+		elsif  a &lt; 0  then
+			puts(&quot;kleiner&quot;)
+		else
+			puts(&quot;gleich&quot;)
+		end
+	end
+	# Ein Testblock
+	def Ein
+		My.Maid.start(Game.new)
+		function(this) { |a|
+			puts(a)
+		}
+		while  a == true 
+			puts(&quot;Hallo&quot;)
+		end
+		if  a &gt; 0  then
+			return
+		end
+		a = a | if true then
+			break
+		end 
+	end
+	def self.function(str, puff)
+		return  str(&quot;test&quot;).size + 1
+	end
+end</code>
+      </cuina.script.Script>
+    </entry>
+    <entry>
+      <string>main</string>
+      <cuina.script.Script>
+        <key>main</key>
+        <name>main</name>
+        <interfaceClass>cuina.script.MainScript</interfaceClass>
+        <code>class Script_main
+	include cuina.script.MainScript
+	def start
+		puts(&quot;Hello Cuina!&quot;)
+	end
+	def loadGame(game)
+	end
+	def newGame(game)
+	end
+	def saveGame(game)
+	end
+	def endGame(game)
+	end
+	def close
+	end
+end</code>
+      </cuina.script.Script>
+    </entry>
+  </data>
+</cuina.database.DataTable>

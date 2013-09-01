@@ -1,0 +1,87 @@
+<!--DOCTYPE desc SYSTEM "func-desc.dtd"-->
+<!-- Beispieldatei für die Beschreibung von Plugin-Skriptlibraries -->
+<desc>
+	<!--Definiert eine Section, wo drunter die Funktionen aufgelistet werden sollen.
+	Wenn die Section bereits existiert werden die Funktionen dort angehangen.
+	Doppelte Funktionen werden NICHT überschrieben.
+	Innerhalb der Rubydatei entspricht die Section dem modulnamen.-->
+	<class id="Example" label="Beispiel Funktionen">
+		<!--Beschreibt eine Ruby-Funktion mit der Signatur:
+			"tolle_fuktion(type, target, desc, exec)"
+			und dem optionalen Anzeigenamen: "Toller Effekt"-->
+		<function id="tolle_fuktion" label="Toller Effekt">
+			<!--Ruby-Code im Skript-Code. Wörter mit einem vorstehenden % werden
+			duch den ausgewählten Wert des Parameters mit der entsprechenden id ersetzt.-->
+			<code>tolle_fuktion(%type, %target, %count, %desc, "Prozentzeichen: \%")</code>
+			<!--Angezeigter Text im Skript-Code. Wird das Element weggelassen,
+			wird der Anzeigenamen der Funktion angezeigt.-->
+			<text>Starte %count Effekte %type auf %target mit dem Text: %desc</text>
+			<!--Hilfetext der angezeigt wird, wenn man mit der Maus über ein Feld geht.-->
+			<help>Startet einen Coolen Effekt im Spiel. (Leider stürzt das Spiel noch manchmal dabei ab.)</help>
+			<!--Definiert ein Parameter für die Funktion mit dem Namen <id>
+				Einem optionalen Anzeigenamen <label>, einem Datentyp <type>
+				und einem defaultwert <default>
+			
+				Mögliche Type sind:
+				bool, int, float, string, key:<Datenbank-Name>-->
+			<param id="test" label="TEST" type="bool" default="true"/>
+			<param id="type" label="Typ" type="string">
+				<!--Ein Filter schränkt die möglichen Eingaben ein.
+					mögliche Einschränkungen sind: lenght, range, pattern und values-->
+				<filter>
+					<!--values definiert eine Enumeration. Hierbei gibt der Typ an
+					ob die Werte an sich, oder nur der Index benutzt werden soll.
+					Mögliche Werte sind string und int.-->
+					<values>normal, short, extendent</values>
+				</filter>
+			</param>
+			<param id="target" label="Zielkarte" type="key:MapInfo" default="0"/>
+			<param id="count" label="Anzahl" type="int" default="0">
+				<filter>
+					<range min="0" max="99"/>
+				</filter>
+			</param>
+			<param id="desc" label="Beschreibung:" type="string">
+				<filter>
+					<pattern>[-_ a-zA-ZäöüÄÖÜß]*</pattern>
+					<lenght min="0" max="20"/>
+				</filter>
+			</param>
+			<!--Optionaler Rückgabe-Typ der Funktion. Default: void-->
+			<return>bool</return>
+		</function>
+		
+		<!--minimale Kurzschreibweise für Funktionen ohne Parameter und ohne Anzeigenamen.
+			Da es sich hier um eine Ruby-interne Funktion handelt,
+			ist eine Definition in der Library überflüssig.-->
+		<function id="exit"/>
+	</class>
+	<class id="Yuri">
+		<function id="kiss" label="Kiss">
+			<param id="a" label="A" type="Maid" />
+			<param id="b" label="B" type="Maid" />
+			<return>bool</return>
+		</function>
+		<attribut id="level" label="Level" type="string">
+			<text>Level = %value</text>
+			<param id="value" label="Value" type="string">
+				<filter>
+					<values>soft, normal, hard</values>
+				</filter>
+			</param>
+		</attribut>
+	</class>
+	<class id="Maid">
+		<function id="new" label="Konstruktor">
+			<text>Erstelle Maid: %name</text>
+			<param id="name" label="Name" type="string" />
+			<return>Maid</return>
+		</function>
+	</class>
+	<class id="Harem">
+		<function id="get">
+			<param id="name" label="Name" type="string" />
+			<return>Maid</return>
+		</function>
+	</class>
+</desc>

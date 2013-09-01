@@ -1,0 +1,26 @@
+<desc>
+	<section id="Message">
+		<function id="show_message" label="Textausgabe">
+			<text>Zeige Text: %text</text>
+			<param id="text" label="Text" type="string" default="" />
+		</function>
+		
+		<function id="show_choice" label="Auswahlmenü">
+			<text>Zeige Auswahl:\n%a\n%b\n%c\n%d</text>
+			<param id="a" label="1:" type="string" default="" />
+			<param id="b" label="2:" type="string" default="" />
+			<param id="c" label="3:" type="string" default="" />
+			<param id="d" label="4:" type="string" default="" />
+		</function>
+		
+		<function id="set_name" label="Name setzen">
+			<text>Name= %name</text>
+			<param id="name" label="Name" type="string" default="" />
+		</function>
+		
+		<function id="set_face" label="Bild setzen">
+			<text>Bild= %face</text>
+			<param id="face" label="Bilddatei" type="string" default="" />
+		</function>
+	</section>
+</desc>

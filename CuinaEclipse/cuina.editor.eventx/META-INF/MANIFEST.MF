@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eventx
+Bundle-SymbolicName: cuina.editor.eventx;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Cuina
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: cuina.buildins,
+ cuina.database,
+ cuina.database.ui,
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.ide
+Export-Package: cuina.eventx
+Bundle-ActivationPolicy: lazy

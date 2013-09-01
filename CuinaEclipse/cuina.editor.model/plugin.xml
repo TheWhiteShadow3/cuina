@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="cuina.model.Animator" name="Animator" schema="schema/cuina.model.Animator.exsd"/>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="cuina.editor.object.ObjectAdapter"
+            class="cuina.editor.model.AdapterFactory">
+         <adapter
+               type="cuina.editor.object.ObjectGraphic">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            category="cuina.object.ExtensionPage"
+            class="cuina.editor.model.properties.ModelPropertyPage"
+            id="cuina.editor.model.ModelPropertyPage"
+            name="Model">
+         <enabledWhen>
+            <test
+                  property="cuina.editor.core.adapt"
+                  value="cuina.animation.ModelData">
+            </test>
+         </enabledWhen>
+      </page>
+   </extension>
+
+</plugin>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="cuina.core.project.extension">
+   </extension>
+   <extension
+         id="cuina.editor.ui.new.project"
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="cuina.editor"
+            name="Cuina">
+      </category>
+      <wizard
+            category="cuina.editor"
+            class="cuina.editor.ui.internal.ProjectWizard"
+            finalPerspective="cuina.editor.core.perspective"
+            icon="icons/cuina16.png"
+            id="cuina.editor.ui.new.project"
+            name="Cuina Project"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            type="new"
+            wizardId="cuina.editor.core.new.project">
+         <enablement></enablement>
+      </commonWizard>
+      <commonWizard
+            type="new"
+            wizardId="cuina.editor.map.new.map">
+         <enablement></enablement>
+      </commonWizard>
+      <navigatorContent
+            activeByDefault="true"
+            appearsBefore="org.eclipse.ui.navigator.resources.workingSets"
+            contentProvider="cuina.editor.ui.CuinaContentProvider"
+            icon="icons/cuina16.png"
+            id="cuina.editor.core.CuinaNavigatorContent"
+            labelProvider="cuina.editor.ui.CuinaLabelProvider"
+            name="Cuina Navigation Content"
+            priority="normal"
+            providesSaveables="false"
+            sortOnly="false">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IProject">
+            </instanceof>
+         </enablement>
+         <commonSorter
+               class="cuina.editor.ui.internal.CuinaResourceSorter"
+               id="cuina.editor.ui.CuinaResourceSorter">
+            <parentExpression>
+               <instanceof
+                     value="org.eclipse.core.resources.IContainer">
+               </instanceof>
+            </parentExpression>
+         </commonSorter>
+      </navigatorContent>
+   </extension>
+</plugin>

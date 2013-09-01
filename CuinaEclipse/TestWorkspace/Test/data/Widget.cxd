@@ -1,0 +1,79 @@
+<cuina.database.DataTable name="Widget" type="cuina.widget.data.WidgetTree">
+	<cuina.widget.data.WidgetTree>
+		<key>title_menu</key>
+		<name>Title Menü</name>
+		<root class="cuina.widget.data.FrameNode">
+	      <key>frame</key>
+	      <title>Title Menü</title>
+	      <x>224</x>
+	      <y>164</y>
+	      <width>192</width>
+	      <height>96</height>
+	      <visible>true</visible>
+	      <enabled>true</enabled>
+	      <resizable>false</resizable>
+	      <draggable>false</draggable>
+	      <children>
+	        <cuina.widget.data.MenuNode>
+	          <key>menu</key>
+	          <x>0</x>
+	          <y>2</y>
+	          <width>192</width>
+	          <height>96</height>
+	          <visible>true</visible>
+	          <enabled>true</enabled>
+	          <columns>1</columns>
+	          <commands>
+	          	<string>Neues Spiel</string>
+	          	<string>Spiel laden</string>
+	          	<string>Spiel beenden</string>
+	          </commands>
+	          <align>1</align>
+	          <children/>
+	        </cuina.widget.data.MenuNode>
+	      </children>
+	    </root>
+	    <active>menu</active>
+	</cuina.widget.data.WidgetTree>
+	<cuina.widget.data.WidgetTree>
+		<key>test_window</key>
+		<name>Test Fenster</name>
+		<root class="cuina.widget.data.FrameNode">
+	      <key>myRoot</key>
+	      <title>Frame</title>
+	      <x>20</x>
+	      <y>20</y>
+	      <width>256</width>
+	      <height>144</height>
+	      <visible>true</visible>
+	      <enabled>true</enabled>
+	      <resizable>false</resizable>
+	      <draggable>true</draggable>
+	      <children>
+	        <cuina.widget.data.PictureNode>
+	          <key>myPicture</key>
+	          <imageName>faces/rosa.png</imageName>
+	          <x>10</x>
+	          <y>10</y>
+	          <width>128</width>
+	          <height>128</height>
+	          <visible>true</visible>
+	          <enabled>true</enabled>
+	          <children/>
+	        </cuina.widget.data.PictureNode>
+	        <cuina.widget.data.ButtonNode>
+	          <key>button</key>
+	          <text>Drück mich</text>
+	          <x>140</x>
+	          <y>30</y>
+	          <width>100</width>
+	          <height>22</height>
+	          <visible>true</visible>
+	          <enabled>true</enabled>
+	          <children/>
+	        </cuina.widget.data.ButtonNode>
+	      </children>
+	    </root>
+		<active>button</active>
+	</cuina.widget.data.WidgetTree>
+</cuina.database.DataTable>

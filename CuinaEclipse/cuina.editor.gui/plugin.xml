@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="cuina.editor.gui.widget" name="Cuina GuiEditor Widget" schema="schema/cuina.editor.gui.widget.exsd"/>
+   <extension
+         point="cuina.database.types">
+      <database
+            class="cuina.widget.data.WidgetTree"
+            editor="cuina.editor.gui.internal.WidgetPage"
+            image="icons/widget.png"
+            name="Widget">
+      </database>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="cuina.editor.gui.internal.properties.WidgetPropertyPage"
+            icon="icons/widget.png"
+            id="cuina.editors.gui.WidgetPropertyPage"
+            name="Widget">
+         <enabledWhen>
+            <test
+                  property="cuina.editor.core.adapt"
+                  value="cuina.widget.data.WidgetTree">
+            </test>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="cuina.widget.data.WidgetTree"
+            class="cuina.editor.gui.internal.AdapterFactory">
+         <adapter
+               type="org.eclipse.jface.resource.ImageDescriptor">
+         </adapter>
+      </factory>
+   </extension>
+
+</plugin>

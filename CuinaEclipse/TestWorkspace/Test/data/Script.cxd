@@ -1,0 +1,147 @@
+<cuina.database.DataTable name="Script" type="cuina.script.Script">
+    <cuina.script.Script>
+      <key>new2</key>
+      <name>new2</name>
+    </cuina.script.Script>
+    <cuina.script.Script>
+      <key>main</key>
+      <name>main</name>
+      <interfaceClass>cuina.script.MainScript</interfaceClass>
+      <code>class Script_main
+	include Script::MainScript
+	def start
+		Yuri.level =&quot;soft&quot;
+		#int =5
+		#str =&quot;hallo&quot;
+		#bool =true
+		#var =str
+		
+		m1 = Maid.new(&quot;Lisa&quot;)
+		m2 = Maid.new(&quot;Anna&quot;)
+		Yuri.kiss(m1, m2)
+		puts(&quot;Hello Cuina!&quot;)
+		#Cuina.new_game()
+		OBJ_title.start
+	end
+	def loadGame(game)
+	end
+	def newGame(game)
+		Cuina.new_scene("Map")
+		Audio.play_bgm(1, "bgm/spring.mp3")
+		Map.load_map(&quot;schule&quot;)
+		Map.scrolltarget = Map.get_object(1)
+		#party = Java::CuinaActor::ActorGroup.new
+		#actor = Java::CuinaKs::ActorFactory.createActor("Alice", 1, 1)
+		#party.addActor(actor)
+		
+		#SessionContext["Party"] = party
+		#SessionContext["BattleMenu"] = Java::CuinaKs::AutoMenu.new
+		
+		#Battle.start_battle(&quot;test&quot;)
+	end
+	def saveGame(game)
+	end
+	def endGame(game)
+	end
+	def close
+		return true
+	end
+end
+Script_main.new
+</code>
+    </cuina.script.Script>
+    <cuina.script.Script>
+      <key>me_create</key>
+      <name>me_create</name>
+      <interfaceClass/>
+      <code>class Script_me_create
+      def run(obj)
+		puts "Object erstellt. Args: #{obj}"
+      end
+end
+Script_me_create.new
+</code>
+	</cuina.script.Script>
+    <cuina.script.Script>
+      <key>create_menu</key>
+      <name>erstelle Menu</name>
+      <interfaceClass/>
+      <code>class Script_create_menu
+      def create_menu
+      	@adapter = TWL::WidgetAdapter.new(TWL.create_from_database("myRoot"))
+      	@adapter.add_method_handler("button", self, :button_pressed)
+      end
+      
+      def button_pressed(widget, arg)
+      	puts "invoke: button_pressed"
+      end
+end
+Script_create_menu.new
+</code>
+	</cuina.script.Script>
+    <cuina.script.Script>
+      <key>title</key>
+      <name>Title Menü</name>
+      <interfaceClass/>
+      <code>class Script_title
+	TIME = 40.0
+      
+	def start
+	  	# Binde das Skript in den Lifecycle der Szene ein.
+	  	Script.init_lifecycle(self)
+	end
+      
+	def init
+      	# Erstelle einen Adapter für verbesserten Event-Handling Support.
+      	@adapter = TWL::WidgetAdapter.new(TWL.create_from_database("title_menu"))
+      	# Definiere eine Event-Handling Methode.
+      	@adapter.add_method_handler("menu", self, :item_selected)
+      	@adapter.container.setVisible(false)
+      	# Erstelle ein Bild als Hintergrund.
+      	@background = Graphic::PictureSprite.new("system/title.png");
+		@background.setAlpha(0);
+		# Setze die Einblendzeit.
+		@duration = TIME.to_i
+	end
+      
+	def update
+		# Blende Hintergrund ein.
+      	if @duration &gt; 0
+			@background.setAlpha(255 * (1 - @duration / TIME))
+			@duration -= 1
+			if @duration == 0
+				# Zeige Menü an, sobald der Hintergrund eingeblendet ist.
+				@adapter.container.setVisible(true)
+				@adapter.get_widget("menu").requestKeyboardFocus
+			end
+		end
+	end
+	
+	def postUpdate	
+	end
+
+	def dispose
+		# Lösche benutzte Ressourcen.
+		@background.dispose
+		@adapter.dispose
+	end
+      
+	def item_selected(widget, index)
+		Audio.play_snd("snd/bieb.wav")
+        case index
+      		when 0
+      			# Starte ein neues Spiel.
+				Cuina.new_game()
+      		when 1
+      			# Gehe zum Ladebildschirm.
+				Cuina.new_scene("Load")
+      		when 2
+      			# Beende die Engine.
+			  	Cuina.close
+      	end
+	end
+end
+Script_title.new
+</code>
+	</cuina.script.Script>
+</cuina.database.DataTable>

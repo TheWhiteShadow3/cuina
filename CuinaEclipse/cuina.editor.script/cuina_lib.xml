@@ -1,0 +1,13 @@
+<desc>
+	<class id="Cuina" label="Cuina">
+		<function id="new_game" label="Neues Spiel">
+			<text>Neues Spiel</text>
+			<help>Startet ein neues Spiel.</help>
+		</function>
+		<function id="load_game" label="Spiel Laden">
+			<text>lade Spiel %file</text>
+			<help>Ladet ein gespeicherten Spielstand.</help>
+			<param id="file" label="Datei" type="string" />
+		</function>
+	</class>
+</desc>

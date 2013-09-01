@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Cuina Window Editor
+Bundle-SymbolicName: cuina.editor.gui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: cuina.editor.gui.internal.Activator
+Bundle-Vendor: Cuina
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ cuina.gl,
+ cuina.database,
+ org.eclipse.jface.text,
+ org.eclipse.core.resources,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.ide,
+ cuina.database.ui,
+ cuina.resource,
+ cuina.editor.ui,
+ cuina.editor.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: cuina.widget,
+ cuina.widget.data
+Bundle-ClassPath: lib/xpp3-1.1.4c.jar,
+ .,
+ lib/TWL.jar
+Bundle-ActivationPolicy: lazy
+

@@ -1,0 +1,77 @@
+<map>
+  <entry>
+    <string>cuina.database.ui.tree.Blubber</string>
+    <root>
+      <node key="rekrut_bman"/>
+      <node key="rekrut_blubman"/>
+      <node key="rekrut_blobman"/>
+      <node key="offizier_alpha"/>
+      <node key="offizier_beta"/>
+      <node key="new"/>
+    </root>
+  </entry>
+  <entry>
+    <string>cuina.database.ui.tree.Script</string>
+    <root>
+      <node key="main"/>
+      <node name="newGroup">
+        <node key="new2"/>
+      </node>
+      <node key="me_create"/>
+      <node key="create_menu"/>
+    </root>
+  </entry>
+  <entry>
+    <string>cuina.database.ui.tree.Harem</string>
+    <root>
+      <node key="susi"/>
+      <node key="nicole"/>
+      <node key="sandra"/>
+      <node key="vanessa"/>
+      <node name="newGroup"/>
+      <node key="hanna"/>
+      <node key="yuna"/>
+    </root>
+  </entry>
+  <entry>
+    <string>cuina.database.ui.tree.Tileset</string>
+    <root>
+      <node key="Schule"/>
+    </root>
+  </entry>
+  <entry>
+    <string>cuina.database.ui.tree.Template</string>
+    <root>
+      <node key="Rosa"/>
+    </root>
+  </entry>
+  <entry>
+    <string>cuina.database.ui.tree.MapInfo</string>
+    <root>
+      <node key="schule"/>
+    </root>
+  </entry>
+  <entry>
+    <string>cuina.database.ui.tree.Item</string>
+    <root/>
+  </entry>
+  <entry>
+    <string>cuina.database.ui.tree.Widget</string>
+    <root>
+      <node key="title_menu"/>
+      <node key="test_window"/>
+    </root>
+  </entry>
+  <entry>
+    <string>cuina.database.ui.tree.Event</string>
+    <root>
+      <node key="test"/>
+      <node key="wwasadd"/>
+      <node key="ssaassa"/>
+      <node key="jnbrt"/>
+      <node key="dfsf"/>
+      <node key="dsaa"/>
+      <node key="ssaasassd"/>
+    </root>
+  </entry>
+</map>

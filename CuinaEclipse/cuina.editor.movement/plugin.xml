@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="cuina.movement.Driver" name="cuina.movement.Driver" schema="schema/cuina.movement.Driver.exsd"/>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            category="cuina.object.ExtensionPage"
+            class="cuina.editor.movement.properties.MotorPropertyPage"
+            id="cuina.editor.movement.MotorPropertyPage"
+            name="Motor">
+         <enabledWhen>
+            <test
+                  property="cuina.editor.core.adapt"
+                  value="cuina.map.movement.MotorData">
+            </test>
+         </enabledWhen>
+      </page>
+   </extension>
+
+</plugin>

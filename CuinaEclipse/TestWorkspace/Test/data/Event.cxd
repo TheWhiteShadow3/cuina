@@ -1,0 +1,105 @@
+<cuina.database.DataTable name="Event" type="cuina.eventx.CommandList">
+  <cuina.eventx.CommandList>
+    <commands/>
+    <key>ssaassa</key>
+    <name>ssaassa</name>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <commands>
+      <cuina.eventx.Command>
+        <context>STATIC</context>
+        <name>cuina.map.MapUtil:turnToTarget</name>
+        <args class="object-array">
+          <cuina.eventx.Argument>
+            <index>0</index>
+          </cuina.eventx.Argument>
+          <cuina.eventx.Argument>
+            <index>1</index>
+          </cuina.eventx.Argument>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <context>SZENE</context>
+        <name>Message:setFaceImage</name>
+        <args class="string">faces/Reimu smile.png</args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <context>SZENE</context>
+        <name>Message:setName</name>
+        <args class="string">???</args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <context>SZENE</context>
+        <name>Message:showMessage</name>
+        <args class="string">&lt;span class=&quot;yellow&quot;&gt;Reimu&lt;/span&gt;&lt;br/&gt;My name is &lt;b&gt;Reimu&lt;/b&gt; and I am new here.</args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <context>SZENE</context>
+        <name>Message:setName</name>
+        <args class="string">Rosa</args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <context>SZENE</context>
+        <name>Message:showMessage</name>
+        <args class="string">I don&apos;t wearing &lt;span class=&quot;rosa&quot;&gt;panties&lt;/span&gt; today because it&apos;s so hot.</args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <context>GLOBAL</context>
+        <name>Transition:colorize</name>
+        <args class="int-array">
+          <int>255</int>
+          <int>0</int>
+          <int>127</int>
+          <int>64</int>
+          <int>120</int>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <context>INTERNAL</context>
+        <name>wait</name>
+        <args class="int">60</args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <context>SZENE</context>
+        <name>Message:showMessage</name>
+        <args class="string">But it would still be nice if you are not constantly staring at my &lt;i&gt;pussy&lt;/i&gt;.&lt;img src=&quot;herz.png&quot; align=&quot;bottom&quot;/&gt;</args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+    </commands>
+    <key>test</key>
+    <name>Test</name>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <commands/>
+    <key>ssaasassd</key>
+    <name>ssaasassd</name>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <commands/>
+    <key>wwasadd</key>
+    <name>wwasadd</name>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <commands/>
+    <key>dsaa</key>
+    <name>dsaa</name>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <commands/>
+    <key>dfsf</key>
+    <name>dfsf</name>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <commands/>
+    <key>jnbrt</key>
+    <name>jnbrt</name>
+  </cuina.eventx.CommandList>
+</cuina.database.DataTable>

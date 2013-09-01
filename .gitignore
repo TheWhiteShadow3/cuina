@@ -1,0 +1,7 @@
+*.class
+*.zip
+*/bin/*
+*/build/*
+*/deploy/plugin/*
+*/deploy/lib/*
+engine/deploy/cuina.engine.jar

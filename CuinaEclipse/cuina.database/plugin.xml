@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="cuina.database.types" name="Cuina Database Type" schema="schema/cuina.databases.exsd"/>
+   
+   <extension
+       point="org.eclipse.core.expressions.propertyTesters">
+    <propertyTester
+          class="cuina.database.DBPropertyTester"
+          id="cuina.database.DBPropertyTester"
+          namespace="cuina.database.files"
+          properties="name, type, isTableFile"
+          type="org.eclipse.core.resources.IResource">
+    </propertyTester>
+   </extension>
+   <extension
+         point="cuina.resource.directories">
+      <directory
+            create="true"
+            id="cuina.database.path"
+            keep-Reference="true"
+            name="data">
+      </directory>
+   </extension>
+   <extension
+         point="cuina.core.project.extension">
+      <serviceFactory
+            class="cuina.database.DatabaseServiceFactory">
+         <Service
+               class="cuina.database.Database">
+         </Service>
+      </serviceFactory>
+   </extension>
+   <extension
+         point="cuina.resource.serialisation.XML">
+      <rule>
+         <converter
+               class="cuina.database.DataTableConverter">
+         </converter>
+      </rule>
+   </extension>
+</plugin>

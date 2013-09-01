@@ -1,0 +1,35 @@
+<cuina.database.DataTable>
+  <name>Blubber</name>
+  <clazz>cuina.blub.Blubber</clazz>
+  <data>
+      <cuina.blub.Blubber>
+        <key>rekrut_bman</key>
+        <name>Rekrut B-Man</name>
+        <parent>offizier_beta</parent>
+      </cuina.blub.Blubber>
+      <cuina.blub.Blubber>
+        <key>rekrut_blubman</key>
+        <name>Rekrut Blubman</name>
+        <parent>offizier_alpha</parent>
+      </cuina.blub.Blubber>
+      <cuina.blub.Blubber>
+        <key>rekrut_blobman</key>
+        <name>Rekrut Blobman</name>
+        <parent>offizier_beta</parent>
+      </cuina.blub.Blubber>
+      <cuina.blub.Blubber>
+        <key>offizier_alpha</key>
+        <name>Offizier Alpha</name>
+        <parent>general</parent>
+      </cuina.blub.Blubber>
+      <cuina.blub.Blubber>
+        <key>offizier_beta</key>
+        <name>Offizier Beta</name>
+        <parent>general</parent>
+      </cuina.blub.Blubber>
+      <cuina.blub.Blubber>
+        <key>general</key>
+        <name>General</name>
+      </cuina.blub.Blubber>
+  </data>
+</cuina.database.DataTable>

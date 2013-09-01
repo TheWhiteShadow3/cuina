@@ -1,0 +1,81 @@
+<!--DOCTYPE desc SYSTEM "func-desc.dtd"-->
+<!-- interne Math functions -->
+<desc>
+	<class id="Math" label="Math">
+		<attribut id="PI" type="float">
+			<text>PI</text>
+			<help>Die Kreis-Konstante Pi.</help>
+		</attribut>
+		<attribut id="E" type="float">
+			<text>E</text>
+			<help>Die Euler-Konstante E.</help>
+		</attribut>
+		<function id="sin" label="Sinus">
+			<text>sin %ang</text>
+			<help>Die Sinus-Funktion. Der Winkel muss in Radiant angegeben werden.</help>
+			<param id="ang" label="Winkel" type="float" />
+			<return>float</return>
+		</function>
+		<function id="cos" label="Kosinus">
+			<text>cos %ang</text>
+			<help>Die Kosinus-Funktion. Der Winkel muss in Radiant angegeben werden.</help>
+			<param id="ang" label="Winkel" type="float" />
+			<return>float</return>
+		</function>
+		<function id="tan" label="Tangens">
+			<text>tan %ang</text>
+			<help>Die Tangens-Funktion. Der Winkel muss in Radiant angegeben werden.</help>
+			<param id="ang" label="Winkel" type="float" />
+			<return>float</return>
+		</function>
+		<function id="exp" label="Exponential">
+			<text>exp %x</text>
+			<help>Die Exponential-Funktion. Entspricht x**e</help>
+			<param id="x" label="Wert" type="float" />
+			<return>float</return>
+		</function>
+		<function id="log" label="Logarithmus">
+			<text>log %x</text>
+			<help>Die Logarithmus-Funktion.</help>
+			<param id="x" label="Wert" type="float" />
+			<return>float</return>
+		</function>
+		
+		<!-- Cuina-Erweiterung -->
+		<function id="add" label="Addition">
+			<text>%a + %b</text>
+			<help>Addiert zwei Zahlen.</help>
+			<param id="a" label="A" type="float" />
+			<param id="b" label="B" type="float" />
+			<return>float</return>
+		</function>
+		<function id="sub" label="Subtraktion">
+			<text>%a - %b</text>
+			<help>Subtrahiert zwei Zahlen.</help>
+			<param id="a" label="A" type="float" />
+			<param id="b" label="B" type="float" />
+			<return>float</return>
+		</function>
+		<function id="mul" label="Multiplikation">
+			<text>%a * %b</text>
+			<help>Multipliziert zwei Zahlen.</help>
+			<param id="a" label="A" type="float" />
+			<param id="b" label="B" type="float" />
+			<return>float</return>
+		</function>
+		<function id="div" label="Division">
+			<text>%a / %b</text>
+			<help>Subtrahiert zwei Zahlen.</help>
+			<param id="a" label="A" type="float" />
+			<param id="b" label="B" type="float" />
+			<return>float</return>
+		</function>
+		<function id="pot" label="Potenz">
+			<text>%a ** %b</text>
+			<help>Potenziert zwei Zahlen.</help>
+			<param id="a" label="A" type="float" />
+			<param id="b" label="B" type="float" />
+			<return>float</return>
+		</function>
+	</class>
+</desc>

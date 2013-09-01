@@ -1,0 +1,12 @@
+<cuina.database.DataTable name="BattleScene" type="cuina.ks.BattleScene">
+  	<cuina.ks.BattleScene>
+  		<key>test</key>
+  		<name>Test-Kampf</name>
+  		<battlegroundKey>gras</battlegroundKey>
+  		<troop>
+  			<enemies>
+  				<string>Monster</string>
+  			</enemies>
+		</troop>
+    </cuina.ks.BattleScene>
+</cuina.database.DataTable>

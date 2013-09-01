@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="cuina.editor.debug.CuinaProjectApplication">
+<stringAttribute key="cuina.engine.path" value="G:\Projekte\Java\CuinaProjekt\engine\deploy"/>
+<booleanAttribute key="cuina.engine.src" value="true"/>
+<setAttribute key="cuina.plugin.entries"/>
+<intAttribute key="cuina.plugin.magicNumber" value="0"/>
+<stringAttribute key="cuina.plugin.path" value="plugins"/>
+<stringAttribute key="cuina.project.name" value="Test"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms64m -Xmx512m"/>
+</launchConfiguration>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="cuina.core.project.extension" name="cuina.core.project.extension" schema="schema/cuina.core.project.extension.exsd"/>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="cuina.editor.core.internal.CuinaPerspective"
+            fixed="false"
+            icon="icons/cuina16.png"
+            id="cuina.editor.core.perspective"
+            name="Cuina">
+      </perspective>
+   </extension>
+   <extension
+        point="org.eclipse.debug.core.launchConfigurationTypes">
+     <launchConfigurationType
+           delegate="cuina.editor.debug.CuinaLauncher"
+           delegateName="Cuina Engine Launcher"
+           id="cuina.editor.debug.CuinaProjectApplication"
+           modes="run, debug"
+           name="Cuina Game"
+           public="true">
+     </launchConfigurationType>
+  </extension>
+  <extension
+        point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+     <launchConfigurationTabGroup
+           class="cuina.editor.debug.CuinaLaunchConfigurationTabGroup"
+           id="cuina.editor.debug.CuinaLaunchConfigurationTabGroup"
+           type="cuina.editor.debug.CuinaProjectApplication">
+     </launchConfigurationTabGroup>
+  </extension>
+  <extension
+        point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+     <launchConfigurationTypeImage
+           configTypeID="cuina.editor.debug.CuinaProjectApplication"
+           icon="icons/cuina16.png"
+           id="cuina.editor.debug.CuinalaunchConfigurationImage">
+     </launchConfigurationTypeImage>
+  </extension>
+  <extension
+        point="org.eclipse.debug.ui.launchShortcuts">
+     <shortcut
+           class="cuina.editor.debug.CuinaLaunchShortcut"
+           description="Startet die Engine"
+           icon="icons/cuina16.png"
+           id="cuina.editor.debug.CuinaLaunchShortcut"
+           label="Run"
+           modes="run">
+        <contextualLaunch>
+           <contextLabel label="Run" mode="run" />
+           <contextLabel label="Debug" mode="debug" />
+           <enablement >
+	           <with variable="selection">
+	           <count value="1"/>
+	          <!--iterate>
+	            <adapt type="org.eclipse.core.resources.IResource">
+	                <and>
+	                <test property="org.eclipse.core.resources.name" value="*.cdx"/>
+	            </and>
+	        </adapt>
+	          </iterate-->
+	           </with>
+	       </enablement>
+        </contextualLaunch>
+     </shortcut>
+  </extension>
+  <extension
+        point="org.eclipse.ui.perspectiveExtensions">
+     <perspectiveExtension
+           targetID="cuina.editor.core.perspective">
+        <actionSet
+              id="org.eclipse.debug.ui.launchActionSet">
+        </actionSet>
+     </perspectiveExtension>
+  </extension>
+  <extension
+        id="cuina.ProjectNature"
+        name="Cuina ProjectNature"
+        point="org.eclipse.core.resources.natures">
+     <runtime>
+        <run
+              class="cuina.editor.core.internal.CuinaNature">
+        </run>
+     </runtime>
+  </extension>
+  <extension
+        point="org.eclipse.ui.navigator.viewer">
+     <viewerContentBinding
+           viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+        <includes>
+           <contentExtension
+                 isRoot="true"
+                 pattern="cuina.editor.core.CuinaNavigatorContent">
+           </contentExtension>
+        </includes>
+     </viewerContentBinding>
+  </extension>
+  <extension
+        point="org.eclipse.ui.views">
+     <category
+           id="cuina.editor.core.ViewCategory"
+           name="Cuina">
+     </category>
+  </extension>
+  <extension
+        point="org.eclipse.core.expressions.propertyTesters">
+     <propertyTester
+           class="cuina.editor.core.AdapterTester"
+           id="cuina.editor.core.AdapterTester"
+           namespace="cuina.editor.core"
+           properties="adapt"
+           type="java.lang.Object">
+     </propertyTester>
+  </extension>
+</plugin>

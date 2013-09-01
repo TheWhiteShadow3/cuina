@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   	<extension point="org.eclipse.ui.editors">
+      <editor
+            class="cuina.database.ui.internal.DatabaseEditor"
+            default="true"
+            extensions="cxd"
+            icon="icons/data.png"
+            id="cuina.editor.editors.DatabaseEditor"
+            name="Database Editor">
+      </editor>
+	</extension>
+ 
+ <extension
+       id="Database.navigatorContent"
+       point="org.eclipse.ui.navigator.viewer">
+    <viewerContentBinding
+          viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+       <includes>
+          <contentExtension
+                pattern="Database.navigatorContent">
+          </contentExtension>
+       </includes>
+    </viewerContentBinding>
+ </extension>
+	
+ <extension
+       id="Database.navigatorContent"
+       point="org.eclipse.ui.navigator.navigatorContent">
+    <navigatorContent
+          activeByDefault="true"
+          appearsBefore="cuina.editor.core.CuinaNavigatorContent"
+          contentProvider="cuina.database.ui.internal.DataContentProvider"
+          icon="icons/data.png"
+          id="Database.navigatorContent"
+          labelProvider="cuina.database.ui.internal.DataLabelProvider"
+          name="cuina.databaseContent"
+          priority="high"
+          providesSaveables="false"
+          sortOnly="false">
+		<enablement>
+		     <and>
+		        <instanceof
+		              value="org.eclipse.core.resources.IFile">
+		        </instanceof>
+          <test
+                forcePluginActivation="true"
+                property="cuina.database.files.isTableFile"
+                value="true">
+          </test>
+		     </and>
+		</enablement >
+		<actionProvider
+          class="cuina.database.ui.DatabaseActionProvider"
+          id="cuina.database.ui.DatabaseActionProvider"
+          priority="normal">
+	     <enablement>
+	        <instanceof
+	              value="cuina.database.ui.tree.TreeNode">
+	        </instanceof>
+	     </enablement>
+        </actionProvider>
+    </navigatorContent>
+ </extension>
+ <extension
+       point="cuina.resource.serialisation.XML">
+    <rule>
+       <converter
+             class="cuina.database.ui.tree.XMLTreeConverter">
+       </converter>
+       <alias
+             class="cuina.database.ui.tree.TreeRoot"
+             name="root">
+       </alias></rule>
+ </extension>
+ <extension
+       point="org.eclipse.ui.commands">
+    <command
+          defaultHandler="cuina.database.ui.RessCounterAction"
+          id="cuina.database.ui.RessCounter"
+          name="Count Resources">
+    </command>
+ </extension>
+ <extension
+       point="org.eclipse.ui.menus">
+    <menuContribution
+          allPopups="true"
+          locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
+       <command
+             commandId="cuina.database.ui.RessCounter"
+             icon="icons/data.png"
+             label="Count Resources"
+             style="push">
+       </command>
+    </menuContribution>
+ </extension>
+ <extension
+       point="org.eclipse.ui.propertyPages">
+    <page
+          class="cuina.database.ui.properties.DataObjectPropertyPage"
+          icon="icons/data.png"
+          id="cuina.database.ui.properties.DataObjectPropertyPage"
+          name="Datenbank">
+       <enabledWhen>
+          <instanceof
+                value="cuina.database.ui.tree.TreeNode">
+          </instanceof>
+       </enabledWhen>
+    </page>
+ </extension>
+</plugin>

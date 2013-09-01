@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Build-File für die Test-Plugins der Cuina-Engine -->
+<project name="CuinaJUnitPlugins" basedir=".." default="main">
+	
+	<!-- Properties definieren -->
+	<property name="target" value="1.7"/>
+	<property name="source" value="1.7"/>
+	
+	<property name="src.dir" value="test/src"/>
+	<property name="build.dir" value="test/build"/>
+	<property name="deploy.dir" value="deploy/junit/plugins"/>
+	
+    <path id="CuinaEngine.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/jruby/jruby-complete-1.7.3.jar"/>
+        <pathelement location="lib/lwjgl/jinput.jar"/>
+        <pathelement location="lib/lwjgl/lwjgl_util.jar"/>
+        <pathelement location="lib/lwjgl/lwjgl.jar"/>
+        <pathelement location="lib/sound/jl1.0.1.jar"/>
+        <pathelement location="lib/sound/jogg-0.0.7.jar"/>
+        <pathelement location="lib/sound/jorbis-0.0.15.jar"/>
+        <pathelement location="lib/sound/mp3spi1.9.5.jar"/>
+        <pathelement location="lib/sound/tritonus_share.jar"/>
+        <pathelement location="lib/sound/vorbisspi1.0.2.jar"/>
+        <pathelement location="lib/xml/kxml2-2.3.0.jar"/>
+        <pathelement location="lib/xml/xstream-1.4.1.jar"/>
+		<pathelement location="lib/continuations/Continuations_runtime_2013-02-17_03-52.jar"/>
+		<!-- Libaries nur für Tests -->
+		<pathelement location="test/junit/junit.jar"/>
+    </path>
+	
+	<target name="setup_files">
+		<delete dir="${build.dir}" />
+		<delete dir="${deploy.dir}" />
+		
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${deploy.dir}" />
+	</target>
+	
+	<target name="build" depends="setup_files">
+		<javac debug="on" srcdir="${src.dir}" destdir="${build.dir}" classpathref="CuinaEngine.classpath" includeantruntime="false" />
+
+		<echo message="Deploy Test Plugin: SimplePlugin" />
+		<jar destfile="${deploy.dir}/junit.simpleplugin.jar" includes="plugin/simple/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Script-Library" value="JUnit-Plugin.rb" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Test Plugin: DependentPlugin" />
+		<jar destfile="${deploy.dir}/junit.depententplugin.jar" includes="plugin/depentent/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Dependency" value="junit.simpleplugin-1.0" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<!-- Plugin mit zu hoher Version in Abhängigkeit -->
+		<echo message="Deploy Test Plugin: InvalidPlugin" />
+		<jar destfile="${deploy.dir}/junit.invalidplugin.jar" includes="plugin/invalid/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Dependency" value="junit.simpleplugin-2.0" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Test Plugin: RekursivDependentPlugin 1" />
+		<jar destfile="${deploy.dir}/junit.recursive.dependency1.jar" includes="plugin/recursive/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Dependency" value="junit.recursive.dependency2-1.0" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Test Plugin: RekursivDependentPlugin 2" />
+		<jar destfile="${deploy.dir}/junit.recursive.dependency2.jar" includes="plugin/recursive/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Dependency" value="junit.recursive.dependency1-1.0" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="main" depends="build">
+		<description>Cuina Engine JUnit Test-Plugin-Deployment</description>
+	</target>
+</project>

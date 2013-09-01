@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test/src"/>
+	<classpathentry kind="src" path="plug/src"/>
+	<classpathentry kind="lib" path="lib/lwjgl/jinput.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/lwjgl.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/G:/Java/common lib/lwjgl/lwjgl-docs-2.8.3.zip!/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/xml/kxml2-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/xml/xstream-1.4.1.jar" sourcepath="G:/Projekte/Java/CuinaEngine_old/lib/xml/xstream-distribution-1.4.2-src.zip"/>
+	<classpathentry kind="lib" path="lib/sound/paulscode/CodecIBXM.jar" sourcepath="lib/sound/paulscode/src.zip"/>
+	<classpathentry kind="lib" path="lib/sound/paulscode/CodecJOgg.jar" sourcepath="lib/sound/paulscode/src.zip"/>
+	<classpathentry kind="lib" path="lib/sound/paulscode/CodecJOrbis.jar" sourcepath="lib/sound/paulscode/src.zip"/>
+	<classpathentry kind="lib" path="lib/sound/paulscode/CodecWav.jar" sourcepath="lib/sound/paulscode/src.zip"/>
+	<classpathentry kind="lib" path="lib/sound/paulscode/LibraryLWJGLOpenAL.jar" sourcepath="lib/sound/paulscode/src.zip"/>
+	<classpathentry kind="lib" path="lib/sound/paulscode/SoundSystem.jar" sourcepath="G:/Projekte/Java/CuinaProjekt/engine/lib/sound/paulscode/src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.paulscode.com/docs/SoundSystem/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/sound/paulscode/LibraryJavaSound.jar" sourcepath="lib/sound/paulscode/src.zip"/>
+	<classpathentry kind="lib" path="lib/sound/paulscode/CodecJSpeex.jar" sourcepath="lib/sound/paulscode/src.zip"/>
+	<classpathentry kind="lib" path="lib/sound/paulscode/CodecJLayerMP3.jar"/>
+	<classpathentry kind="lib" path="lib/widget/TWL.jar" sourcepath="G:/Java/common lib/TWL/twl-src.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://twl.l33tlabs.org/dist/javadoc/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/widget/xpp3-1.1.4c.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/jruby/jruby-complete-1.7.3.jar" sourcepath="G:/Java/common lib/jruby/jruby-src-1.7.3.zip"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

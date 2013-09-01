@@ -1,0 +1,27 @@
+<cuina.actor.Item-array>
+  <null/>
+  <cuina.actor.Item>
+    <id>1</id>
+    <name>Feuer</name>
+    <icon>fire.png</icon>
+    <description></description>
+  </cuina.actor.Item>
+  <cuina.actor.Item>
+    <id>2</id>
+    <name>Eis</name>
+    <icon>ice.png</icon>
+    <description></description>
+  </cuina.actor.Item>
+  <cuina.actor.Item>
+    <id>3</id>
+    <name>Donner</name>
+    <icon>thunder.png</icon>
+    <description></description>
+  </cuina.actor.Item>
+  <cuina.actor.Item>
+    <id>4</id>
+    <name>Wasser</name>
+    <icon>water.png</icon>
+    <description></description>
+  </cuina.actor.Item>
+</cuina.actor.Item-array>

@@ -1,0 +1,12 @@
+Cuina Logo Farben:
+
+Blattverlauf:
+79c471
+00601b
+
+Blaustich:
+88d6ff
+
+Text:
+0054a3
+48e7ff

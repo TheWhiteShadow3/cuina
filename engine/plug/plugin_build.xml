@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Build-File für die Plugins der Cuina-Engine -->
+<project name="CuinaEnginePlugins" basedir=".." default="main">
+	
+	<!-- Properties definieren -->
+	<property name="target" value="1.7"/>
+	<property name="source" value="1.7"/>
+	
+	<property name="src.dir" value="plug/src"/>
+	<property name="lib.dir" value="plug/libs"/>
+	<property name="build.dir" value="plug/build"/>
+	<property name="deploy.dir" value="deploy/plugins"/>
+	
+    <!-- Sollten bereits in build.xml definiert sein.
+    <path id="CuinaEngine.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/jruby/jruby.jar"/>
+        <pathelement location="lib/lwjgl/jinput.jar"/>
+        <pathelement location="lib/lwjgl/lwjgl_util.jar"/>
+        <pathelement location="lib/lwjgl/lwjgl.jar"/>
+        <pathelement location="lib/sound/jl1.0.1.jar"/>
+        <pathelement location="lib/sound/jogg-0.0.7.jar"/>
+        <pathelement location="lib/sound/jorbis-0.0.15.jar"/>
+        <pathelement location="lib/sound/mp3spi1.9.5.jar"/>
+        <pathelement location="lib/sound/tritonus_share.jar"/>
+        <pathelement location="lib/sound/vorbisspi1.0.2.jar"/>
+        <pathelement location="lib/xml/kxml2-2.3.0.jar"/>
+        <pathelement location="lib/xml/xstream-1.4.1.jar"/>
+    </path.-->
+	
+	<target name="setup_files">
+		<delete dir="${build.dir}" />
+		<delete dir="${deploy.dir}" />
+		
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${deploy.dir}" />
+		
+		<copy todir="${build.dir}" >
+			<fileset dir="${lib.dir}" />
+		</copy>
+	</target>
+	
+	<target name="build" depends="setup_files">
+		<javac debug="on" srcdir="${src.dir}" destdir="${build.dir}" classpathref="CuinaEngine.classpath" includeantruntime="false" />
+
+		<echo message="Deploy Plugin: Object" />
+		<jar destfile="${deploy.dir}/cuina.object.jar" includes="cuina/object/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: Animation" />
+		<jar destfile="${deploy.dir}/cuina.animation.jar" includes="cuina/animation/**" basedir="${build.dir}">
+			<manifest>
+				<!--attribute name="Plugin-Classes" value="" /-->
+				<attribute name="Plugin-Version" value="1.0" />
+				<attribute name="Plugin-Dependency" value="cuina.object-1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: Hud" />
+		<jar destfile="${deploy.dir}/cuina.hud.jar" includes="cuina/hud/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+			
+		<echo message="Deploy Plugin: Event" />
+		<jar destfile="${deploy.dir}/cuina.eventx.jar" includes="cuina/eventx/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: Map" />
+		<jar destfile="${deploy.dir}/cuina.map.jar" includes="cuina/map/**, Map.rb, Map.xml" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="cuina.map.GameMap;cuina.map.MapUtil" />
+				<attribute name="Plugin-Version" value="1.0" />
+				<attribute name="Plugin-Dependency" value="cuina.animation-1.0;cuina.object-1.0;cuina.eventx-1.0" />
+				<attribute name="Script-Library" value="Map.rb" />
+				<attribute name="Script-Description" value="Map.xml" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: Message" />
+		<jar destfile="${deploy.dir}/cuina.message.jar" includes="cuina/message/**, Message.rb, Message.xml" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="cuina.message.MessageBox;cuina.message.MessageHistory" />
+				<attribute name="Plugin-Version" value="1.0" />
+				<attribute name="Script-Library" value="Message.rb" />
+				<attribute name="Script-Description" value="Message.xml" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: RPG" />
+		<jar destfile="${deploy.dir}/cuina.rpg.jar" includes="cuina/rpg/**, RPG.rb" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Dependency" value="cuina.animation-1.0;cuina.map-1.0" />
+				<attribute name="Plugin-Version" value="1.0" />
+				<attribute name="Script-Library" value="RPG.rb" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: KS" />
+		<jar destfile="${deploy.dir}/cuina.ks.jar" includes="cuina/ks/**, Battle.rb" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="cuina.ks.Battle;cuina.ks.BattleMap;cuina.ks.EnemyTroop" />
+				<attribute name="Script-Library" value="Battle.rb" />
+				<attribute name="Plugin-Dependency" value="cuina.animation-1.0;cuina.rpg-1.0" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: Particle" />
+		<jar destfile="${deploy.dir}/cuina.particle.jar" includes="cuina/particle/**, Particle.rb" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="cuina.particle.ParticleTest" />
+				<attribute name="Script-Library" value="Particle.rb" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: Test-Configuration" />
+		<jar destfile="${deploy.dir}/cuina.test.jar" includes="cuina/test/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="cuina.test.TestConfiguration" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
+		<echo message="Deploy Plugin: Transition" />
+		<jar destfile="${deploy.dir}/cuina.transition.jar" includes="cuina/transition/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="cuina.transition.Transition" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="main" depends="build">
+		<description>Cuina Engine Plugin-Deployment</description>
+	</target>
+</project>

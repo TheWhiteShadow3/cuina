@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="cuina.resource.SerializationProviders" name="Cuina Serialization Provider" schema="schema/cuina.resource.Serializationproviders.exsd"/>
+   <extension-point id="cuina.resource.serialisation.XML" name="XML Serialisation Rules" schema="schema/cuina.resource.cuina.resource.serialisation.XML.exsd"/>
+   <extension-point id="cuina.resource.directories" name="Cuina Resource Directories" schema="schema/cuina.resource.directories.exsd"/>
+   <extension
+         point="cuina.resource.SerializationProviders">
+      <provider
+            class="cuina.resource.XMLSerialisationProvider"
+            extensions="xml, cxd, cxm"
+            default="true">
+      </provider>
+      <provider
+            class="cuina.resource.JavaSerialisationProvider"
+            extensions="ser">
+      </provider>
+   </extension>
+   
+   <extension
+         point="cuina.resource.directories">
+      <directory
+            id="cuina.graphics.path"
+            create="true"
+            keep-Reference="true"
+            name="graphics">
+            
+            <directory id="cuina.tilesets.path"     name="tilesets"     create="true" keep-Reference="false" />
+            <directory id="cuina.charsets.path"     name="charsets"     create="true" keep-Reference="false" />
+            <directory id="cuina.backgrounds.path"  name="backgrounds"  create="true" keep-Reference="false" />
+            <directory id="cuina.system.path"       name="system"       create="true" keep-Reference="false" />
+            <directory id="cuina.pictures.path"     name="pictures"     create="true" keep-Reference="false" />
+            <directory id="cuina.autotiles.path"    name="autotiles"    create="true" keep-Reference="false" />
+            <directory id="cuina.icons.path"        name="backgrounds"  create="true" keep-Reference="false" />
+      </directory>
+      <directory
+            create="true"
+            id="cuina.audio.path"
+            keep-Reference="true"
+            name="audio">
+            
+            <directory id="cuina.bgm.path" name="bgm" create="true" keep-Reference="false" />
+            <directory id="cuina.snd.path" name="snd" create="true" keep-Reference="false" />
+      </directory>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="cuina.resource.internal.CuinaPropertyTester"
+            id="cuina.resource.CuinaPropertyTester"
+            namespace="cuina.resource"
+            properties="directory"
+            type="org.eclipse.core.resources.IResource">
+      </propertyTester>
+   </extension>
+   <extension
+         point="cuina.core.project.extension">
+      <serviceFactory
+            class="cuina.resource.internal.ResourceServiceFactory">
+         <Service
+               class="cuina.resource.ResourceProvider">
+         </Service>
+      </serviceFactory>
+   </extension>
+</plugin>

@@ -1,0 +1,18 @@
+<cuina.data.DataTable serialization="custom">
+  <unserializable-parents/>
+  <map>
+    <default>
+      <loadFactor>0.75</loadFactor>
+      <threshold>12</threshold>
+    </default>
+    <int>16</int>
+    <int>0</int>
+  </map>
+  <cuina.data.DataTable>
+    <default>
+      <clazz>cuina.data.ObjectTemplate</clazz>
+      <name>ObjectTemplate</name>
+      <treeOrder/>
+    </default>
+  </cuina.data.DataTable>
+</cuina.data.DataTable>

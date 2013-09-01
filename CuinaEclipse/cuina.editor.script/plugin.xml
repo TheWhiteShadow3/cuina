@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="cuina.script.functions" name="Cuina Script Functions" schema="schema/cuina.script.functions.exsd"/>
+   <extension-point id="cuina.script.interfaces" name="Cuina Script Interfaces" schema="schema/cuina.script.interfaces.exsd"/>
+   <extension
+         point="cuina.script.functions">
+      <description
+            file="func-desc.xml"
+            name="Test-Funktionsbeschreibung">
+      </description>
+      <description
+            name="Buildin">
+         <function
+               help="Gibt einen Text in der Konsole aus"
+               id="puts"
+               label="Ausgabe"
+               return="void"
+               text="Ausgabe: %str">
+            <param
+                  id="str"
+                  label="Text"
+                  type="string">
+            </param>
+         </function>
+         <function
+               help="Wartet die angegebene Zeit in Sekunden."
+               id="sleep"
+               label="Warte"
+               return="void"
+               text="Warte %time sec">
+            <param
+                  id="time"
+                  label="Zeit"
+                  type="int">
+            </param>
+         </function>
+         <function
+               help="Gibt eine Zufallszahl zurück von =0 bis &lt;max."
+               id="rand"
+               label="Zufallszahl"
+               return="int"
+               text="Zufallszahl 0 bis %max">
+            <param
+                  default="0"
+                  id="max"
+                  type="int">
+            </param>
+         </function>
+      </description>
+      <description
+            file="map_lib.xml"
+            name="Map-Library">
+      </description>
+      <description
+            file="cuina_lib.xml"
+            name="Cuina">
+      </description>
+      <description
+            file="Math.xml"
+            name="Math">
+      </description>
+   </extension>
+   <extension
+         point="cuina.database.types">
+      <database
+            class="cuina.script.Script"
+            editor="cuina.editor.script.internal.ScriptEditor"
+            image="icons/script.png"
+            name="Script">
+      </database>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="cuina.editor.script.internal.prefs.ScriptPreferencePage"
+            id="cuina.editor.script.prefs.ScriptPreferencePage"
+            name="Skript Editor">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="cuina.editor.script.internal.prefs.ScriptPreferences">
+      </initializer>
+   </extension>
+   <extension
+         point="cuina.core.project.extension">
+      <serviceFactory
+            class="cuina.editor.script.internal.ScriptServiceFactory">
+         <Service
+               class="cuina.editor.script.library.StaticScriptLibrary">
+         </Service>
+      </serviceFactory>
+   </extension>
+   <extension
+         point="cuina.script.interfaces">
+      <class
+            interface="cuina.script.MainScript"
+            module="Cuina"
+            name="MainScript">
+      </class>
+   </extension>
+
+</plugin>

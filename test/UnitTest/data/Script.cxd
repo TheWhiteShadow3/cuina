@@ -1,0 +1,30 @@
+<!-- Wird für JUnit-Tests benötigt. Nicht ändern! -->
+<cuina.database.DataTable name="Script" type="cuina.script.Script">
+    <cuina.script.Script>
+      <key>empty_script</key>
+      <name>empty_script</name>
+    </cuina.script.Script>
+    <cuina.script.Script>
+      <key>main</key>
+      <name>main</name>
+      <interfaceClass>cuina.script.MainScript</interfaceClass>
+      <code>class Script_main
+	include Script::MainScript
+	def start
+	end
+	def loadGame(game)
+	end
+	def newGame(game)
+	end
+	def saveGame(game)
+	end
+	def endGame(game)
+	end
+	def close
+		return true
+	end
+end
+Script_main.new
+</code>
+    </cuina.script.Script>
+</cuina.database.DataTable>

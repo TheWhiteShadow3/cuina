@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Model
+Bundle-SymbolicName: cuina.editor.model;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Cuina
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.ui,
+ cuina.editor.object,
+ org.eclipse.core.runtime,
+ cuina.gl,
+ cuina.resource,
+ cuina.editor.core,
+ cuina.database
+Export-Package: cuina.animation,
+ cuina.editor.model
+Bundle-ActivationPolicy: lazy

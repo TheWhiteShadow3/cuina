@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="cuina.database.types">
+      <database
+            class="cuina.rpg.inventory.Item"
+            image="icons/item.png"
+            name="Item">
+      </database>
+   </extension>
+   <extension
+         point="cuina.model.Animator">
+      <animator
+            class="cuina.rpg.CharacterAnimator">
+      </animator>
+   </extension>
+   <extension
+         point="cuina.movement.Driver">
+      <driver
+            class="cuina.rpg.CharacterDriver">
+      </driver>
+      <driver
+            class="cuina.rpg.Player">
+      </driver>
+   </extension>
+
+</plugin>

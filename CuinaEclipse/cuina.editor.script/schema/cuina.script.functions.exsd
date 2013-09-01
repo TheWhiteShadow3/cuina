@@ -1,0 +1,373 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="cuina.editor.script" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="cuina.editor.script" id="cuina.script.functions" name="Cuina Script Functions"/>
+      </appinfo>
+      <documentation>
+         Beschreibt Skript-Funktionen für den Skript-Editor. Funktionen stellen Ruby-Funktionen da, die in der Engine durch Plugins verfügbar sind.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+         <documentation>
+            Beschreibt Skript-Funktionen für den Skript-Editor. Funktionen stellen Ruby-Funktionen da, die in der Engine durch Plugins verfügbar sind.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="description" minOccurs="1" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="function">
+      <annotation>
+         <documentation>
+            Definiert eine Ruby-Funktion.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="param" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Muss dem Vollständigen Namen der Ruby-Funktion innerhalb der Sektion entsprechen.
+Muss ein gültiger Ruby-Bezeichner sein.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  Anzeigetext der Funktion im Editor.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="text" type="string">
+            <annotation>
+               <documentation>
+                  Format-Text der Funktion im Code-Baum.
+Wörter mit einem vorstehenden % werden duch den ausgewählten Wert des Parameters mit der entsprechenden id ersetzt.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="help" type="string">
+            <annotation>
+               <documentation>
+                  Hilfetext der angezeigt wird, wenn man mit der Maus über ein Feld geht.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="return" type="string" use="default" value="void">
+            <annotation>
+               <documentation>
+                  Rückgabe-Typ der Funktion. Da Ruby keine festen Datentypen hat, dient es als Erkennung für den Editor und muss angegeben werden.
+Mögliche Type sind:
+void, bool, int, float, string, id:Map, id:%Table-Name%, time
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description">
+      <annotation>
+         <documentation>
+            Eine Funktions-Beschreibung für eine oder mehrere Ruby-Funktionen.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="section"/>
+            <element ref="function"/>
+         </choice>
+         <attribute name="file" type="string">
+            <annotation>
+               <documentation>
+                  Datei, in der die Beschreibung der Funktionen liegt.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Interner Name der Funktions-Beschreibung.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="section">
+      <annotation>
+         <documentation>
+            Definiert eine Section, wo drunter die Funktionen aufgelistet werden sollen.
+Wenn die Section bereits existiert werden die Funktionen dort angehangen.
+Doppelte Funktionen werden NICHT überschrieben.
+Innerhalb der Rubydatei entspricht die Section dem modulnamen.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="function"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Eindeutiger Modulname der Sektion. Muss ein gültiger Ruby-Bezeichner sein.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  Anzeigetext der Sektion im Editor.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="param">
+      <annotation>
+         <documentation>
+            Ein Funktions-Parameter.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="filter" minOccurs="0" maxOccurs="1"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name des Parameters. Muss ein gültiger Ruby-Bezeichner sein.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  Anzeigetext des Parameters im Editor.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Datentyp des Parameters. Da Ruby keine festen Datentypen hat, dient es als Erkennung für den Editor und muss angegeben werden.
+Mögliche Type sind:
+bool, int, float, string, id:Map, id:%Table-Name%, time
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="string">
+            <annotation>
+               <documentation>
+                  Default Wert. Ruby unterstützt default-Werte bei Parametern.
+Wird ein Defaultwert angegeben, erscheint kein Eingabefeld im Editor.
+Skript-technisch kann dieser Parameter jedoch trotzdem gesetzt werden.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="filter">
+      <annotation>
+         <documentation>
+            Ein Filter schränkt die möglichen Eingaben neben dem Datentypen noch weiter ein.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="lenght"/>
+            <element ref="pattern"/>
+            <element ref="enum"/>
+            <element ref="range"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="enum">
+      <annotation>
+         <documentation>
+            Aufzählung von erlaubten Werten.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  Komma getrennte Aufzählung der erlaubten Werte.
+Ist der Datentyp String wird der Name übergeben.
+Bei einem int, wird der 0-Basierte Index der ausgewählten Wertes übergeben.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="range">
+      <annotation>
+         <documentation>
+            Erlaubter Zahlenbereich bei numerischen Werten.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="min" type="string">
+            <annotation>
+               <documentation>
+                  Inklusives Minimum.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="max" type="string">
+            <annotation>
+               <documentation>
+                  Inklusives Maximum.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="lenght">
+      <annotation>
+         <documentation>
+            Erlaubte Länge bei Sting-Werten.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="min" type="string">
+            <annotation>
+               <documentation>
+                  Inklusives Minimum.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="max" type="string">
+            <annotation>
+               <documentation>
+                  Inklusives Maximum.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="pattern">
+      <annotation>
+         <documentation>
+            Regexpression Muster für Parameter. Der Typ muss dabei nicht zwangsweie ein String sein.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="cuina.editor.object.internal.properties.ObjectBasePropertyPage"
+            id="cuina.editor.object.properties.ObjectBasePropertyPage"
+            name="Objekt">
+         <enabledWhen>
+            <test
+                  property="cuina.editor.core.adapt"
+                  value="cuina.editor.object.ObjectAdapter">
+            </test>
+         </enabledWhen>
+      </page>
+      <page
+            class="cuina.editor.object.internal.properties.ObjectExtensionPropertyPage"
+            id="cuina.object.ExtensionPage"
+            name="Erweiterungen">
+         <enabledWhen>
+            <test
+                  property="cuina.editor.core.adapt"
+                  value="cuina.object.ObjectData">
+            </test>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="cuina.mapeditor.layers">
+      <layer
+            class="cuina.editor.object.internal.ObjectLayer"
+            name="Objects"
+            selectable="true">
+      </layer>
+   </extension>
+   <extension
+         point="cuina.database.types">
+      <database
+            class="cuina.object.ObjectTemplate"
+            image="icons/template.png"
+            name="Template">
+      </database>
+   </extension>
+
+</plugin>

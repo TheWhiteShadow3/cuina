@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    DTD für die Beschreibung von Klassen, die im Skript-Editor benutzt werden
+	können. Die Beschreibung dient der Einbindung von Library-Klassen
+    und sollte jeder Skript-Library beiliegen, da hier zusätzliche Informationen
+    angegeben werden können, wie Datentypen und Anzeigenamen.
+    
+    Autor: TheWhiteShadow
+    Stand: 18.01.2013
+-->
+<!ELEMENT desc (class+) -- Wurzelelement -->
+ 
+<!ELEMENT class (function, attribut)*
+-- Klasse, in der die Funktionen und Felder definiert sind -->
+ 
+<!ATTLIST class
+    id      CDATA   "default"   -- Modulname --
+    label   CDATA   #IMPLIED    -- Anzeigename --
+>
+ 
+<!--============================== Funktionen ===============================-->
+ 
+<!ELEMENT function (text?, help?, param*, return?)
+-- Die Elementreihenfolge ist nicht zwingend einzuhalten -->
+
+<!ELEMENT attribut (help?, filter?) -- Felder und Funktions-Parameter -->
+
+<!ATTLIST function
+    id      CDATA   #REQUIRED   -- Funktionsname --
+    label   CDATA   #IMPLIED    -- Anzeigename --
+>
+
+<!ATTLIST attribut
+    id      CDATA   #REQUIRED   -- Attributname --
+    label   CDATA   #IMPLIED    -- Anzeigename --
+    type    CDATA   #REQUIRED   -- zulässiger Datentyp --
+    default CDATA   #IMPLIED    -- Standartwert --
+>
+
+<!-- Der Inhalt der Elemente text und help kann einen oder mehrere
+Parameter referenzieren, indem ein % vor dessen id gesetzt wird.
+Beispiel Referenz der Funktion foor(bar): "Foo %bar"
+-->
+<!ELEMENT text (#PCDATA) -- Anzeigetext der Funktion -->
+<!ELEMENT help (#PCDATA) -- Hilfetext, für Funktionen und Attribute -->
+<!ELEMENT attribut (filter?) -- Parameter, der Funktionssignatur -->
+<!ELEMENT return (#PCDATA) -- Rückgabewert der Funktion -->
+ 
+ 
+<!--============================ Attributfilter =============================-->
+ 
+<!-- Filter schränken den Wert der übergebenen Parameter ein.
+Sie beziehen sich allerdings nur auf direkt gesetzte Werte und stellen keine
+Garantie da, dass sich die übergebenen Werte die Filtereinschränkugnen erfüllen.
+Werte, die mittels Variablen oder Funktionsergebnissen übergeben werden,
+können außerhalb des Filterbereichs liegen. -->
+<!ELEMENT filter (values?, pattern?, range?, lenght?)
+-- Die Elementreihenfolge ist nicht zwingend einzuhalten -->
+ 
+<!ELEMENT values (#PCDATA) -- Ein fester Satz an zulässigen Werten -->
+<!ELEMENT pattern (#PCDATA) -- Muster, auf das der Parameter passen muss -->
+<!ELEMENT range EMPTY>
+<!ELEMENT lenght EMPTY>
+ 
+<!ATTLIST range
+    min     CDATA   #IMPLIED    -- Minimaler zulässiger Wert --
+    max     CDATA   #IMPLIED    -- Maximaler zulässiger Wert --
+>
+    
+<!ATTLIST lenght
+    min     CDATA   #IMPLIED    -- Minimaler zulässige Charakterlänge --
+    max     CDATA   #IMPLIED    -- Maximaler zulässige Charakterlänge --
+>

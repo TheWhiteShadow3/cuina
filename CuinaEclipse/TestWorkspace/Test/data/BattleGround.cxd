@@ -1,0 +1,7 @@
+<cuina.database.DataTable name="BattleGround" type="cuina.ks.BattleGroundData">
+  	<cuina.ks.BattleGroundData>
+  		<key>gras</key>
+  		<name>Gaslandschaft</name>
+  		<backgroundName>backgrounds/Berge.png</backgroundName>
+    </cuina.ks.BattleGroundData>
+</cuina.database.DataTable>

@@ -1,0 +1,57 @@
+####################################################################################################
+# Plugin-Anleitung zum erstellen von Cuina-Plugins und einbrignen in den Buildprozess.
+# Autor: TheWhiteShadow
+# Stand: 18.09.2012
+####################################################################################################
+
+1 - Erstellen des Plugins:
+Im Souceverzeichnis plug eine oder mehrere neue Klassen erstellen.
+
+Soll eien Klasse des Plugins automatisch injiziert werden muss sie Plugin implementieren und eine Annotation erhalten:
+(ForGlobal, ForSession, ForScene)
+
+Soll eine Klasse des Plugins einen Lebenszyklus innerhalb einer Spielszene erhalten muss sie LifeCycle implementieren.
+
+
+2a - Erstellen einer Skriptlibary:
+Unter <Projekt>/engine/plug/bin muss eine Rubydatei erstellt werden (*.rb)
+Dort muss ein Modul für das Plugin erstellt werden mit statischen Methoden.
+
+2b - Erstellen der Skriptbeschreibung:
+Unter dem selben Pfad wie in 3a muss eine XML-Datei angelegt werden.
+Die Syntax für diese Datei steht unter <Projekt>/editor/plugins/func-desc.xml
+
+
+3 - Eintragen in den Buildprozess:
+In der Datei plugin_build.xml einen Eintrag erstellen.
+Beispiel fürs Map-Plugin:
+
+<echo message="Deploy Plugin: Map" />
+<jar destfile="${deploy.dir}/cuina.map.jar" includes="cuina/map/**, Map.rb, Map.xml" basedir="${bin.dir}">
+	<manifest>
+		<attribute name="Plugin-Classes" value="cuina.map.GameMap" />
+		<attribute name="Plugin-Version" value="1.0" />
+		<attribute name="Plugin-Dependency" value="cuina.animation-1.0" />
+		<attribute name="Script-Libary" value="Map.rb" />
+		<attribute name="Script-Description" value="Map.xml" />
+	</manifest>
+</jar>
+
+Die Attribute des Manifests:
+Plugin-Classes: Liste der zu ladenden klassen. Hier reichen die Klassen, die als Interface zum Plugin fungieren.
+Plugin-Version: Versionsnummer. (beginnend mit 1.0)
+Plugin-Dependency: Plugins, von denen dieses Plugin abhängt. Dieses wird dann zuerst geladen.
+Script-Libary: Angabe der Skriptlibary (optional. Muss wenn vorhanden auch bei includes stehen)
+Script-Description: Angabe der Skriptbeschreibung (optional. Muss wenn vorhanden auch bei includes stehen)
+
+Anmerkung;
+Aufgrund der Class-Path Priorität in Eclipse werden die Pluginklassen vorrangig aus dem Bin-Ordner geladen.
+Dadurch ist beim Entwickeln und Testen ein Build nur nötig, wenn sich die Klassenstruktur ändert.
+Damit der Pluginloader die Klassen auch korrekt laden kann,
+müssen dennoch alle relevanten Dateien und Angaben in der jar vorhanden sein.
+
+####################################################################################################
+Geplate Features:
+Einbinden von Java-Klassen in die Libary durch Annotationen:
+cuina.editor.scripting.ScriptFunction
+cuina.editor.scripting.Restriction
