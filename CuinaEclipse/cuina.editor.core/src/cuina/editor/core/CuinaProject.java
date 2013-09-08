@@ -11,6 +11,10 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * Stellt ein Cuina-Projekt da.
+ * @author TheWhiteShadow
+ */
 public class CuinaProject
 {
 	public static final String CONFIG_FILE = "cuina.cfg";
@@ -25,11 +29,19 @@ public class CuinaProject
 		this.project = project;
 	}
 
+	/**
+	 * Gibt die Projekt-Ressorce zum Cuina-Projekt zurück.
+	 * @return Die Projekt-Ressorce zum Cuina-Projekt.
+	 */
 	public IProject getProject()
 	{
 		return project;
 	}
 	
+	/**
+	 * Gibt die Ini-Datei zum Projekt zurück.
+	 * @return Die Ini-Datei zum Projekt.
+	 */
 	public Ini getIni()
 	{
 		if (ini == null) try
@@ -44,11 +56,20 @@ public class CuinaProject
 		return ini;
 	}
 	
+	/**
+	 * Gibt den Namen des Projekts zurück.
+	 * @return Der Name des Projekts.
+	 */
 	public String getName()
 	{
 		return project.getName();
 	}
 	
+	/**
+	 * Erstellt eine neue Projekt-Ressource und üffnet sie.
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	public void create(IProgressMonitor monitor) throws CoreException
 	{
 		project.create(monitor);

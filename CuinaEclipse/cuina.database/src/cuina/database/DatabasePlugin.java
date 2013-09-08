@@ -3,7 +3,6 @@ package cuina.database;
 import cuina.editor.core.CuinaPlugin;
 import cuina.editor.core.CuinaProject;
 import cuina.resource.ResourceException;
-import cuina.resource.ResourceProvider;
 
 import java.util.HashMap;
 
@@ -121,8 +120,7 @@ public final class DatabasePlugin extends Plugin
 	
 	static String loadDataPath(CuinaProject project)
 	{
-		ResourceProvider rp = project.getService(ResourceProvider.class);
-		return rp.getIni().get(DatabasePlugin.PLUGIN_ID, DatabasePlugin.DATABASE_DIRECTORY_ID, "data");
+		return project.getIni().get(DatabasePlugin.PLUGIN_ID, DatabasePlugin.DATABASE_DIRECTORY_ID, "data");
 	}
 	
 	/**

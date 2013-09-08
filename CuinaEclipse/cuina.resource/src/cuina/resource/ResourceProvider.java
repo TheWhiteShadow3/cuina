@@ -19,21 +19,25 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * Stellt einen Projekt-Service für Dateizugriffe da.
+ * <p>
+ * Die Klasse bildet die Verzeichnisstruktur im Projekt ab
+ * </p>
+ * @author TheWhiteShadow
+ */
 public class ResourceProvider
 {
 	public static final String INI_PATH = "cuina.cfg";
 	public static final String RESOURCE_PATH = "resource.path";
-//	public static final String EDITOR_SECTION = "Editor";
 	public static final String RESOURCE_SECTION = "Resource";
 
 	private CuinaProject project;
-//	private String resourcePath;
 	private final HashMap<String, Resource> cache = new HashMap<String, Resource>();
 
 	ResourceProvider(CuinaProject project)
 	{
 		this.project = project;
-//		init();
 	}
 
 	public CuinaProject getCuinaProject()
@@ -41,41 +45,11 @@ public class ResourceProvider
 		return project;
 	}
 
-//	private void init()
-//	{
-//		try
-//		{
-//			this.ini = new Ini(project.getProject().getFile(INI_PATH).getLocation().toFile());
-//			this.resourcePath = ini.get(RESOURCE_SECTION, RESOURCE_PATH);
-//		}
-//		catch (InvalidFileFormatException | IOException e)
-//		{
-//			e.printStackTrace();
-//		}
-//
-//		Runtime.getRuntime().addShutdownHook(new Thread()
-//		{
-//			@Override
-//			public void run()
-//			{
-//				try
-//				{
-//					ini.set(RESOURCE_SECTION, RESOURCE_PATH, resourcePath);
-//					ini.write();
-//				}
-//				catch (IOException e)
-//				{
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
-//	public Ini getIni()
-//	{
-//		return ini;
-//	}
-
+	/**
+	 * Erzeugt die komplette Verzeichnisstruktur des Projeks.
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	public void createFileStructure(IProgressMonitor monitor) throws CoreException
 	{
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
