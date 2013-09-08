@@ -89,7 +89,7 @@ public class NodePropertySource implements IPropertySource
 				Node arg =((IParameter)node).getArgument();
 				if (arg instanceof ArrayNode)
 				{
-					if (arg.getChilds().size() > 1)
+					if (arg.getChildren().size() > 1)
 						return new NodeArrayPropertySource(editor, (ArrayNode) arg);
 					else
 						return new NodePropertySource(editor, ((ArrayNode) arg).getChild(0));

@@ -9,12 +9,13 @@ import cuina.editor.script.ruby.ast.RootNode;
 import cuina.script.Script;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 
 public class ScriptCache
 {
-	private final HashMap<String, TreeEditor> cache = new HashMap<String, TreeEditor>();
+	private final Map<String, TreeEditor> cache = new HashMap<String, TreeEditor>();
 	private final CuinaProject project;
 	
 	public ScriptCache(CuinaProject project)
@@ -33,6 +34,7 @@ public class ScriptCache
 		if (treeEditor == null)
 		{
 			treeEditor = createTreeEditor(script);
+			treeEditor.setData(script);
 			cache.put(script.getKey(), treeEditor);
 		}
 		return treeEditor;

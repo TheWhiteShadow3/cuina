@@ -102,7 +102,7 @@ public class TreeLibrary implements IScriptLibrary
 	private void addParamDefinitions(DefNode defNode, FunctionDefinition funcDef)
 	{
 		// Definitionen aus den Knoten erstellen.
-		for(Node arg : defNode.getArgument().getChilds())
+		for(Node arg : defNode.getArgument().getChildren())
 		{
 			ValueDefinition paramDef = new ValueDefinition();
 			paramDef.id = ((INamed) arg).getName();
@@ -160,7 +160,7 @@ public class TreeLibrary implements IScriptLibrary
 
 	private void addArguments(LibraryTree tree, DefNode defNode)
 	{
-		for (Node arg : defNode.getArgument().getChilds())
+		for (Node arg : defNode.getArgument().getChildren())
 		{
 			getReciver(tree, null).addVariable((ArgNode) arg, null);
 		}
@@ -169,7 +169,7 @@ public class TreeLibrary implements IScriptLibrary
 	private void addLocalScope(LibraryTree tree, DefNode defNode)
 	{
 		String next;
-		for (Node node : defNode.getChilds())
+		for (Node node : defNode.getChildren())
 		{
 			if (node instanceof AsgNode)
 			{

@@ -34,7 +34,7 @@ public class ListNode extends AbstractNode implements Iterable<Node>
 	}
 
 	@Override
-	public List<Node> getChilds()
+	public List<Node> getChildren()
 	{
 		return childs;
 	}

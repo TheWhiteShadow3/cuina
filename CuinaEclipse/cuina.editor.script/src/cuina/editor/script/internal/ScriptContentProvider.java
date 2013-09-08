@@ -7,18 +7,12 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * ContentProvider für den ScriptEditor.
- * Akzeptiert ein Input-Objekt vom Typ CommandPage.
+ * Akzeptiert nur ein Input-Objekt vom Typ CommandPage.
  * @author TheWhiteShadow
  */
 public class ScriptContentProvider implements IStructuredContentProvider
 {
 	private static final Object[] EMPTY = new Object[0];
-	private RubyNodeConverter converter;
-	
-	public ScriptContentProvider(RubyNodeConverter converter)
-	{
-		this.converter = converter;
-	}
 	
 	@Override
 	public void dispose() {}
@@ -28,13 +22,13 @@ public class ScriptContentProvider implements IStructuredContentProvider
 	{}
 
 	@Override
-	public Object[] getElements(Object input)
+	public Object[] getElements(Object element)
 	{
-		if (input instanceof CommandPage)
+		if (element instanceof CommandPage)
 		{
-			CommandPage page = (CommandPage) input;
+			CommandPage page = (CommandPage) element;
 			// aktualisiere die Zeilen der Seite
-			converter.createLines(page);
+			page.createLines();
 			return page.lines.toArray();
 		}
 		return EMPTY;

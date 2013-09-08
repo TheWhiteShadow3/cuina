@@ -33,7 +33,7 @@ public interface Node
 	 * </p>
 	 * @return Liste der vorhandenen Kind-Knoten.
 	 */
-	public List<Node> getChilds();
+	public List<Node> getChildren();
 
 	/**
 	 * Gibt den Typ des Knoten zurück.

@@ -2,6 +2,7 @@ package cuina.database.ui.internal;
 
 import cuina.database.DatabasePlugin;
 import cuina.database.NamedItem;
+import cuina.database.ui.internal.tree.FixDataNode;
 import cuina.database.ui.internal.tree.TreeDataNode;
 import cuina.database.ui.internal.tree.TreeGroup;
 import cuina.database.ui.tree.TreeNode;
@@ -39,43 +40,30 @@ public class DataLabelProvider extends LabelProvider
 				return DatabasePlugin.getDescriptor((IFile) element).getImage();
 			else
 				return null;
-//			return getDefaultImage();//DatabasePlugin.getDescriptor((IFile) element).getImage();
 		}
-		
-		ImageDescriptor desc = null;
-		if (element instanceof IAdaptable)
-			desc = (ImageDescriptor) ((IAdaptable) element).getAdapter(ImageDescriptor.class);
-		
-		if (desc == null)
-			desc = (ImageDescriptor)Platform.getAdapterManager().getAdapter(element, ImageDescriptor.class);
-		
-		if (desc != null)
+		else if (element instanceof FixDataNode)
 		{
-			Image image = desc.createImage();
-			imageCache.put(element, image);
-			return desc.createImage();
-		}
+			ImageDescriptor desc = null;
+			Object obj = ((FixDataNode) element).getData();
+			Image img = imageCache.get(obj);
+			if (img != null) return img;
 			
-//			if (isDatabaseFolder((IFolder) element))
-//			{
-//				this.image = new Image(Display.getDefault(), FileLocator.resolve(plugin.getEntry("")).getPath());
-//			}
-//			else
-//			{
-//				PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-//			}
+			if (obj instanceof IAdaptable)
+				desc = (ImageDescriptor) ((IAdaptable) obj).getAdapter(ImageDescriptor.class);
+			
+			if (desc == null)
+				desc = (ImageDescriptor)Platform.getAdapterManager().getAdapter(obj, ImageDescriptor.class);
+			
+			if (desc != null)
+			{
+				Image image = desc.createImage();
+				imageCache.put(obj, image);
+				return desc.createImage();
+			}
+		}
+		
 		return Activator.getDefaultImage();
 	}
-	
-//	private boolean isDatabaseFolder(IFolder folder)
-//	{
-//		IProject project = folder.getProject();
-//		IFolder f = project.getFolder(DatabasePlugin.getDatabase(project).getDataPath());
-//		
-////		IProject project = folder.getProject();
-////		IPath path = new Path(project.getName() + '/' + DatabasePlugin.getDatabase(project).getDataPath());
-//		return folder.equals(f);
-//	}
 
 	@Override
 	public String getText(Object element)
@@ -103,7 +91,8 @@ public class DataLabelProvider extends LabelProvider
 	@Override
 	public void dispose()
 	{
-		imageCache = null;
+		for (Image img : imageCache.values()) img.dispose();
+		imageCache.clear();
 		super.dispose();
 	}
 }

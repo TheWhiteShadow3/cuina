@@ -6,6 +6,11 @@ import cuina.database.ui.internal.tree.TreeDataNode;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * <i>Benutze das Extension-Point Attribut TreeContentProvider Der Datenbank-Typ Definition
+ * um die Baumstruktur von Daten-Elementen anzugeben.</i>
+ */
+@Deprecated
 public class AbstractChildContentProvider<E extends DatabaseObject> implements ITreeContentProvider
 {
 	protected static final Object[] EMPTY = new Object[0];

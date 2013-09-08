@@ -48,7 +48,7 @@ public class IfNode extends BlockNode implements IParameter
         StringBuilder builder = new StringBuilder(128);
         builder.append("if ").append(argument).append(" then ");
 
-        for (Node child : super.getChilds())
+        for (Node child : super.getChildren())
         {
             builder.append("\n\t").append(child);
         }

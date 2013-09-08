@@ -23,7 +23,7 @@ public abstract class AbstractDataNode implements DataNode
 	@Override
 	public void setParent(TreeNode parent)
 	{
-		if (parent != null && !(parent instanceof TreeGroup))
+		if (parent != null && !(parent instanceof TreeNode))
 			throw new IllegalArgumentException("parent must be an Instance of TreeGroup.");
 		
 		this.parent = parent;
@@ -107,6 +107,7 @@ public abstract class AbstractDataNode implements DataNode
 		for(int i = 0; i < childData.length; i++)
 		{
 			children[i] = new FixDataNode(getDataRoot(), childData[i]);
+			children[i].setParent(this);
 		}
 		
 		return children;

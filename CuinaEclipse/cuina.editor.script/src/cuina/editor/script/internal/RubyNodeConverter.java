@@ -1,7 +1,6 @@
 package cuina.editor.script.internal;
 
-import cuina.database.ui.TreeItem;
-import cuina.database.ui.tree.TreeRoot;
+import cuina.database.NamedItem;
 import cuina.editor.script.Scripts;
 import cuina.editor.script.internal.prefs.ScriptPreferences;
 import cuina.editor.script.internal.properties.NodePropertySource;
@@ -24,12 +23,11 @@ public class RubyNodeConverter
 	private TreeEditor treeEditor;
 	private ArrayList<CommandPage> pageList;
 	private ScriptType scriptType;
-
+	
 	// Variablen für den Build.
 	private int indent;
 	private String colorKey;
 	private CommandPage page;
-	
 	
 	public RubyNodeConverter(TreeEditor treeEditor)
 	{
@@ -37,6 +35,11 @@ public class RubyNodeConverter
 //		treeEditor.addTreeEditorListener(this);
 	}
 	
+	public TreeEditor getTreeEditor()
+	{
+		return treeEditor;
+	}
+
 	/**
 	 * Erstellt die Command-Seiten des Skripts.
 	 * Wenn das Skript ein Klassen-Typ ist, wird eine Seite für jedem methode erstellt,
@@ -47,9 +50,9 @@ public class RubyNodeConverter
 		pageList = new ArrayList<CommandPage>(8);
 		
 		RootNode root = treeEditor.getRoot();
-		if (root.getChilds() != null && root.getChilds().size() > 0)
+		if (root.getChildren() != null && root.getChildren().size() > 0)
 		{
-			Node first = root.getChilds().get(0);
+			Node first = root.getChildren().get(0);
 			if (first instanceof ClassNode)
 			{
 				ClassNode classNode = (ClassNode) first;
@@ -73,26 +76,26 @@ public class RubyNodeConverter
 								break;
 							}
 						}
-						pageList.add(new CommandPage(treeEditor, classNode, child,
+						pageList.add(new CommandPage(this, classNode, child,
 								((DefNode) child).getName(), important));
 					}
 				}
 			}
 			return;
 		}
-		pageList.add(new CommandPage(treeEditor, true));
+		pageList.add(new CommandPage(this, true));
 	}
 	
-	public void createSinglePage(TreeEditor treeEditor)
+	public void createSinglePage()
 	{
 		pageList = new ArrayList<CommandPage>(1);
 		
-		pageList.add(new CommandPage(treeEditor, true));
+		pageList.add(new CommandPage(this, true));
 	}
 	
-	public CommandPage addPage(TreeEditor treeEditor, ListNode parent, DefNode node)
+	public CommandPage addPage(ListNode parent, DefNode node)
 	{
-		CommandPage page = new CommandPage(treeEditor, parent, node, node.getName(), false);
+		CommandPage page = new CommandPage(this, parent, node, node.getName(), false);
 		pageList.add(page);
 		return page;
 	}
@@ -109,7 +112,7 @@ public class RubyNodeConverter
 	
 	/**
 	 * Gibt die Seitenliste zurück.
-	 * Wenn {@link #createPages(Node)} noch nicht aufgerufen wurde wird <code>null</code> zurückgegeben.
+	 * Wenn {@link #createPages()} noch nicht aufgerufen wurde wird <code>null</code> zurückgegeben.
 	 * @return Die Seitenliste oder <code>null</code>, wenn noch keine Seiten erstellt wurden.
 	 */
 	public ArrayList<CommandPage> getPageList()
@@ -128,7 +131,7 @@ public class RubyNodeConverter
 		page.lines = new ArrayList<CommandLine>(16);
 		
 		indent = 0;
-		for(Node node : page.node.getChilds())
+		for(Node node : page.node.getChildren())
 		{
 			addCommandLine(node);
 		}
@@ -202,7 +205,7 @@ public class RubyNodeConverter
 		if (body != null)
 		{
 			indent++;
-			for(Node node : body.getChilds())
+			for(Node node : body.getChildren())
 			{
 				addCommandLine(node);
 			}
@@ -217,14 +220,14 @@ public class RubyNodeConverter
 		colorKey = ScriptPreferences.CMDLINE_COLOR_CONTROL;
 		addNodeLine(caseNode);
 		indent++;
-		for(Node node : caseNode.getChilds())
+		for(Node node : caseNode.getChildren())
 		{
 			if (node instanceof WhenNode)
 			{
 				colorKey = ScriptPreferences.CMDLINE_COLOR_CONTROL;
 				addNodeLine(node);
 				indent++;
-				for (Node bodyNode : node.getChilds())
+				for (Node bodyNode : node.getChildren())
 				{
 					addCommandLine(bodyNode);
 				}
@@ -246,7 +249,7 @@ public class RubyNodeConverter
 		colorKey = ScriptPreferences.CMDLINE_COLOR_CONTROL;
 		addNodeLine(ifNode);
 		indent++;
-		for(Node node : ifNode.getChilds())
+		for(Node node : ifNode.getChildren())
 		{
 			addCommandLine(node);
 		}
@@ -267,7 +270,7 @@ public class RubyNodeConverter
 		colorKey = ScriptPreferences.CMDLINE_COLOR_CONTROL;
 		addNodeLine(elseNode);
 		indent++;
-		for(Node node : elseNode.getChilds())
+		for(Node node : elseNode.getChildren())
 		{
 			addCommandLine(node);
 		}
@@ -298,30 +301,30 @@ public class RubyNodeConverter
 		}
 	}
 	
-	public class CommandPage implements TreeItem, IAdaptable
+	public static class CommandPage implements IAdaptable, NamedItem
 	{
-		public final TreeEditor treeEditor;
+		public final RubyNodeConverter converter;
 		public boolean important;
 		public ScriptPosition position;
 		public Node node;
 		public String name;
 		public ArrayList<CommandLine> lines;
-
-		public CommandPage(TreeEditor treeEditor, ListNode parent, Node node, String name, boolean important)
+		
+		public CommandPage(RubyNodeConverter converter, ListNode parent, Node node, String name, boolean important)
 		{
-			this.treeEditor = treeEditor;
+			this.converter = converter;
 			this.node = node;
 			this.name = name;
 			this.important = important;
-			this.position = new ScriptPosition(parent, parent.getChilds().indexOf(node));
+			this.position = new ScriptPosition(parent, parent.getChildren().indexOf(node));
 			if (position.getIndex() == -1 && node != null)
 				throw new IllegalStateException();
 		}
 		
-		public CommandPage(TreeEditor treeEditor, boolean important)
+		public CommandPage(RubyNodeConverter converter, boolean important)
 		{
-			this.treeEditor = treeEditor;
-			this.node = treeEditor.getRoot();
+			this.converter = converter;
+			this.node = converter.treeEditor.getRoot();
 			this.name = "root";
 			this.important = important;
 			this.position = new ScriptPosition(node);
@@ -334,21 +337,9 @@ public class RubyNodeConverter
 		}
 
 		@Override
-		public Object[] getChildren(TreeRoot root)
-		{
-			return lines.toArray();
-		}
-
-		@Override
-		public boolean hasChildren()
-		{
-			return lines != null && lines.size() > 0;
-		}
-
-		@Override
 		public int hashCode()
 		{
-			return -position.hashCode();
+			return 167 * position.hashCode();
 		}
 
 		@Override
@@ -369,9 +360,14 @@ public class RubyNodeConverter
 			}
 			return null;
 		}
+		
+		public void createLines()
+		{
+			this.converter.createLines(this);
+		}
 	}
 	
-	public static class CommandLine implements TreeItem, IAdaptable
+	public static class CommandLine implements IAdaptable, NamedItem
 	{
 		public static final int TYPE_NODE = 1;
 		public static final int TYPE_SLAVE = 2;
@@ -392,7 +388,7 @@ public class RubyNodeConverter
 			this.colorKey = colorKey;
 			this.indent = indent;
 			this.type = type;
-			this.position = new ScriptPosition(parent, parent.getChilds().indexOf(node));
+			this.position = new ScriptPosition(parent, parent.getChildren().indexOf(node));
 			if (position.getIndex() == -1 && node != null)
 				throw new IllegalStateException();
 		}
@@ -417,18 +413,6 @@ public class RubyNodeConverter
 		public String getName()
 		{
 			return node != null ? node.toString() : "";
-		}
-
-		@Override
-		public boolean hasChildren()
-		{
-			return false;
-		}
-
-		@Override
-		public Object[] getChildren(TreeRoot root)
-		{
-			return new Object[0];
 		}
 	}
 	
@@ -463,7 +447,7 @@ public class RubyNodeConverter
 //				case "line.text": return line.text;
 				case "line.node":
 					if (line.node != null)
-						return new NodePropertySource(line.page.treeEditor, line.node);
+						return new NodePropertySource(line.page.converter.treeEditor, line.node);
 					else
 						return null;
 			}

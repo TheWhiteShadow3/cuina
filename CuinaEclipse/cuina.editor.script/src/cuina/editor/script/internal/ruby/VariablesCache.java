@@ -32,7 +32,7 @@ public class VariablesCache
 	
 	private void findVariables(BlockNode current, ModuleNode module, ClassNode clazz, IScope local)
 	{
-		for (Node node : current.getChilds())
+		for (Node node : current.getChildren())
 		{
 			if (node instanceof ClassNode)
 				findVariables((ClassNode) node, module, (ClassNode) node, (IScope) node);
@@ -41,7 +41,7 @@ public class VariablesCache
 			else if (node instanceof DefNode)
 			{
 				DefNode defNode = (DefNode) node;
-				for (Node arg : defNode.getArgument().getChilds())
+				for (Node arg : defNode.getArgument().getChildren())
 				{
 					addVariable(defNode, arg);
 				}

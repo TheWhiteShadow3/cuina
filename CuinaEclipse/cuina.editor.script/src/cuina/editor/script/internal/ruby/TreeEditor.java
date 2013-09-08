@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class TreeEditor
 {
 	private RootNode root;
-//	private Node[] selectionPath;
+	private Object data;
 	private BlockNode selectedBlock;
 	private int selectedIndex;
 	private final ArrayList<TreeEditorListener> listeners = new ArrayList<TreeEditorListener>(4);
@@ -47,6 +47,16 @@ public class TreeEditor
 		this.root = root;
 		fireTreeNodeChanged(new ScriptPosition(root), root);
 //		setPosition(root, -1);
+	}
+
+	public Object getData()
+	{
+		return data;
+	}
+
+	public void setData(Object data)
+	{
+		this.data = data;
 	}
 
 	public void addTreeEditorListener(TreeEditorListener l)

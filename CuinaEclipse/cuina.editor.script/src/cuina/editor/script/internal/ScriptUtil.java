@@ -25,7 +25,7 @@ public class ScriptUtil
 
 	public static ClassNode getScriptClass(RootNode root)
 	{
-		List<Node> nodes = root.getChilds();
+		List<Node> nodes = root.getChildren();
 		
 		Node node = nodes.get(0);
 		if (node instanceof ClassNode)
@@ -141,7 +141,7 @@ public class ScriptUtil
 	public static List<DefNode> getClassMethods(ClassNode classNode)
 	{
 		ArrayList<DefNode> list = new ArrayList<DefNode>();
-		for (Node node : classNode.getChilds())
+		for (Node node : classNode.getChildren())
 		{
 			if (node instanceof DefNode) list.add((DefNode) node);
 		}
@@ -154,7 +154,7 @@ public class ScriptUtil
 		if (!jMethod.getName().equals(rMethod.getName())) return false;
 		
 		Class[] jArgs = jMethod.getParameterTypes();
-		List<Node> rArgs = rMethod.getArgument().getChilds();
+		List<Node> rArgs = rMethod.getArgument().getChildren();
 		if (jArgs.length != rArgs.size()) return false;
 		
 		// Typen können nicht vergleicht werden und die Namen sind egal.
@@ -301,7 +301,7 @@ public class ScriptUtil
 //			if (node.getNextNode() != null)
 //				result.sectionID = ((ConstNode) node.getNextNode()).getName();
 			
-			List<Node> args = node.getArgument().getChilds();
+			List<Node> args = node.getArgument().getChildren();
 			for (int i = 0; i < args.size(); i++)
 			{
 				ValueDefinition param = new ValueDefinition();

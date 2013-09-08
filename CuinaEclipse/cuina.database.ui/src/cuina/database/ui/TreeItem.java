@@ -3,6 +3,10 @@ package cuina.database.ui;
 import cuina.database.NamedItem;
 import cuina.database.ui.tree.TreeRoot;
 
+/**
+ * <i>Benutze das Extension-Point Attribut TreeContentProvider Der Datenbank-Typ Definition
+ * um die Baumstruktur von Daten-Elementen anzugeben.</i>
+ */
 @Deprecated
 public interface TreeItem extends NamedItem
 {

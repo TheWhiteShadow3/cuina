@@ -28,7 +28,7 @@ public class ArgNode extends AbstractNode implements INamed
     }
 	
 	@Override
-	public List<Node> getChilds()
+	public List<Node> getChildren()
 	{
 		return AbstractNode.EMPTY_LIST;
 	}

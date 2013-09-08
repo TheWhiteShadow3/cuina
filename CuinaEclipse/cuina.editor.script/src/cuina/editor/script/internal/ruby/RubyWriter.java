@@ -48,7 +48,7 @@ public class RubyWriter
 		else if (node instanceof AliasNode) 	writeAlias((AliasNode) node);
 		else if (node instanceof RootNode)
 		{
-			for (Node child : node.getChilds())
+			for (Node child : node.getChildren())
 			{
 				write0(child);
 				builder.append('\n');
@@ -56,7 +56,7 @@ public class RubyWriter
 		}
 		else if (node instanceof ArrayNode)
 		{
-			for (int i = 0; i < node.getChilds().size(); i++)
+			for (int i = 0; i < node.getChildren().size(); i++)
 			{
 				if (i > 0) builder.append(", ");
 				write0(((ArrayNode) node).getChild(i));
@@ -147,7 +147,7 @@ public class RubyWriter
 		builder.append("when ");
 		write0(whenNode.getArgument());
 		builder.append(": ");
-		if (whenNode.getChilds().size() == 1)
+		if (whenNode.getChildren().size() == 1)
 		{
 			write0(whenNode.getChild(0));
 		}
@@ -283,7 +283,7 @@ public class RubyWriter
 	{
 		char c = expNode.getStartLiteral();
 		if (c != ' ') builder.append(c);
-		for (int i = 0; i < expNode.getChilds().size(); i++)
+		for (int i = 0; i < expNode.getChildren().size(); i++)
 		{
 			if (i > 0) builder.append(' ').append(expNode.getOperator(i-1)).append(' ');
 			write0(expNode.getChild(i));

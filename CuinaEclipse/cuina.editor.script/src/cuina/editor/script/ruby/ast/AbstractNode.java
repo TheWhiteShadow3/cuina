@@ -52,7 +52,7 @@ public abstract class AbstractNode implements Node
 
         builder.append(" ").append(getPosition().getToken());
 
-        for (Node child : getChilds())
+        for (Node child : getChildren())
         {
             builder.append(", ").append(child);
         }
@@ -88,7 +88,7 @@ public abstract class AbstractNode implements Node
     }
 	
 	@Override
-	public abstract List<Node> getChilds();
+	public abstract List<Node> getChildren();
 	
 	@Override
 	public abstract NodeType getNodeType();

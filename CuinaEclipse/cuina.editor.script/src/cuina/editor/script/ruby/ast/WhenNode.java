@@ -36,7 +36,7 @@ public class WhenNode extends BlockNode implements IParameter
         StringBuilder builder = new StringBuilder(128);
         builder.append("when ").append(argument).append(":");
 
-        for (Node child : super.getChilds())
+        for (Node child : super.getChildren())
         {
             builder.append("\n\t").append(child);
         }

@@ -1,4 +1,4 @@
-package cuina.editor.core;
+package cuina.editor.core.util;
  
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

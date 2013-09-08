@@ -17,7 +17,7 @@ public class NodeArrayPropertySource implements IPropertySource
 	
 	public NodeArrayPropertySource(TreeEditor editor, ListNode listNode)
 	{
-		this(editor, listNode.getChilds());
+		this(editor, listNode.getChildren());
 	}
 	
 	public NodeArrayPropertySource(TreeEditor editor, List<Node> list)

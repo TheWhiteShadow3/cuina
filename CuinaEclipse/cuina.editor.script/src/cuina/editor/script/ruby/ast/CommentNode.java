@@ -37,7 +37,7 @@ public class CommentNode extends AbstractNode
 	}
 
 	@Override
-	public List<Node> getChilds()
+	public List<Node> getChildren()
 	{
 		return AbstractNode.EMPTY_LIST;
 	}

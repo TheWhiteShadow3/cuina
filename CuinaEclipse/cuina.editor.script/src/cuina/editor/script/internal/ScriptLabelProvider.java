@@ -114,7 +114,7 @@ public class ScriptLabelProvider extends NodeLabelProvider implements IColorProv
 		FunctionDefinition func = ScriptUtil.findLibraryFunction(library, callNode);
 		if (func == null || func.text == null) return super.getFunction(callNode);
 		
-		return createFunctionLabel(func, callNode.getArgument().getChilds());
+		return createFunctionLabel(func, callNode.getArgument().getChildren());
 	}
 	
 	private String createFunctionLabel(FunctionDefinition function, List<Node> arguments)

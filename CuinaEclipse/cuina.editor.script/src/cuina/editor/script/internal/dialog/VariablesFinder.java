@@ -71,7 +71,7 @@ public class VariablesFinder
 	
 	private static void testDefNode(HashMap<String, Variable> vars, DefNode defNode)
 	{
-		for (Node arg : defNode.getArgument().getChilds())
+		for (Node arg : defNode.getArgument().getChildren())
 		{
 			String name = ((ArgNode) arg).getName();
 			if (vars.get(name) == null);

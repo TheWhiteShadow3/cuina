@@ -3,7 +3,7 @@ package cuina.editor.gui.internal;
 import cuina.database.ui.DataEditorPage;
 import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.core.CuinaProject;
-import cuina.editor.core.Ini;
+import cuina.editor.core.util.Ini;
 import cuina.editor.ui.selection.HighlightingSelectionMode;
 import cuina.editor.ui.selection.SelectionEvent;
 import cuina.editor.ui.selection.SelectionListener;

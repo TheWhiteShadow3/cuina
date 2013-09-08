@@ -24,7 +24,7 @@ public class BlockNode extends ListNode
         StringBuilder builder = new StringBuilder(256);
         builder.append("[");
 
-        for (Node child : super.getChilds())
+        for (Node child : super.getChildren())
         {
             builder.append("\n\t").append(child);
         }

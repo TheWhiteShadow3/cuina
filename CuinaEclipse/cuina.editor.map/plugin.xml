@@ -55,7 +55,7 @@
     </category>
     <wizard
           category="cuina.editor"
-          class="cuina.editor.map.MapWizard"
+          class="cuina.editor.map.internal.MapWizard"
           icon="icons/map.png"
           id="cuina.editor.map.new.map"
           name="Cuina Map">

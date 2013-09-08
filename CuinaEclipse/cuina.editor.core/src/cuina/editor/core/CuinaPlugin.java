@@ -1,12 +1,14 @@
 package cuina.editor.core;
 
-
 import cuina.editor.core.internal.EngineClassLoader;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,23 +38,27 @@ import org.osgi.framework.BundleContext;
 public class CuinaPlugin extends AbstractUIPlugin
 {
 	// The plug-in ID
-	public static final String PLUGIN_ID = "cuina.editor.core";		//$NON-NLS-1$
-	public static final String NATURE_ID = "cuina.ProjectNature";	//$NON-NLS-1$
-	
-	public static final String IMAGE_PROJECT	 	= "project.png";
-	public static final String IMAGE_DATA_FOLDER	= "data_folder.png";
+	public static final String PLUGIN_ID 			= "cuina.editor.core"; //$NON-NLS-1$
+	public static final String NATURE_ID 			= "cuina.ProjectNature"; //$NON-NLS-1$
+
+	public static final String IMAGE_PROJECT 		= "project.png";
+	public static final String IMAGE_DATA_FOLDER 	= "data_folder.png";
 	public static final String IMAGE_CONFIG_FILE 	= "cuina16.png";
+
+	public static final String PROJECT_EXTENSION_ID 	= "cuina.core.project.extension";
 	
-	public static final String PROJECT_SERVICE_ID 	= "cuina.core.project.extension";
+	private static final String MSG_PLUGIN_CLOSED = "cuina-plugin is closed!"; //$NON-NLS-1$
 
 	// The shared instance
 	private static CuinaPlugin plugin;
 	private EngineClassLoader engineClassLoader;
 	private IPartService partService;
 	private CuinaPartListener listener;
-	private ArrayList<EditorContextChangeListener> listeners;
-	private HashMap<String, ProjectServiceFactory> projectServiceFactories;
-	private HashMap<IProject, CuinaProject> projects = new HashMap<IProject, CuinaProject>();
+	private List<EditorContextChangeListener> listeners;
+	private Map<String, ProjectServiceFactory> projectServiceFactories;
+	private final Map<IProject, CuinaProject> projects = new HashMap<IProject, CuinaProject>();
+	private final Map<String, List<ProjectParameter>> parameters = new HashMap<String, List<ProjectParameter>>();
+	private final List<IProjectHook> projectHooks = new ArrayList<IProjectHook>();
 	
 	/**
 	 * The constructor
@@ -63,46 +69,68 @@ public class CuinaPlugin extends AbstractUIPlugin
 		listeners = new ArrayList<EditorContextChangeListener>();
 		projectServiceFactories = new HashMap<String, ProjectServiceFactory>();
 	}
-	 
-    public static CuinaProject[] getCuinaProjects()
-    {
-    	IProject[] projects = getWorkspaceRoot().getProjects();
-    	CuinaProject[] cuinaProjects = new CuinaProject[projects.length];
-    	for(int i = 0; i < projects.length; i++)
-    	{
-    		cuinaProjects[i] = getCuinaProject(projects[i]);
-    	}
-        return cuinaProjects;
-    }
- 
-    private static IWorkspaceRoot getWorkspaceRoot()
-    {
-        return ResourcesPlugin.getWorkspace().getRoot();
-    }
- 
-    public static CuinaProject getCuinaProject(IProject project)
-    {
-    	CuinaProject cuinaProject = plugin.projects.get(project);
-    	if (cuinaProject == null)
-    	{
-    		cuinaProject = new CuinaProject(project);
-    		plugin.projects.put(project, cuinaProject);
-    	}
-        return cuinaProject;
-    }
-    
-    public static CuinaProject getCuinaProject(String name)
-    {
-        return getCuinaProject(getWorkspaceRoot().getProject(name));
-    }
 
-    static ProjectServiceFactory getProjectServiceFactory(Class api)
-    {
-    	return plugin.projectServiceFactories.get(api.getName());
-    }
-    
+	public static CuinaProject[] getCuinaProjects()
+	{
+		IProject[] projects = getWorkspaceRoot().getProjects();
+		CuinaProject[] cuinaProjects = new CuinaProject[projects.length];
+		for (int i = 0; i < projects.length; i++)
+		{
+			cuinaProjects[i] = getCuinaProject(projects[i]);
+		}
+		return cuinaProjects;
+	}
+
+	private static IWorkspaceRoot getWorkspaceRoot()
+	{
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+
+	public static CuinaProject getCuinaProject(IProject project)
+	{
+		CuinaProject cuinaProject = getPlugin().projects.get(project);
+		if (cuinaProject == null)
+		{
+			cuinaProject = new CuinaProject(project);
+			plugin.projects.put(project, cuinaProject);
+		}
+		return cuinaProject;
+	}
+
+	public static CuinaProject getCuinaProject(String name)
+	{
+		return getCuinaProject(getWorkspaceRoot().getProject(name));
+	}
+	
+	public static ProjectParameter getProjectParameter(String group, String name)
+	{
+		List<ProjectParameter> params = getPlugin().parameters.get(group);
+		if (params == null) return null;
+		
+		return params.get(params.indexOf(name));
+	}
+	
+	public static String[] getProjectParameterGroups()
+	{
+		return getPlugin().parameters.keySet().toArray(new String[plugin.parameters.size()]);
+	}
+	
+	public static ProjectParameter[] getProjectParameters(String group)
+	{
+		List<ProjectParameter> params = getPlugin().parameters.get(group);
+		if (params == null) return null;
+		
+		return params.toArray(new ProjectParameter[params.size()]);
+	}
+
+	static ProjectServiceFactory getProjectServiceFactory(Class api)
+	{
+		return getPlugin().projectServiceFactories.get(api.getName());
+	}
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -119,12 +147,16 @@ public class CuinaPlugin extends AbstractUIPlugin
 				partService.addPartListener(listener);
 			}
 		});
-		loadProjectServices();
+		loadProjectExtensions();
+		loadProjectParameters();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+	 * )
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception
@@ -136,11 +168,12 @@ public class CuinaPlugin extends AbstractUIPlugin
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
-	public static CuinaPlugin getPlugin() 
+	public static CuinaPlugin getPlugin()
 	{
+		if (plugin == null) throw new IllegalStateException(MSG_PLUGIN_CLOSED);
 		return plugin;
 	}
 
@@ -153,7 +186,7 @@ public class CuinaPlugin extends AbstractUIPlugin
 	{
 		listeners.remove(l);
 	}
-	
+
 	private void fireEditorContextChange(IWorkbenchPartReference partRef)
 	{
 		IWorkbenchPart part = partRef.getPart(false);
@@ -161,45 +194,95 @@ public class CuinaPlugin extends AbstractUIPlugin
 		{
 			IEditorInput editorInput = ((IEditorPart) part).getEditorInput();
 			IFile file = (IFile) editorInput.getAdapter(IFile.class);
-			for(EditorContextChangeListener l : listeners)
+			for (EditorContextChangeListener l : listeners)
 			{
 				l.editorContextChange((IEditorPart) part, file.getProject());
 			}
 		}
 	}
-	
-	private void loadProjectServices()
+
+	private void loadProjectExtensions()
 	{
-        IConfigurationElement[] elements = Platform.getExtensionRegistry().
-    			getConfigurationElementsFor(PROJECT_SERVICE_ID);
-        
-        for (IConfigurationElement conf : elements)
-        {
-			try
-			{
-				ProjectServiceFactory factory = (ProjectServiceFactory) conf.createExecutableExtension("class");
-				
-	        	IConfigurationElement[] childs = conf.getChildren("Service");
-	            for (IConfigurationElement childConf : childs)
-	            {
-	            	String apiName = childConf.getAttribute("class");
-	            	if (!projectServiceFactories.containsKey(apiName))
-	            	{
-	            		projectServiceFactories.put(apiName, factory);
-	            	}
-	            }
-			}
-			catch (CoreException e)
-			{
-				e.printStackTrace();
-			}
-        }
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().
+				getConfigurationElementsFor(PROJECT_EXTENSION_ID);
+
+		for (IConfigurationElement conf : elements)
+		{
+			if ( "serviceFactory".equals(conf.getName()) ) loadProjectService(conf);
+			
+			else if ( "hook".equals(conf.getName()) ) loadProjectHooks(conf);
+		}
 	}
 	
+	private void loadProjectService(IConfigurationElement conf)
+	{
+		try
+		{
+			ProjectServiceFactory factory = (ProjectServiceFactory) conf.createExecutableExtension("class");
+
+			IConfigurationElement[] childs = conf.getChildren("Service");
+			for (IConfigurationElement childConf : childs)
+			{
+				String apiName = childConf.getAttribute("class");
+				if (!projectServiceFactories.containsKey(apiName))
+				{
+					projectServiceFactories.put(apiName, factory);
+				}
+			}
+		}
+		catch (CoreException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadProjectHooks(IConfigurationElement conf)
+	{
+		try
+		{
+			IProjectHook hook = (IProjectHook) conf.createExecutableExtension("class");
+			projectHooks.add(hook);
+		}
+		catch (CoreException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadProjectParameters()
+	{
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().
+				getConfigurationElementsFor(ProjectParameter.PROJECT_PARAMETER_ID);
+		
+		for (IConfigurationElement conf : elements)
+		{
+			ProjectParameter param = new ProjectParameter(conf);
+			
+			List<ProjectParameter> list = parameters.get(param.getGroup());
+			if (list != null)
+			{
+				if (list.contains(param)) throw new IllegalArgumentException("Parameter already exists.");
+				
+				list.add(param);
+			}
+			else
+			{
+				list = new ArrayList<ProjectParameter>(8);
+				list.add(param);
+				parameters.put(param.getGroup(), list);
+			}
+		}
+		
+		// Sortiere die Parameter
+		for (List<ProjectParameter> list : parameters.values())
+		{
+			Collections.sort(list);
+		}
+	}
+
 	public static ClassLoader getCuinaClassLoader()
 	{
-		if (plugin == null) throw new IllegalStateException("plugin is not started");
-		if (plugin.engineClassLoader == null) try
+		if (getPlugin().engineClassLoader == null) try
 		{
 			plugin.engineClassLoader = new EngineClassLoader();
 		}
@@ -209,11 +292,11 @@ public class CuinaPlugin extends AbstractUIPlugin
 		}
 		return plugin.engineClassLoader;
 	}
-	
+
 	private class CuinaPartListener implements IPartListener2
 	{
 		private boolean debugOut = false;
-		
+
 		@Override
 		public void partActivated(IWorkbenchPartReference partRef)
 		{
@@ -263,31 +346,18 @@ public class CuinaPlugin extends AbstractUIPlugin
 			if (debugOut) System.out.println("partInputChanged: " + partRef.getPartName());
 		}
 	}
-	
+
 	public static Image getImage(String imageName)
 	{
 		return getImageDescriptor(imageName).createImage();
 	}
-	
+
 	public static ImageDescriptor getImageDescriptor(String imageName)
 	{
 		Bundle bundle = Platform.getBundle(PLUGIN_ID);
 		if (!BundleUtility.isReady(bundle)) { return null; }
 
-		// look for the image (this will check both the plugin and fragment
-		// folders
 		URL fullPathString = BundleUtility.find(bundle, "icons/" + imageName);
-//		if (fullPathString == null)
-//		{
-//			try
-//			{
-//				fullPathString = new URL(imageName);
-//			}
-//			catch (MalformedURLException e)
-//			{
-//				return null;
-//			}
-//		}
 
 		return ImageDescriptor.createFromURL(fullPathString);
 	}

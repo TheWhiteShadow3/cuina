@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="cuina.core.project.extension" name="cuina.core.project.extension" schema="schema/cuina.core.project.extension.exsd"/>
+   <extension-point id="cuina.editor.project.parameter" name="cuina.editor.project.parameter" schema="schema/cuina.editor.project.parameter.exsd"/>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
@@ -82,6 +83,10 @@
      <runtime>
         <run
               class="cuina.editor.core.internal.CuinaNature">
+           <parameter
+                 name="engine-path"
+                 value="${CUINA-HOME}">
+           </parameter>
         </run>
      </runtime>
   </extension>
@@ -113,5 +118,35 @@
            properties="adapt"
            type="java.lang.Object">
      </propertyTester>
+  </extension>
+  <extension
+        point="cuina.editor.project.parameter">
+     <parameter
+           name="Screen-Width"
+           description="Breite des Fensters"
+           group="Game"
+           defaultValue="640">
+     </parameter>
+     <parameter
+           after="Screen-Width"
+           defaultValue="480"
+           description="Höhe des Fensters"
+           group="Game"
+           name="Screen-Height">
+     </parameter>
+     <parameter
+           after="Screen-Height"
+           defaultValue="main"
+           description="Haupt Skript der Engine."
+           group="Game"
+           name="Main-Script">
+     </parameter>
+     <parameter
+           after="Main-Script"
+           defaultValue="Title"
+           description="Start Szene der Engine."
+           group="Game"
+           name="Start-Scene">
+     </parameter>
   </extension>
 </plugin>

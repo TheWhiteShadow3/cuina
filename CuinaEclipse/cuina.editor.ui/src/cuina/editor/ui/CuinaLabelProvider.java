@@ -23,7 +23,9 @@ public class CuinaLabelProvider extends LabelProvider
 				return CuinaPlugin.getImage(CuinaPlugin.IMAGE_DATA_FOLDER);
 		}
 		else if (element instanceof IFile && ((IFile) element).getFileExtension().equals("cfg"))
+		{
 			return CuinaPlugin.getImage(CuinaPlugin.IMAGE_CONFIG_FILE);
+		}
 		
 		return null;
 	}

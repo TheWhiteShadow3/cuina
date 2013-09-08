@@ -15,6 +15,5 @@ Bundle-ClassPath: lib/kxml2-2.3.0.jar,
  .
 Export-Package: com.thoughtworks.xstream.converters;uses:="com.thoughtworks.xstream.io,com.thoughtworks.xstream",
  com.thoughtworks.xstream.io,
- cuina.resource;uses:="org.eclipse.core.resources,org.eclipse.swt.graphics,com.thoughtworks.xstream",
- cuina.util
+ cuina.resource;uses:="org.eclipse.core.resources,org.eclipse.swt.graphics,com.thoughtworks.xstream"
 Eclipse-BuddyPolicy: global

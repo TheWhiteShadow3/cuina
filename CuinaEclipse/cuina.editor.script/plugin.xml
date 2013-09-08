@@ -68,6 +68,9 @@
             editor="cuina.editor.script.internal.ScriptEditor"
             image="icons/script.png"
             name="Script">
+         <TreeContentProvider
+               class="cuina.editor.script.internal.ScriptTreeContentProvider">
+         </TreeContentProvider>
       </database>
    </extension>
    <extension
@@ -92,6 +95,9 @@
                class="cuina.editor.script.library.StaticScriptLibrary">
          </Service>
       </serviceFactory>
+      <hook
+            class="cuina.editor.script.internal.ProjectScriptHook">
+      </hook>
    </extension>
    <extension
          point="cuina.script.interfaces">
@@ -100,6 +106,15 @@
             module="Cuina"
             name="MainScript">
       </class>
+   </extension>
+   <extension
+         point="cuina.editor.project.parameter">
+      <parameter
+            defaultValue="require &apos;./lib/cuina.rb&apos;"
+            description="Initialisierungs Skript für dir JRuby Bibliotheken."
+            group="Script"
+            name="Init-Script">
+      </parameter>
    </extension>
 
 </plugin>

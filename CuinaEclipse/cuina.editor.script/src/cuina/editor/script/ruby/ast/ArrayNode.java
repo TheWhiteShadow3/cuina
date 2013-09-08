@@ -19,7 +19,7 @@ public class ArrayNode extends ListNode
         StringBuilder builder = new StringBuilder(256);
         builder.append("[");
 
-        for (Node child : getChilds())
+        for (Node child : getChildren())
         {
             builder.append(child).append(", ");
         }

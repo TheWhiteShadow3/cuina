@@ -51,7 +51,7 @@ public class NodeLabelProvider extends LabelProvider
 		Node arg = asgNode.getArgument();
 		if (arg instanceof ArrayNode)
 		{
-			List<Node> args = arg.getChilds();
+			List<Node> args = arg.getChildren();
 			if (args.size() > 0)
 			{
 				if (args.size() > 1) builder.append('[');
@@ -168,7 +168,7 @@ public class NodeLabelProvider extends LabelProvider
 	{
 		if (argNode instanceof ArrayNode)
 		{
-			List<Node> args = argNode.getChilds();
+			List<Node> args = argNode.getChildren();
 //			if (args.size() == 0) return;
 			
 			builder.append('(');

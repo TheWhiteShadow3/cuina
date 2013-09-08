@@ -145,7 +145,7 @@ public class ArgumentList implements Listener
 		if (node instanceof IParameter)
 		{
 			arguments.set(index, newNode);
-			java.util.List<Node> args = ((IParameter) node).getArgument().getChilds();
+			java.util.List<Node> args = ((IParameter) node).getArgument().getChildren();
 			args.set(index, newNode);
 		}
 	}

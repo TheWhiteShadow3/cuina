@@ -575,7 +575,7 @@ public class RubyParser
 			getIdentifierNode(nextToken(2));
 			Node node = current;
 			if (node instanceof ExpNode)
-				((IHasNext) node.getChilds().get(0)).setNextNode(paramNode);
+				((IHasNext) node.getChildren().get(0)).setNextNode(paramNode);
 			else
 			{
 				while ( ((IHasNext) node).getNextNode() != null) node = ((IHasNext) node).getNextNode();
@@ -784,7 +784,7 @@ public class RubyParser
 			DefNode defNode = new DefNode(newSD(token));
 			defNode.setNextNode(current);
 			arrayFillElements(defNode);
-			for (Node node : defNode.getArgument().getChilds())
+			for (Node node : defNode.getArgument().getChildren())
 			{
 				defNode.getLocalVars().put(((INamed)node).getName(), node);
 			}

@@ -79,7 +79,7 @@ public class ExpressionScriptTab implements CommandTab, ModifyListener
 		try
 		{
 			RootNode root = parser.parse(source);
-			if (root.getChilds().size() == 0) root.add(new EmptyNode());
+			if (root.getChildren().size() == 0) root.add(new EmptyNode());
 			if (root.getChild(0) != null)
 			{
 				this.node = root.getChild(0);

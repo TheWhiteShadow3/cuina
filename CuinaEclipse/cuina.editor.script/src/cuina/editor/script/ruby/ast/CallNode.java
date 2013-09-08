@@ -97,7 +97,7 @@ public class CallNode extends AbstractNode implements INamed, IContainerNode, IH
 	}
 
 	@Override
-	public List<Node> getChilds()
+	public List<Node> getChildren()
 	{
 		return AbstractNode.createList(next, arguments, body);
 	}

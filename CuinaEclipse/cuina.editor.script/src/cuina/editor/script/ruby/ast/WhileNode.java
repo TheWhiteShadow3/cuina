@@ -21,7 +21,7 @@ public class WhileNode extends BlockNode implements IParameter
 	
 	public List<Node> getBlock()
 	{
-		return super.getChilds();
+		return super.getChildren();
 	}
 	
 	@Override
@@ -43,7 +43,7 @@ public class WhileNode extends BlockNode implements IParameter
         StringBuilder builder = new StringBuilder(128);
         builder.append("while ").append(argument);
 
-        for (Node child : super.getChilds())
+        for (Node child : super.getChildren())
         {
             builder.append("\n\t").append(child);
         }

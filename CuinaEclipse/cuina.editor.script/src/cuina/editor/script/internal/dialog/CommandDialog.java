@@ -302,7 +302,7 @@ public final class CommandDialog extends TitleAreaDialog implements ScriptDialog
 		
 		if (node instanceof ListNode)
 		{
-			for (Node n : node.getChilds())
+			for (Node n : node.getChildren())
 			{
 				String str = validate(n);
 				if (str != null) return str;

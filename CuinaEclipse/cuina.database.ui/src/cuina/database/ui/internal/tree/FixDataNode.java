@@ -1,8 +1,7 @@
 package cuina.database.ui.internal.tree;
 
 
-
-class FixDataNode extends AbstractDataNode
+public class FixDataNode extends AbstractDataNode
 {
 	transient private Object data; 
 	

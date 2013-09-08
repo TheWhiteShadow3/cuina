@@ -652,7 +652,7 @@ public class ScriptEditor implements DataEditorPage<Script>, ScriptDialogContext
 			if (dialog.open() == Dialog.OK)
 			{
 				classNode.add(defNode);
-				addPage(converter.addPage(treeEditor, classNode, defNode));
+				addPage(converter.addPage(classNode, defNode));
 				fireScriptChanged();
 			}
 		}
@@ -871,7 +871,7 @@ public class ScriptEditor implements DataEditorPage<Script>, ScriptDialogContext
 			tableColumnLayout.setColumnData(column.getColumn(), new ColumnWeightData(100, 240, true)); 
 			
 //			viewer.setLabelProvider(new ScriptLabelProvider(editor.getScriptLibrary()));
-			viewer.setContentProvider(new ScriptContentProvider(editor.getNodeConverter()));
+			viewer.setContentProvider(new ScriptContentProvider());
 			viewer.addSelectionChangedListener(editor.handler);
 			viewer.addDoubleClickListener(editor.handler);
 			viewer.getControl().addListener(SWT.KeyDown, editor.handler);

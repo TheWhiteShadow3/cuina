@@ -1,4 +1,4 @@
-package cuina.editor.map;
+package cuina.editor.map.internal;
 
 import cuina.database.Database;
 import cuina.database.ui.DatabaseComboViewer;
@@ -53,12 +53,6 @@ public class MapWizard extends Wizard implements INewWizard
 	private Text inFolder;
 
 	@Override
-	public void addPages()
-	{
-		addPage(creationPage);
-	}
-
-	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection)
 	{
 		this.workbench = workbench;
@@ -70,18 +64,30 @@ public class MapWizard extends Wizard implements INewWizard
 		}
 		creationPage = new MapCreationPage(selectedFolder);
 	}
-
+	
+	@Override
+	public void addPages()
+	{
+		addPage(creationPage);
+	}
+	
 	@Override
 	public boolean performFinish()
 	{
-		creationPage.createMap();
+		try
+		{
+			creationPage.createMap();
+		}
+		catch (ResourceException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
 		return creationPage.isPageComplete();
 	}
 
 	private class MapCreationPage extends WizardPage implements SelectionListener
 	{
-		private Composite container;
-
 		private String key = "newMap";
 		private String name = key;
 		private int width = 20;
@@ -92,22 +98,20 @@ public class MapWizard extends Wizard implements INewWizard
 
 		protected MapCreationPage(IFolder selectedFolder)
 		{
-			super("New Map");
+			super("Neue Karte");
 			this.folder = selectedFolder;
-			setTitle("New Map");
-			setDescription("Create a new Map.");
+			setTitle("Neue Karte");
+			setDescription("Erstellt eine neue Karte.");
 		}
 
 		@Override
 		public void createControl(Composite parent)
 		{
-			container = new Composite(parent, SWT.NULL);
-			GridLayout layout = new GridLayout();
-			container.setLayout(layout);
-			layout.numColumns = 3;
+			Composite container = new Composite(parent, SWT.NULL);
+			container.setLayout(new GridLayout(3, false));
 
 			Label txtFolder = new Label(container, SWT.NULL);
-			txtFolder.setText("Directory");
+			txtFolder.setText("Verzeichnis");
 
 			if(folder != null)
 				db = CuinaPlugin.getCuinaProject(folder.getProject()).getService(Database.class);
@@ -169,7 +173,7 @@ public class MapWizard extends Wizard implements INewWizard
 			}
 			
 			Label widthLabel = new Label(container, SWT.NULL);
-			widthLabel.setText("Width");
+			widthLabel.setText("Breite");
 
 			final Spinner widthSpinner = new Spinner(container, SWT.BORDER);
 			widthSpinner.setMinimum(15);
@@ -187,7 +191,7 @@ public class MapWizard extends Wizard implements INewWizard
 			});
 
 			Label heightLabel = new Label(container, SWT.NULL);
-			heightLabel.setText("Height");
+			heightLabel.setText("Höhe");
 
 			final Spinner heightSpinner = new Spinner(container, SWT.BORDER);
 			heightSpinner.setMinimum(20);
@@ -207,29 +211,24 @@ public class MapWizard extends Wizard implements INewWizard
 			setControl(container);
 		}
 
-		public void createMap()
+		public void createMap() throws ResourceException
 		{
 			if(db == null) return;
 
 			Map newMap = new Map(key, width, height);
 			newMap.tilesetKey = combo.getSelectedElement().getTilesetName();
 
+			IPath path = new Path(folder + key + "." + DEFAULT_EXTENSION);
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			SerializationManager.save(newMap, file);
+			db.loadTable("MapInfo").put(new MapInfo(key, name));
+
 			try
 			{
-				IPath path = new Path(folder + key + "." + DEFAULT_EXTENSION);
-				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-				SerializationManager.save(newMap, file);
-				db.loadTable("MapInfo").put(new MapInfo(key, name));
-
-				try
-				{
-					IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-					IDE.openEditor(page, file, true);
-				} catch(PartInitException e)
-				{
-					e.printStackTrace();
-				}
-			} catch(ResourceException e)
+				IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
+				IDE.openEditor(page, file, true);
+			}
+			catch(PartInitException e)
 			{
 				e.printStackTrace();
 			}
@@ -240,7 +239,7 @@ public class MapWizard extends Wizard implements INewWizard
 		public void widgetSelected(SelectionEvent e)
 		{
 			ContainerSelectionDialog chooser = new ContainerSelectionDialog(
-					getShell(), folder, false, "Choose Directory");
+					getShell(), folder, false, "Wähle ein Verzeichnis");
 			chooser.showClosedProjects(false);
 
 			if(chooser.open() == ContainerSelectionDialog.OK)

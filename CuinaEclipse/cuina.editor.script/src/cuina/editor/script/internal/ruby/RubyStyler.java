@@ -1,11 +1,6 @@
 package cuina.editor.script.internal.ruby;
 
-import java.awt.Color;
-
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
+import cuina.editor.core.util.Ini;
 import cuina.editor.script.ruby.ast.CallNode;
 import cuina.editor.script.ruby.ast.ClassNode;
 import cuina.editor.script.ruby.ast.CommentNode;
@@ -17,7 +12,12 @@ import cuina.editor.script.ruby.ast.Node;
 import cuina.editor.script.ruby.ast.RootNode;
 import cuina.editor.script.ruby.ast.StrNode;
 import cuina.editor.script.ruby.ast.VarNode;
-import cuina.util.Ini;
+
+import java.awt.Color;
+
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 /**
  * Highlightet Textabschnitte eines übergebenen {@link StyledDocument} anhand eines zuvor eingelesenen Ruby-Codes.
@@ -82,7 +82,7 @@ public class RubyStyler
 	
 	private void iterateChilds(Node root)
 	{
-		for(Node child : root.getChilds())
+		for(Node child : root.getChildren())
 		{
 			if (child instanceof VarNode)
 			{

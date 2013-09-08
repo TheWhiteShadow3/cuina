@@ -53,7 +53,7 @@ public class ConstNode extends AbstractNode implements INamed, IHasNext
 	}
 	
 	@Override
-	public List<Node> getChilds()
+	public List<Node> getChildren()
 	{
 		return AbstractNode.createList(next);
 	}

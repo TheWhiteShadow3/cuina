@@ -3,10 +3,10 @@
 <schema targetNamespace="cuina.editor.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="cuina.editor.core" id="cuina.core.project.extension" name="cuina.core.project.extension"/>
+         <meta.schema plugin="cuina.editor.core" id="cuina.core.project.parameter" name="cuina.core.project.parameter"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         Ein Parameter für ein Cuina Projekt.
       </documentation>
    </annotation>
 
@@ -17,9 +17,8 @@
          </appinfo>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="serviceFactory" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="hook" minOccurs="0" maxOccurs="unbounded"/>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="parameter"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -48,53 +47,46 @@
       </complexType>
    </element>
 
-   <element name="serviceFactory">
+   <element name="parameter">
       <complexType>
-         <choice>
-            <element ref="Service" minOccurs="1" maxOccurs="unbounded"/>
-         </choice>
-         <attribute name="class" type="string" use="required">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Eine Klasse die ProjectServiceFactory implementiert.
+                  Name des Parameters.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Eine kurze Beschreibung des Parameters.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":cuina.editor.core.ProjectServiceFactory"/>
+                  <meta.attribute translatable="true"/>
                </appinfo>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="Service">
-      <complexType>
-         <attribute name="class" type="string" use="required">
+         <attribute name="defaultValue" type="string" use="required">
             <annotation>
                <documentation>
-                  Interface des Services.
+                  Default Wert des Parameters.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="java"/>
-               </appinfo>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="hook">
-      <annotation>
-         <documentation>
-            Ein Hook bietet die Möglichkeit beim Anlegen oder Löschen eines Projekts eigene Funktionen auszuführen.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="class" type="string" use="required">
+         <attribute name="group" type="string">
             <annotation>
                <documentation>
-                  Eine Klasse, die cuina.editor.core.IProjectHook implementiert.
+                  Gruppe, unter die der Parameter stehen soll.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="after" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":cuina.editor.core.IProjectHook"/>
+                  <meta.attribute kind="identifier" basedOn="cuina.editor.project.parameter/parameter/@name"/>
                </appinfo>
             </annotation>
          </attribute>

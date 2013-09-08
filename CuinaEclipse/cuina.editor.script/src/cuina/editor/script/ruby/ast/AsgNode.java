@@ -16,7 +16,7 @@ public class AsgNode extends AbstractNode implements IParameter
 	}
 
 	@Override
-	public List<Node> getChilds()
+	public List<Node> getChildren()
 	{
 		return AbstractNode.createList(acceptor, argument);
 	}

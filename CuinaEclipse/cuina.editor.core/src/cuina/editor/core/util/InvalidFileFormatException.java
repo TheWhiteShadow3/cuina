@@ -1,4 +1,4 @@
-package cuina.editor.core;
+package cuina.editor.core.util;
  
 public class InvalidFileFormatException extends Exception
 {

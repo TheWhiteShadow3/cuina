@@ -26,7 +26,7 @@ public class ScriptPosition
 		if (parent == null)
 			this.index = -1;
 		else
-			this.index = parent.getChilds().indexOf(node);
+			this.index = parent.getChildren().indexOf(node);
 	}
 	
 	public ListNode getParent()
@@ -46,7 +46,7 @@ public class ScriptPosition
 	 */
 	public Node getNode()
 	{
-		if (index < 0 || index >= parent.getChilds().size()) return null;
+		if (index < 0 || index >= parent.getChildren().size()) return null;
 		return parent.getChild(index);
 	}
 

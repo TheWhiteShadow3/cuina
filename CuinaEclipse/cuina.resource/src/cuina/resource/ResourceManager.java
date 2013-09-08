@@ -359,12 +359,21 @@ public class ResourceManager
             return path;
         }
  
-        public boolean isCreate()
+        /**
+         * Gibt an, ob das Verzeichnis beim Anlegen eines Projekts erstellt werden soll.
+         * @return <code>true</code>, wenn das Verzeichnis angelegt werden soll, andernfalls <code>false</code>.
+         */
+        public boolean forCreate()
         {
             return create;
         }
  
-        public boolean isKeepRef()
+        /**
+         * Gibt an, ob eine Referenz des Verzeichnises in der Ini geschrieben werden soll.
+         * @return <code>true</code>, wenn das Verzeichnis in der Ini geschrieben werden soll,
+         * andernfalls <code>false</code>.
+         */
+        public boolean keepRef()
         {
             return keepRef;
         }

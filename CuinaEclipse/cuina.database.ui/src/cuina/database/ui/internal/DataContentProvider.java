@@ -2,6 +2,7 @@ package cuina.database.ui.internal;
 
 import cuina.database.DataTable;
 import cuina.database.Database;
+import cuina.database.DatabaseObject;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
 import cuina.editor.core.CuinaPlugin;
@@ -14,11 +15,9 @@ import org.eclipse.jface.viewers.Viewer;
 
 public class DataContentProvider implements ITreeContentProvider
 {
-	
-	
 	private static final Object[] EMPTY = new Object[0];
 	
-//	private Node rootNode;
+	private Viewer viewer;
 	private TreeRoot root;
 	private DataTable table;
 
@@ -36,15 +35,14 @@ public class DataContentProvider implements ITreeContentProvider
 	public void dispose()
 	{
 		this.table = null;
-//		this.rootNode = null;
 	}
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
 		if (oldInput == newInput) return;
-		this.table = null;
-//		this.rootNode = null;
+		this.root = null;
+		this.viewer = viewer;
 	}
 	
 	private TreeRoot init(IFile file)
@@ -53,6 +51,8 @@ public class DataContentProvider implements ITreeContentProvider
 
 		try
 		{
+			DataTable<?> oldTable = table;
+			
 			Database db = getDatabase(file);
 			this.table = db.loadTable(file);
 			
@@ -67,6 +67,8 @@ public class DataContentProvider implements ITreeContentProvider
 				root = new TreeRoot(table);
 				root.saveTree();
 			}
+			ITreeContentProvider tcp = root.getContentProvider();
+			if (tcp != null) tcp.inputChanged(viewer, oldTable, table);
 		}
 		catch (ResourceException e)
 		{
