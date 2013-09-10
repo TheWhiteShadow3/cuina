@@ -1,6 +1,5 @@
 package cuina.editor.debug;
 
-import cuina.editor.core.internal.CuinaEngine;
 
 
 public class CuinaLaunch
@@ -12,13 +11,9 @@ public class CuinaLaunch
     public static final String ENGINE_PATH      = "cuina.engine.path";
     public static final String ENGINE_SOURCE    = "cuina.engine.src";
     public static final String PLUGIN_PATH      = "cuina.plugin.path";
-    public static final String PLUGIN_ENTRIES   = "cuina.plugin.entries";
+    public static final String PLUGIN_LIST  	= "cuina.plugin.entries";
     public static final String PLUGIN_MAGIC     = "cuina.plugin.magicNumber";
-    
-    public static String getEnginePath()
-    {
-    	return CuinaEngine.getEnginePath();
-    }
+	
     
     public static String getDefaultVMArgs()
     {

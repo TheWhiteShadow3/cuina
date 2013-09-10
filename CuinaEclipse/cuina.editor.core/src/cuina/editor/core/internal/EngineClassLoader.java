@@ -1,5 +1,8 @@
 package cuina.editor.core.internal;
 
+
+import cuina.editor.core.EngineReference;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
@@ -9,11 +12,14 @@ import java.net.URLClassLoader;
 
 public class EngineClassLoader extends URLClassLoader
 {
-	public EngineClassLoader() throws FileNotFoundException
+	private EngineReference engineReference;
+	
+	public EngineClassLoader(EngineReference engineReference) throws FileNotFoundException
 	{
 		super(new URL[0]);
+		this.engineReference = engineReference;
 		
-		String path = CuinaEngine.getEnginePath();
+		String path = Util.resolveEnviromentVariables(engineReference.getEnginePath());
 		if (path != null)
 		{
 			File file = new File(path);
@@ -30,7 +36,7 @@ public class EngineClassLoader extends URLClassLoader
 
 	private void addPlugins()
 	{
-		String path = CuinaEngine.getPluginPath();
+		String path = Util.resolveEnviromentVariables(engineReference.getPluginPath());
 		if (path != null)
 		{
 			File rootDir = new File(path);

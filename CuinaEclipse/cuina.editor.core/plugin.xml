@@ -149,4 +149,13 @@
            name="Start-Scene">
      </parameter>
   </extension>
+  <extension
+        point="cuina.core.project.extension">
+     <serviceFactory
+           class="cuina.editor.core.internal.ClassLoaderServiceFactory">
+        <Service
+              class="java.lang.ClassLoader">
+        </Service>
+     </serviceFactory>
+  </extension>
 </plugin>

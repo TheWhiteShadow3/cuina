@@ -1,8 +1,5 @@
 package cuina.editor.core;
 
-import cuina.editor.core.internal.EngineClassLoader;
-
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +48,6 @@ public class CuinaPlugin extends AbstractUIPlugin
 
 	// The shared instance
 	private static CuinaPlugin plugin;
-	private EngineClassLoader engineClassLoader;
 	private IPartService partService;
 	private CuinaPartListener listener;
 	private List<EditorContextChangeListener> listeners;
@@ -279,20 +275,7 @@ public class CuinaPlugin extends AbstractUIPlugin
 			Collections.sort(list);
 		}
 	}
-
-	public static ClassLoader getCuinaClassLoader()
-	{
-		if (getPlugin().engineClassLoader == null) try
-		{
-			plugin.engineClassLoader = new EngineClassLoader();
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		return plugin.engineClassLoader;
-	}
-
+	
 	private class CuinaPartListener implements IPartListener2
 	{
 		private boolean debugOut = false;

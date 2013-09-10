@@ -1,5 +1,10 @@
 package cuina.editor.debug;
 
+import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.EngineReference;
+
+import java.io.FileNotFoundException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -57,12 +62,15 @@ public class CuinaLaunchShortcut implements ILaunchShortcut
 			ILaunchConfigurationType configType = manager.getLaunchConfigurationType(CuinaLaunch.CONFIGURATION_TYPE);
 			wc = configType.newInstance(null, manager.generateLaunchConfigurationName(CuinaLaunch.CONFIGURATION_NAME));
 			wc.setAttribute(CuinaLaunch.PROJECT_NAME, project.getName());
-			wc.setAttribute(CuinaLaunch.ENGINE_PATH, CuinaLaunch.getEnginePath());
-			wc.setAttribute(CuinaLaunch.PLUGIN_PATH, "plugins");
+			
+			EngineReference eRef = CuinaPlugin.getCuinaProject(project).getEngineReference();
+			
+			wc.setAttribute(CuinaLaunch.ENGINE_PATH, eRef.getEnginePath());
+			wc.setAttribute(CuinaLaunch.PLUGIN_PATH, eRef.getPluginPath());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, CuinaLaunch.getDefaultVMArgs());
 			config = wc.doSave();
 		}
-		catch (CoreException e)
+		catch (CoreException | FileNotFoundException e)
 		{
 			e.printStackTrace();
 		}

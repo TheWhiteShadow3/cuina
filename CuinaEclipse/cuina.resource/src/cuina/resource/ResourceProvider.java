@@ -22,13 +22,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Stellt einen Projekt-Service für Dateizugriffe da.
  * <p>
- * Die Klasse bildet die Verzeichnisstruktur im Projekt ab
+ * Die Klasse bildet die Verzeichnisstruktur im Projekt ab.
  * </p>
  * @author TheWhiteShadow
  */
 public class ResourceProvider
 {
-	public static final String INI_PATH = "cuina.cfg";
 	public static final String RESOURCE_PATH = "resource.path";
 	public static final String RESOURCE_SECTION = "Resource";
 
@@ -98,12 +97,17 @@ public class ResourceProvider
 		return true;
 	}
 
-	public String getResourcePath(String key)
+	/**
+	 * Gibt den Wurzelpfad für Ressourcen des angegebenen Typs zurück.
+	 * @param type Ressourcen-Typ.
+	 * @return Wurzelpfad der Ressourcen.
+	 */
+	public String getResourcePath(String type)
 	{
-		if (key == null) throw new NullPointerException();
+		if (type == null) throw new NullPointerException();
 
-		String path = project.getIni().get(RESOURCE_SECTION, key);
-		if (path == null) path = ResourceManager.getDirectories().get(key).getPath().toString();
+		String path = project.getIni().get(RESOURCE_SECTION, type);
+		if (path == null) path = ResourceManager.getDirectories().get(type).getPath().toString();
 		return path;
 	}
 

@@ -58,7 +58,7 @@ public class ProjectBlock
         inProject.addModifyListener(listener);
         
         cmdProject = new Button(parent, SWT.NONE);
-        cmdProject.setText("Browse...");
+        cmdProject.setText("Suchen...");
         cmdProject.addSelectionListener(listener);
     }
     

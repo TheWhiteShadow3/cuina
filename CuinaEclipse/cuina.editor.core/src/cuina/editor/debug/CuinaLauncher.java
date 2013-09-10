@@ -1,6 +1,7 @@
 package cuina.editor.debug;
 
 import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.internal.Util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +42,8 @@ public class CuinaLauncher extends JavaLaunchDelegate
 		try
 		{
 			if (pathName == null) throw new NullPointerException("engine-path is null.");
-	
+			
+			pathName = Util.resolveEnviromentVariables(pathName);
 			file = verifyPath(new Path(pathName));
 			if (file.isDirectory())
 			{
@@ -77,7 +79,7 @@ public class CuinaLauncher extends JavaLaunchDelegate
 		return classPath;
 	}
 
-	private File verifyPath(IPath path)
+	private File verifyPath(IPath path) throws Exception
 	{
 		if (path.isAbsolute())
 		{
@@ -88,7 +90,7 @@ public class CuinaLauncher extends JavaLaunchDelegate
 			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (res instanceof IContainer && res.exists()) return res.getLocation().toFile();
 		}
-		return null;
+		throw new IllegalArgumentException(path.toString());
 	}
 
 	@Override
@@ -96,17 +98,15 @@ public class CuinaLauncher extends JavaLaunchDelegate
 	{
 		String args = super.getVMArguments(config);
 		int pathIndex;
+		StringBuilder builder = new StringBuilder(args);
 		pathIndex = args.indexOf("-Dcuina.game.path"); //$NON-NLS-1$
 		if (pathIndex < 0)
 		{
-			StringBuffer buffer = new StringBuffer(args);
 			String projectName = config.getAttribute(CuinaLaunch.PROJECT_NAME, (String) null);
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			if (project != null)
 			{
-				buffer.append(" -Dcuina.game.path="); //$NON-NLS-1$
-				buffer.append("\"").append(project.getLocation().toString()).append("\""); //$NON-NLS-1$ $NON-NLS-2$
-				args = buffer.toString();
+				addParameter(builder, "cuina.game.path", project.getLocation().toString());
 			}
 		}
 		pathIndex = args.indexOf("-Dcuina.plugin.path"); //$NON-NLS-1$
@@ -115,14 +115,24 @@ public class CuinaLauncher extends JavaLaunchDelegate
 			String pluginPath = config.getAttribute(CuinaLaunch.PLUGIN_PATH, (String) null);
 			if (pluginPath != null)
 			{
-				StringBuffer buffer = new StringBuffer(args);
-				buffer.append(" -Dcuina.plugin.path="); //$NON-NLS-1$
-				buffer.append("\"").append(pluginPath).append("\""); //$NON-NLS-1$ $NON-NLS-2$
-				args = buffer.toString();
+				addParameter(builder, "cuina.plugin.path", pluginPath);
 			}
 		}
+		
+		String pluginList = config.getAttribute(CuinaLaunch.PLUGIN_LIST, (String) null);
+		if (pluginList != null)
+		{
+			addParameter(builder, "cuina.plugin.list", pluginList);
+		}
 
-		return args;
+		return builder.toString();
+	}
+	
+	private void addParameter(StringBuilder builder, String name, String value)
+	{
+		builder.append(" -D"); //$NON-NLS-1$
+		builder.append(name);
+		builder.append("=\"").append(value).append("\""); //$NON-NLS-1$ $NON-NLS-2$
 	}
 
 //	@Override
