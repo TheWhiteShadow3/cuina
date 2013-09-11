@@ -4,7 +4,6 @@ import cuina.editor.core.util.Ini;
 import cuina.editor.core.util.InvalidFileFormatException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
@@ -22,7 +21,6 @@ public final class CuinaProject
 	
 	private IProject project;
 	private Ini ini;
-	private EngineReference engineReference;
 	
 	public CuinaProject(IProject project)
 	{
@@ -65,18 +63,6 @@ public final class CuinaProject
 	public String getName()
 	{
 		return project.getName();
-	}
-	
-	/**
-	 * Gibt eine Referenz auf die Engine zurück, welche das Projekt benutzt.
-	 * @return Referenz auf de Engine.
-	 * @throws FileNotFoundException Wenn der Pfad zur Engine nicht aufgelöst werden konnte.
-	 */
-	public EngineReference getEngineReference() throws FileNotFoundException
-	{
-		if (engineReference == null)
-			this.engineReference = new EngineReference(this);
-		return engineReference;
 	}
 	
 	/**

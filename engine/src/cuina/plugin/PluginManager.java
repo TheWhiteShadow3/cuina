@@ -7,7 +7,6 @@
 
 package cuina.plugin;
 
-import cuina.Game;
 import cuina.Logger;
 import cuina.util.CuinaClassLoader;
 
@@ -16,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,8 +84,7 @@ public class PluginManager
 	 * Sucht nach Plugins und ladet diese in den Cache.
 	 * Wenn die Systemproperty "cuina.plugin.path" angegeben wurde, wird diese standardmäßig benutzt.
 	 * Nur wenn diese <code>null</code> ist oder ein leerer String, wird das angegebene Verzeichnis benutzt.
-	 * @param file Alternatives Verzeichnis für die Suche,
-	 * wenn "cuina.plugin.path" <code>null</code> oder ein leerer String ist.
+	 * @param file Verzeichnis für die Suche.
 	 */
 	public static void findPlugins(File file)
 	{
@@ -95,7 +92,7 @@ public class PluginManager
 		Logger.log(PluginManager.class, Logger.DEBUG, "Plugindirectory: " + file.getAbsolutePath());
 		
 		List<String> plugins = null;
-		String pluginListString = Game.getProperty(CUINA_PLUGINLIST_KEY, null);
+		String pluginListString = System.getProperty(CUINA_PLUGINLIST_KEY);
 		if (pluginListString != null)
 		{
 			plugins = Arrays.asList(pluginListString.split(";"));
@@ -104,22 +101,8 @@ public class PluginManager
 		loadPluginsFromList();
 		
 		Logger.log(PluginManager.class, Logger.INFO, jarFiles.size() + " plugins loaded.");
-//		String paths = "";
-//		for(File f : jarFiles)
-//		{
-//			paths += ";" + f.toString();
-//		}
-//		
-//		System.setProperty("java.class.path", System.getProperty("java.class.path") + paths);
-//		System.out.println(System.getProperty("java.class.path"));
 	}
 	
-	/**
-	 * Löscht alle geladenen Plugins aus dem Cache.
-	 * <p>
-	 * Nach dem Aufruf gibt {@link #getPluginFiles()} und {@link #getPluginsClasses()} eine leere Liste zurück.
-	 * </p>
-	 */
 	public static void clear()
 	{
 		classes.clear();
@@ -133,20 +116,20 @@ public class PluginManager
 
 	/**
 	 * Gibt eine Liste aller Plugins zurück.
-	 * @return Unveränderbare Liste aller geladenen Plugins. 
+	 * @return Die geladenen Plugins.
 	 */
-	public static Map<String, CuinaPlugin> getPluginFiles()
+	public static HashMap<String, CuinaPlugin> getPluginFiles()
 	{
-		return Collections.<String, CuinaPlugin>unmodifiableMap(jarFiles);
+		return jarFiles;
 	}
 
 	/**
 	 * Gibt eine Liste der Klassen zurück, die das Plugin-Interface implementieren.
 	 * @return Plugin-Klassen.
 	 */
-	public static List<Class<?>> getPluginsClasses()
+	public static ArrayList<Class<?>> getPluginsClasses()
 	{
-		return Collections.<Class<?>>unmodifiableList(classes);
+		return classes;
 	}
 	
 	private static void createPluginList(File rootFile, List<String> list)
@@ -197,7 +180,7 @@ public class PluginManager
 		}
 		
 		File file = fileList.get(name);
-		if (file == null) throw new FileNotFoundException(name);
+		if (file == null || !file.exists()) throw new FileNotFoundException(name);
 		
 		CuinaClassLoader.getInstance().addURL(file.toURI().toURL());
 		plugin = new CuinaPlugin(file);
@@ -214,14 +197,15 @@ public class PluginManager
 				throw new DependencyException(name, e);
 			}
 		}
-		checkDependencies(plugin);
+		loadDependencies(plugin);
 		try
 		{
 			plugin.load();
-			if (plugin.classList != null)
+			String[] classNames = plugin.getClassNames();
+			for(String str : classNames)
 			{
-				for(Class c : plugin.classList)
-					if (isPluginClass(c)) addClass(c);
+				Class c = CuinaClassLoader.getInstance().loadClass(str);
+				if (isPluginClass(c)) classes.add(c);
 			}
 		}
 		catch (ClassNotFoundException e)
@@ -230,27 +214,12 @@ public class PluginManager
 		}
 	}
 	
-	private static void checkDependencies(CuinaPlugin plugin) throws IOException, DependencyException
+	private static void loadDependencies(CuinaPlugin plugin) throws IOException, DependencyException
 	{
-		String dependencies = plugin.dependencies;
-		if (dependencies != null && !dependencies.isEmpty())
+		Map<String, String> dependencies = plugin.getDependencies();
+		for (String name : dependencies.keySet())
 		{
-			String[] plugins = dependencies.split("[;-]");
-			if (plugins.length % 2 != 0)
-			{
-				Logger.log(PluginManager.class, Logger.WARNING,
-						"Invalid attribut-format in Plugin: " + plugin.getJar().getName());
-				return;
-			}
-			
-			for(int i = 0; i < plugins.length; i+=2)
-			{
-				String name = plugins[i];
-				String ver = plugins[i+1];
-				
-				if (!name.endsWith(".jar")) name = name + ".jar";
-				loadPlugin(name, ver);
-			}
+			loadPlugin(name, dependencies.get(name));
 		}
 	}
 	

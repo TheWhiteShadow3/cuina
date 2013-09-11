@@ -1,5 +1,8 @@
 package cuina.editor.debug;
  
+import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaProject;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -11,6 +14,7 @@ import org.eclipse.swt.widgets.Composite;
  
 public class CuinaTab extends AbstractLaunchConfigurationTab 
 {
+	private CuinaProject project;
     private ProjectBlock projectBlock;
     private EngineBlock engineBlock;
     private PluginBlock pluginBlock;
@@ -38,9 +42,17 @@ public class CuinaTab extends AbstractLaunchConfigurationTab
     @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config)
     {
-        projectBlock.setDefaults(config);
-        engineBlock.setDefaults(config);
-        pluginBlock.setDefaults(config);
+    	try
+		{
+			readProject(config);
+	        projectBlock.setDefaults(config);
+	        engineBlock.setDefaults(config);
+	        pluginBlock.setDefaults(config);
+		}
+		catch (CoreException e)
+		{
+			e.printStackTrace();
+		}
     }
  
     @Override
@@ -48,6 +60,7 @@ public class CuinaTab extends AbstractLaunchConfigurationTab
     {
         try
         {
+        	readProject(config);
             projectBlock.initializeFrom(config);
             engineBlock.initializeFrom(config);
             pluginBlock.initializeFrom(config);
@@ -89,4 +102,17 @@ public class CuinaTab extends AbstractLaunchConfigurationTab
     {
         updateLaunchConfigurationDialog();
     }
+    
+    public CuinaProject getProject()
+    {
+    	return project;
+    }
+	
+	private void readProject(ILaunchConfiguration config) throws CoreException
+	{
+		String projectName = config.getAttribute(CuinaLaunch.PROJECT_NAME, (String) null);
+		if (projectName == null || projectName.isEmpty()) return;
+		
+		this.project = CuinaPlugin.getCuinaProject(projectName);
+	}
 }

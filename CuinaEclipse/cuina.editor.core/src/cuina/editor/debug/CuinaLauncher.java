@@ -5,6 +5,7 @@ import cuina.editor.core.internal.Util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
@@ -119,10 +120,18 @@ public class CuinaLauncher extends JavaLaunchDelegate
 			}
 		}
 		
-		String pluginList = config.getAttribute(CuinaLaunch.PLUGIN_LIST, (String) null);
+		Set<String> pluginList = config.getAttribute(CuinaLaunch.PLUGIN_LIST, (Set<String>) null);
 		if (pluginList != null)
 		{
-			addParameter(builder, "cuina.plugin.list", pluginList);
+			builder.append(" -Dcuina.plugin.list=\"");
+			
+			Object[] array = pluginList.toArray();
+			for (int i = 0; i < array.length; i++)
+			{
+				if (i > 0) builder.append(';');
+				builder.append(array[i]);
+			}
+			builder.append("\""); 
 		}
 
 		return builder.toString();
@@ -130,9 +139,9 @@ public class CuinaLauncher extends JavaLaunchDelegate
 	
 	private void addParameter(StringBuilder builder, String name, String value)
 	{
-		builder.append(" -D"); //$NON-NLS-1$
+		builder.append(" -D");
 		builder.append(name);
-		builder.append("=\"").append(value).append("\""); //$NON-NLS-1$ $NON-NLS-2$
+		builder.append("=\"").append(value).append("\"");
 	}
 
 //	@Override

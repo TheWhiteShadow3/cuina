@@ -150,6 +150,6 @@ public class CuinaPlugin
 	@Override
 	public String toString()
 	{
-		return jar.getName();
+		return getName() + " - " + getVersion();
 	}
 }

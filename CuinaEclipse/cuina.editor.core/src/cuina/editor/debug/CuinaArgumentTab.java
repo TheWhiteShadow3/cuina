@@ -1,9 +1,10 @@
 package cuina.editor.debug;
 
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS;
+import static org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS;
+
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-
 
 public class CuinaArgumentTab extends JavaArgumentsTab
 {
@@ -12,7 +13,7 @@ public class CuinaArgumentTab extends JavaArgumentsTab
    {
        super.setDefaults(config);
        
-       config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "");
-       config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, CuinaLaunch.getDefaultVMArgs());
+       config.setAttribute(ATTR_PROGRAM_ARGUMENTS, CuinaLaunch.getDefaultArgs());
+       config.setAttribute(ATTR_VM_ARGUMENTS, CuinaLaunch.getDefaultVMArgs());
    }
 }

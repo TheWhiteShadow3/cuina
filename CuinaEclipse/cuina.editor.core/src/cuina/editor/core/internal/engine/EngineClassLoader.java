@@ -1,7 +1,8 @@
-package cuina.editor.core.internal;
+package cuina.editor.core.internal.engine;
 
 
-import cuina.editor.core.EngineReference;
+import cuina.editor.core.engine.EngineReference;
+import cuina.editor.core.internal.Util;
 
 import java.io.File;
 import java.io.FileNotFoundException;

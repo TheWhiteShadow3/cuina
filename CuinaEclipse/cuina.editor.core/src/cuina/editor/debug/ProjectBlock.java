@@ -62,7 +62,7 @@ public class ProjectBlock
         cmdProject.addSelectionListener(listener);
     }
     
-    public void setDefaults(ILaunchConfigurationWorkingCopy config)
+    public void setDefaults(ILaunchConfigurationWorkingCopy config) throws CoreException
     {
         config.setAttribute(CuinaLaunch.PROJECT_NAME, "");
 //      config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "");

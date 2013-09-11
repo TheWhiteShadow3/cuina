@@ -1,13 +1,10 @@
 package cuina.editor.debug;
 
-import cuina.editor.core.CuinaPlugin;
-import cuina.editor.core.EngineReference;
+import cuina.editor.core.CuinaProject;
+import cuina.editor.core.engine.EngineReference;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -82,13 +79,13 @@ public class EngineBlock
 		cmdEngine.addSelectionListener(listener);
 	}
 
-	public void setDefaults(ILaunchConfigurationWorkingCopy config)
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) throws CoreException
 	{
 		config.setAttribute(CuinaLaunch.ENGINE_SOURCE, cuinaHome != null);
 		config.setAttribute(CuinaLaunch.ENGINE_PATH, cuinaHome != null ? cuinaHome : (String) null);
 
-		txtHome.setText(getConfigEnginePath(config));
-		if (cuinaHome == null) opSrcHome.setEnabled(false);
+//		txtHome.setText(getConfigEnginePath(config));
+//		if (cuinaHome == null) opSrcHome.setEnabled(false);
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException
@@ -109,27 +106,18 @@ public class EngineBlock
 			inEngine.setText(path.toString());
 		}
 
-		txtHome.setText(getConfigEnginePath(config));
+		String path = getConfigEnginePath(config);
+		txtHome.setText(path != null ? path : "");
 		if (cuinaHome == null) opSrcHome.setEnabled(false);
 	}
 
 	private String getConfigEnginePath(ILaunchConfiguration config)
 	{
-		try
-		{
-			String projectName = config.getAttribute(CuinaLaunch.PROJECT_NAME, (String) null);
-			if (projectName == null || projectName.isEmpty()) return null;
-			
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-			EngineReference ref = CuinaPlugin.getCuinaProject(project).getEngineReference();
-			
-			if (ref != null) return ref.getEnginePath();
-		}
-		catch (FileNotFoundException | CoreException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		CuinaProject project = cuinaTab.getProject();
+		if (project == null) return null;
+		EngineReference ref = project.getService(EngineReference.class);
+	
+		return ref.getEnginePath();
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config)
@@ -184,9 +172,15 @@ public class EngineBlock
 			else
 			{
 				if (opSrcHome.getSelection())
+				{
+					inEngine.setEnabled(false);
 					path = new File(cuinaHome);
+				}
 				else
+				{
+					inEngine.setEnabled(true);
 					path = new File(inEngine.getText());
+				}
 				cuinaTab.updateTab();
 			}
 		}

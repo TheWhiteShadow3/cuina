@@ -1,6 +1,10 @@
-package cuina.editor.core;
+package cuina.editor.core.engine;
 
 
+import cuina.editor.core.CuinaProject;
+import cuina.editor.core.internal.engine.EngineClassLoader;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,17 +25,36 @@ public class EngineReference
 	private static final String ENGINE_KEY = "cuina.engine.path";
 	private static final String PLUGIN_KEY = "cuina.plugin.path";
 
-//	private CuinaProject project;
+	private CuinaProject project;
 	private IEclipsePreferences prefs;
+	private EngineClassLoader classLoader;
 
 	public EngineReference(CuinaProject project) throws FileNotFoundException
 	{
-//		this.project = project;
+		this.project = project;
 		this.prefs = new ProjectScope(project.getProject()).getNode("cuina.editor.core");
 		
 		validateEnginePath();
+		this.classLoader = new EngineClassLoader(this);
 	}
 	
+	public CuinaProject getProject()
+	{
+		return project;
+	}
+
+	public ClassLoader getClassLoader()
+	{
+		return classLoader;
+	}
+
+	public PluginManager createPluginManager()
+	{
+		PluginManager pm = new PluginManager();
+		pm.findPlugins(new File(getPluginPath()));
+		return pm;
+	}
+
 	/**
 	 * Gibt den Pfad zur Engine zurück, die vom Projekt benutzt wird.
 	 * @return Pfad zur Engine.
@@ -47,7 +70,7 @@ public class EngineReference
 	 */
 	public String getPluginPath()
 	{
-    	return prefs.get(PLUGIN_KEY, getDefaultPath() + "/plugins");
+    	return prefs.get(PLUGIN_KEY, "plugins");
 	}
 	
 	private String getDefaultPath()
