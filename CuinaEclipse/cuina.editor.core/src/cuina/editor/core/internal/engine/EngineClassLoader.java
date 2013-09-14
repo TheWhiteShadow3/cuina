@@ -1,55 +1,53 @@
 package cuina.editor.core.internal.engine;
 
-
 import cuina.editor.core.engine.EngineReference;
-import cuina.editor.core.internal.Util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class EngineClassLoader extends URLClassLoader
 {
 	private EngineReference engineReference;
-	
-	public EngineClassLoader(EngineReference engineReference) throws FileNotFoundException
+
+	public EngineClassLoader(EngineReference engineReference) throws IOException
 	{
 		super(new URL[0]);
 		this.engineReference = engineReference;
-		
-		String path = Util.resolveEnviromentVariables(engineReference.getEnginePath());
-		if (path != null)
+
+		Path path = engineReference.resolveEnginePath();
+		try
 		{
-			File file = new File(path);
-			if (!file.exists()) throw new FileNotFoundException();
-			try
-			{
-				addURL(file.toURI().toURL());
-			}
-			catch (MalformedURLException e)
-			{ throw new Error(e); } // can't happen
-			addPlugins();
+			addURL(path.toUri().toURL());
 		}
+		catch (MalformedURLException e)
+		{	// can't happen
+			throw new Error(e);
+		}
+//		addPlugins(path.getParent().resolve("plugins"));
+		addPlugins(engineReference.resolvePluginPath());
 	}
 
-	private void addPlugins()
+	public EngineReference getEngineReference()
 	{
-		String path = Util.resolveEnviromentVariables(engineReference.getPluginPath());
-		if (path != null)
+		return engineReference;
+	}
+
+	private void addPlugins(Path path) throws IOException
+	{
+		if (path == null || Files.notExists(path)) return;
+		for (Path p : Files.newDirectoryStream(path))
 		{
-			File rootDir = new File(path);
-			if (!rootDir.exists()) return;
-			for (File file : rootDir.listFiles())
+			try
 			{
-				try
-				{
-					addURL(file.toURI().toURL());
-				}
-				catch (MalformedURLException e)
-				{ throw new Error(e); } // can't happen
+				addURL(p.toUri().toURL());
+			}
+			catch (MalformedURLException e)
+			{	// can't happen
+				throw new Error(e);
 			}
 		}
 	}

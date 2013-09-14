@@ -1,6 +1,6 @@
 package cuina.database;
 
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.resource.ResourceException;
 
@@ -242,7 +242,7 @@ public final class DatabasePlugin extends Plugin
 	{
 		if (plugin == null) throw new IllegalStateException(MSG_SERVICE_CLOSED);
 		
-		CuinaProject project = CuinaPlugin.getCuinaProject(file.getProject());
+		CuinaProject project = CuinaCore.getCuinaProject(file.getProject());
 		IFolder f = project.getProject().getFolder( loadDataPath(project));
 		if (file.getParent().equals(f) && !file.getName().equals(DatabasePlugin.META_DATA_FILE))
 		{

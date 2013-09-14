@@ -1,6 +1,6 @@
 package cuina.editor.map.internal;
 
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.map.Map;
 import cuina.resource.ResourceException;
@@ -115,7 +115,7 @@ public class MapEditor extends MultiPageEditorPart
 				if (adapter.equals(Map.class)) return map;
 				if (adapter.equals(IFile.class)) return file;
 				if (adapter.equals(IProject.class)) return file.getProject();
-				if (adapter.equals(CuinaProject.class)) return CuinaPlugin.getCuinaProject(file.getProject());
+				if (adapter.equals(CuinaProject.class)) return CuinaCore.getCuinaProject(file.getProject());
 				return null;
 			}
 

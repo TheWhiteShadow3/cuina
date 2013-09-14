@@ -1,6 +1,6 @@
 package cuina.editor.core.engine;
 
-import cuina.plugin.CuinaPlugin;
+import cuina.editor.core.engine.CuinaPlugin.State;
 import cuina.plugin.DependencyException;
 
 import java.io.File;
@@ -32,10 +32,9 @@ public class PluginManager
 	 */
 	public void findPlugins(File directory)
 	{
+		clear();
 		this.directory = directory;
 		
-		fileList.clear();
-		jarFiles.clear();
 		createPluginList(directory);
 		loadPluginsFromList();
 	}
@@ -43,6 +42,13 @@ public class PluginManager
 	public File getDirectory()
 	{
 		return directory;
+	}
+	
+	public void clear()
+	{
+		directory = null;
+		fileList.clear();
+		jarFiles.clear();
 	}
 
 	/**
@@ -96,7 +102,7 @@ public class PluginManager
 			}
 			catch (IOException | DependencyException e)
 			{
-				jarFiles.remove(name);
+				jarFiles.get(name).state = State.MISSING_DEPENDENCY;
 				e.printStackTrace();
 			}
 		}
@@ -107,18 +113,6 @@ public class PluginManager
 		CuinaPlugin plugin = jarFiles.get(name);
 		if (plugin != null)
 		{
-			if (!checkVersion(plugin.getVersion(), minVersion))
-				throw new DependencyException(name);
-			return;
-		}
-		
-		File file = fileList.get(name);
-		if (file == null || !file.exists()) throw new FileNotFoundException(name);
-		
-		plugin = new CuinaPlugin(file);
-		jarFiles.put(file.getName(), plugin);
-		if (minVersion != null)
-		{
 			try
 			{
 				if (!checkVersion(plugin.getVersion(), minVersion))
@@ -128,11 +122,28 @@ public class PluginManager
 			{
 				throw new DependencyException(name, e);
 			}
+			return;
+		}
+		
+		File file = fileList.get(name);
+		if (file == null || !file.exists()) throw new FileNotFoundException(name);
+		plugin = new CuinaPlugin(file);
+		jarFiles.put(file.getName(), plugin);
+		
+		try
+		{
+			if (!checkVersion(plugin.getVersion(), minVersion))
+				throw new DependencyException(name);
+		}
+		catch (NumberFormatException e)
+		{
+			throw new DependencyException(name, e);
 		}
 		loadDependencies(plugin);
 		try
 		{
 			plugin.load();
+			plugin.state = State.LOADED;
 //			String[] classNames = plugin.getClassNames();
 //			for(String str : classNames)
 //			{

@@ -1,4 +1,4 @@
-package cuina.plugin;
+package cuina.editor.core.engine;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,8 @@ import java.util.jar.Manifest;
 
 public class CuinaPlugin
 {
+	public static enum State { UNLOADED, LOADED, MISSING_DEPENDENCY }
+	
 	private File file;
 	private JarFile jar;
 	private String version;
@@ -25,12 +27,14 @@ public class CuinaPlugin
 	
 	private String dependencyStr;
 	private Map<String, String> dependencies = new HashMap<String, String>();
+	State state;
 	private List<String> classNames;
 	
 	public CuinaPlugin(File file) throws IOException
 	{
 		this.file = file;
 		this.jar = new JarFile(file);
+		this.state = State.UNLOADED;
 		scanManifest();
 		resolveDependencyAttribut();
 	}
@@ -55,6 +59,11 @@ public class CuinaPlugin
 		return file;
 	}
 	
+	public State getState()
+	{
+		return state;
+	}
+
 	public String[] getClassNames()
 	{
 		return classNames.toArray(new String[classNames.size()]);
@@ -87,6 +96,7 @@ public class CuinaPlugin
 			scriptDesc 		= att.getValue("Script-Description");
 			dependencyStr	= att.getValue("Plugin-Dependency");
 		}
+		if (version == null) version = "0.0";
 	}
 
 	public void load() throws IOException, ClassNotFoundException

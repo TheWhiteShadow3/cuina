@@ -2,7 +2,7 @@ package cuina.editor.map.internal;
 
 import cuina.database.Database;
 import cuina.database.ui.DatabaseComboViewer;
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.map.Map;
 import cuina.map.MapInfo;
 import cuina.map.Tileset;
@@ -114,7 +114,7 @@ public class MapWizard extends Wizard implements INewWizard
 			txtFolder.setText("Verzeichnis");
 
 			if(folder != null)
-				db = CuinaPlugin.getCuinaProject(folder.getProject()).getService(Database.class);
+				db = CuinaCore.getCuinaProject(folder.getProject()).getService(Database.class);
 			
 			inFolder = new Text(container, SWT.BORDER);
 			inFolder.setText((folder != null) ? folder.getFullPath().toString() : "");
@@ -257,7 +257,7 @@ public class MapWizard extends Wizard implements INewWizard
 						{
 							folder = (IFolder) folders[0];
 							inFolder.setText((folder != null) ? folder.getFullPath().toString() : "");
-							db = CuinaPlugin.getCuinaProject(folder.getProject()).getService(Database.class);
+							db = CuinaCore.getCuinaProject(folder.getProject()).getService(Database.class);
 						}
 					}
 				}

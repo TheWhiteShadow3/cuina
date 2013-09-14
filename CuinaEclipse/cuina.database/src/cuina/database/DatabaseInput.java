@@ -1,6 +1,6 @@
 package cuina.database;
 
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.resource.ResourceException;
 
@@ -90,7 +90,7 @@ public class DatabaseInput implements IEditorInput
 	
 	private CuinaProject getCuinaProject()
 	{
-		return CuinaPlugin.getCuinaProject(file.getProject());
+		return CuinaCore.getCuinaProject(file.getProject());
 	}
 	
 	private static DataTable getDataTable(CuinaProject project, String tableName) throws ResourceException 

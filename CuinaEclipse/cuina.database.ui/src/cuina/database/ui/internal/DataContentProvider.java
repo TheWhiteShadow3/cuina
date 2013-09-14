@@ -5,7 +5,7 @@ import cuina.database.Database;
 import cuina.database.DatabaseObject;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.resource.ResourceException;
 
 import org.eclipse.core.resources.IFile;
@@ -79,7 +79,7 @@ public class DataContentProvider implements ITreeContentProvider
 	
 	private Database getDatabase(IFile file)
 	{
-		return CuinaPlugin.getCuinaProject(file.getProject()).getService(Database.class);
+		return CuinaCore.getCuinaProject(file.getProject()).getService(Database.class);
 	}
 
 	@Override

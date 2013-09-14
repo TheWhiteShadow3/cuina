@@ -23,6 +23,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -32,7 +33,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class CuinaPlugin extends AbstractUIPlugin
+public class CuinaCore extends AbstractUIPlugin
 {
 	// The plug-in ID
 	public static final String PLUGIN_ID 			= "cuina.editor.core"; //$NON-NLS-1$
@@ -47,7 +48,7 @@ public class CuinaPlugin extends AbstractUIPlugin
 	private static final String MSG_PLUGIN_CLOSED = "cuina-plugin is closed!"; //$NON-NLS-1$
 
 	// The shared instance
-	private static CuinaPlugin plugin;
+	private static CuinaCore instance;
 	private IPartService partService;
 	private CuinaPartListener listener;
 	private List<EditorContextChangeListener> listeners;
@@ -59,7 +60,7 @@ public class CuinaPlugin extends AbstractUIPlugin
 	/**
 	 * The constructor
 	 */
-	public CuinaPlugin()
+	public CuinaCore()
 	{
 		listener = new CuinaPartListener();
 		listeners = new ArrayList<EditorContextChangeListener>();
@@ -84,11 +85,13 @@ public class CuinaPlugin extends AbstractUIPlugin
 
 	public static CuinaProject getCuinaProject(IProject project)
 	{
-		CuinaProject cuinaProject = getPlugin().projects.get(project);
+		if (project == null) return null;
+		
+		CuinaProject cuinaProject = getDefault().projects.get(project);
 		if (cuinaProject == null)
 		{
 			cuinaProject = new CuinaProject(project);
-			plugin.projects.put(project, cuinaProject);
+			instance.projects.put(project, cuinaProject);
 		}
 		return cuinaProject;
 	}
@@ -100,7 +103,7 @@ public class CuinaPlugin extends AbstractUIPlugin
 	
 	public static ProjectParameter getProjectParameter(String group, String name)
 	{
-		List<ProjectParameter> params = getPlugin().parameters.get(group);
+		List<ProjectParameter> params = getDefault().parameters.get(group);
 		if (params == null) return null;
 		
 		return params.get(params.indexOf(name));
@@ -108,12 +111,12 @@ public class CuinaPlugin extends AbstractUIPlugin
 	
 	public static String[] getProjectParameterGroups()
 	{
-		return getPlugin().parameters.keySet().toArray(new String[plugin.parameters.size()]);
+		return getDefault().parameters.keySet().toArray(new String[instance.parameters.size()]);
 	}
 	
 	public static ProjectParameter[] getProjectParameters(String group)
 	{
-		List<ProjectParameter> params = getPlugin().parameters.get(group);
+		List<ProjectParameter> params = getDefault().parameters.get(group);
 		if (params == null) return null;
 		
 		return params.toArray(new ProjectParameter[params.size()]);
@@ -121,7 +124,7 @@ public class CuinaPlugin extends AbstractUIPlugin
 
 	static ProjectServiceFactory getProjectServiceFactory(Class api)
 	{
-		return getPlugin().projectServiceFactories.get(api.getName());
+		return getDefault().projectServiceFactories.get(api.getName());
 	}
 
 	/*
@@ -133,7 +136,7 @@ public class CuinaPlugin extends AbstractUIPlugin
 	public void start(BundleContext context) throws Exception
 	{
 		super.start(context);
-		plugin = this;
+		instance = this;
 		Display.getDefault().asyncExec(new Runnable()
 		{
 			@Override
@@ -157,7 +160,7 @@ public class CuinaPlugin extends AbstractUIPlugin
 	@Override
 	public void stop(BundleContext context) throws Exception
 	{
-		plugin = null;
+		instance = null;
 		partService.removePartListener(listener);
 		super.stop(context);
 	}
@@ -167,10 +170,15 @@ public class CuinaPlugin extends AbstractUIPlugin
 	 * 
 	 * @return the shared instance
 	 */
-	public static CuinaPlugin getPlugin()
+	public static CuinaCore getDefault()
 	{
-		if (plugin == null) throw new IllegalStateException(MSG_PLUGIN_CLOSED);
-		return plugin;
+		if (instance == null) throw new IllegalStateException(MSG_PLUGIN_CLOSED);
+		return instance;
+	}
+
+	public static IWorkbenchWindow getWorkbenchWindow()
+	{
+		return instance.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public void addEditorContextChangeListener(EditorContextChangeListener l)
@@ -204,9 +212,10 @@ public class CuinaPlugin extends AbstractUIPlugin
 
 		for (IConfigurationElement conf : elements)
 		{
-			if ( "serviceFactory".equals(conf.getName()) ) loadProjectService(conf);
-			
-			else if ( "hook".equals(conf.getName()) ) loadProjectHooks(conf);
+			if ("serviceFactory".equals(conf.getName()) )
+				loadProjectService(conf);
+			else if ("hook".equals(conf.getName()) )
+				loadProjectHooks(conf);
 		}
 	}
 	

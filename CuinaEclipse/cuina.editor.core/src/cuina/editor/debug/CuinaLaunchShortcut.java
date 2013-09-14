@@ -1,6 +1,6 @@
 package cuina.editor.debug;
 
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.engine.EngineReference;
 
 import org.eclipse.core.resources.IFile;
@@ -61,7 +61,7 @@ public class CuinaLaunchShortcut implements ILaunchShortcut
 			wc = configType.newInstance(null, manager.generateLaunchConfigurationName(CuinaLaunch.CONFIGURATION_NAME));
 			wc.setAttribute(CuinaLaunch.PROJECT_NAME, project.getName());
 			
-			EngineReference eRef = CuinaPlugin.getCuinaProject(project).getService(EngineReference.class);
+			EngineReference eRef = CuinaCore.getCuinaProject(project).getService(EngineReference.class);
 			wc.setAttribute(CuinaLaunch.ENGINE_PATH, eRef.getEnginePath());
 			wc.setAttribute(CuinaLaunch.PLUGIN_PATH, eRef.getPluginPath());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, CuinaLaunch.getDefaultArgs());

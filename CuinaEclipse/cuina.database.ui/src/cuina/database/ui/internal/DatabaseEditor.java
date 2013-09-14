@@ -14,7 +14,7 @@ import cuina.database.ui.internal.tree.TreeDataNode;
 import cuina.database.ui.tree.DataNode;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.resource.ResourceException;
 
@@ -250,7 +250,7 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 			setPartName(file.getName());
 			try
 			{
-				CuinaProject cuinaProject = CuinaPlugin.getCuinaProject(file.getProject());
+				CuinaProject cuinaProject = CuinaCore.getCuinaProject(file.getProject());
 				table = cuinaProject.getService(Database.class).loadTable(file);
 			}
 			catch (ResourceException e)

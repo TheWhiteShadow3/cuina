@@ -1,6 +1,6 @@
 package cuina.editor.ui.internal;
 
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.core.ProjectParameter;
 import cuina.editor.core.util.Ini;
@@ -86,7 +86,7 @@ public class ProjectWizard extends Wizard implements INewWizard
 
 		public boolean finish() throws CoreException, IOException
 		{
-			cuinaProject = CuinaPlugin.getCuinaProject(getProjectHandle());
+			cuinaProject = CuinaCore.getCuinaProject(getProjectHandle());
 			
 			if (cuinaProject.getProject().exists()) return false;
 
@@ -125,7 +125,7 @@ public class ProjectWizard extends Wizard implements INewWizard
 			Composite container = new Composite(parent, SWT.NONE);
 			container.setLayout(new GridLayout());
 			
-			String[] groups = CuinaPlugin.getProjectParameterGroups();
+			String[] groups = CuinaCore.getProjectParameterGroups();
 			Arrays.sort(groups);
 			
 			for (String group : groups)
@@ -135,7 +135,7 @@ public class ProjectWizard extends Wizard implements INewWizard
 				groupWidget.setLayout(new GridLayout(2, false));
 				groupWidget.setText(group != null ? group : "default");
 				
-				for (ProjectParameter param : CuinaPlugin.getProjectParameters(group))
+				for (ProjectParameter param : CuinaCore.getProjectParameters(group))
 				{
 					new Label(groupWidget, SWT.NONE).setText(param.getName() + ':');
 					

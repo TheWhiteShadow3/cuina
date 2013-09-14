@@ -1,6 +1,6 @@
 package cuina.editor.map.internal.views;
 
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.EditorContextChangeListener;
 import cuina.editor.map.ITerrainEditor;
 import cuina.editor.map.TileSelection;
@@ -64,7 +64,7 @@ public class AutotileView extends ViewPart implements EditorContextChangeListene
 		{
 			setEditor( ((MapEditor) editor).getTerrainEditor());
 		}
-		CuinaPlugin.getPlugin().addEditorContextChangeListener(this);
+		CuinaCore.getDefault().addEditorContextChangeListener(this);
 		getSite().setSelectionProvider(panel);
 	}
 

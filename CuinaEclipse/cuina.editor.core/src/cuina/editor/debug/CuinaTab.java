@@ -1,31 +1,39 @@
 package cuina.editor.debug;
  
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
  
-public class CuinaTab extends AbstractLaunchConfigurationTab 
+public class CuinaTab extends AbstractLaunchConfigurationTab
 {
-	private CuinaProject project;
-    private ProjectBlock projectBlock;
-    private EngineBlock engineBlock;
-    private PluginBlock pluginBlock;
-    
-    public CuinaTab()
-    {
-        projectBlock = new ProjectBlock(this);
-        engineBlock = new EngineBlock(this);
-        pluginBlock = new PluginBlock(this);
-    }
-    
+	private ProjectBlock projectBlock;
+	private EngineBlock engineBlock;
+	private PluginBlock pluginBlock;
+	ILaunchConfiguration launchConfig;
+
+	public CuinaTab()
+	{
+		projectBlock = new ProjectBlock(this);
+		engineBlock = new EngineBlock(this);
+		pluginBlock = new PluginBlock(this);
+	}
+
     @Override
     public void createControl(Composite parent)
     {
@@ -44,7 +52,6 @@ public class CuinaTab extends AbstractLaunchConfigurationTab
     {
     	try
 		{
-			readProject(config);
 	        projectBlock.setDefaults(config);
 	        engineBlock.setDefaults(config);
 	        pluginBlock.setDefaults(config);
@@ -58,9 +65,9 @@ public class CuinaTab extends AbstractLaunchConfigurationTab
     @Override
     public void initializeFrom(ILaunchConfiguration config)
     {
+    	this.launchConfig = config;
         try
         {
-        	readProject(config);
             projectBlock.initializeFrom(config);
             engineBlock.initializeFrom(config);
             pluginBlock.initializeFrom(config);
@@ -104,15 +111,32 @@ public class CuinaTab extends AbstractLaunchConfigurationTab
     }
     
     public CuinaProject getProject()
-    {
-    	return project;
-    }
-	
-	private void readProject(ILaunchConfiguration config) throws CoreException
 	{
-		String projectName = config.getAttribute(CuinaLaunch.PROJECT_NAME, (String) null);
-		if (projectName == null || projectName.isEmpty()) return;
-		
-		this.project = CuinaPlugin.getCuinaProject(projectName);
+		IWorkbenchPage page = CuinaCore.getWorkbenchWindow().getActivePage();
+		if (page != null)
+		{
+			ISelection selection = page.getSelection();
+			if (selection instanceof IStructuredSelection)
+			{
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				if (!ss.isEmpty())
+				{
+					Object obj = ss.getFirstElement();
+					if (obj instanceof IResource)
+					{
+						IProject pro = ((IResource) obj).getProject();
+						return CuinaCore.getCuinaProject(pro);
+					}
+				}
+			}
+			IEditorPart part = page.getActiveEditor();
+			if (part != null)
+			{
+				IEditorInput input = part.getEditorInput();
+				IFile file = (IFile) input.getAdapter(IFile.class);
+				return CuinaCore.getCuinaProject(file.getProject());
+			}
+		}
+		return null;
 	}
 }

@@ -1,24 +1,22 @@
 package cuina.editor.debug;
 
-import cuina.editor.core.CuinaPlugin;
-import cuina.editor.core.internal.Util;
+import cuina.editor.core.CuinaCore;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
@@ -39,27 +37,39 @@ public class CuinaLauncher extends JavaLaunchDelegate
 
 	private void init(ILaunchConfiguration config) throws CoreException
 	{
-		String pathName = config.getAttribute(CuinaLaunch.ENGINE_PATH, (String) null);
 		try
 		{
-			if (pathName == null) throw new NullPointerException("engine-path is null.");
+			this.file = getEnginePath(config).toFile();
 			
-			pathName = Util.resolveEnviromentVariables(pathName);
-			file = verifyPath(new Path(pathName));
-			if (file.isDirectory())
-			{
-				file = new File(file, "cuina.engine.jar");
-			}
-
-			if (file == null || !file.exists()) throw new FileNotFoundException(file.toString());
 			Attributes atts = new JarFile(file).getManifest().getMainAttributes();
-			mainClass = atts.getValue("Main-Class");
-			classPath = new String[] { file.getName() };
+			this.mainClass = atts.getValue("Main-Class");
+			this.classPath = new String[] { file.getName() };
 		}
 		catch (Exception e)
 		{
-			throw new CoreException(new Status(IStatus.ERROR, CuinaPlugin.PLUGIN_ID, "Cuina-Engine not found.", e));
+			throw new CoreException(new Status(IStatus.ERROR, CuinaCore.PLUGIN_ID, "Cuina-Engine not found.", e));
 		}
+	}
+	
+	private Path getEnginePath(ILaunchConfiguration config) throws CoreException
+	{
+		String att = config.getAttribute(CuinaLaunch.ENGINE_PATH, (String) null);
+		String pathName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(att);
+		if (pathName == null) throw new CoreException(new Status(
+				IStatus.ERROR, CuinaCore.PLUGIN_ID, "Engine-path is null."));
+		
+		Path path = Paths.get(pathName);
+		if (!path.isAbsolute())
+		{
+			path = getProjectPath(config).resolve(path);
+		}
+		
+		if (Files.isDirectory(path))
+			path = path.resolve("cuina.engine.jar");
+
+		if (Files.notExists(path)) throw new CoreException(new Status(
+				IStatus.ERROR, CuinaCore.PLUGIN_ID, "Engine-path not found: " + path.toString()));
+		return path;
 	}
 
 	@Override
@@ -79,19 +89,25 @@ public class CuinaLauncher extends JavaLaunchDelegate
 	{
 		return classPath;
 	}
-
-	private File verifyPath(IPath path) throws Exception
+	
+	private Path getProjectPath(ILaunchConfiguration config) throws CoreException
 	{
-		if (path.isAbsolute())
-		{
-			return path.toFile();
-		}
-		else
-		{
-			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-			if (res instanceof IContainer && res.exists()) return res.getLocation().toFile();
-		}
-		throw new IllegalArgumentException(path.toString());
+		String att = config.getAttribute(CuinaLaunch.PROJECT_NAME, (String) null);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(att);
+		return Paths.get(project.getLocation().toOSString());
+	}
+	
+	private File getPluginPath(ILaunchConfiguration config) throws CoreException
+	{
+		String att = config.getAttribute(CuinaLaunch.PLUGIN_PATH, (String) null);
+		if (att == null) return null;
+		
+		String path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(att);
+		File file = new File(path);
+
+		if (!file.exists()) throw new CoreException(new Status(
+				IStatus.ERROR, CuinaCore.PLUGIN_ID, "Plugin-path not found: " + file.toString()));
+		return file;
 	}
 
 	@Override
@@ -113,10 +129,10 @@ public class CuinaLauncher extends JavaLaunchDelegate
 		pathIndex = args.indexOf("-Dcuina.plugin.path"); //$NON-NLS-1$
 		if (pathIndex < 0)
 		{
-			String pluginPath = config.getAttribute(CuinaLaunch.PLUGIN_PATH, (String) null);
+			File pluginPath = getPluginPath(config);
 			if (pluginPath != null)
 			{
-				addParameter(builder, "cuina.plugin.path", pluginPath);
+				addParameter(builder, "cuina.plugin.path", pluginPath.getAbsolutePath());
 			}
 		}
 		

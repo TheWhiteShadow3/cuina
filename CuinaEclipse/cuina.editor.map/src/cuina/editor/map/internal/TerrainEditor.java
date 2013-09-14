@@ -1,7 +1,7 @@
 package cuina.editor.map.internal;
 
 import cuina.database.Database;
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.map.EditorToolAction;
 import cuina.editor.map.ITerrainEditor;
@@ -123,7 +123,7 @@ public class TerrainEditor extends EditorPart implements
 		try
 		{
 			project = (CuinaProject) input.getAdapter(CuinaProject.class);
-			if (project == null) project = CuinaPlugin.getCuinaProject(file.getProject());
+			if (project == null) project = CuinaCore.getCuinaProject(file.getProject());
 			
 			map = (Map) input.getAdapter(Map.class);
 			if (map == null) map = (Map) SerializationManager.load(file, Map.class.getClassLoader());

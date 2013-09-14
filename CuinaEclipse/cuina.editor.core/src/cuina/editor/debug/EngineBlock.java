@@ -2,10 +2,13 @@ package cuina.editor.debug;
 
 import cuina.editor.core.CuinaProject;
 import cuina.editor.core.engine.EngineReference;
+import cuina.editor.core.internal.Util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
@@ -23,17 +26,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class EngineBlock
-{
+{	
 	private CuinaTab cuinaTab;
 	private Shell shell;
-	private File path;
+//	private File path;
 	private EngineListener listener;
 	private Button opSrcHome;
 	private Button opSrcPath;
 	private Text inEngine;
 	private Button cmdEngine;
 	private Text txtHome;
-	private String cuinaHome;
+	private final String cuinaHome;
 	
 	public EngineBlock(CuinaTab cuinaTab)
 	{
@@ -84,6 +87,7 @@ public class EngineBlock
 		config.setAttribute(CuinaLaunch.ENGINE_SOURCE, cuinaHome != null);
 		config.setAttribute(CuinaLaunch.ENGINE_PATH, cuinaHome != null ? cuinaHome : (String) null);
 
+		
 //		txtHome.setText(getConfigEnginePath(config));
 //		if (cuinaHome == null) opSrcHome.setEnabled(false);
 	}
@@ -96,19 +100,16 @@ public class EngineBlock
 		{
 			opSrcHome.setSelection(true);
 			inEngine.setEnabled(false);
-			path = new File(cuinaHome);
 		}
 		else
 		{
 			opSrcPath.setSelection(true);
 			inEngine.setEnabled(true);
-			path = new File(config.getAttribute(CuinaLaunch.ENGINE_PATH, ""));
-			inEngine.setText(path.toString());
+			inEngine.setText(config.getAttribute(CuinaLaunch.ENGINE_PATH, ""));
 		}
 
 		String path = getConfigEnginePath(config);
 		txtHome.setText(path != null ? path : "");
-		if (cuinaHome == null) opSrcHome.setEnabled(false);
 	}
 
 	private String getConfigEnginePath(ILaunchConfiguration config)
@@ -123,32 +124,58 @@ public class EngineBlock
 	public void performApply(ILaunchConfigurationWorkingCopy config)
 	{
 		config.setAttribute(CuinaLaunch.ENGINE_SOURCE, opSrcHome.getSelection());
-		config.setAttribute(CuinaLaunch.ENGINE_PATH, path.toString());
+		
+		String enginePath = getEnginePath();
+		config.setAttribute(CuinaLaunch.ENGINE_PATH, enginePath);
+		
+		try
+		{
+			String resolvedPath = VariablesPlugin.getDefault().getStringVariableManager().
+					performStringSubstitution(enginePath);
+			CuinaVariableResolver.setValue("engine_path", resolvedPath);
+		}
+		catch (CoreException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	private String getEnginePath()
+	{
+		if (opSrcHome.getSelection())
+			return cuinaHome;
+		else
+			return inEngine.getText();
 	}
 
-	private File chooseEnginePath()
+	private String chooseEnginePath()
 	{
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 		dialog.setFilterExtensions(new String[] { "*.jar; *.exe" });
 		dialog.setText("Engine Auswahl");
-
-		if (path != null)
-		{
-			dialog.setFileName(path.toString());
-		}
+		dialog.setFileName(getEnginePath());
+		
 		String result = dialog.open();
 		if (result != null)
 		{
-			File file = new File(result);
-			if (file.exists()) return file;
+			if (new File(result).exists()) return result;
 		}
 		return null;
 	}
  
 	public String validate()
 	{
-		if (path == null || !path.exists()) return "Cuina-Engine nicht gefunden!";
-		return null;
+		try
+		{
+			String path = VariablesPlugin.getDefault().getStringVariableManager().
+					performStringSubstitution(getEnginePath());
+			Util.validateEnginePath(path);
+			return null;
+		}
+		catch (FileNotFoundException | CoreException e)
+		{
+			return "Cuina-Engine nicht gefunden!";
+		}
 	}
 
 	private class EngineListener implements ModifyListener, SelectionListener
@@ -156,7 +183,6 @@ public class EngineBlock
 		@Override
 		public void modifyText(ModifyEvent e)
 		{
-			path = new File(inEngine.getText());
 			cuinaTab.updateTab();
 		}
 
@@ -165,22 +191,16 @@ public class EngineBlock
 		{
 			if (e.widget == cmdEngine)
 			{
-				path = chooseEnginePath();
+				String path = chooseEnginePath();
 				if (path != null)
-					inEngine.setText(path.toString());
+					inEngine.setText(path);
 			}
 			else
 			{
 				if (opSrcHome.getSelection())
-				{
 					inEngine.setEnabled(false);
-					path = new File(cuinaHome);
-				}
 				else
-				{
 					inEngine.setEnabled(true);
-					path = new File(inEngine.getText());
-				}
 				cuinaTab.updateTab();
 			}
 		}

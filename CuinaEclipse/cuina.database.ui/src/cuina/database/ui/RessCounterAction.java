@@ -2,7 +2,7 @@ package cuina.database.ui;
 
 import cuina.database.Database;
 import cuina.database.ui.ReferenceCounter.Reference;
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -27,14 +27,14 @@ public class RessCounterAction extends AbstractHandler
 			IProject project = (IProject) obj;
 			try
 			{
-				if (project.getNature(CuinaPlugin.NATURE_ID) == null) return null;
+				if (project.getNature(CuinaCore.NATURE_ID) == null) return null;
 			}
 			catch (CoreException e)
 			{
 				e.printStackTrace();
 			}
 			
-			Database db = CuinaPlugin.getCuinaProject(project).getService(Database.class);
+			Database db = CuinaCore.getCuinaProject(project).getService(Database.class);
 			ReferenceCounter counter = new ReferenceCounter();
 			counter.scanDatabase(db);
 			Reference[] refs = counter.getReferences();

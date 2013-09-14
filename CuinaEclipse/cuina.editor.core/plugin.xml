@@ -161,4 +161,13 @@
         </Service>
      </serviceFactory>
   </extension>
+  <extension
+        point="org.eclipse.core.variables.dynamicVariables">
+     <variable
+           description="description"
+           name="engine_path"
+           resolver="cuina.editor.debug.CuinaVariableResolver"
+           supportsArgument="false">
+     </variable>
+  </extension>
 </plugin>

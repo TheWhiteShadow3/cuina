@@ -2,7 +2,7 @@ package cuina.editor.map.internal.views;
 
 import cuina.database.DatabaseInput;
 import cuina.database.ui.IDatabaseEditor;
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.EditorContextChangeListener;
 import cuina.editor.map.ITerrainEditor;
 import cuina.editor.map.internal.MapEditor;
@@ -45,7 +45,7 @@ public class TilesetView extends ViewPart implements EditorContextChangeListener
 		{
 			setEditor( ((MapEditor) editor).getTerrainEditor());
 		}
-		CuinaPlugin.getPlugin().addEditorContextChangeListener(this);
+		CuinaCore.getDefault().addEditorContextChangeListener(this);
 		getSite().setSelectionProvider(panel);
 		makeActions();
 	}

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: cuina.editor.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: cuina.editor.core.CuinaPlugin
+Bundle-Activator: cuina.editor.core.CuinaCore
 Bundle-Vendor: Cuina
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.debug,
  org.eclipse.jdt.debug.ui,
  org.eclipse.jdt.launching,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.core.variables
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: cuina.editor.core,
  cuina.editor.core.util

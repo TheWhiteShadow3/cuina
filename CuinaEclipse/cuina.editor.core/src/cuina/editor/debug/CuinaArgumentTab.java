@@ -11,8 +11,6 @@ public class CuinaArgumentTab extends JavaArgumentsTab
    @Override
    public void setDefaults(ILaunchConfigurationWorkingCopy config)
    {
-       super.setDefaults(config);
-       
        config.setAttribute(ATTR_PROGRAM_ARGUMENTS, CuinaLaunch.getDefaultArgs());
        config.setAttribute(ATTR_VM_ARGUMENTS, CuinaLaunch.getDefaultVMArgs());
    }

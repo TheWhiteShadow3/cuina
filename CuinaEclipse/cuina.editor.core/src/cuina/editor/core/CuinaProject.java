@@ -76,7 +76,7 @@ public final class CuinaProject
 		project.open(monitor);
 		
 		IProjectDescription description = project.getDescription();
-		description.setNatureIds(new String[] { CuinaPlugin.NATURE_ID });
+		description.setNatureIds(new String[] { CuinaCore.NATURE_ID });
 		project.setDescription(description, null);
 	}
 	
@@ -90,7 +90,7 @@ public final class CuinaProject
 	{
 		try
 		{
-			return project.exists() && project.hasNature(CuinaPlugin.NATURE_ID);
+			return project.exists() && project.hasNature(CuinaCore.NATURE_ID);
 		}
 		catch (CoreException e)
 		{
@@ -108,7 +108,7 @@ public final class CuinaProject
 	 */
 	public <T> T getService(Class<T> api)
 	{
-		ProjectServiceFactory factory = CuinaPlugin.getProjectServiceFactory(api);
+		ProjectServiceFactory factory = CuinaCore.getProjectServiceFactory(api);
 		if (factory == null) return null;
 		
 		return (T) factory.create(api, this);

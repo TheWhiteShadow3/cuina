@@ -6,6 +6,7 @@ import cuina.editor.core.internal.engine.EngineClassLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,13 +29,15 @@ public class EngineReference
 	private CuinaProject project;
 	private IEclipsePreferences prefs;
 	private EngineClassLoader classLoader;
+	private PluginManager pluginManager;
+	
+	private Path projectPath;
 
-	public EngineReference(CuinaProject project) throws FileNotFoundException
+	public EngineReference(CuinaProject project) throws IOException
 	{
 		this.project = project;
 		this.prefs = new ProjectScope(project.getProject()).getNode("cuina.editor.core");
-		
-		validateEnginePath();
+		this.projectPath = Paths.get(getProject().getProject().getLocation().toString());
 		this.classLoader = new EngineClassLoader(this);
 	}
 	
@@ -48,11 +51,14 @@ public class EngineReference
 		return classLoader;
 	}
 
-	public PluginManager createPluginManager()
+	public PluginManager getPluginManager()
 	{
-		PluginManager pm = new PluginManager();
-		pm.findPlugins(new File(getPluginPath()));
-		return pm;
+		if (pluginManager == null)
+		{
+			pluginManager = new PluginManager();
+			pluginManager.findPlugins(new File(getPluginPath()));
+		}
+		return pluginManager;
 	}
 
 	/**
@@ -73,6 +79,37 @@ public class EngineReference
     	return prefs.get(PLUGIN_KEY, "plugins");
 	}
 	
+	public Path resolveEnginePath() throws FileNotFoundException
+    {
+		Path path = Paths.get(getEnginePath());
+		if (!path.isAbsolute())
+		{
+			path = projectPath.resolve(path);
+		}
+		if (Files.notExists(path))
+			throw new FileNotFoundException(path.toString());
+		
+		if (Files.isDirectory(path))
+		{
+			path = path.resolve("cuina.engine.jar");
+			if (Files.notExists(path))
+				throw new FileNotFoundException(path.toString());
+		}
+    	return path;
+    }
+	
+	public Path resolvePluginPath()
+    {
+		Path path = Paths.get(getPluginPath());
+		if (!path.isAbsolute())
+		{
+			path = projectPath.resolve(path);
+		}
+		if (Files.notExists(path)) return null;
+		
+    	return path;
+    }
+	
 	private String getDefaultPath()
 	{
 		String value = System.getenv(CUINA_SYSTEM_VARIABLE);
@@ -91,23 +128,17 @@ public class EngineReference
 	
 	/**
 	 * Setzt den Pfad zu den Plugins. Wenn der Pfad <code>null</code> ist,
-	 * wird im Verzeichnis der System-Variablen CUINA_HOME das Verzeichnis plugin gesucht.
+	 * wird im Verzeichnis des Projekts das Verzeichnis <i>plugins</i> gesucht.
 	 * @param path Pfad zu den Plugins.
 	 */
 	public void setPluginPath(String path)
 	{
 		prefs.put(PLUGIN_KEY, path);
-	}
-	
-	private void validateEnginePath() throws FileNotFoundException
-	{
-		Path path = Paths.get(getEnginePath());
-		if (Files.notExists(path))
-			throw new FileNotFoundException(path.toString());
-		
-		if ( !path.toString().endsWith(".jar") && Files.notExists(path.resolve("cuina.engine.jar")) )
+		if (pluginManager != null)
 		{
-			throw new FileNotFoundException(path.toString());
+			File file = new File(getPluginPath());
+			if (file.equals(pluginManager.getDirectory())) return;
+			pluginManager.findPlugins(file);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package cuina.editor.ui;
 
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.resource.ResourceManager;
 
 import org.eclipse.core.resources.IFile;
@@ -16,15 +16,15 @@ public class CuinaLabelProvider extends LabelProvider
 	public Image getImage(Object element)
 	{
 		if (element instanceof IProject)
-			return CuinaPlugin.getImage(CuinaPlugin.IMAGE_PROJECT);
+			return CuinaCore.getImage(CuinaCore.IMAGE_PROJECT);
 		else if (element instanceof IFolder)
 		{
 			if (ResourceManager.isRegistedDirectory((IFolder) element))
-				return CuinaPlugin.getImage(CuinaPlugin.IMAGE_DATA_FOLDER);
+				return CuinaCore.getImage(CuinaCore.IMAGE_DATA_FOLDER);
 		}
 		else if (element instanceof IFile && ((IFile) element).getFileExtension().equals("cfg"))
 		{
-			return CuinaPlugin.getImage(CuinaPlugin.IMAGE_CONFIG_FILE);
+			return CuinaCore.getImage(CuinaCore.IMAGE_CONFIG_FILE);
 		}
 		
 		return null;

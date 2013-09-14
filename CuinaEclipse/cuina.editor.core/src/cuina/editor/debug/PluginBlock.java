@@ -1,7 +1,10 @@
 package cuina.editor.debug;
 
+import cuina.editor.core.CuinaProject;
+import cuina.editor.core.engine.CuinaPlugin;
+import cuina.editor.core.engine.CuinaPlugin.State;
+import cuina.editor.core.engine.EngineReference;
 import cuina.editor.core.engine.PluginManager;
-import cuina.plugin.CuinaPlugin;
 
 import java.io.File;
 import java.util.HashSet;
@@ -11,6 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -39,7 +43,6 @@ public class PluginBlock
 	private Text inPlugin;
 	private Button cmdPlugin;
 	private PluginListener listener;
-	private String enginePath;
 	private String pluginPath;
 	private Set<String> plugins;
 	private Table table;
@@ -47,7 +50,7 @@ public class PluginBlock
 	private Button cmdSelectAll;
 	private Button cmdSelectNone;
 	private Button cmdAddDepends;
-//	private ILaunchConfiguration originalConfig;
+	private EngineReference engineReference;
 	private PluginManager pluginManager;
 	
 	public PluginBlock(CuinaTab cuinaTab)
@@ -81,11 +84,6 @@ public class PluginBlock
 		cmdPlugin.setText("Suchen...");
 		cmdPlugin.addListener(SWT.Selection, listener);
 
-//		// XXX Debug Zeilen:
-//		Label label = new Label(parent, SWT.NONE);
-//		label.setText("DEBUG: Es werden z.Z. immer alle Plugins geladen!");
-//		label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 3));
-
 		pluginTable = CheckboxTableViewer.newCheckList(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL);
 		pluginTable.setContentProvider(new PluginContentProvider());
 		pluginTable.setInput(pluginManager);
@@ -111,79 +109,45 @@ public class PluginBlock
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) throws CoreException
 	{
-		config.setAttribute(CuinaLaunch.PLUGIN_PATH, "plugins");
-		config.setAttribute(CuinaLaunch.PLUGIN_LIST, (Set<String>) null);
+//		config.setAttribute(CuinaLaunch.PLUGIN_PATH, "");
+//		config.setAttribute(CuinaLaunch.PLUGIN_LIST, (Set<String>) null);
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException
 	{
-		enginePath = config.getAttribute(CuinaLaunch.ENGINE_PATH, "");
-		pluginPath = config.getAttribute(CuinaLaunch.PLUGIN_PATH, "");
+//		enginePath = config.getAttribute(CuinaLaunch.ENGINE_PATH, "");
+		pluginPath = config.getAttribute(CuinaLaunch.PLUGIN_PATH, (String) null);
 		plugins = config.getAttribute(CuinaLaunch.PLUGIN_LIST, (Set<String>) null);
 		
+		CuinaProject project = cuinaTab.getProject();
+		if (project != null)
+			this.engineReference = project.getService(EngineReference.class);
+		if (pluginPath == null)
+		{
+			pluginPath = engineReference != null ? engineReference.getPluginPath() : "";
+		}
 		inPlugin.setText(pluginPath.toString());
-		
-//		pluginManager.findPlugins(new File(enginePath, pluginPath));
-//		pluginTable.refresh();
-//		if (plugins == null)
-//		{
-//			plugins = new HashSet<String>();
-//			for (CuinaPlugin plugin : pluginManager.getPluginFiles().values())
-//			{
-//				plugins.add(plugin.getName());
-//				pluginTable.setChecked(plugin, true);
-//			}
-//		}
-//		else
-//		{
-//			for (String name : plugins)
-//			{
-//				CuinaPlugin plugin = pluginManager.getPluginFiles().get(name);
-//				if (plugin != null) pluginTable.setChecked(plugin, true);
-//			}
-//		}
-//		pluginTable.refresh();
-		
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config)
 	{
-		config.setAttribute(CuinaLaunch.PLUGIN_PATH, inPlugin.getText());
+		String pluginPath = inPlugin.getText();
+		config.setAttribute(CuinaLaunch.PLUGIN_PATH, pluginPath);
 		config.setAttribute(CuinaLaunch.PLUGIN_LIST, plugins);
 		// Workaround wegen LaunchConfiguration Bug.
-		config.setAttribute(CuinaLaunch.PLUGIN_MAGIC, plugins.hashCode());
+		config.setAttribute(CuinaLaunch.PLUGIN_MAGIC, Objects.hashCode(plugins));
+		
+		try
+		{
+			String resolvedPath = VariablesPlugin.getDefault().getStringVariableManager().
+					performStringSubstitution(pluginPath);
+			CuinaVariableResolver.setValue("plugin_path", resolvedPath);
+		}
+		catch (CoreException e)
+		{
+			e.printStackTrace();
+		}
 	}
-
-//	private void findPlugins(File dir)
-//	{
-//		if (dir.exists())
-//		{
-//			String[] pluginNames = dir.list(new FilenameFilter()
-//			{
-//				@Override
-//				public boolean accept(File dir, String name)
-//				{
-//					return name.endsWith(".jar");
-//				}
-//			});
-//			pluginTable.setInput(pluginNames);
-//		}
-//		else
-//			pluginTable.setInput(null);
-//		if (originalConfig != null) try
-//		{
-//			if (dir.toString().equals(originalConfig.getAttribute(CuinaLaunch.PLUGIN_PATH, (String) null)))
-//			{
-//				plugins = originalConfig.getAttribute(CuinaLaunch.PLUGIN_LIST, new HashSet<String>());
-//				pluginTable.setCheckedElements(plugins.toArray());
-//				return;
-//			}
-//		}
-//		catch (CoreException e)
-//		{
-//			e.printStackTrace();
-//		}
-//	}
 
 	private File choosePluginPath()
 	{
@@ -257,16 +221,13 @@ public class PluginBlock
 			}
 			else if (e.widget == inPlugin)
 			{
-				File file = new File(inPlugin.getText());
-				if (!file.isAbsolute())
-					file = new File(enginePath, inPlugin.getText());
-				
-				if (!file.equals(pluginManager.getDirectory()))
+				try
 				{
-					pluginManager.findPlugins(file);
-					pluginTable.refresh();
-					fillPluginTable();
-					cuinaTab.updateTab();
+					changePluginDirectory(getPluginDirectory());
+				}
+				catch (CoreException e1)
+				{
+					e1.printStackTrace();
 				}
 			}
 			else if (e.widget == cmdSelectAll)
@@ -304,6 +265,20 @@ public class PluginBlock
 		}
 	}
 	
+	private void changePluginDirectory(File directory)
+	{
+		if (Objects.equals(directory, pluginManager.getDirectory()) ) return;
+
+		if (directory == null)
+			pluginManager.clear();
+		else
+			pluginManager.findPlugins(directory);
+		
+		pluginTable.refresh();
+		fillPluginTable();
+		cuinaTab.updateTab();
+	}
+	
 	private void fillPluginTable()
 	{
 		if (plugins == null)
@@ -312,7 +287,10 @@ public class PluginBlock
 			for (CuinaPlugin plugin : pluginManager.getPluginFiles().values())
 			{
 				plugins.add(plugin.getName());
-				pluginTable.setChecked(plugin, true);
+				if (plugin.getState() != State.LOADED)
+					pluginTable.setGrayed(plugin, true);
+				else
+					pluginTable.setChecked(plugin, true);
 			}
 		}
 		else
@@ -320,15 +298,58 @@ public class PluginBlock
 			for (String name : plugins)
 			{
 				CuinaPlugin plugin = pluginManager.getPluginFiles().get(name);
-				if (plugin != null) pluginTable.setChecked(plugin, true);
+				if (plugin != null)
+				{
+					if (plugin.getState() != State.LOADED)
+						pluginTable.setGrayed(plugin, true);
+					else
+						pluginTable.setChecked(plugin, true);
+				}
 			}
+		}
+	}
+	
+	private File getPluginDirectory() throws CoreException
+	{
+		String path;
+		try
+		{
+			path = VariablesPlugin.getDefault().getStringVariableManager().
+					performStringSubstitution(inPlugin.getText());
+			File directory = new File(path);
+			if (!directory.isAbsolute())
+			{
+				CuinaProject project = cuinaTab.getProject();
+				if (project == null) return null;
+				
+				String projectPath = project.getProject().getLocation().toOSString();
+				directory = new File(projectPath, directory.getPath());
+			}
+			return directory;
+		}
+		catch (CoreException e)
+		{
+			return null;
 		}
 	}
 
 	public String validate()
 	{
-		if (!inPlugin.getText().isEmpty() && !new File(inPlugin.getText()).exists())
-			return "Plugin-Pfad nicht gefunden!";
+		if (!inPlugin.getText().isEmpty())
+		{
+			File file = null;
+			try
+			{
+				file = getPluginDirectory();
+			}
+			catch (CoreException e)
+			{
+				e.printStackTrace();
+			}
+			if (file == null || !file.exists())
+				return "Plugin-Pfad nicht gefunden!";
+		}
+		if (plugins == null || plugins.isEmpty()) return null;
 		
 		Set<String> missingPlugins = new HashSet<String>();
 		for (CuinaPlugin plugin : pluginManager.getPluginFiles().values())

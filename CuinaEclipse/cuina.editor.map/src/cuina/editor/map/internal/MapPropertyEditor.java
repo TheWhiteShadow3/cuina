@@ -3,7 +3,7 @@ package cuina.editor.map.internal;
 import cuina.database.DataTable;
 import cuina.database.Database;
 import cuina.database.ui.DatabaseComboViewer;
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.ui.WidgetFactory;
 import cuina.map.Map;
@@ -86,7 +86,7 @@ public class MapPropertyEditor extends EditorPart implements ModifyListener
         try
         {
 			project = (CuinaProject) input.getAdapter(CuinaProject.class);
-			if (project == null) project = CuinaPlugin.getCuinaProject(file.getProject());
+			if (project == null) project = CuinaCore.getCuinaProject(file.getProject());
 			
             map = (Map) input.getAdapter(Map.class);
             if (map == null) map = (Map) SerializationManager.load(file, Map.class.getClassLoader());

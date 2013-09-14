@@ -1,7 +1,7 @@
 package cuina.editor.map.internal;
 
 import cuina.database.DatabasePlugin;
-import cuina.editor.core.CuinaPlugin;
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 
 import org.eclipse.core.resources.IFile;
@@ -20,7 +20,7 @@ public class MapMatchingStrategy implements IEditorMatchingStrategy
 		{
 			IFile file = (IFile) input.getAdapter(IFile.class);
 			
-			CuinaProject cuinaProject = CuinaPlugin.getCuinaProject(file.getProject());
+			CuinaProject cuinaProject = CuinaCore.getCuinaProject(file.getProject());
 			String mapPath = cuinaProject.getIni().
 					get(DatabasePlugin.PLUGIN_ID, DatabasePlugin.DATABASE_DIRECTORY_ID, "maps");
 			return mapPath.equals(file.getFullPath().segment(1));
