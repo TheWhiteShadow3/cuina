@@ -2,9 +2,9 @@ package cuina.database.ui;
 
 import cuina.database.DataTable;
 import cuina.database.Database;
-import cuina.database.DatabaseDescriptor;
 import cuina.database.DatabaseObject;
 import cuina.database.DatabasePlugin;
+import cuina.database.IDatabaseDescriptor;
 import cuina.database.ResourceReference;
 import cuina.editor.core.CuinaProject;
 import cuina.resource.ResourceException;
@@ -27,8 +27,8 @@ public class ReferenceCounter
 	
 	public void scanDatabase(Database db)
 	{
-		DatabaseDescriptor[] descriptors = DatabasePlugin.getDescriptors();
-		for (DatabaseDescriptor descriptor : descriptors) try
+		IDatabaseDescriptor[] descriptors = DatabasePlugin.getDescriptors();
+		for (IDatabaseDescriptor descriptor : descriptors) try
 		{
 			DataTable<?> table = db.loadTable(descriptor.getName());
 			if(table != null)

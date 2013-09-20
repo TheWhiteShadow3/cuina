@@ -9,6 +9,6 @@ public interface DataEditorPage<E extends DatabaseObject>
 	public void setValue(E obj);
 	public void setChildValue(Object obj);
 	public E getValue();
-	
+
 	public void createEditorPage(Composite parent, IDatabaseEditor context);
 }

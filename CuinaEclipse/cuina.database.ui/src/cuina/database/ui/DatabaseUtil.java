@@ -208,11 +208,11 @@ public class DatabaseUtil
 
 		public void enableDragAndDrop()
 		{
-			activateDragAndDrop();
+			addDragListener();
 			addDropListener();
 		}
 		
-		private void activateDragAndDrop()
+		private void addDragListener()
 		{
 			DragSource source = (DragSource) viewer.getControl().getData(DND.DRAG_SOURCE_KEY);
 			if (source == null)
@@ -396,8 +396,8 @@ public class DatabaseUtil
 				}
 			});
 		}
-		
-		public void enableEditorActions()
+
+		public void enableEditorOpenAction()
 		{
 			openEditorAction = new Action()
 			{
@@ -425,6 +425,18 @@ public class DatabaseUtil
 			openEditorAction.setText("Edit");
 			openEditorAction.setAccelerator(SWT.CONTROL | 'e');
 			
+			viewer.addDoubleClickListener(new IDoubleClickListener()
+			{
+				@Override
+				public void doubleClick(DoubleClickEvent event)
+				{
+					openEditorAction.run();
+				}
+			});
+		}
+		
+		public void enableEditorActions()
+		{
 			newElement = new Action()
 			{
 				@Override
@@ -496,16 +508,6 @@ public class DatabaseUtil
 			};
 			changeKeyAction.setText("Change Key...");
 			changeKeyAction.setAccelerator(SWT.F2);
-			
-			
-			viewer.addDoubleClickListener(new IDoubleClickListener()
-			{
-				@Override
-				public void doubleClick(DoubleClickEvent event)
-				{
-					openEditorAction.run();
-				}
-			});
 		}
 		
 		public void enableClipboardActions()

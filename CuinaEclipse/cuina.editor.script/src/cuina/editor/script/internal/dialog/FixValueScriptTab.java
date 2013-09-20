@@ -2,9 +2,9 @@ package cuina.editor.script.internal.dialog;
 
 import cuina.database.DataTable;
 import cuina.database.Database;
-import cuina.database.DatabaseDescriptor;
 import cuina.database.DatabaseObject;
 import cuina.database.DatabasePlugin;
+import cuina.database.IDatabaseDescriptor;
 import cuina.database.ui.DatabaseComboViewer;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.script.dialog.CommandTab;
@@ -364,7 +364,7 @@ public class FixValueScriptTab implements CommandTab, Listener
 
 	private String[] createTableList()
 	{
-		DatabaseDescriptor[] descriptors = DatabasePlugin.getDescriptors();
+		IDatabaseDescriptor[] descriptors = DatabasePlugin.getDescriptors();
 		String[] names = new String[descriptors.length];
 		for (int i = 0; i < descriptors.length; i++)
 		{

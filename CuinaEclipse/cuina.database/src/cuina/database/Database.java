@@ -127,7 +127,7 @@ public class Database
 		if (file == null) throw new NullPointerException("file is null");
 		if (name == null) throw new NullPointerException("name is null");
 		
-		DatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(name);
+		IDatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(name);
 		if (descriptor == null) throw new ResourceException("Descriptor for " + name + " is null!");
 		
 		Class clazz = descriptor.getDataClass();
@@ -186,7 +186,7 @@ public class Database
 	
 	public <E extends DatabaseObject> DataTable<E> createNewTable(String name)
 	{
-		DatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(name);
+		IDatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(name);
 		if (descriptor == null) throw new NullPointerException("Database " + name + " is not registed!");
 
 		return new DataTable<E>(name, descriptor.getDataClass());

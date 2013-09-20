@@ -49,7 +49,7 @@ public final class DatabasePlugin extends Plugin
 	// The shared instance
 	private static DatabasePlugin plugin;
 	
-	private HashMap<String, DatabaseDescriptor> databaseTypes = new HashMap<String, DatabaseDescriptor>();
+	private HashMap<String, IDatabaseDescriptor> databaseTypes = new HashMap<String, IDatabaseDescriptor>();
 	private HashMap<CuinaProject, Database> databases = new HashMap<CuinaProject, Database>();
 	
 	/**
@@ -166,7 +166,7 @@ public final class DatabasePlugin extends Plugin
 	 * @return Den DatabaseDescriptor.
 	 * @throws IllegalStateException wenn das Plugin gestoppt ist.
 	 */
-	public static DatabaseDescriptor getDescriptor(String name)
+	public static IDatabaseDescriptor getDescriptor(String name)
 	{
 		if (plugin == null) throw new IllegalStateException(MSG_SERVICE_CLOSED);
 		
@@ -179,7 +179,7 @@ public final class DatabasePlugin extends Plugin
 	 * @return Den DatabaseDescriptor.
 	 * @throws IllegalStateException wenn das Plugin gestoppt ist.
 	 */
-	public static DatabaseDescriptor getDescriptor(IFile file)
+	public static IDatabaseDescriptor getDescriptor(IFile file)
 	{
 		return getDescriptor(getTableNameFromFile(file));
 	}
@@ -210,7 +210,7 @@ public final class DatabasePlugin extends Plugin
 	 * @return Liste aller verfügbaren DatabaseDescriptor.
 	 * @throws IllegalStateException wenn das Plugin gestoppt ist.
 	 */
-	public static DatabaseDescriptor[] getDescriptors()
+	public static IDatabaseDescriptor[] getDescriptors()
 	{
 		if (plugin == null) throw new IllegalStateException(MSG_SERVICE_CLOSED);
 		
@@ -227,7 +227,7 @@ public final class DatabasePlugin extends Plugin
 		{
 			try
 			{
-				DatabaseDescriptor descriptor = new DatabaseDescriptor(conf);
+				IDatabaseDescriptor descriptor = new DatabaseDescriptor(conf);
 			
 				databaseTypes.put(descriptor.getName(), descriptor);
 			}
@@ -269,7 +269,7 @@ public final class DatabasePlugin extends Plugin
 				{
 					IProject project = (IProject) event.getResource();
 					System.out.println("[DatabasePlugin] schließe Datenbank für Projekt: " + project.getName());
-					DatabaseDescriptor descriptor = databaseTypes.get(project.getName());
+					IDatabaseDescriptor descriptor = databaseTypes.get(project.getName());
 					if (descriptor != null)
 					{
 						Image image = descriptor.getImage();

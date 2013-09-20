@@ -10,6 +10,8 @@ public class WidgetNode implements NamedItem, Serializable
 {
 	private static final long serialVersionUID = -5908853649088580099L;
 	
+	public transient WidgetTree tree;
+	public transient WidgetNode parent;
 	public String name;
 	public int x;
 	public int y;

@@ -2,7 +2,6 @@ package cuina.database.ui.internal;
 
 import cuina.database.DataTable;
 import cuina.database.Database;
-import cuina.database.DatabaseObject;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
 import cuina.editor.core.CuinaCore;

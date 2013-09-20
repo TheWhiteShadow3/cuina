@@ -4,6 +4,7 @@ import cuina.database.ui.DataEditorPage;
 import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.core.util.Ini;
+import cuina.editor.gui.internal.tree.WidgetTreeEditor;
 import cuina.editor.ui.selection.HighlightingSelectionMode;
 import cuina.editor.ui.selection.SelectionEvent;
 import cuina.editor.ui.selection.SelectionListener;
@@ -20,11 +21,13 @@ import cuina.widget.data.WidgetTree;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -32,7 +35,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.views.properties.IPropertySource;
 
 import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.Image;
@@ -47,29 +49,21 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	
 	private IDatabaseEditor context;
 	
-	private WidgetEditorPanel panel;
-//	private EditorPanel editorPanel;
+	private WidgetEditorViewer viewer;
 	private IStructuredSelection selection;
 	private final ArrayList<ISelectionChangedListener> listener = new ArrayList<ISelectionChangedListener>();
 	
-	private WidgetFactory widgetFactory;
-//	private WidgetLibraryTree widgetLibraryTree;
-	
 	private WidgetTree tree;
-	private Widget rootWidget;
+	private WidgetTreeEditor treeEditor = new WidgetTreeEditor();
+//	private WidgetLibraryTree widgetLibraryTree;
 	
 	@Override
 	public void setValue(WidgetTree tree)
 	{
 		if (this.tree == tree) return;
 		this.tree = tree;
-		
-		if (rootWidget != null) rootWidget.destroy();
-		
-		rootWidget = widgetFactory.createWidget(tree.root);
 
-		panel.setViewSize(rootWidget.getRight() + 32, rootWidget.getBottom() + 32);
-		panel.setWidgetTree(tree);
+		treeEditor.setWidgetTree(tree);
 	}
 	
 	@Override
@@ -77,7 +71,7 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	{
 		if (obj instanceof WidgetNode)
 		{
-			selectWidget((WidgetNode) obj);
+			setSelection(new StructuredSelection(obj));
 		}
 	}
 
@@ -104,13 +98,11 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	public void createEditorPage(Composite parent, IDatabaseEditor context)
 	{
 		this.context = context;
-		this.widgetFactory = new WidgetFactory(this);
-		
 		parent.setLayout(new GridLayout(1, false));
 		
 		try
 		{
-			createTabFolder(parent);
+			createWidgetEditorViewer(parent);
 		}
 		catch (ResourceException e)
 		{
@@ -118,15 +110,16 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 		}
 	}
 
-	private void createTabFolder(Composite parent) throws ResourceException
+	private void createWidgetEditorViewer(Composite parent) throws ResourceException
 	{
-		panel = new WidgetEditorPanel(parent, 640, 480);
-		panel.getGLCanvas().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		panel.getGLCanvas().addListener(SWT.Resize, getResizeListener());
-		panel.setThemeURL(getThemeResource().getURL());
-		panel.setWidgetFactory(new WidgetFactory(this));
+		viewer = new WidgetEditorViewer(parent, 640, 480);
+		viewer.getGLCanvas().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		viewer.getGLCanvas().addListener(SWT.Resize, getResizeListener());
+		viewer.setThemeURL(getThemeResource().getURL());
+		viewer.setWidgetFactory(new WidgetFactory(this));
+		viewer.setWidgetTreeEditor(treeEditor);
 		
-		SelectionManager sh = panel.getSelectionHandler();
+		SelectionManager sh = viewer.getSelectionHandler();
 		sh.addSelectionListener(this);
 		sh.setDisableOutside(false);
 	}
@@ -141,10 +134,10 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 				if (tree != null)
 				{
 					WidgetNode root = tree.root;
-					Rectangle rect = panel.getBounds();
+					Rectangle rect = viewer.getBounds();
 					int minWidth  = Math.max(root.x + root.width, rect.width - 18);
 					int minHeight = Math.max(root.y + root.height, rect.height - 18);
-					panel.setViewSize(minWidth, minHeight);
+					viewer.setViewSize(minWidth, minHeight);
 				}
 			}
 		};
@@ -167,6 +160,19 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	{
 		if (selection instanceof IStructuredSelection)
 			this.selection = (IStructuredSelection) selection;
+		updateSelection();
+	}
+	
+	private void updateSelection()
+	{
+		SelectionManager sm = viewer.getSelectionHandler();
+		sm.clearSelections();
+		for (WidgetNode node : (List<WidgetNode>) selection.toList())
+		{
+			Widget widget = viewer.getWidget(node);
+			sm.addSelection(widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight());
+		}
+		viewer.refresh();
 	}
 
 	@Override
@@ -182,7 +188,7 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 		Resource res = rp.getResource(ResourceManager.KEY_GRAPHICS, filename);
 		try
 		{
-			Texture tex = panel.getRenderer().loadTexture(res.getURL(), null, null);
+			Texture tex = viewer.getRenderer().loadTexture(res.getURL(), null, null);
 			return tex.getImage(0, 0, tex.getWidth(), tex.getHeight(), null, false, Texture.Rotation.NONE);
 		}
 		catch (IOException e)
@@ -246,18 +252,9 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 //			{}
 //		});
 //	}
+
 	
-	private void selectWidget(WidgetNode node)
-	{
-		//TODO: node.widget existiert nicht mehr. Alternative muss gefunden werden.
-//		Widget widget = node.widget;
-//		selection = new StructuredSelection(widget);
-//		SelectionHandler sh = panel.getSelectionHandler();
-//		sh.getSelection().setBounds(widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight());
-		panel.refresh();
-	}
-	
-	/*
+	/**
 	 *  Gibt den Owner des Widgets zurück.
 	 *  Die meißten Widgets sind selbständig, aber einige gehören zu anderen.
 	 *  In diesme Fall gib das Eltern-Widget zurück.
@@ -357,7 +354,7 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	{
 		if (event.selection != null)
 		{
-			event.manager.setSelectionMode(new HighlightingSelectionMode(panel.getGLCanvas(), 5), true);
+			event.manager.setSelectionMode(new HighlightingSelectionMode(viewer.getGLCanvas(), 5), true);
 		}
 	}
 }

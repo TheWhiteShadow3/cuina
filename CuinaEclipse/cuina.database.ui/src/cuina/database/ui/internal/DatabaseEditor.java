@@ -2,14 +2,15 @@ package cuina.database.ui.internal;
 
 import cuina.database.DataTable;
 import cuina.database.Database;
-import cuina.database.DatabaseDescriptor;
 import cuina.database.DatabaseInput;
 import cuina.database.DatabaseObject;
 import cuina.database.DatabasePlugin;
-import cuina.database.ui.TreeListener;
+import cuina.database.IDatabaseDescriptor;
 import cuina.database.ui.DataEditorPage;
-import cuina.database.ui.IDatabaseEditor;
 import cuina.database.ui.DatabaseViewer;
+import cuina.database.ui.IDatabaseEditor;
+import cuina.database.ui.Toolbox;
+import cuina.database.ui.TreeListener;
 import cuina.database.ui.internal.tree.TreeDataNode;
 import cuina.database.ui.tree.DataNode;
 import cuina.database.ui.tree.TreeNode;
@@ -42,6 +43,7 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 {
 	private DataTable table;
 	private DatabaseViewer viewer;
+	private Toolbox<?> toolbox;
 	private DataEditorPage page;
 	private TreeDataNode currentLeaf;
 	private boolean dirty;
@@ -83,6 +85,27 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 		setSite(site);
 		setInput(input);
 		readInput(input);
+		initPage();
+	}
+
+	private void initPage()
+	{
+		if (table != null) try
+		{
+			IDatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(table.getName());
+			if (descriptor.getEditorClass() != null)
+			{
+				this.page = (DataEditorPage) descriptor.getEditorClass().newInstance();
+			}
+			if (descriptor.getToolboxClass() != null)
+			{
+				this.toolbox = (Toolbox<?>) descriptor.getToolboxClass().newInstance();
+			}
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -101,9 +124,8 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 	public void createPartControl(Composite parent)
 	{
 		SashForm splitter = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
-		this.viewer = createDatabaseViewer(splitter);
-		this.viewer.expandToLevel(2);
-		this.page = createDataEditorPage(splitter);
+		createNavigationArea(splitter);
+		createEditorPage(splitter);
 		splitter.setWeights(new int[] {25, 75});
 		
 		// wähle das erste Item aus
@@ -118,6 +140,41 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 				DatabaseObject obj = ((TreeDataNode) leaf.getData()).getData();
 				page.setValue(obj);
 			}
+		}
+	}
+	
+	private void createNavigationArea(Composite parent)
+	{
+		Composite navigationComposite = new Composite(parent, SWT.NONE);
+		navigationComposite.setLayout(new FillLayout());
+		if (toolbox != null)
+		{
+			SashForm splitter = new SashForm(navigationComposite, SWT.VERTICAL | SWT.SMOOTH);
+			this.viewer = createDatabaseViewer(splitter);
+			Composite toolboxComposite = new Composite(splitter, SWT.BORDER);
+			toolboxComposite.setLayout(new FillLayout());
+			toolbox.createToolboxControl(toolboxComposite, page);
+			splitter.setWeights(new int[] {40, 60});
+		}
+		else
+		{
+			this.viewer = createDatabaseViewer(parent);
+		}
+	}
+	
+	private void createEditorPage(Composite parent)
+	{
+		Composite navigationComposite = new Composite(parent, SWT.NONE);
+		navigationComposite.setLayout(new FillLayout());
+		
+		if (page != null)
+		{
+			page.createEditorPage(navigationComposite, this);
+		}
+		else
+		{
+			Label error = new Label(navigationComposite, SWT.NONE);
+			error.setText("No Editor for " + table.getName() + " available.");
 		}
 	}
 	
@@ -143,6 +200,7 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 		DatabaseViewer viewer = new DatabaseViewer(parent, table.getName(), false);
 		viewer.addDataChangeListener(this);
 		viewer.setInput(getEditorInput());
+		viewer.expandToLevel(2);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener()
 		{
 			@Override
@@ -161,45 +219,6 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 			}
 		});
 		return viewer;
-	}
-	
-	private DataEditorPage createDataEditorPage(Composite parent)
-	{
-		Composite editorContainer = new Composite(parent, SWT.NONE);
-		
-		DataEditorPage page = null;
-		if (table != null) try
-		{
-			DatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(table.getName());
-			if(descriptor.getEditorClass() != null)
-			{
-				page = (DataEditorPage) descriptor.getEditorClass().newInstance();
-				page.createEditorPage(editorContainer, this);
-				
-//				IConfigurationElement[] children = descriptor.getConfiguration().getChildren("TreeContent");
-//				if (children.length > 0)
-//				{
-//					if (children[0].getAttribute("ContentProvider") != null)
-//					{
-//						AbstractChildContentProvider cp = (AbstractChildContentProvider) children[0].
-//								createExecutableExtension("ContentProvider");
-//						viewer.getContentProvider().setChildContentProvider(cp);
-//						viewer.refresh();
-//					}
-//				}
-			}
-			else
-			{
-				editorContainer.setLayout(new FillLayout());
-				Label error = new Label(editorContainer, SWT.NONE);
-				error.setText("No Editor for " + table.getName() + " available.");
-			}
-		}
-		catch (InstantiationException | IllegalAccessException e)
-		{
-			e.printStackTrace();
-		}
-		return page;
 	}
 	
 	private void changeElement(TreeDataNode node)
@@ -240,7 +259,7 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 		if (input instanceof DatabaseInput)
 		{
 			DatabaseInput dbInput = (DatabaseInput) input;
-			table = (DataTable) dbInput.getAdapter(DataTable.class);
+			this.table = (DataTable) dbInput.getAdapter(DataTable.class);
 		}
 		else if (input instanceof IAdaptable)
 		{
@@ -251,13 +270,19 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 			try
 			{
 				CuinaProject cuinaProject = CuinaCore.getCuinaProject(file.getProject());
-				table = cuinaProject.getService(Database.class).loadTable(file);
+				this.table = cuinaProject.getService(Database.class).loadTable(file);
 			}
 			catch (ResourceException e)
 			{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public Toolbox<?> getToolbox()
+	{
+		return toolbox;
 	}
 
 	@Override

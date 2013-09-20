@@ -7,4 +7,6 @@ public class MenuNode extends WidgetNode
 	public int columns;
 	public int align;
 	public String[] commands;
+	public int hGap;
+	public int vGap;
 }

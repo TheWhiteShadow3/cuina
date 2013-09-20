@@ -37,6 +37,7 @@ public class DatabaseActionProvider extends CommonActionProvider implements Tree
 		{
 			provider = DatabaseUtil.getDefaultActions(getActionSite().getStructuredViewer());
 			provider.addDataChangeListener(this);
+			provider.enableEditorOpenAction();
 			provider.enableEditorActions();
 			provider.enableClipboardActions();
 			provider.enableDragAndDrop();

@@ -48,7 +48,7 @@
            icon="icons/cuina16.png"
            id="cuina.editor.debug.CuinaLaunchShortcut"
            label="Run"
-           modes="run">
+           modes="run, debug">
         <contextualLaunch>
            <contextLabel label="Run" mode="run" />
            <contextLabel label="Debug" mode="debug" />
@@ -169,5 +169,31 @@
            resolver="cuina.editor.debug.CuinaVariableResolver"
            supportsArgument="false">
      </variable>
+  </extension>
+  <extension
+        point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+     <propertyTabs
+           contributorId="org.eclipse.ui.navigator.ProjectExplorer">
+        <propertyTab
+              afterTab=" "
+              category="general"
+              id="cuina.editor.core.PreviewTab"
+              label="Vorschau">
+        </propertyTab>
+     </propertyTabs>
+  </extension>
+  <extension
+        point="org.eclipse.ui.views.properties.tabbed.propertySections">
+     <propertySections
+           contributorId="org.eclipse.ui.navigator.ProjectExplorer">
+        <propertySection
+              class="cuina.editor.core.PreviewPropertySection"
+              id="cuina.editor.core.PreviewSection"
+              tab="cuina.editor.core.PreviewTab">
+           <input
+                 type="org.eclipse.core.resources.IResource">
+           </input>
+        </propertySection>
+     </propertySections>
   </extension>
 </plugin>

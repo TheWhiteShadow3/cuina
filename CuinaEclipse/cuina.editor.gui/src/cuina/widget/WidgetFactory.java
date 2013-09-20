@@ -30,7 +30,7 @@ public class WidgetFactory
 	{
 		Widget widget = null;
 		
-		if (data instanceof FrameNode)			widget = createResizableFrame((FrameNode) data);
+		if (data instanceof FrameNode)			widget = createFrame((FrameNode) data);
 		else if (data instanceof ButtonNode)	widget = createButton((ButtonNode) data);
 		else if (data instanceof PictureNode)	widget = createPicture((PictureNode) data);
 		else if (data instanceof TextAreaNode)	widget = createTextArea((TextAreaNode) data);
@@ -43,7 +43,11 @@ public class WidgetFactory
 	
 	private Widget createMenu(MenuNode data)
 	{
-		return null;
+		Menu menu = new Menu();
+		menu.setTheme("/menu");
+		apply(menu, data);
+		
+		return menu;
 	}
 
 	// Einstellungen, die für alle Widget-Typen gültig sind.
@@ -55,10 +59,10 @@ public class WidgetFactory
 		widget.setVisible(data.visible);
 	}
 
-	private Widget createResizableFrame(FrameNode data)
+	private Widget createFrame(FrameNode data)
 	{
-		final ResizableFrame frame = new FactoryFrame();
-		frame.setTheme("/resizableframe");
+		ResizableFrame frame = new FactoryFrame();
+		frame.setTheme("/frame");
 		apply(frame, data);
 		for (WidgetNode child : data.children)
 		{
@@ -147,6 +151,14 @@ public class WidgetFactory
 		textArea.setStyleClassResolver(defaultStyleSheet);
 	}
 	
+	private void apply(Menu menu, MenuNode data)
+	{
+		applyGeneralSettings(menu, data);
+		menu.setColumns(data.columns);
+		menu.setGaps(data.hGap, data.vGap);
+		menu.setCommands(data.commands);
+	}
+	
 	public void reapply(Widget widget, WidgetNode data)
 	{
 		if (data instanceof FrameNode)
@@ -164,6 +176,10 @@ public class WidgetFactory
 		else if (data instanceof TextAreaNode)
 		{
 			apply((TextArea) widget, (TextAreaNode) data);
+		}
+		else if (data instanceof MenuNode)
+		{
+			apply((Menu) widget, (MenuNode) data);
 		}
 	}
 	

@@ -7,8 +7,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import cuina.database.DataTable;
 import cuina.database.Database;
-import cuina.database.DatabaseDescriptor;
 import cuina.database.DatabasePlugin;
+import cuina.database.IDatabaseDescriptor;
 import cuina.database.KeyReference;
 import cuina.resource.ResourceException;
 
@@ -57,10 +57,10 @@ public class ReferenceValidator
 	public static void updateKey(Database db, String tableName, String oldKey, String newKey, IProgressMonitor monitor)
 	{
 		System.out.println("Aktualisiere Referenzen von " + oldKey + " auf " + newKey);
-		DatabaseDescriptor[] descriptors = DatabasePlugin.getDescriptors();
+		IDatabaseDescriptor[] descriptors = DatabasePlugin.getDescriptors();
 		if (monitor != null) monitor.beginTask("update References", descriptors.length);
 		
-		for (DatabaseDescriptor d : descriptors)
+		for (IDatabaseDescriptor d : descriptors)
 		{
 //			if ( tableName.equals(d.getName()) ) continue;
 			if (monitor != null)

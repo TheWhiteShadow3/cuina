@@ -19,6 +19,7 @@ public interface IDatabaseEditor
 	public void removeDataChangeListener(TreeListener l);
 	public CuinaProject getProject();
 	public DataTable getTable();
+	public Toolbox<?> getToolbox();
 	public IEditorInput getEditorInput();
 	public IEditorSite getEditorSite();
 	public void fireDataChanged(Object source, DatabaseObject obj);

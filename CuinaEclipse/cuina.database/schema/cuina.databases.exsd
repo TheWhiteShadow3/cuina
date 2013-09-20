@@ -95,6 +95,17 @@ Geeignet ist z.B. der vollständige Klaseenname.
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="toolbox" type="string">
+            <annotation>
+               <documentation>
+                  Eine Toolbox, die unter dem Navigationsbaum angezeigt werden soll.
+Die Klasse muss cuina.database.ui.Toolbox implementieren.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":cuina.database.ui.Toolbox"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
