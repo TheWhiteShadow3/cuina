@@ -89,7 +89,12 @@ public class WidgetEditorViewer extends AbstractSelectionPanel
 	{
 		this.factory = factory;
 	}
-	
+
+	public Widget getRootWidget()
+	{
+		return rootWidget;
+	}
+
 	public Widget getWidget(WidgetNode widgetNode)
 	{
 		return nodeMap.get(widgetNode);
@@ -228,37 +233,56 @@ public class WidgetEditorViewer extends AbstractSelectionPanel
 		return this.treeListener;
 	}
 	
+	private void addWidgetRecursively(WidgetNode parentNode, WidgetNode node)
+	{
+		Widget widget = factory.createWidget(node);
+		Widget parent = getWidget(parentNode);
+		if (parent == null)
+		{
+			parent = rootWidget;
+			widget.setPosition(16, 16);
+			setViewSize(widget.getRight() + 32, widget.getBottom() + 32);
+		}
+		parent.add(widget);
+		nodeMap.put(node, widget);
+		for (WidgetNode child : node.children)
+		{
+			if (nodeMap.get(child) == null) addWidgetRecursively(node, child);
+		}
+	}
+	
+	private void removeWidgetRecursively(WidgetNode node)
+	{
+		for (WidgetNode child : node.children)
+		{
+			if (nodeMap.get(child) != null) removeWidgetRecursively(child);
+		}
+		Widget widget = getWidget(node);
+		widget.getParent().removeChild(widget);
+		widget.destroy();
+		nodeMap.remove(node);
+	}
+	
 	class WidgetTreeEditorListenerImpl implements WidgetTreeEditorListener
 	{
 		@Override
 		public void widgetAdded(WidgetTreeEditor treeEditor, WidgetNode parentNode, WidgetNode node)
 		{
-			Widget widget = factory.createWidget(node);
-			Widget parent = getWidget(parentNode);
-			if (parent == null)
-			{
-				parent = rootWidget;
-				widget.setPosition(16, 16);
-				setViewSize(widget.getRight() + 32, widget.getBottom() + 32);
-			}
-			parent.add(widget);
-			nodeMap.put(node, widget);
+			addWidgetRecursively(parentNode, node);
 			refresh();
 		}
 	
 		@Override
 		public void widgetRemoved(WidgetTreeEditor treeEditor, WidgetNode parentNode, WidgetNode node)
 		{
-			Widget widget = getWidget(node);
-			widget.getParent().removeChild(widget);
-			widget.destroy();
-			nodeMap.remove(node);
+			removeWidgetRecursively(node);
 			refresh();
 		}
 	
 		@Override
 		public void widgetChanged(WidgetTreeEditor treeEditor, WidgetNode node)
 		{
+			// Muss erst rekursiv sein, wenn ein Layout-System existiert.
 			Widget widget = getWidget(node);
 			factory.reapply(widget, node);
 			widget.invalidateLayout();

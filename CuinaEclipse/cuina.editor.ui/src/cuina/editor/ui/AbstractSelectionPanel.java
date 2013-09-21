@@ -115,7 +115,7 @@ public abstract class AbstractSelectionPanel extends GLPanel
 		updateSelectionArea();
 	}
 	
-	public SelectionManager getSelectionHandler()
+	public SelectionManager getSelectionManager()
 	{
 		return selectionHandler;
 	}

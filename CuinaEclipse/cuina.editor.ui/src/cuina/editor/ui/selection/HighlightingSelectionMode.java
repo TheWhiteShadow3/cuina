@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Display;
  * Ändert den Mauszeiger innerhalb des Auswahlrechtecks und an dessem Rand zu
  * Pfeilen.
  * <p>
- * Die Klasse dient nur dem User-Feedback für den {@link SpanSelectionMode} Die
+ * Die Klasse dient nur dem User-Feedback für den {@link MoveSelectionMode} Die
  * Auswahl selbst, wird hiermit nicht beeinflusst.
  * </p>
  * 

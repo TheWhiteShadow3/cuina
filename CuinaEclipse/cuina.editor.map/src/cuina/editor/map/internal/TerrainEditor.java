@@ -230,7 +230,7 @@ public class TerrainEditor extends EditorPart implements
 	
 	private void addSelectionHandling()
 	{
-		panel.getSelectionHandler().addSelectionListener(new SelectionListener()
+		panel.getSelectionManager().addSelectionListener(new SelectionListener()
 		{
 //			@Override
 //			public void selectionModeChanged(Object source, SelectionMode oldMode, SelectionMode newMode)
@@ -437,7 +437,7 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public SelectionManager getSelectionManager()
 	{
-		return panel.getSelectionHandler();
+		return panel.getSelectionManager();
 	}
 
 	@Override

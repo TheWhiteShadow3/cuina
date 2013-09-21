@@ -161,7 +161,7 @@ public class AutotileView extends ViewPart implements EditorContextChangeListene
 		public AutotileViewSelectionPanel(Composite parent, int width, int height)
 		{
 			super(parent, width, height);
-			getSelectionHandler().addSelectionListener(this);
+			getSelectionManager().addSelectionListener(this);
 			addPaintListener(new PaintListener()
 			{
 				@Override

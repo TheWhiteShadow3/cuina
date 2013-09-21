@@ -225,7 +225,7 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 	
 	public DatabaseInput createDatabaseInput(String key)
 	{
-		return new DatabaseInput(db.getProject(), this, key);
+		return new DatabaseInput(this, key);
 	}
 	
 //	/**

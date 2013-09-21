@@ -1,6 +1,7 @@
 package cuina.editor.ui.selection;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
@@ -27,21 +28,21 @@ public class MoveSelectionMode implements SelectionMode
 	private int dx;
 	private int dy;
 	
-//	private Rectangle anchor;
+	private Rectangle anchor;
 	private int mode = NONE;
 	private int borderRange;
-	private int rasterSize;
+	private int gridSize;
 
 	public MoveSelectionMode(Control control)
 	{
 		this(control, -1, 1);
 	}
 	
-	public MoveSelectionMode(Control control, int borderRange, int rasterSize)
+	public MoveSelectionMode(Control control, int borderRange, int gridSize)
 	{
 		this.control = control;
 		this.borderRange = borderRange;
-		this.rasterSize = rasterSize;
+		this.gridSize = gridSize;
 	}
 	
 	public int getBorderRange()
@@ -90,9 +91,9 @@ public class MoveSelectionMode implements SelectionMode
 //    }
 
 	@Override
-	public void activate(SelectionManager handler, int x, int y)
+	public void activate(SelectionManager manager, int x, int y)
 	{
-		Selection sel = handler.getSelection();
+		Selection sel = manager.getSelection();
 		if (sel == null)
 		{
 			mode = NONE;
@@ -123,37 +124,65 @@ public class MoveSelectionMode implements SelectionMode
 					else														mode = CENTER;
                 }
             }
-
-			if (mode == NONE)
+			lastX = x;
+			lastY = y;
+			if (mode == CENTER)
 			{
-				mode = CENTER;
-				lastX = x;
-				lastY = y;
 				setCursor(SWT.CURSOR_SIZEALL);
+			}
+			else
+			{
+				anchor = manager.getSelection().getBounds();
 			}
 		}
 	}
 
 	@Override
-	public void deactivate(SelectionManager handler, int x, int y)
+	public void deactivate(SelectionManager manager, int x, int y)
 	{
 		mode = NONE;
 		setCursor(SWT.CURSOR_ARROW);
 	}
 
 	@Override
-	public boolean move(SelectionManager handler, int x, int y)
+	public boolean move(SelectionManager manager, int x, int y)
 	{
 		if (mode == NONE) return false;
 		
+		if (mode == CENTER)
+		{
+			return moveCenter(manager, x, y);
+		}
+		else
+		{
+			return resize(manager, x, y);
+		}
+	}
+	
+	private boolean resize(SelectionManager manager, int x, int y)
+	{
+		Selection sel = manager.getSelection();
+		if (sel == null) return false;
+
+		int xx = (x / gridSize * gridSize);
+		int yy = (y / gridSize * gridSize);
+
+		Rectangle rect = new Rectangle(anchor.x, anchor.y, anchor.width, anchor.height);
+		rect.add(new Rectangle(xx, yy, gridSize, gridSize));
+		sel.setBounds(rect);
+		return sel.needRefresh();
+	}
+
+	private boolean moveCenter(SelectionManager manager, int x, int y)
+	{
 		dx = x - lastX;
 		dy = y - lastY;
 		lastX = x;
 		lastY = y;
 		
-		for(Selection s : handler.getSelectionList())
+		for(Selection s : manager.getSelectionList())
 		{
-			s.setLocation(s.getX() + dx, s.getY() + dy, rasterSize, 0, 0);
+			s.setLocation(s.getX() + dx, s.getY() + dy, gridSize, 0, 0);
 		}
 		return Math.abs(dx) + Math.abs(dy) > 0;
 	}

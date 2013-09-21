@@ -6,6 +6,7 @@ import cuina.editor.core.CuinaProject;
 import cuina.editor.core.util.Ini;
 import cuina.editor.gui.internal.tree.WidgetTreeEditor;
 import cuina.editor.ui.selection.HighlightingSelectionMode;
+import cuina.editor.ui.selection.MoveSelectionMode;
 import cuina.editor.ui.selection.SelectionEvent;
 import cuina.editor.ui.selection.SelectionListener;
 import cuina.editor.ui.selection.SelectionManager;
@@ -56,6 +57,8 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	private WidgetTree tree;
 	private WidgetTreeEditor treeEditor = new WidgetTreeEditor();
 //	private WidgetLibraryTree widgetLibraryTree;
+	private HighlightingSelectionMode highlightingSelectionMode;
+	private MoveSelectionMode moveSelectionMode;
 	
 	@Override
 	public void setValue(WidgetTree tree)
@@ -64,6 +67,9 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 		this.tree = tree;
 
 		treeEditor.setWidgetTree(tree);
+		SelectionManager sm = viewer.getSelectionManager();
+		sm.clearSelections();
+		sm.clearSeletionMode();
 	}
 	
 	@Override
@@ -94,6 +100,11 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 		return context.getProject();
 	}
 
+	public WidgetTreeEditor getTreeEditor()
+	{
+		return treeEditor;
+	}
+
 	@Override
 	public void createEditorPage(Composite parent, IDatabaseEditor context)
 	{
@@ -118,8 +129,10 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 		viewer.setThemeURL(getThemeResource().getURL());
 		viewer.setWidgetFactory(new WidgetFactory(this));
 		viewer.setWidgetTreeEditor(treeEditor);
+		this.highlightingSelectionMode = new HighlightingSelectionMode(viewer.getGLCanvas(), 5);
+		this.moveSelectionMode = new MoveSelectionMode(viewer.getGLCanvas(), 5, 1);
 		
-		SelectionManager sh = viewer.getSelectionHandler();
+		SelectionManager sh = viewer.getSelectionManager();
 		sh.addSelectionListener(this);
 		sh.setDisableOutside(false);
 	}
@@ -165,7 +178,7 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	
 	private void updateSelection()
 	{
-		SelectionManager sm = viewer.getSelectionHandler();
+		SelectionManager sm = viewer.getSelectionManager();
 		sm.clearSelections();
 		for (WidgetNode node : (List<WidgetNode>) selection.toList())
 		{
@@ -313,7 +326,13 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	@Override
 	public void startSelection(SelectionEvent event)
 	{
-		event.manager.setSelectionMode(CURSOR_SELECTION_MODE, true);
+		if (event.selection != null)
+		{
+			System.out.println("[ObjectLayer] change Selection-Mode");
+			event.manager.setSelectionMode(moveSelectionMode, true);
+		}
+		else
+			event.manager.setSelectionMode(CURSOR_SELECTION_MODE, true);
 //		if (CURSOR_SELECTION_MODE.getMode() != SpanSelectionMode.NONE) return;
 //		
 //		SelectionManager sh = panel.getSelectionHandler();
@@ -354,7 +373,29 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	{
 		if (event.selection != null)
 		{
-			event.manager.setSelectionMode(new HighlightingSelectionMode(viewer.getGLCanvas(), 5), true);
+			if (event.selection.getWidth() == 1 && event.selection.getHeight() == 1)
+			{
+				selectSingleWidget(event.mouseEvent.x, event.mouseEvent.y);
+			}
+			event.manager.setSelectionMode(highlightingSelectionMode, true);
+		}
+	}
+	
+	private void selectSingleWidget(int x, int y)
+	{
+		Widget widget = getOwner(viewer.getRootWidget().getWidgetAt(x, y));
+		if (widget != null && widget != viewer.getRootWidget())
+		{
+			WidgetNode node = viewer.findWidgetNode(widget);
+
+			if (node == null) throw new NullPointerException("Node for Widget " + widget + " is null.");
+			if (selection != null && selection.getFirstElement() == node) return;
+			
+			setSelection(new StructuredSelection(node));
+		}
+		else
+		{
+			setSelection(StructuredSelection.EMPTY);
 		}
 	}
 }

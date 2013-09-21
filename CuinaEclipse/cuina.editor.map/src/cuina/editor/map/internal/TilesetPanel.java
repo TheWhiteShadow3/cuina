@@ -60,7 +60,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 	public TilesetPanel(Composite parent, int width, int height)
 	{
 		super(parent, width, height);
-		getSelectionHandler().addSelectionListener(this);
+		getSelectionManager().addSelectionListener(this);
 		addPaintListener(createPaintListener());
 		
 		try
@@ -175,10 +175,10 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 	
 	public TileSelection getSelectedTiles()
 	{
-		if (getSelectionHandler().getSelection().getWidth() <= 0) return TileSelection.EMPTY;
+		if (getSelectionManager().getSelection().getWidth() <= 0) return TileSelection.EMPTY;
 		
 		short[][] data = null;
-		Rectangle bounds = getSelectionHandler().getSelection().getBounds();
+		Rectangle bounds = getSelectionManager().getSelection().getBounds();
 		int ts = tileset.getTileSize();
 		data = new short[bounds.width / ts][bounds.height / ts];
 		if (data.length != 0)
@@ -195,7 +195,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 	
 	public Rectangle getSelectedRect()
 	{
-		Rectangle bounds = getSelectionHandler().getSelection().getBounds();
+		Rectangle bounds = getSelectionManager().getSelection().getBounds();
 		int ts = tileset.getTileSize();
 		bounds.x /= ts;
 		bounds.y /= ts;

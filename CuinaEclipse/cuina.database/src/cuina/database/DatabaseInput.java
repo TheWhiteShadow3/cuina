@@ -20,20 +20,20 @@ public class DatabaseInput implements IEditorInput
 	
 	public DatabaseInput(IFile file, String key)
 	{
+		if (file == null) throw new NullPointerException("file is null.");
+		if (key == null) throw new NullPointerException("key is null.");
 		this.file = file;
 		this.key = key;
 	}
 	
-	public DatabaseInput(CuinaProject project, DataTable table, String key)
+	public DatabaseInput(DataTable table, String key)
 	{
-		Path path = new Path(table.getFileName());
-		this.file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		this.key = key;
+		this(getFile(table), key);
 	}
 	
 	public DatabaseInput(CuinaProject project, String tableName, String key) throws ResourceException
 	{
-		this(project, getDataTable(project, tableName), key);
+		this(getDataTable(project, tableName), key);
 	}
 	
 	@Override
@@ -67,13 +67,13 @@ public class DatabaseInput implements IEditorInput
 	@Override
 	public ImageDescriptor getImageDescriptor()
 	{
-		return null;
+		return ImageDescriptor.createFromImage(DatabasePlugin.getDescriptor(file).getImage());
 	}
 
 	@Override
 	public String getName()
 	{
-		return file.toString() + "/" + key;
+		return file.toString() + '/' + key;
 	}
 
 	@Override
@@ -93,8 +93,30 @@ public class DatabaseInput implements IEditorInput
 		return CuinaCore.getCuinaProject(file.getProject());
 	}
 	
+	private static IFile getFile(DataTable table)
+	{
+		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(table.getFileName()));
+	}
+	
 	private static DataTable getDataTable(CuinaProject project, String tableName) throws ResourceException 
 	{
 		return project.getService(Database.class).loadTable(tableName);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 37;
+		return prime * (prime + file.hashCode()) + key.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		DatabaseInput other = (DatabaseInput) obj;
+		return (file.equals(other.file) && key.equals(other.key));
 	}
 }
