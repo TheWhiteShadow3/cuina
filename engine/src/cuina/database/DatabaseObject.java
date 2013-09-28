@@ -1,7 +1,5 @@
 package cuina.database;
 
-import cuina.data.NamedItem;
-
 import java.io.Serializable;
 
 /**

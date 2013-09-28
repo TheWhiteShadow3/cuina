@@ -1,6 +1,7 @@
 package cuina.world;
 
 
+import cuina.database.NamedItem;
 import cuina.event.Event;
 import cuina.event.Trigger;
 
@@ -8,12 +9,27 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-public interface CuinaObject extends Serializable
+/**
+ * Das Interface für Spielobjekte.
+ * @author TheWhiteShadow
+ */
+public interface CuinaObject extends Serializable, NamedItem
 {
-	public void		setID(int id);
+	/**
+	 * Gibt die ID des Objekts zurück.
+	 * Die ID ist innerhalb einer Welt eindeutig.
+	 * @return die ID des Objekts.
+	 */
 	public int 		getID();
 	
+	@Override
 	public String 	getName();
+	
+	/**
+	 * Setzt den Namen des Objekts.
+	 * @param name Name.
+	 */
+	public void 	setName(String name);
 	
 	public float 	getX();
 	public void 	setX(float x);
@@ -38,5 +54,18 @@ public interface CuinaObject extends Serializable
 	public boolean 	exists();
 	public boolean 	isPersistent();
 	
+	/**
+	 * Testet das übergebenes Ereignis gegen alle gesetzten Auslöser.
+	 * Der Auslöser kann durch ein Ereignis-Argument bedingt sein.
+	 * Es ist Aufgabe der Auslösers das Ereignis spezifische Argument zu verarbeiten.
+	 * <p>
+	 * Der Methode können beliebige Parameter für den Auslöser übergeben werden,
+	 * die zum Ereignis gehören und den Kontext abbilden.
+	 * Z.B. wird bei einem Kollisionsereignis der Kollisions-Partner mit übergeben.
+	 * </p>
+	 * @param event Das Ereignis.
+	 * @param eventArg Das Ereignis-Argument.
+	 * @param callArgs Auslöser-Parameter.
+	 */
 	public void testTriggers(Event event, Object eventArg, Object... callArgs);
 }

@@ -29,7 +29,9 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	private boolean freeze;
 	private final ConcurrentHashMap<Integer, CuinaObject> objects =
 			new ConcurrentHashMap<Integer, CuinaObject>(20, 0.8f, 4);
-	private final String OBSERVER_KEY = "$" + Integer.toHexString(hashCode());
+	private final String SPIRIT_KEY = "$" + Integer.toHexString(hashCode());
+
+	private int aviableID;
 	
 	/**
 	 * Gibt die Instanz der Spielwelt zurück.
@@ -40,14 +42,9 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	{
 		return (BaseWorld) Game.getWorld();
 	}
-
-	public void load(String key) {}
 	
 	@Override
-	public void init()
-	{
-		
-	}
+	public void init() {}
 	
 	@Override
 	public void update()
@@ -92,27 +89,33 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	}
 
 	@Override
-	public int addObject(CuinaObject obj)
+	public int getAvilableID()
+	{
+		return aviableID;
+	}
+
+	@Override
+	public boolean addObject(CuinaObject obj)
 	{
 		if (obj == null)
 		{
 			Logger.log(BaseWorld.class, Logger.WARNING, "Objekt ist null.");
-			return -1;
+			return false;
 		}
 
 		if (objects.containsKey(obj.getID()))
 		{
 			Logger.log(BaseWorld.class, Logger.WARNING, "ID-Konflikt! Objekt " + obj.getID() + " abgelehnt.");
-			return -1;
+			return false;
 		}
 
-		obj.addExtension(OBSERVER_KEY, new Observer(obj));
-
-		return obj.getID();
+        aviableID = Math.min(aviableID, obj.getID() + 1);
+		obj.addExtension(SPIRIT_KEY, new Spirit(this, obj));
+		return true;
 	}
 
 	@Override
-	public Set<Integer> getObjectKeys()
+	public Set<Integer> getObjectIDs()
 	{
 		return objects.keySet();
 	}
@@ -244,30 +247,34 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	}
 	
 	/**
-	 * 
+	 * Der Geist ist eine Erweiterung eines Objekts, der es mit der Welt verbindet.
+	 * Nur solange ein Objekt einen Geist hat, ist es mit der Welt verdunden.
+	 * Stirbt ein Objekt, bringt der Geist es aus der Welt.
 	 * @author TheWhiteShadow
 	 */
-	public class Observer extends LifeCycleAdapter implements Serializable
+	public static class Spirit extends LifeCycleAdapter implements Serializable
 	{
 		private static final long serialVersionUID = 4861290551009035892L;
 		
 		private CuinaObject obj;
+		private BaseWorld word;
 
-		private Observer(CuinaObject obj)
+		private Spirit(BaseWorld word, CuinaObject obj)
 		{
+			this.word = word;
 			this.obj = obj;
 		}
 
 		@Override
 		public void init()
 		{
-			objects.put(obj.getID(), obj);
+			word.objects.put(obj.getID(), obj);
 		}
 
 		@Override
 		public void dispose()
 		{
-			objects.remove(obj.getID());
+			word.objects.remove(obj.getID());
 		}
 	}
 

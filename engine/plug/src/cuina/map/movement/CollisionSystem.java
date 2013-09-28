@@ -1,7 +1,6 @@
 package cuina.map.movement;
 
 import cuina.Logger;
-import cuina.data.Area;
 import cuina.object.BaseObject;
 import cuina.world.CuinaMask;
 import cuina.world.CuinaObject;
@@ -28,7 +27,7 @@ public class CollisionSystem implements Serializable
 	private int areaHeight;
 	private int xCount;
 	
-	static private class CollisionArea extends Area
+	static private class CollisionArea extends Rectangle
 	{
 		private static final long serialVersionUID = -7810887030018292181L;
 		
@@ -216,7 +215,7 @@ public class CollisionSystem implements Serializable
 		}
 	}
 	
-	public BaseObject[] findObjects(Area a)
+	public BaseObject[] findObjects(CollisionArea a)
 	{
 		if (a  == null) return null;
 		HashSet<CuinaObject> founds = new HashSet<CuinaObject>();
@@ -308,7 +307,7 @@ public class CollisionSystem implements Serializable
 		else 		 { y = y2; height = y1 - x2; }
 		
 		Rectangle rect = new Rectangle(x, y, width, height);
-		for(Area area : getAreas(rect))
+		for (CollisionArea area : getAreas(rect))
 		{
 			BaseObject[] objects = findObjects(area);
 			for (BaseObject obj : objects)

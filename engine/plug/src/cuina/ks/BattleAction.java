@@ -1,7 +1,7 @@
 package cuina.ks;
  
-import cuina.data.NamedItem;
 import cuina.database.Database;
+import cuina.database.NamedItem;
 import cuina.rpg.Skill;
 import cuina.rpg.actor.Actor;
 

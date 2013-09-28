@@ -52,8 +52,6 @@ public class GameMap extends BaseWorld implements Plugin
 	private SaveHashMap<Integer, CuinaObject> areas = new SaveHashMap<Integer, CuinaObject>();
 	private Panorama[] panoramas = new Panorama[10];
 	
-	private int autoObejctID = 1;
-	private int autoAreaID = 1;
 	private Tileset tileset;
 	private TileMap tilemap;
 	private short[][] collisionMap;
@@ -71,14 +69,12 @@ public class GameMap extends BaseWorld implements Plugin
 	@Override
 	public void init()
 	{
-//		super.init();
+		super.init();
 		Game.setWorld(this);
 	}
 	
-	@Override
 	public void load(String key)
 	{
-		super.init();
 		if (map != null)
 		{
 //			DebugPanel.dispose();
@@ -402,42 +398,30 @@ public class GameMap extends BaseWorld implements Plugin
 		return areas;
 	}
 
-	public int addArea(CuinaObject area)
-	{
-		if (area.getID() == -1)
-			area.setID(autoAreaID++);
-		else
-		{
-			if (area.getID() <= autoAreaID) autoAreaID = area.getID() + 1;
-		}
-		areas.put(area.getID(), area);
-		cs.updatePosition(area);
-		return area.getID();
-	}
-	
-	/**
-	 * Fügt der Map ein Objekt hinzu.
-	 * Wenn das Objekt noch keine ID besitzt wird ihm eine zugeordnet.
-	 * @param obj neues Objekt.
-	 * @return ID des Objekts.
-	 */
+//	public int addArea(CuinaObject area)
+//	{
+//		if (area.getID() == -1)
+//			area.setID(autoAreaID++);
+//		else
+//		{
+//			if (area.getID() <= autoAreaID) autoAreaID = area.getID() + 1;
+//		}
+//		areas.put(area.getID(), area);
+//		cs.updatePosition(area);
+//		return area.getID();
+//	}
+
 	@Override
-	public int addObject(CuinaObject obj)
+	public boolean addObject(CuinaObject obj)
 	{
-		// setze ID, wenn noch nicht vorhaden
-		if (obj.getID() <= 0)
-			obj.setID(autoObejctID++);
-		else
+		if (super.addObject(obj))
 		{
-			if (obj.getID() < 100000 && obj.getID() >= autoObejctID) autoObejctID = obj.getID() + 1;
+//			System.out.println("Neues Objekt (" + obj.getID() + ") " + obj.getName() + ": " + obj.getX() + ", " + obj.getY());
+			cs.updatePosition(obj);
+			obj.testTriggers(OBJECT_CREATE, obj.getID(), obj);
+			return true;
 		}
-//		System.out.println("Neues Objekt (" + obj.getID() + ") " + obj.getName() + ": " + obj.getX() + ", " + obj.getY());
-		int id = super.addObject(obj);
-		if (id == -1) return -1;
-		
-		cs.updatePosition(obj);
-		obj.testTriggers(OBJECT_CREATE, obj.getID(), obj);
-		return obj.getID();
+		else return false;
 	}
 	
 //	public boolean testTriggers(CuinaObject obj, Event event, int value, CuinaObject other)

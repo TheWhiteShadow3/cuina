@@ -1,7 +1,6 @@
 package cuina.map;
 
 import cuina.animation.ModelIF;
-import cuina.data.Area;
 import cuina.world.CuinaMask;
 import cuina.world.CuinaModel;
 import cuina.world.CuinaObject;
@@ -393,9 +392,9 @@ public class CollisionBox implements CuinaMask
 //			return false;
 //	}
 	
-	public boolean inArea(Area area)
+	public boolean intersects(Rectangle rect)
 	{
-		return area.intersects(getBox());
+		return rect.intersects(getBox());
 	}
 	
 	/**

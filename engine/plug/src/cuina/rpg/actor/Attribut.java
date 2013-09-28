@@ -1,6 +1,6 @@
 package cuina.rpg.actor;
 
-import cuina.rpg.NamedItem;
+import cuina.database.NamedItem;
 
 import java.io.Serializable;
 

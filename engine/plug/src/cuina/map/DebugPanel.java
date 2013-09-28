@@ -152,7 +152,7 @@ public class DebugPanel
 	private void createCollisionMask()
 	{
 		CuinaObject object;
-		for(Integer key : map.getObjectKeys())
+		for(Integer key : map.getObjectIDs())
 		{
 			object = map.getObject(key);
 			CollisionBox box = (CollisionBox) object.getExtension("box");
@@ -200,7 +200,7 @@ public class DebugPanel
 		}
 		
 		CuinaObject object;
-		for(Integer key : map.getObjectKeys())
+		for(Integer key : map.getObjectIDs())
 		{
 			object = map.getObject(key);
 			sprite = objectSprites.get(key);

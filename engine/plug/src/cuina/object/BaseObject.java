@@ -68,7 +68,11 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 		triggers.addAll(data.triggers);
 	}
 	
-	@Override
+	/**
+	 * Setzt die ID des Objekts.
+	 * Das darf nur geschehen, solange das Objekt keiner Welt angehört.
+	 * @param id
+	 */
 	public void setID(int id)
 	{
 		this.id = id;
@@ -80,6 +84,7 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 		return name;
 	}
 
+	@Override
 	public void setName(String name)
 	{
 		this.name = name;
@@ -196,6 +201,12 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 	@Override
 	public void addExtension(String key, Object instance)
 	{
+		Object old = extensions.get(key);
+		if (old != null && old instanceof LifeCycle)
+		{
+			((LifeCycle) old).dispose();
+		}
+		
 		extensions.put(key, instance);
 		
 		if (instance instanceof LifeCycle)

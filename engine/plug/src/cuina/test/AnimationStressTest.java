@@ -5,6 +5,7 @@ import cuina.animation.ModelData;
 import cuina.event.Trigger;
 import cuina.object.BaseObject;
 import cuina.object.ObjectData;
+import cuina.world.CuinaWorld;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,10 +70,12 @@ public class AnimationStressTest
 		data.extensions.put("dumm2", new DummyExtension());
 		data.extensions.put("dumm3", new DummyExtension());
 		
+		CuinaWorld world = Game.getWorld();
 		BaseObject obj = new BaseObject(data);
-		Game.getWorld().addObject(obj);
+		obj.setID(world.getAvilableID());
+		world.addObject(obj);
 		
-		Set<Integer> keys = Game.getWorld().getObjectKeys();
+		Set<Integer> keys = world.getObjectIDs();
 		System.out.println("Objekte: " + keys.size());
 	}
 }

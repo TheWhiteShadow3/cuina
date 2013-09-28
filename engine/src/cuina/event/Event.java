@@ -1,5 +1,7 @@
 package cuina.event;
 
+import cuina.database.NamedItem;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,7 +12,7 @@ import java.util.HashMap;
  * Ein Ereignis für Trigger.
  * @author TheWhiteShadow
  */
-public final class Event implements Serializable
+public final class Event implements Serializable, NamedItem
 {
 	private static final long serialVersionUID = -2153248452225951248L;
 	
@@ -53,6 +55,11 @@ public final class Event implements Serializable
 	// Die ID ist zur Identifizierung des Objekts.
 	private /*final*/ transient int id;
 	
+	/**
+	 * Gibt das Ereignis zum übergebenen Namen zurück.
+	 * @param name Ereignis-Name.
+	 * @return Das Ereignis.
+	 */
 	public static Event getEvent(String name)
 	{
 		if (name == null) throw new NullPointerException();
@@ -77,6 +84,7 @@ public final class Event implements Serializable
 		id = ++lastID;
 	}
 
+	@Override
 	public String getName()
 	{
 		return name;

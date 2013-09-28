@@ -4,7 +4,7 @@ import cuina.event.Trigger;
 import cuina.event.Event;
 
 /**
- * Die SkriptCall-Klasse stellt eine einfache Implementierung des Triggers da.
+ * Die SkriptCall-Klasse stellt eine einfache Implementierung des Triggers für Skriptaktionen da.
  * @author TheWhiteShadow
  */
 public class ScriptTrigger implements Trigger
@@ -23,7 +23,6 @@ public class ScriptTrigger implements Trigger
 		this.main = main;
 	}
 
-	@Override
 	public Event getEvent()
 	{
 		return event;

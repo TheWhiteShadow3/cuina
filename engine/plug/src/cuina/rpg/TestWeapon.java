@@ -1,6 +1,6 @@
 package cuina.rpg;
  
-import cuina.data.NamedItem;
+import cuina.database.NamedItem;
 import cuina.rpg.actor.Equippable;
  
 public class TestWeapon implements Equippable, NamedItem

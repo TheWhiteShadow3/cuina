@@ -1,7 +1,7 @@
 package cuina.rpg.inventory;
 
 import cuina.database.DatabaseObject;
-import cuina.rpg.NamedItem;
+import cuina.database.NamedItem;
 
 import java.util.HashMap;
 

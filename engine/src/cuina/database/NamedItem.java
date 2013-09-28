@@ -1,4 +1,4 @@
-package cuina.data;
+package cuina.database;
 
 /**
  * Definiert ein Namensattribut für das implementierende Objekt.
