@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="cuina.database.types" name="Cuina Database Type" schema="schema/cuina.databases.exsd"/>
+   <extension-point id="cuina.database.types" name="Cuina Database Type" schema="schema/cuina.database.types.exsd"/>
    
    <extension
        point="org.eclipse.core.expressions.propertyTesters">
@@ -38,5 +38,12 @@
                class="cuina.database.DataTableConverter">
          </converter>
       </rule>
+   </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="cuina.database.internal.InputFactory"
+            id="cuina.database.InputFactory">
+      </factory>
    </extension>
 </plugin>

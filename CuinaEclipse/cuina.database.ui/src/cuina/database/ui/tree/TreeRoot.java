@@ -2,17 +2,14 @@ package cuina.database.ui.tree;
 
 import cuina.database.DataTable;
 import cuina.database.Database;
-import cuina.database.DatabasePlugin;
 import cuina.database.ui.internal.tree.TreeDataNode;
 import cuina.database.ui.internal.tree.TreeGroup;
 import cuina.resource.ResourceException;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-
 public class TreeRoot extends TreeGroup
 {
 	private transient DataTable<?> table;
-	private transient ITreeContentProvider contentProvider;
+//	private transient ITreeContentProvider contentProvider;
 
 	TreeRoot()
 	{
@@ -57,22 +54,22 @@ public class TreeRoot extends TreeGroup
 		return table;
 	}
 	
-	public ITreeContentProvider getContentProvider()
-	{
-		if (contentProvider == null)
-		{
-			Class clazz = DatabasePlugin.getDescriptor(table.getName()).getContentProviderClass();
-			if (clazz != null) try
-			{
-				contentProvider = (ITreeContentProvider) clazz.newInstance();
-			}
-			catch (InstantiationException | IllegalAccessException e)
-			{
-				throw new RuntimeException(e);
-			}
-		}
-		return contentProvider;
-	}
+//	public ITreeContentProvider getContentProvider()
+//	{
+//		if (contentProvider == null)
+//		{
+//			Class clazz = DatabasePlugin.getDescriptor(table.getName()).getContentProviderClass();
+//			if (clazz != null) try
+//			{
+//				contentProvider = (ITreeContentProvider) clazz.newInstance();
+//			}
+//			catch (InstantiationException | IllegalAccessException e)
+//			{
+//				throw new RuntimeException(e);
+//			}
+//		}
+//		return contentProvider;
+//	}
 	
 	public void saveTree() throws ResourceException
 	{

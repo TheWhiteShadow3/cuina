@@ -63,6 +63,8 @@ public class WidgetEditorViewer extends AbstractSelectionPanel
 		if (treeEditor == null) return;
 
 		treeEditor.addWidgetTreeEditorListener(getWidgetTreeEditorListener());
+		addWidgetRecursively(null, treeEditor.getWidgetTree().root);
+		refresh();
 	}
 
 	public WidgetTreeEditorListener getWidgetTreeListener()

@@ -7,13 +7,13 @@
        name="MapEditor DatabaseTypes"
        point="cuina.database.types">
 		<database
-        	class="cuina.map.MapInfo"
-        	image="icons/map.png"
-       		name="MapInfo">
+        class="cuina.map.MapInfo"
+        editorID="cuina.editor.map.MapEditor"
+        image="icons/map.png"
+        name="MapInfo">
 		</database>
 		<database
         class="cuina.map.Tileset"
-        editor="cuina.editor.map.internal.TilesetEditor"
         image="icons/tileset.png"
         name="Tileset">
 		</database>
@@ -23,12 +23,19 @@
        name="MapEditor"
        point="org.eclipse.ui.editors">
     <editor
-          class="cuina.editor.map.internal.MapEditor"
+          class="cuina.editor.map.internal.TerrainEditor"
           default="true"
           extensions="cxm"
           icon="icons/map.png"
           id="cuina.editor.map.MapEditor"
           name="Cuina Map Editor">
+    </editor>
+    <editor
+          class="cuina.editor.map.internal.TilesetEditor"
+          default="true"
+          icon="icons/tileset.png"
+          id="cuina.editor.map.TilesetEditor"
+          name="Cuina Tilset Editor">
     </editor>
  </extension>
  <extension

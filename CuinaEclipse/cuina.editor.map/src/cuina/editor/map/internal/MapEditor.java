@@ -1,8 +1,11 @@
 package cuina.editor.map.internal;
 
+import cuina.database.ui.DataEditorPage;
+import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.map.Map;
+import cuina.map.MapInfo;
 import cuina.resource.ResourceException;
 import cuina.resource.SerializationManager;
 
@@ -11,12 +14,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
+@Deprecated
 public class MapEditor extends MultiPageEditorPart
 {
 	private TerrainEditor terrainEditor;
@@ -24,8 +29,6 @@ public class MapEditor extends MultiPageEditorPart
 	// private EventEditor triggerEditor;
 	private IFile file;
 	private Map map;
-	
-
 
 	public void setDirty(boolean value)
 	{

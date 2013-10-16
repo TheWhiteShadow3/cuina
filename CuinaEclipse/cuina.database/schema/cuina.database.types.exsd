@@ -53,8 +53,7 @@ Die Datenbank ermöglicht das serialisieren von Java-Objekten im Dateisystem.
 
    <element name="database">
       <complexType>
-         <choice minOccurs="0" maxOccurs="1">
-            <element ref="TreeContentProvider"/>
+         <choice minOccurs="1" maxOccurs="unbounded">
          </choice>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -63,17 +62,6 @@ Die Datenbank ermöglicht das serialisieren von Java-Objekten im Dateisystem.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":cuina.editor.database.DatabaseObject"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="editor" type="string">
-            <annotation>
-               <documentation>
-                  Der Editor, der für den entsprechenden Objekt-Typen verwedet werden soll.
-Die Klasse muss cuina.database.ui.DataEditorPage implementieren.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":cuina.editor.database.DataEditorPage"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -95,35 +83,13 @@ Geeignet ist z.B. der vollständige Klaseenname.
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="toolbox" type="string">
+         <attribute name="editorID" type="string">
             <annotation>
                <documentation>
-                  Eine Toolbox, die unter dem Navigationsbaum angezeigt werden soll.
-Die Klasse muss cuina.database.ui.Toolbox implementieren.
+                  
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":cuina.database.ui.Toolbox"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="TreeContentProvider">
-      <annotation>
-         <documentation>
-            Erweiterung der Baumansicht vom Editor.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  Ein ContentProvider, der das Element in der Baumansicht beschreibt.
-Dies ist Sinnvoll, wenn das Element wiederum die Wurzel einer Baumstruktur darstellt.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":ITreeContentProvider"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
                </appinfo>
             </annotation>
          </attribute>

@@ -12,10 +12,6 @@ public interface IDatabaseDescriptor<E extends DatabaseObject>
 	public Class<E> getDataClass();
 
 	public Image getImage();
-
-	public Class getEditorClass();
-
-	public Class getToolboxClass();
-
-	public Class getContentProviderClass();
+	
+	public String getEditorID();
 }

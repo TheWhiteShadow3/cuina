@@ -38,7 +38,6 @@ public class CuinaPerspective implements IPerspectiveFactory
 
 	private void defineActions(IPageLayout layout)
 	{
-		// Editors are placed for free.
 		String editorArea = layout.getEditorArea();
 
 		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, 0.2f, editorArea);

@@ -1,6 +1,7 @@
 package cuina.editor.map.internal;
 
 import cuina.database.Database;
+import cuina.database.DatabaseInput;
 import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.map.EditorToolAction;
@@ -34,6 +35,9 @@ import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -118,15 +122,20 @@ public class TerrainEditor extends EditorPart implements
 
 	private void readInput(IEditorInput input) throws PartInitException
 	{
-		IFile file = (IFile) input.getAdapter(IFile.class);
-		if (file == null) throw new PartInitException("input must adapt an IFile.");
 		try
 		{
+			IFile file;
+			if (input instanceof DatabaseInput)
+				file = getMapFile((DatabaseInput) input);
+			else
+				file = (IFile) input.getAdapter(IFile.class);
+			
+			if (file == null) throw new PartInitException("Input must adapt an IFile.");
+			
 			project = (CuinaProject) input.getAdapter(CuinaProject.class);
 			if (project == null) project = CuinaCore.getCuinaProject(file.getProject());
 			
-			map = (Map) input.getAdapter(Map.class);
-			if (map == null) map = (Map) SerializationManager.load(file, Map.class.getClassLoader());
+			this.map = (Map) SerializationManager.load(file, Map.class.getClassLoader());
 			
 			Database db = project.getService(Database.class);
 			tileset = db.<Tileset> loadTable("Tileset").get(map.tilesetKey);
@@ -136,6 +145,36 @@ public class TerrainEditor extends EditorPart implements
 			throw new PartInitException("read Editor Input faild!", e);
 		}
 		setPartName(input.getName());
+	}
+	
+	private IFile getMapFile(DatabaseInput dbInput) throws ResourceException
+	{
+		CuinaProject project = (CuinaProject) dbInput.getAdapter(CuinaProject.class);
+		IFolder folder = project.getProject().getFolder(
+				project.getIni().get(Activator.PLUGIN_ID, Activator.MAPS_DIRECTORY_ID, "maps"));
+		
+		IFile found = null;
+		try
+		{
+			IResource[] elements = folder.members();
+			for (IResource r : elements)
+			{
+				if (r instanceof IFile && r.getName().startsWith(dbInput.getKey()) )
+				{
+					String ext = r.getFileExtension();
+					if (ext != null && ext.equals("cxm"))
+					{
+						return (IFile) r;
+					}
+					if (found == null) found = (IFile) r;
+				}
+			}
+			return found;
+		}
+		catch (CoreException e)
+		{
+			throw new ResourceException("Map '" + dbInput.getKey() + "' not found!", e);
+		}
 	}
 
 	@Override

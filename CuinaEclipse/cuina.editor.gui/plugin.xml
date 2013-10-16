@@ -6,10 +6,9 @@
          point="cuina.database.types">
       <database
             class="cuina.widget.data.WidgetTree"
-            editor="cuina.editor.gui.internal.WidgetPage"
+            editorID="cuina.editor.gui.WidgetEditor"
             image="icons/widget.png"
-            name="Widget"
-            toolbox="cuina.editor.gui.internal.WidgetToolbox">
+            name="Widget">
       </database>
    </extension>
    <extension
@@ -36,6 +35,16 @@
                type="org.eclipse.jface.resource.ImageDescriptor">
          </adapter>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="cuina.editor.gui.internal.WidgetEditor"
+            default="true"
+            icon="icons/widget.png"
+            id="cuina.editor.gui.WidgetEditor"
+            name="Cuina Widget Editor">
+      </editor>
    </extension>
 
 </plugin>

@@ -6,8 +6,6 @@ import cuina.database.ui.tree.DataNode;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-
 public abstract class AbstractDataNode implements DataNode
 {
 	transient protected TreeDataNode dataRoot;
@@ -84,33 +82,25 @@ public abstract class AbstractDataNode implements DataNode
 	@Override
 	public boolean hasChildren()
 	{
-		Object data = getData();
-		if (data == null) return false;
-		
-		ITreeContentProvider cp = getRoot().getContentProvider();
-		if (cp == null) return false;
-		
-		return cp.hasChildren(data);
+		return false;
 	}
 
 	@Override
 	public TreeNode[] getChildren()
 	{
-		ITreeContentProvider cp = getRoot().getContentProvider();
-		if (cp == null) return null;
-		
-		Object data = getData();
-		if (data == null) return null;
-		
-		Object[] childData = cp.getChildren(data);
-		TreeNode[] children = new TreeNode[childData.length];
-		for(int i = 0; i < childData.length; i++)
-		{
-			children[i] = new FixDataNode(getDataRoot(), childData[i]);
-			children[i].setParent(this);
-		}
-		
-		return children;
+		return null;
+//		Object data = getData();
+//		if (data == null) return null;
+//		
+//		Object[] childData = cp.getChildren(data);
+//		TreeNode[] children = new TreeNode[childData.length];
+//		for(int i = 0; i < childData.length; i++)
+//		{
+//			children[i] = new FixDataNode(getDataRoot(), childData[i]);
+//			children[i].setParent(this);
+//		}
+//		
+//		return children;
 	}
 
 	@Override

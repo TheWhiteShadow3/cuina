@@ -1,6 +1,7 @@
 package cuina.editor.script.internal;
 
-import cuina.database.ui.DataEditorPage;
+import cuina.database.DatabaseObject;
+import cuina.database.ui.AbstractDatabaseEditorPart;
 import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.core.ObjectUtil;
@@ -71,8 +72,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
-public class ScriptEditor implements DataEditorPage<Script>, ScriptDialogContext, ISelectionProvider
+public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDialogContext, ISelectionProvider
 {
 	private static final String SCRIPT_NAME_PREFIX = "SCRIPT_";
 	
@@ -103,19 +106,21 @@ public class ScriptEditor implements DataEditorPage<Script>, ScriptDialogContext
 
 	public ScriptEditor()
 	{
+//		org.eclipse.dltk.ruby.ui.editor.RubyEditor
+		
 		this.buttonBlock = new CommandLibraryBlock(this);
 		this.handler = new ScriptEditorEventHandler();
 		
 //		parser = new RubyParser(RubyParser.MODE_DEFAULT);
 //		treeEditor = parser.getTreeEditor();
 	}
-	
+
 	@Override
-	public void setValue(Script script)
+	protected void init(DatabaseObject obj)
 	{
-		if (this.script == script) return;
+		if (this.script == obj) return;
 		
-		this.script = script;
+		this.script = (Script) obj;
 		modified = false;
 		
 		if (script != null) parseScriptCode();
@@ -123,40 +128,47 @@ public class ScriptEditor implements DataEditorPage<Script>, ScriptDialogContext
 	}
 
 	@Override
-	public Script getValue()
+	protected boolean applySave()
 	{
 		if (modified)
 			script.setCode( new RubyWriter().write(treeEditor.getRoot()) );
-		return script;
+		
+		return true;
 	}
-	
+
 	@Override
-	public void setChildValue(Object obj)
+	public void setFocus()
 	{
-		if (obj instanceof CommandPage)
-		{
-			ScriptPage page = findPage((CommandPage) obj);
-			setSelection(new ScriptSelection(page, null));
-		}
-		else if (obj instanceof CommandLine)
-		{
-			CommandLine cl = (CommandLine) obj;
-			ScriptPage page = findPage(cl.page);
-			setSelection(new ScriptSelection(page, cl));
-		}
+		pageTabFolder.setFocus();
 	}
 	
-	private ScriptPage findPage(CommandPage commandPage)
-	{
-		for (int i = 0; i < scriptPages.size(); i++)
-		{
-			if (scriptPages.get(i).getPage().equals(commandPage))
-			{
-				return scriptPages.get(i);
-			}
-		}
-		return null;
-	}
+//	@Override
+//	public void setChildValue(Object obj)
+//	{
+//		if (obj instanceof CommandPage)
+//		{
+//			ScriptPage page = findPage((CommandPage) obj);
+//			setSelection(new ScriptSelection(page, null));
+//		}
+//		else if (obj instanceof CommandLine)
+//		{
+//			CommandLine cl = (CommandLine) obj;
+//			ScriptPage page = findPage(cl.page);
+//			setSelection(new ScriptSelection(page, cl));
+//		}
+//	}
+//	
+//	private ScriptPage findPage(CommandPage commandPage)
+//	{
+//		for (int i = 0; i < scriptPages.size(); i++)
+//		{
+//			if (scriptPages.get(i).getPage().equals(commandPage))
+//			{
+//				return scriptPages.get(i);
+//			}
+//		}
+//		return null;
+//	}
 	
 	private void refresh()
 	{
@@ -225,11 +237,10 @@ public class ScriptEditor implements DataEditorPage<Script>, ScriptDialogContext
 	}
 
 	@Override
-	public void createEditorPage(Composite parent, IDatabaseEditor context)
+	public void createPartControl(Composite parent)
 	{
 		this.shell = parent.getShell();
-		this.context = context;
-		this.library = context.getProject().getService(StaticScriptLibrary.class);
+		this.library = getCuinaProject().getService(StaticScriptLibrary.class);
 		this.treeLibary = new TreeLibrary(library);
 		
 		parent.setLayout(new GridLayout(3, false));
@@ -911,5 +922,10 @@ public class ScriptEditor implements DataEditorPage<Script>, ScriptDialogContext
 		{
 			return scriptLabelProvider.getBackground(element);
 		}
+	}
+	
+	private class Myp extends AbstractDecoratedTextEditor
+	{
+		
 	}
 }

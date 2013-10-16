@@ -6,12 +6,10 @@ import cuina.database.DatabaseInput;
 import cuina.database.DatabaseObject;
 import cuina.database.DatabasePlugin;
 import cuina.database.IDatabaseDescriptor;
-import cuina.database.ui.DataEditorPage;
 import cuina.database.ui.DatabaseViewer;
-import cuina.database.ui.IDatabaseEditor;
-import cuina.database.ui.Toolbox;
 import cuina.database.ui.TreeListener;
 import cuina.database.ui.internal.tree.TreeDataNode;
+import cuina.database.ui.internal.tree.TreeGroup;
 import cuina.database.ui.tree.DataNode;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
@@ -22,32 +20,35 @@ import cuina.resource.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
-public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeListener
+public class DatabaseEditor extends EditorPart implements TreeListener
 {
 	private DataTable table;
+	private String key;
 	private DatabaseViewer viewer;
-	private Toolbox<?> toolbox;
-	private DataEditorPage page;
 	private TreeDataNode currentLeaf;
 	private boolean dirty;
 	private boolean update;
+	private IEditorPart editor;
 	
 	private void setDirty(boolean value)
 	{
@@ -58,11 +59,10 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 	@Override
 	public void doSave(IProgressMonitor monitor)
 	{
-		DatabaseObject obj = page.getValue();
-		if (obj != null) table.update(obj.getKey(), obj);
+		editor.doSave(monitor);
+		
 		try
 		{
-			table.getDatabase().saveTable(table);
 			table.getDatabase().saveMetaData();
 			setDirty(false);
 		}
@@ -88,24 +88,25 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 		initPage();
 	}
 
-	private void initPage()
+	private void initPage() throws PartInitException
 	{
-		if (table != null) try
+		if (table == null)
 		{
 			IDatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(table.getName());
-			if (descriptor.getEditorClass() != null)
+			if (descriptor.getEditorID() != null)
 			{
-				this.page = (DataEditorPage) descriptor.getEditorClass().newInstance();
-			}
-			if (descriptor.getToolboxClass() != null)
-			{
-				this.toolbox = (Toolbox<?>) descriptor.getToolboxClass().newInstance();
+				IEditorReference[] refs = getSite().getPage().findEditors(null,
+						descriptor.getEditorID(), IWorkbenchPage.MATCH_ID);
+				if (refs.length > 0)
+				{
+					editor = refs[0].getEditor(true);
+					if (editor != null) return;
+				}
 			}
 		}
-		catch (InstantiationException | IllegalAccessException e)
-		{
-			e.printStackTrace();
-		}
+		
+		throw new PartInitException(
+				new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Editor could not be created."));
 	}
 
 	@Override
@@ -124,80 +125,32 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 	public void createPartControl(Composite parent)
 	{
 		SashForm splitter = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
-		createNavigationArea(splitter);
-		createEditorPage(splitter);
+		createNavigator(splitter);
+		createEditor(splitter);
 		splitter.setWeights(new int[] {25, 75});
+	
+		String metaKey = TreeNode.TREE_META_KEY + '.' + table.getName();
+		TreeRoot root = (TreeRoot) table.getDatabase().getMetaData(metaKey);
+		if (key == null)
+		{
+			TreeDataNode node = findFirstLeaf(root);
+			if (node != null) this.key = node.getKey();
+		}
 		
-		// wähle das erste Item aus
-		if (page != null && table.size() > 0)
+		if (key != null)
 		{
-			Tree tree = viewer.getTree();
-			TreeItem leaf = findFirstLeaf(tree, tree.getItem(0));
-			if (leaf != null)
-			{
-				tree.showItem(leaf);
-				tree.select(leaf);
-				DatabaseObject obj = ((TreeDataNode) leaf.getData()).getData();
-				page.setValue(obj);
-			}
+			DataNode dataNode = root.findLeaf(key);
+			if (dataNode != null)
+				viewer.setSelection(new StructuredSelection(dataNode), true);
 		}
 	}
 	
-	private void createNavigationArea(Composite parent)
+	private void createNavigator(Composite parent)
 	{
-		Composite navigationComposite = new Composite(parent, SWT.NONE);
-		navigationComposite.setLayout(new FillLayout());
-		if (toolbox != null)
-		{
-			SashForm splitter = new SashForm(navigationComposite, SWT.VERTICAL | SWT.SMOOTH);
-			this.viewer = createDatabaseViewer(splitter);
-			Composite toolboxComposite = new Composite(splitter, SWT.BORDER);
-			toolboxComposite.setLayout(new FillLayout());
-			toolbox.createToolboxControl(toolboxComposite, page);
-			splitter.setWeights(new int[] {40, 60});
-		}
-		else
-		{
-			this.viewer = createDatabaseViewer(parent);
-		}
-	}
-	
-	private void createEditorPage(Composite parent)
-	{
-		Composite navigationComposite = new Composite(parent, SWT.NONE);
-		navigationComposite.setLayout(new FillLayout());
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new FillLayout());
 		
-		if (page != null)
-		{
-			page.createEditorPage(navigationComposite, this);
-		}
-		else
-		{
-			Label error = new Label(navigationComposite, SWT.NONE);
-			error.setText("No Editor for " + table.getName() + " available.");
-		}
-	}
-	
-	private TreeItem findFirstLeaf(Tree tree, TreeItem item)
-	{
-		if (item.getData() instanceof TreeDataNode)
-		{
-			return item;
-		}
-		else
-		{
-			for(TreeItem i : item.getItems())
-			{
-				TreeItem found = findFirstLeaf(tree, i);
-				if (found != null) return found;
-			}
-		}
-		return null;
-	}
-	
-	private DatabaseViewer createDatabaseViewer(Composite parent)
-	{
-		DatabaseViewer viewer = new DatabaseViewer(parent, table.getName(), false);
+		this.viewer = new DatabaseViewer(composite, table.getName(), false);
 		viewer.addDataChangeListener(this);
 		viewer.setInput(getEditorInput());
 		viewer.expandToLevel(2);
@@ -213,12 +166,31 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 					DataNode dataNode = (DataNode) node;
 					changeElement(dataNode.getDataRoot());
 					if (dataNode instanceof TreeDataNode) return;
-					
-					page.setChildValue(dataNode.getData());
 				}
 			}
 		});
-		return viewer;
+	}
+	
+	private void createEditor(Composite parent)
+	{
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new FillLayout());
+		
+		editor.createPartControl(composite);
+	}
+	
+	private TreeDataNode findFirstLeaf(TreeGroup group)
+	{
+		TreeNode[] children = group.getChildren();
+		for (int i = 0; i < children.length; i++)
+		{
+			if (children[i] instanceof TreeDataNode)
+				return (TreeDataNode) children[i];
+			
+			if (children[i] instanceof TreeGroup)
+				return findFirstLeaf((TreeGroup) children[i]);
+		}
+		return null;
 	}
 	
 	private void changeElement(TreeDataNode node)
@@ -230,7 +202,15 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 		if (obj != null)
 		{
 			update = true;
-			page.setValue(obj);
+			try
+			{
+				editor.init(getEditorSite(), new DatabaseInput(table, key));
+				setPartName(editor.getTitle());
+			}
+			catch (PartInitException e)
+			{
+				e.printStackTrace();
+			}
 			update = false;
 		}
 		else
@@ -260,6 +240,7 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 		{
 			DatabaseInput dbInput = (DatabaseInput) input;
 			this.table = (DataTable) dbInput.getAdapter(DataTable.class);
+			this.key = dbInput.getKey();
 		}
 		else if (input instanceof IAdaptable)
 		{
@@ -280,42 +261,31 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 	}
 
 	@Override
-	public Toolbox<?> getToolbox()
-	{
-		return toolbox;
-	}
-
-	@Override
 	public void setFocus()
 	{
 		viewer.getControl().setFocus();
 	}
 	
-	@Override
 	public void addDataChangeListener(TreeListener l)
 	{
 		viewer.addDataChangeListener(l);
 	}
 
-	@Override
 	public void removeDataChangeListener(TreeListener l)
 	{
 		viewer.removeDataChangeListener(l);
 	}
 
-	@Override
 	public DataTable getTable()
 	{
 		return table;
 	}
 
-	@Override
 	public CuinaProject getProject()
 	{
 		return table.getDatabase().getProject();
 	}
 	
-	@Override
 	public void fireDataChanged(Object source, DatabaseObject item)
 	{
 		if (update) return;
@@ -364,5 +334,11 @@ public class DatabaseEditor extends EditorPart implements IDatabaseEditor, TreeL
 			}
 		}
 		setDirty(true);
+	}
+	@Override
+	public void dispose()
+	{
+		if (editor != null) editor.dispose();
+		super.dispose();
 	}
 }

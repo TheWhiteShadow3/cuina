@@ -1,6 +1,7 @@
 package cuina.database;
 
 
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -13,10 +14,8 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 	private String name;
 	private Class<E> dataClass;
 	private Image image;
-	private Class editorClass;
-	private Class toolboxClass;
-	private Class contentProviderClass;
 	private IConfigurationElement configuration;
+	private String editorID;
 	
 	public DatabaseDescriptor(String name, Class<E> dataClass)
 	{
@@ -33,23 +32,14 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 		
 		this.name = conf.getAttribute("name");
 		if (name == null) name = dataClass.getSimpleName();
-		String editorAttribut = conf.getAttribute("editor");
-		if (editorAttribut != null) this.editorClass = plugin.loadClass(editorAttribut);
-		
-		String toolboxAttribut = conf.getAttribute("toolbox");
-		if (toolboxAttribut != null) this.toolboxClass = plugin.loadClass(toolboxAttribut);
 		
 		String imagePath = conf.getAttribute("image");
 		if (imagePath != null)
 		try {
 			this.image = new Image(Display.getDefault(), FileLocator.resolve(plugin.getEntry(imagePath)).getPath());
 		} catch(Exception e) { e.printStackTrace(); }
-		
-		IConfigurationElement[] childConf = conf.getChildren("TreeContentProvider");
-		if (childConf.length == 1)
-		{
-			this.contentProviderClass = plugin.loadClass(childConf[0].getAttribute("class"));
-		}
+
+		this.editorID = conf.getAttribute("editorID");
 	}
 	
 	@Override
@@ -81,36 +71,14 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 		this.image = image;
 	}
 
-	public void setEditorClass(Class editorClass)
-	{
-		this.editorClass = editorClass;
-	}
-
 	@Override
-	public Class getEditorClass()
+	public String getEditorID()
 	{
-		return editorClass;
+		return editorID;
 	}
 
-	@Override
-	public Class getToolboxClass()
+	public void setEditorID(String editorID)
 	{
-		return toolboxClass;
-	}
-
-	public void setToolboxClass(Class toolboxClass)
-	{
-		this.toolboxClass = toolboxClass;
-	}
-
-	@Override
-	public Class getContentProviderClass()
-	{
-		return contentProviderClass;
-	}
-
-	public void setContentProviderClass(Class contentProviderClass)
-	{
-		this.contentProviderClass = contentProviderClass;
+		this.editorID = editorID;
 	}
 }

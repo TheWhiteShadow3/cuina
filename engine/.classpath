@@ -34,5 +34,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jruby/jruby-complete-1.7.3.jar" sourcepath="G:/Java/common lib/jruby/jruby-src-1.7.3.zip"/>
+	<classpathentry kind="lib" path="lib/expression/tws.expression.jar" sourcepath="/Expression/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

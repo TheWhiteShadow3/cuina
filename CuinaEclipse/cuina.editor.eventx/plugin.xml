@@ -7,6 +7,10 @@
             class="cuina.eventx.CommandList"
             image="icons/event.png"
             name="Event">
+         <editor
+               class="cuina.editor.eventx.internal.CommandListEditor"
+               navigator="true">
+         </editor>
       </database>
    </extension>
 

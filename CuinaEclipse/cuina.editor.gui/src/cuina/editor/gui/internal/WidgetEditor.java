@@ -1,8 +1,7 @@
 package cuina.editor.gui.internal;
 
-import cuina.database.ui.DataEditorPage;
-import cuina.database.ui.IDatabaseEditor;
-import cuina.editor.core.CuinaProject;
+import cuina.database.DatabaseObject;
+import cuina.database.ui.AbstractDatabaseEditorPart;
 import cuina.editor.core.util.Ini;
 import cuina.editor.gui.internal.tree.WidgetTreeEditor;
 import cuina.editor.ui.selection.HighlightingSelectionMode;
@@ -41,14 +40,12 @@ import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.Image;
 import de.matthiasmann.twl.renderer.Texture;
 
-public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvider, SelectionListener, ImageProvider
+public class WidgetEditor extends AbstractDatabaseEditorPart implements ISelectionProvider, SelectionListener, ImageProvider
 {
 	public static final String TWL_RESOURE_PATH = "cuina.twl.path";
 	public static final String TWL_THEME_PATH = "theme.path";
 	
 	private static final SpanSelectionMode CURSOR_SELECTION_MODE = new SpanSelectionMode();
-	
-	private IDatabaseEditor context;
 	
 	private WidgetEditorViewer viewer;
 	private IStructuredSelection selection;
@@ -59,45 +56,35 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 //	private WidgetLibraryTree widgetLibraryTree;
 	private HighlightingSelectionMode highlightingSelectionMode;
 	private MoveSelectionMode moveSelectionMode;
-	
-	@Override
-	public void setValue(WidgetTree tree)
-	{
-		if (this.tree == tree) return;
-		this.tree = tree;
 
-		treeEditor.setWidgetTree(tree);
-		SelectionManager sm = viewer.getSelectionManager();
-		sm.clearSelections();
-		sm.clearSeletionMode();
-	}
-	
 	@Override
-	public void setChildValue(Object obj)
+	protected void init(DatabaseObject obj)
 	{
-		if (obj instanceof WidgetNode)
-		{
-			setSelection(new StructuredSelection(obj));
-		}
+		if (this.tree == obj) return;
+		
+		this.tree = (WidgetTree) obj;
+		treeEditor.setWidgetTree(tree);
+	}
+
+	@Override
+	protected boolean applySave()
+	{
+		return true;
+	}
+
+
+	@Override
+	public void setFocus()
+	{
+		viewer.getGLCanvas().setFocus();
 	}
 
 	private Resource getThemeResource() throws ResourceException
 	{
-		Ini ini = getProject().getIni();
+		Ini ini = getCuinaProject().getIni();
 		String themePath = ini.get("TWL", TWL_THEME_PATH);
-		Resource res = ResourceManager.getResourceProvider(getProject()).getResource(TWL_RESOURE_PATH, themePath);
+		Resource res = ResourceManager.getResourceProvider(getCuinaProject()).getResource(TWL_RESOURE_PATH, themePath);
 		return res;
-	}
-	
-	@Override
-	public WidgetTree getValue()
-	{
-		return null;
-	}
-	
-	public CuinaProject getProject()
-	{
-		return context.getProject();
 	}
 
 	public WidgetTreeEditor getTreeEditor()
@@ -106,9 +93,8 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	}
 
 	@Override
-	public void createEditorPage(Composite parent, IDatabaseEditor context)
+	public void createPartControl(Composite parent)
 	{
-		this.context = context;
 		parent.setLayout(new GridLayout(1, false));
 		
 		try
@@ -129,12 +115,15 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 		viewer.setThemeURL(getThemeResource().getURL());
 		viewer.setWidgetFactory(new WidgetFactory(this));
 		viewer.setWidgetTreeEditor(treeEditor);
+		
 		this.highlightingSelectionMode = new HighlightingSelectionMode(viewer.getGLCanvas(), 5);
 		this.moveSelectionMode = new MoveSelectionMode(viewer.getGLCanvas(), 5, 1);
 		
-		SelectionManager sh = viewer.getSelectionManager();
-		sh.addSelectionListener(this);
-		sh.setDisableOutside(false);
+		SelectionManager sm = viewer.getSelectionManager();
+		sm.clearSelections();
+		sm.clearSeletionMode();
+		sm.addSelectionListener(this);
+		sm.setDisableOutside(false);
 	}
 	
 	private Listener getResizeListener()
@@ -197,7 +186,7 @@ public class WidgetPage implements DataEditorPage<WidgetTree>, ISelectionProvide
 	@Override
 	public Image createImage(String filename) throws ResourceException
 	{
-		ResourceProvider rp = ResourceManager.getResourceProvider(getProject());
+		ResourceProvider rp = ResourceManager.getResourceProvider(getCuinaProject());
 		Resource res = rp.getResource(ResourceManager.KEY_GRAPHICS, filename);
 		try
 		{

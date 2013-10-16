@@ -14,11 +14,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
@@ -168,20 +173,33 @@ public class PreviewPropertySection extends AbstractPropertySection
 	private static class ImageBox extends Canvas
 	{
 		private Image image;
+		private ImageData imageData;
+		private Point origin = new Point(0, 0);
+		private ScrollBar hBar;
+		private ScrollBar vBar;
 		
 		public ImageBox(Composite parent, IFile file)
 		{
-			super(parent, SWT.DOUBLE_BUFFERED);
-			
+			super(parent, SWT.DOUBLE_BUFFERED | SWT.V_SCROLL | SWT.H_SCROLL);
 			try
 			{
 				this.image = new Image(parent.getDisplay(), file.getContents());
+				this.imageData = image.getImageData();
 				addPaintListener(new PaintListener()
 				{
 					@Override
 					public void paintControl(PaintEvent e)
 					{
-						e.gc.drawImage(image, 0, 0);
+						e.gc.drawImage(image, origin.x, origin.y);
+					}
+				});
+				addScrollHandling();
+				getDisplay().asyncExec(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						redraw();
 					}
 				});
 			}
@@ -189,6 +207,89 @@ public class PreviewPropertySection extends AbstractPropertySection
 			{
 				e1.printStackTrace();
 			}
+		}
+		
+		private void addScrollHandling()
+		{
+			final Point size = getSize();
+			addListener(SWT.Resize, getResizeListener());
+			hBar = getHorizontalBar();
+			vBar = getVerticalBar();
+			
+			hBar.setIncrement(32);
+			hBar.setPageIncrement(128);
+			hBar.addListener(SWT.Selection, new Listener()
+			{
+				@Override
+				public void handleEvent(Event e)
+				{
+					origin.x = -hBar.getSelection();
+					scroll(-origin.x, -origin.y, 0, 0, size.x, size.y, false);
+					redraw();
+				}
+			});
+			
+			vBar.setIncrement(32);
+			vBar.setPageIncrement(128);
+			vBar.addListener(SWT.Selection, new Listener()
+			{
+				@Override
+				public void handleEvent(Event e)
+				{
+					origin.y = -vBar.getSelection();
+					scroll(-origin.x, -origin.y, 0, 0, size.x, size.y, false);
+					redraw();
+				}
+			});
+		}
+		
+		private Listener getResizeListener()
+		{
+			return new Listener()
+			{
+				@Override
+				public void handleEvent(Event event)
+				{
+					handleResize(imageData.width, imageData.height);
+				}
+			};
+		}
+		
+		protected void handleResize(int width, int height)
+		{
+			Point size = getSize();
+			
+			hBar.setMaximum(width);
+			hBar.setThumb(Math.min(size.x, width));
+			if (size.x < width)
+			{
+				hBar.setEnabled(true);
+				int hPage = width - size.x;
+				int hSelection = hBar.getSelection();
+				if (hSelection >= hPage)
+				{
+					if (hPage <= 0) hSelection = 0;
+					origin.x = -hSelection;
+				}
+			}
+			else
+				hBar.setEnabled(false);
+				
+			vBar.setMaximum(height);
+			vBar.setThumb(Math.min(size.y, height));
+			if (size.y < height)
+			{
+				vBar.setEnabled(true);
+				int vPage = height - size.y;
+				int vSelection = vBar.getSelection();
+				if (vSelection >= vPage)
+				{
+					if (vPage <= 0) vSelection = 0;
+					origin.y = -vSelection;
+				}
+			}
+			else
+				vBar.setEnabled(false);
 		}
 
 		@Override

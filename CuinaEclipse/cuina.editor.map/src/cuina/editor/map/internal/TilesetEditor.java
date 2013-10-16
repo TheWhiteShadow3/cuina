@@ -1,6 +1,7 @@
 package cuina.editor.map.internal;
 
-import cuina.database.ui.DataEditorPage;
+import cuina.database.DatabaseObject;
+import cuina.database.ui.AbstractDatabaseEditorPart;
 import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.map.TileSelection;
 import cuina.editor.ui.ResourceButton;
@@ -26,7 +27,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-public class TilesetEditor implements DataEditorPage<Tileset>, ISelectionChangedListener
+public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelectionChangedListener
 {
 	public static final int MODE_PASSAGES	= 1;
 	public static final int MODE_MASK		= 2;
@@ -57,26 +58,7 @@ public class TilesetEditor implements DataEditorPage<Tileset>, ISelectionChanged
 	private TileFlagPanel flagList;
 	
 	@Override
-	public void setValue(Tileset tileset)
-	{
-		update = true;
-		
-		this.tileset = tileset;
-		tilesetPanel.setTileset(tileset, context.getProject());
-		
-		nameButton.setText(tileset.getName());
-		
-		fileButton.setResourceName(tileset.getTilesetName());
-		backgroundButton.setResourceName(tileset.getBackgroundName());
-		tileSizeButton.setSelection(tileset.getTileSize());
-		
-		maskPanel.setTileset(context.getProject(), tileset);
-		
-		update = false;
-	}
-
-	@Override
-	public Tileset getValue()
+	protected boolean applySave()
 	{
 		tileset.setName(nameButton.getText());
 		tileset.setTilesetName(fileButton.getResourceName());
@@ -92,8 +74,7 @@ public class TilesetEditor implements DataEditorPage<Tileset>, ISelectionChanged
 				tileset.resizeTileset(tilesetPanel.getTileCount());
 			}
 		}
-		
-		return tileset;
+		return true;
 	}
 	
 	private boolean showWarning(String message)
@@ -103,11 +84,25 @@ public class TilesetEditor implements DataEditorPage<Tileset>, ISelectionChanged
 		int result = dialog.open();
 		return result == Dialog.OK;
 	}
+	
+	@Override
+	protected void init(DatabaseObject obj)
+	{
+		this.tileset = (Tileset) obj;
+		tilesetPanel.setTileset(tileset, context.getProject());
+		
+		nameButton.setText(tileset.getName());
+		
+		fileButton.setResourceName(tileset.getTilesetName());
+		backgroundButton.setResourceName(tileset.getBackgroundName());
+		tileSizeButton.setSelection(tileset.getTileSize());
+		
+		maskPanel.setTileset(context.getProject(), tileset);
+	}
 
 	@Override
-	public void createEditorPage(Composite parent, IDatabaseEditor context)
+	public void createPartControl(Composite parent)
 	{
-		this.context = context;
 		parent.setLayout(new GridLayout(4, false));
 		
 //		Composite cmdGroup = new Composite(parent, SWT.NONE);
@@ -417,7 +412,10 @@ public class TilesetEditor implements DataEditorPage<Tileset>, ISelectionChanged
 		}
 		updateTileData();
 	}
-	
+
 	@Override
-	public void setChildValue(Object obj) {}
+	public void setFocus()
+	{
+		tilesetPanel.getGLCanvas().setFocus();
+	}
 }

@@ -13,6 +13,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import tws.expression.Config;
+import tws.expression.EvaluationException;
+import tws.expression.Resolver;
+
 public class Interpreter implements Serializable
 {
 	private static final long serialVersionUID = -3483878509656721211L;
@@ -67,6 +71,7 @@ public class Interpreter implements Serializable
 	private static final HashMap<String, FunctionAccessor> functions = new HashMap<String, FunctionAccessor>();
 	private static final ThreadLocal<Interpreter> contextInstance = new ThreadLocal<Interpreter>();
 	
+	private Config expConfig;
 	private CommandList list;
 	private int index;
 	private boolean run;
@@ -81,6 +86,11 @@ public class Interpreter implements Serializable
 		}
 	}
 	
+	public Interpreter()
+	{
+		this.expConfig = new Config();
+	}
+
 	private static void findMethods(Class clazz, Annotation[] annotations)
 	{
 		for (Method method : clazz.getMethods())
@@ -319,6 +329,8 @@ public class Interpreter implements Serializable
 	
 	private void handleCondition(Object args)
 	{
+//		new Expression(args, expConfig).resolve().asBoolean();
+		
 		System.out.println("Condition. Nicht implementiert");
 		///TODO Statement prüfen. Aktuell entsprciht die Auswertung: if(true)
 	}
@@ -341,5 +353,15 @@ public class Interpreter implements Serializable
 	public void start()
 	{
 		if (list != null) run = true;
+	}
+	
+	private class EventNameResolver implements Resolver
+	{
+		@Override
+		public Object resolve(String name, tws.expression.Argument[] args) throws EvaluationException
+		{
+			
+			return null;
+		}
 	}
 }

@@ -65,12 +65,9 @@
          point="cuina.database.types">
       <database
             class="cuina.script.Script"
-            editor="cuina.editor.script.internal.ScriptEditor"
+            editorID="org.eclipse.dltk.ruby.ui.editor.RubyEditor"
             image="icons/script.png"
             name="Script">
-         <TreeContentProvider
-               class="cuina.editor.script.internal.ScriptTreeContentProvider">
-         </TreeContentProvider>
       </database>
    </extension>
    <extension
@@ -115,6 +112,23 @@
             group="Script"
             name="Init-Script">
       </parameter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            default="true"
+            icon="icons/script.png"
+            id="cuina.editor.script.ScriptEditor"
+            name="Cuina Script Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.documentProviders">
+      <provider
+            class="cuina.editor.script.internal.ScriptDocumentProvider"
+            id="cuina.editor.script.ScriptDocumentProvider"
+            inputTypes="cuina.database.DatabaseInput">
+      </provider>
    </extension>
 
 </plugin>

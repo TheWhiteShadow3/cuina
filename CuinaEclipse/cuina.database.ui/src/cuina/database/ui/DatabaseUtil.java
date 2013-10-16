@@ -3,10 +3,11 @@ package cuina.database.ui;
 import cuina.database.DataTable;
 import cuina.database.DatabaseInput;
 import cuina.database.DatabaseObject;
+import cuina.database.DatabasePlugin;
+import cuina.database.IDatabaseDescriptor;
 import cuina.database.NamedItem;
 import cuina.database.ui.internal.DataContentProvider;
 import cuina.database.ui.internal.DataLabelProvider;
-import cuina.database.ui.internal.DatabaseEditor;
 import cuina.database.ui.internal.tree.TreeDataNode;
 import cuina.database.ui.internal.tree.TreeGroup;
 import cuina.database.ui.tree.TreeNode;
@@ -15,7 +16,6 @@ import cuina.database.ui.tree.TreeRoot;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
@@ -405,20 +405,24 @@ public class DatabaseUtil
 				public void run()
 				{
 					Object obj = getSelection().getFirstElement();
-					if (obj instanceof TreeDataNode)
+					if (!(obj instanceof TreeDataNode)) return;
+					
+					TreeDataNode node = (TreeDataNode) obj;
+					DataTable table = node.getTable();
+					IDatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(table.getName());
+					if (descriptor.getEditorID() == null) return;
+					
+					String key = node.getData().getKey();
+					DatabaseInput input = new DatabaseInput(table, key);
+				    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				    
+				    try
 					{
-						String key = ((TreeDataNode) obj).getData().getKey();
-						DataTable table =  ((TreeDataNode) obj).getTable();
-						DatabaseInput input = new DatabaseInput(getFile(table), key);
-					    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-					    try
-						{
-							page.openEditor(input, DatabaseEditor.ID);
-						}
-						catch (PartInitException e)
-						{
-							e.printStackTrace();
-						}
+						page.openEditor(input, descriptor.getEditorID());
+					}
+					catch (PartInitException e)
+					{
+						e.printStackTrace();
 					}
 				}
 			};
@@ -637,11 +641,6 @@ public class DatabaseUtil
 				return ((TreeNode) obj).getRoot();
 			else
 				return null;
-		}
-		
-		private IFile getFile(DataTable table)
-		{
-			return table.getDatabase().getProject().getProject().getFile(table.getFileName());
 		}
 
 		private ImageDescriptor getSharedImageDescriptor(String id)

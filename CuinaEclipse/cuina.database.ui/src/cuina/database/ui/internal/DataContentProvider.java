@@ -16,7 +16,7 @@ public class DataContentProvider implements ITreeContentProvider
 {
 	private static final Object[] EMPTY = new Object[0];
 	
-	private Viewer viewer;
+//	private Viewer viewer;
 	private TreeRoot root;
 	private DataTable table;
 
@@ -41,7 +41,7 @@ public class DataContentProvider implements ITreeContentProvider
 	{
 		if (oldInput == newInput) return;
 		this.root = null;
-		this.viewer = viewer;
+//		this.viewer = viewer;
 	}
 	
 	private TreeRoot init(IFile file)
@@ -50,7 +50,7 @@ public class DataContentProvider implements ITreeContentProvider
 
 		try
 		{
-			DataTable<?> oldTable = table;
+//			DataTable<?> oldTable = table;
 			
 			Database db = getDatabase(file);
 			this.table = db.loadTable(file);
@@ -66,8 +66,8 @@ public class DataContentProvider implements ITreeContentProvider
 				root = new TreeRoot(table);
 				root.saveTree();
 			}
-			ITreeContentProvider tcp = root.getContentProvider();
-			if (tcp != null) tcp.inputChanged(viewer, oldTable, table);
+//			ITreeContentProvider tcp = root.getContentProvider();
+//			if (tcp != null) tcp.inputChanged(viewer, oldTable, table);
 		}
 		catch (ResourceException e)
 		{

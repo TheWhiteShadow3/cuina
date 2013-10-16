@@ -3,6 +3,7 @@ package cuina.database.ui.internal.tree;
 import cuina.database.DataTable;
 import cuina.database.DatabaseObject;
 import cuina.database.ui.DatabaseUtil;
+import cuina.database.ui.tree.DataNode;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
 
@@ -114,21 +115,20 @@ public class TreeGroup implements TreeNode
 		return null;
 	}
 	
-	public TreeDataNode findLeaf(String key)
+	public DataNode findLeaf(String key)
 	{
 		TreeNode child = null;
-		TreeDataNode leaf = null;
 		for (int i = 0; i < children.size(); i++)
 		{
 			child = children.get(i);
 			if (child instanceof TreeGroup)
 			{
-				leaf = ((TreeGroup) child).findLeaf(key);
+				DataNode leaf = ((TreeGroup) child).findLeaf(key);
 				if (leaf != null) return leaf;
 			}
 			else if (child instanceof TreeDataNode)
 			{
-				leaf = (TreeDataNode) child;
+				TreeDataNode leaf = (TreeDataNode) child;
 				if (leaf.getKey().equals(key)) return leaf;
 			}
 		}

@@ -9,14 +9,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 
-public class DatabaseInput implements IEditorInput
+public class DatabaseInput implements IEditorInput, IPersistableElement
 {
-//	private String tableName;
 	private IFile file;
 	private String key;
-//	private IProject project;
+	private DataTable table;
 	
 	public DatabaseInput(IFile file, String key)
 	{
@@ -35,7 +35,7 @@ public class DatabaseInput implements IEditorInput
 	{
 		this(getDataTable(project, tableName), key);
 	}
-	
+
 	@Override
 	public Object getAdapter(Class adapter)
 	{
@@ -47,11 +47,11 @@ public class DatabaseInput implements IEditorInput
 		{
 			if (adapter == DataTable.class)
 			{
-				return getCuinaProject().getService(Database.class).loadTable(file);
+				return getTable();
 			}
 			if (adapter == DatabaseObject.class)
 			{
-				return getCuinaProject().getService(Database.class).loadTable(file).get(key);
+				return getData();
 			}
 		}
 		catch (ResourceException e) {}
@@ -61,7 +61,14 @@ public class DatabaseInput implements IEditorInput
 	@Override
 	public boolean exists()
 	{
-		return file.exists();
+		try
+		{
+			return getTable() != null;
+		}
+		catch (ResourceException e)
+		{
+			return false;
+		}
 	}
 
 	@Override
@@ -75,11 +82,33 @@ public class DatabaseInput implements IEditorInput
 	{
 		return file.toString() + '/' + key;
 	}
+	
+	public CuinaProject getCuinaProject()
+	{
+		return CuinaCore.getCuinaProject(file.getProject());
+	}
+	
+	public DataTable getTable() throws ResourceException
+	{
+		if (table == null)
+			table = getCuinaProject().getService(Database.class).loadTable(file);
+		return table;
+	}
+	
+	public DatabaseObject getData() throws ResourceException
+	{
+		return getTable().get(key);
+	}
+	
+	public String getKey()
+	{
+		return key;
+	}
 
 	@Override
 	public IPersistableElement getPersistable()
 	{
-		return null;
+		return this;
 	}
 
 	@Override
@@ -87,12 +116,7 @@ public class DatabaseInput implements IEditorInput
 	{
 		return "Datenbankelement: " + getName();
 	}
-	
-	private CuinaProject getCuinaProject()
-	{
-		return CuinaCore.getCuinaProject(file.getProject());
-	}
-	
+
 	private static IFile getFile(DataTable table)
 	{
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(table.getFileName()));
@@ -118,5 +142,18 @@ public class DatabaseInput implements IEditorInput
 		if (getClass() != obj.getClass()) return false;
 		DatabaseInput other = (DatabaseInput) obj;
 		return (file.equals(other.file) && key.equals(other.key));
+	}
+
+	@Override
+	public void saveState(IMemento memento)
+	{
+		memento.putString("file", file.getFullPath().toString());
+		memento.putString("key", key);
+	}
+
+	@Override
+	public String getFactoryId()
+	{
+		return "cuina.database.InputFactory";
 	}
 }
