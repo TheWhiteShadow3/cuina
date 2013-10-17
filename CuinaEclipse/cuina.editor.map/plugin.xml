@@ -14,6 +14,7 @@
 		</database>
 		<database
         class="cuina.map.Tileset"
+        editorID="cuina.editor.map.TilesetEditor"
         image="icons/tileset.png"
         name="Tileset">
 		</database>

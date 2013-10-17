@@ -2,7 +2,6 @@ package cuina.editor.map.internal;
 
 import cuina.database.DatabaseObject;
 import cuina.database.ui.AbstractDatabaseEditorPart;
-import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.map.TileSelection;
 import cuina.editor.ui.ResourceButton;
 import cuina.editor.ui.WidgetFactory;
@@ -29,13 +28,15 @@ import org.eclipse.swt.widgets.Text;
 
 public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelectionChangedListener
 {
+	public static final String ID = "cuina.editor.map.TilesetEditor";
+	
 	public static final int MODE_PASSAGES	= 1;
 	public static final int MODE_MASK		= 2;
 	public static final int MODE_PRIORITIES = 3;
 	public static final int MODE_FLAGS 		= 4;
 	public static final int MODE_TAGS 		= 5;
 	
-	private IDatabaseEditor context;
+	
 	private int editMode;
 	private boolean update;
 	
@@ -79,7 +80,7 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 	
 	private boolean showWarning(String message)
 	{
-		MessageDialog dialog = new MessageDialog(context.getEditorSite().getShell(), "Warnung!", null,
+		MessageDialog dialog = new MessageDialog(getEditorSite().getShell(), "Warnung!", null,
 				message, MessageDialog.WARNING, new String[] {"Ja", "Nein"}, Dialog.CANCEL);
 		int result = dialog.open();
 		return result == Dialog.OK;
@@ -89,15 +90,6 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 	protected void init(DatabaseObject obj)
 	{
 		this.tileset = (Tileset) obj;
-		tilesetPanel.setTileset(tileset, context.getProject());
-		
-		nameButton.setText(tileset.getName());
-		
-		fileButton.setResourceName(tileset.getTilesetName());
-		backgroundButton.setResourceName(tileset.getBackgroundName());
-		tileSizeButton.setSelection(tileset.getTileSize());
-		
-		maskPanel.setTileset(context.getProject(), tileset);
 	}
 
 	@Override
@@ -135,10 +127,10 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 		tilesetPanel.setGridVisible(true);
 		tilesetPanel.addSelectionChangedListener(this);
 		
-		fileButton = WidgetFactory.createImageButton(parent, context.getProject(), "Tileset", null);
+		fileButton = WidgetFactory.createImageButton(parent, getCuinaProject(), "Tileset", null);
 		fileButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 2, 1));
 		fileButton.addListener(SWT.Modify, handler);
-		backgroundButton = WidgetFactory.createImageButton(parent, context.getProject(), "Hintergrund", null);
+		backgroundButton = WidgetFactory.createImageButton(parent, getCuinaProject(), "Hintergrund", null);
 		backgroundButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 2, 1));
 		backgroundButton.addListener(SWT.Modify, handler);
 		
@@ -157,10 +149,28 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 		createEditGroup(parent, handler);
 		createTileDataGroup(parent, handler);
 		
+		setValues();
+		
 		setEditMode(MODE_MASK);
 		updateTileData();
 	}
 	
+	private void setValues()
+	{
+		update = true;
+		{
+			tilesetPanel.setTileset(tileset, getCuinaProject());
+			nameButton.setText(tileset.getName());
+			
+			fileButton.setResourceName(tileset.getTilesetName());
+			backgroundButton.setResourceName(tileset.getBackgroundName());
+			tileSizeButton.setSelection(tileset.getTileSize());
+			
+			maskPanel.setTileset(getCuinaProject(), tileset);
+		}
+		update = false;
+	}
+
 	private void createEditGroup(Composite parent, Listener handler)
 	{
 		Group editGroup = new Group(parent, SWT.NONE);
@@ -217,7 +227,7 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 		
 		new Label(tileDataGroup, SWT.NONE).setText("Flags");
 		
-		flagList = new TileFlagPanel(tileDataGroup, context.getProject().getProject());
+		flagList = new TileFlagPanel(tileDataGroup, getCuinaProject().getProject());
 		gd = new GridData(SWT.FILL, SWT.TOP, true, false);
 		gd.horizontalSpan = 2;
 		gd.minimumHeight = 128;
@@ -304,26 +314,26 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 				else if (event.widget == editFlagsOP) setEditMode(MODE_FLAGS);
 				else if (event.widget == maskPanel)
 				{
-					context.fireDataChanged(TilesetEditor.this, tileset);
+					setDirty(true);
 					updateTileData();
 				}
 				else if (event.widget == fileButton)
 				{
 					tileset.setTilesetName(fileButton.getResourceName());
-					tilesetPanel.setTileset(tileset, context.getProject());
+					tilesetPanel.setTileset(tileset, getCuinaProject());
 					maskPanel.refreshImage();
 					tileSizeHint.setVisible(!tilesetPanel.isGridMatchingImage());
-					context.fireDataChanged(TilesetEditor.this, tileset);
+					setDirty(true);
 				}
 				else if (event.widget == backgroundButton)
 				{
 					tileset.setBackgroundName(backgroundButton.getResourceName());
-					context.fireDataChanged(TilesetEditor.this, tileset);
+					setDirty(true);
 				}
 				else if (event.widget == tileSizeButton)
 				{
 					tileset.setTileSize(tileSizeButton.getSelection());
-					context.fireDataChanged(TilesetEditor.this, tileset);
+					setDirty(true);
 					updateTileData();
 					
 					tileSizeHint.setVisible(!tilesetPanel.isGridMatchingImage());
@@ -331,11 +341,11 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 				else if (event.widget == tileData)
 				{
 					parseFieldData(tileData.getText());
-					context.fireDataChanged(TilesetEditor.this, tileset);
+					setDirty(true);
 				}
 				else if (event.widget == flagList.getTable())
 				{
-					context.fireDataChanged(TilesetEditor.this, tileset);
+					setDirty(true);
 					updateTileData();
 				}
 			}

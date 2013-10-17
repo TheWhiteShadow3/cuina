@@ -5,7 +5,8 @@ import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.core.CuinaCore;
 import cuina.editor.core.EditorContextChangeListener;
 import cuina.editor.map.ITerrainEditor;
-import cuina.editor.map.internal.MapEditor;
+import cuina.editor.map.internal.TerrainEditor;
+import cuina.editor.map.internal.TilesetEditor;
 import cuina.editor.map.internal.TilesetPanel;
 import cuina.editor.ui.ClipboardUtil;
 import cuina.map.Tileset;
@@ -41,9 +42,9 @@ public class TilesetView extends ViewPart implements EditorContextChangeListener
 		
 		IWorkbenchPage page = getViewSite().getPage();
 		IEditorPart editor = page.getActiveEditor();
-		if (editor instanceof MapEditor)
+		if (editor instanceof TerrainEditor)
 		{
-			setEditor( ((MapEditor) editor).getTerrainEditor());
+			setEditor((TerrainEditor) editor);
 		}
 		CuinaCore.getDefault().addEditorContextChangeListener(this);
 		getSite().setSelectionProvider(panel);
@@ -62,7 +63,7 @@ public class TilesetView extends ViewPart implements EditorContextChangeListener
 				try
 				{
 					DatabaseInput input = new DatabaseInput(editor.getProject(), "Tileset", tileset.getKey());
-					getSite().getPage().openEditor(input, IDatabaseEditor.ID);
+					getSite().getPage().openEditor(input, TilesetEditor.ID);
 				}
 				catch (PartInitException | ResourceException e)
 				{
@@ -98,8 +99,8 @@ public class TilesetView extends ViewPart implements EditorContextChangeListener
 	@Override
 	public void editorContextChange(IEditorPart part, IProject project)
 	{
-		if (part instanceof MapEditor)
-			setEditor( ((MapEditor) part).getTerrainEditor() );
+		if (part instanceof TerrainEditor)
+			setEditor((TerrainEditor) part);
 		else
 			setEditor(null);
 	}
