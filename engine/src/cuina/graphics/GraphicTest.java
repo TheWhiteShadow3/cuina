@@ -108,12 +108,6 @@ public class GraphicTest
 		}
 	}
 	
-	private static int createTextureID()
-	{
-		glGenTextures(CuinaGLUtil.TEMP_INT_BUFFER);
-		return CuinaGLUtil.TEMP_INT_BUFFER.get(0);
-	}
-	
 	private static Texture loadTextureAlternativ(String filename) throws IOException
 	{
 		BufferedImage image = ImageIO.read(new FileInputStream(filename));
@@ -134,7 +128,7 @@ public class GraphicTest
 		intBuffer.put(pixels);
 		intBuffer.rewind();
 		
-      	int id = createTextureID();
+      	int id = glGenTextures();
  
         glBindTexture(GL_TEXTURE_2D, id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

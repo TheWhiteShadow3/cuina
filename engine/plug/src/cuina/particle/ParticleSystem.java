@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 
 import cuina.FrameTimer;
-import cuina.graphics.D3D;
+import cuina.graphics.GraphicUtil;
 import cuina.graphics.GLCache;
 import cuina.graphics.Graphic;
 import cuina.graphics.GraphicContainer;
@@ -157,7 +157,7 @@ public class ParticleSystem implements Graphic
     public void draw()
     {
 //        shader.bind();
-        D3D.set3DView(false);
+        GraphicUtil.set3DView(false);
         
         GLCache.setColor(ReadableColor.WHITE);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -167,7 +167,7 @@ public class ParticleSystem implements Graphic
         {
             p = particles[i % size];
             if (p.lifeTime == 0) continue;
-            p.type.image.getTexture().bind();
+            p.type.image.bind();
             GLCache.setBlendMode(p.type.drawMode);
             
             glPushMatrix();

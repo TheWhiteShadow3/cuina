@@ -21,21 +21,21 @@ public class Menu extends Widget implements CuinaWidget
 	private int hGap;
 	private int vGap;
 	private int index = -1;
-	private String key;
+	private String name;
 	private WidgetEventHandler handler;
 	private CycleTintAnimator animator;
 
-	public Menu(String key, int columns)
+	public Menu(String name, int columns)
 	{
-		this.key = key;
+		this.name = name;
 		this.columns = columns;
 		setTheme("/menu");
 	}
 
 	@Override
-	public String getKey()
+	public String getName()
 	{
-		return key;
+		return name;
 	}
 
 	@Override
@@ -183,7 +183,7 @@ public class Menu extends Widget implements CuinaWidget
 //        System.out.println("Klick: " + getIndex());
     	if (handler == null) return;
     	
-    	handler.handleEvent(key, this, getIndex());
+    	handler.handleEvent(name, this, getIndex());
     }
  
     @Override

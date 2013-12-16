@@ -18,7 +18,7 @@ public class Button extends de.matthiasmann.twl.Button implements CuinaWidget
 	}
 	
 	@Override
-	public String getKey()
+	public String getName()
 	{
 		return key;
 	}

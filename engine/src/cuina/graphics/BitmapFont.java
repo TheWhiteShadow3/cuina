@@ -34,7 +34,7 @@ public class BitmapFont
 		System.out.println("[BitmapFont] create font: " + font);
 		this.font = font;
 		widths = new int[256];
-		Texture tex = TextureLoader.getInstance().getTexture(BitmapFontRenderer.renderFont(font, true, widths), null);
+		Texture tex = TextureLoader.getInstance().getTexture(BitmapFontRenderer.renderFont(font, true, widths), 0, null);
 		imageSet = new ImageSet(tex, 16, 16);
 		nativeWidth = imageSet.getHeight() / imageSet.getYCount();
 	}

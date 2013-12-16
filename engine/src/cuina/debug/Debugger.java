@@ -1,10 +1,10 @@
 package cuina.debug;
 
-import static cuina.Context.SESSION;
-
+import cuina.Context;
 import cuina.Game;
 import cuina.GameEvent;
 import cuina.GameListener;
+import cuina.plugin.ForGlobal;
 import cuina.util.LoadingException;
 import cuina.util.ResourceManager;
 
@@ -19,12 +19,14 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.Timer;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
+@ForGlobal(name="Debugger")
 public class Debugger extends JFrame implements ActionListener, GameListener
 {
 	private static final long serialVersionUID = -6098038422649938126L;
@@ -53,18 +55,21 @@ public class Debugger extends JFrame implements ActionListener, GameListener
 			e.printStackTrace();
 		}
 		initComponents();
-		
 		setVisible(true);
+		
+		addDataMap("Global", Context.GLOBAL);
 		addPage("Messages", new MessagePage());
 		
 		timer = new Timer(500, this);
 		timer.setRepeats(true);
 		timer.start();
+		
+		Game.addGameListener(this);
 	}
 	
-	public void setGame(Game game)
+	public Game getGameInstance()
 	{
-		this.game = game;
+		return game;
 	}
 	
 	@Override
@@ -91,12 +96,27 @@ public class Debugger extends JFrame implements ActionListener, GameListener
 	public void addPage(String name, JComponent page)
 	{
 		if (page instanceof DebugPage)
+		{
+			page.setName(name);
 			tabs.add((DebugPage)page);
-		mainTab.add(name, page);
+		}
+		mainTab.add(name, new JScrollPane(page));
 	}
 	
-	public void addDataMap(String name, Map<String, Object> data)
+	public void addDataMap(String name, int context)
 	{
+		Map<String, Object> data = Game.getContext(context).getData();
+		for (DebugPage tab : tabs)
+		{
+			if (name.equals(tab.getName()))
+			{
+				JTable table = (JTable) tab;
+				table.setModel(new DataModel(data));
+				table.repaint();
+				return;
+			}
+		}
+		
 		addPage(name, new TabelPage(data));
 	}
 	
@@ -213,24 +233,24 @@ public class Debugger extends JFrame implements ActionListener, GameListener
 //		}
 	}
 	
-	private class DataEntry
-	{
-		public String name;
-		public Object value;
-		public String valueString;
-		
-		public DataEntry(String name, Object value)
-		{
-			this.name = name;
-			setValue(value);
-		}
-		
-		public void setValue(Object value)
-		{
-			this.value = value;
-			valueString = value.toString();
-		}
-	}
+//	private class DataEntry
+//	{
+//		public String name;
+//		public Object value;
+//		public String valueString;
+//		
+//		public DataEntry(String name, Object value)
+//		{
+//			this.name = name;
+//			setValue(value);
+//		}
+//		
+//		public void setValue(Object value)
+//		{
+//			this.value = value;
+//			valueString = value.toString();
+//		}
+//	}
 //	@Override
 //	public void windowOpened(WindowEvent e) {}
 //
@@ -255,12 +275,12 @@ public class Debugger extends JFrame implements ActionListener, GameListener
 		{
 			case GameEvent.OPEN_SESSION:
 			case GameEvent.SESSION_LOADED:
-				addDataMap("Session", Game.getContext(SESSION).getData());
+				addDataMap("Session", Context.SESSION);
 				repaint();
 				break;
 				
 			case GameEvent.NEW_SCENE:
-				addDataMap("Scene", Game.getContext(SESSION).getData());
+				addDataMap("Scene", Context.SCENE);
 				repaint();
 				break;
 			

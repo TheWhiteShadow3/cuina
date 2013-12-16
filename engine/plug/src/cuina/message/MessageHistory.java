@@ -3,6 +3,8 @@ package cuina.message;
 import cuina.plugin.ForSession;
 import cuina.plugin.Plugin;
 
+import java.util.ArrayList;
+
 @ForSession(name="MessageHistory")
 public class MessageHistory implements Plugin
 {
@@ -24,6 +26,14 @@ public class MessageHistory implements Plugin
 		return size;
 	}
 	
+	public void clear()
+	{
+		first = null;
+		last = null;
+		current = null;
+		size = 0;
+	}
+	
 	public void add(String text)
 	{
 		last = new TextBufferElement(text, last);
@@ -42,7 +52,7 @@ public class MessageHistory implements Plugin
 		}
 		current = last;
 	}
-	
+
 	public String pop()
 	{
 		if (size == 0) return null;

@@ -85,8 +85,10 @@ public class DebugPanel
 		Sprite sprite = new DebugSprite(bounds.width, bounds.height, new Color(255, 255, 0, 128), true);
 		sprite.setOX(-area.getX());
 		sprite.setOY(-area.getY());
-		sprite.setX(area.getX() - map.getScrollX());
-		sprite.setX(area.getY() - map.getScrollY());
+//		sprite.setX(area.getX() - map.getScrollX());
+//		sprite.setX(area.getY() - map.getScrollY());
+		sprite.setX(area.getX());
+		sprite.setX(area.getY());
 		sprite.setDepth(999);
 		mapAreaSprites.put(area.getID(), sprite);
 	}
@@ -97,8 +99,8 @@ public class DebugPanel
 		Sprite sprite = new DebugSprite(rect.width, rect.height, new Color(255, 0, 0), false);
 		sprite.setOX(-rect.x);
 		sprite.setOY(-rect.y);
-		sprite.setX(-map.getScrollX());
-		sprite.setX(-map.getScrollY());
+//		sprite.setX(-map.getScrollX());
+//		sprite.setX(-map.getScrollY());
 		sprite.setDepth(1000);
 		CSAreaSprites[index] = sprite;
 	}
@@ -130,21 +132,18 @@ public class DebugPanel
 				if (s == -1)
 				{
 					sprite = new DebugSprite();
-					sprite.setX(x * map.getTileSize() - map.getScrollX());
-					sprite.setY(y * map.getTileSize() - map.getScrollY());
-					sprite.setDepth((int)sprite.getY() + 1);
-					
-					mapSprites[x][y] = sprite;
 				}
 				else
 				{
 					sprite = new DebugSprite(map, s);
-					sprite.setX(x * map.getTileSize() - map.getScrollX());
-					sprite.setY(y * map.getTileSize() - map.getScrollY());
-					sprite.setDepth((int)sprite.getY() + 1);
-					
-					mapSprites[x][y] = sprite;
 				}
+//				sprite.setX(x * map.getTileSize() - map.getScrollX());
+//				sprite.setY(y * map.getTileSize() - map.getScrollY());
+				sprite.setX(x * map.getTileSize());
+				sprite.setY(y * map.getTileSize());
+				sprite.setDepth((int)sprite.getY() + 1);
+				
+				mapSprites[x][y] = sprite;
 			}
 		}
 	}
@@ -192,8 +191,8 @@ public class DebugPanel
 				sprite = mapSprites[x][y];
 				if (sprite != null)
 				{
-					sprite.setX(x * map.getTileSize() - map.getScrollX());
-					sprite.setY(y * map.getTileSize() - map.getScrollY());
+					sprite.setX(x * map.getTileSize());
+					sprite.setY(y * map.getTileSize());
 					sprite.setDepth((int)sprite.getY() + 31);
 				}
 			}
@@ -214,8 +213,8 @@ public class DebugPanel
 				}
 				
 				Rectangle bounds = box.getBox();
-				sprite.setX(bounds.x - map.getScrollX());
-				sprite.setY(bounds.y - map.getScrollY());
+				sprite.setX(bounds.x);
+				sprite.setY(bounds.y);
 				sprite.setDepth((int) sprite.getY() + map.getTileSize());
 			}
 		}
@@ -234,9 +233,6 @@ public class DebugPanel
 		for(int i = 0; i < CSAreaSprites.length; i++)
 		{
 			sprite = CSAreaSprites[i];
-			sprite.setX(-map.getScrollX());
-			sprite.setY(-map.getScrollY());
-//			sprite.z = 10000;
 		}
 		
 //		HashMap<Integer, MapObject> areas = map.getAreas();

@@ -67,10 +67,10 @@ public interface CuinaWorld extends Serializable
 	 */
 	public void removeObject(int id);
 
-	public int getScrollX();
-	public void setScrollX(int scrollX);
-	public int getScrollY();
-	public void setScrollY(int scrollY);
+//	public int getScrollX();
+//	public void setScrollX(int scrollX);
+//	public int getScrollY();
+//	public void setScrollY(int scrollY);
 
 	/**
 	 * Aktualisiert die Welt um ein Frame.

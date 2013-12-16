@@ -26,16 +26,16 @@ public class TestActorSerilizer
 		DataTable table = new DataTable<>("Enemy", ActorData.class);
 		ActorData data = new ActorData();
 		data.name = "Monster";
-		data.setInitialLevel(1);
+		data.initialLevel = 1;
 		data.setKey("Monster");
-		data.setMaximumLevel(99);
+		data.initialLevel = 99;
 		
 		HashMap<String, Attribut> atts = new HashMap<String, Attribut>();
 		atts.put("HP", new Attribut("HP", 100, 100));
 		atts.put("ATK", new Attribut("ATK", 10));
 		atts.put("DEF", new Attribut("DEF", 5));
 		
-		data.setAttributes(atts);
+		data.attributes = atts;
 		
 		table.put(data);
 		try
@@ -47,5 +47,4 @@ public class TestActorSerilizer
 			e.printStackTrace();
 		}
 	}
-
 }

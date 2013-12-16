@@ -23,8 +23,8 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	
 	private int width;
 	private int height;
-	private int scrollX = 0;
-	private int scrollY = 0;
+//	private int scrollX = 0;
+//	private int scrollY = 0;
 	
 	private boolean freeze;
 	private final ConcurrentHashMap<Integer, CuinaObject> objects =
@@ -173,52 +173,52 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	{
 		this.height = height;
 	}
+//
+//	@Override
+//	public int getScrollX()
+//	{
+//		return scrollX;
+//	}
 
-	@Override
-	public int getScrollX()
-	{
-		return scrollX;
-	}
+//	@Override
+//	public void setScrollX(int scrollX)
+//	{
+//		this.scrollX = scrollX;
+//	}
 
-	@Override
-	public void setScrollX(int scrollX)
-	{
-		this.scrollX = scrollX;
-	}
-
-	@Override
-	public int getScrollY()
-	{
-		return scrollY;
-	}
-
-	@Override
-	public void setScrollY(int scrollY)
-	{
-		this.scrollY = scrollY;
-	}
+//	@Override
+//	public int getScrollY()
+//	{
+//		return scrollY;
+//	}
+//
+//	@Override
+//	public void setScrollY(int scrollY)
+//	{
+//		this.scrollY = scrollY;
+//	}
 	
-	public void scrollTo(int x, int y, int threshold)
-	{
-		int diffX = x - Graphics.getWidth() / 2 - scrollX;
-		int diffY = y - Graphics.getHeight() / 2 - scrollY;
-
-		if (Math.abs(diffX) > threshold)
-		{
-			x += (diffX < 0) ? threshold : -threshold;
-			scrollX = Math.max(0, Math.min(x - Graphics.getWidth() / 2 , getWidth() - Graphics.getWidth()));
-		}
-		if (Math.abs(diffY) > threshold)
-		{
-			y += (diffY < 0) ? threshold : -threshold;
-			scrollY = Math.max(0, Math.min(y - Graphics.getHeight() / 2 , getHeight() - Graphics.getHeight()));
-		}
-	}
-	
-	public void scrollTo(int x, int y)
-	{
-		scrollTo(x, y, 0);
-	}
+//	public void scrollTo(int x, int y, int threshold)
+//	{
+//		int diffX = x - Graphics.getWidth() / 2 - scrollX;
+//		int diffY = y - Graphics.getHeight() / 2 - scrollY;
+//
+//		if (Math.abs(diffX) > threshold)
+//		{
+//			x += (diffX < 0) ? threshold : -threshold;
+//			scrollX = Math.max(0, Math.min(x - Graphics.getWidth() / 2 , getWidth() - Graphics.getWidth()));
+//		}
+//		if (Math.abs(diffY) > threshold)
+//		{
+//			y += (diffY < 0) ? threshold : -threshold;
+//			scrollY = Math.max(0, Math.min(y - Graphics.getHeight() / 2 , getHeight() - Graphics.getHeight()));
+//		}
+//	}
+//	
+//	public void scrollTo(int x, int y)
+//	{
+//		scrollTo(x, y, 0);
+//	}
 
 	/**
 	 * Prüft, ob die Position auf der Karte gültig ist. Wird auch in

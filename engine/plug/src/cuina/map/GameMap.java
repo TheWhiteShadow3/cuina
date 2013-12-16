@@ -14,7 +14,6 @@ import cuina.database.Database;
 import cuina.event.Event;
 import cuina.eventx.Interpreter;
 import cuina.graphics.Panorama;
-import cuina.graphics.Sprite;
 import cuina.map.movement.CollisionSystem;
 import cuina.object.BaseObject;
 import cuina.object.BaseWorld;
@@ -29,7 +28,7 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.HashMap;
 
-@ForSession(name=CuinaWorld.INSTANCE_KEY, scenes={"Map"})
+@ForSession(name = CuinaWorld.INSTANCE_KEY, scenes = {"Map"})
 public class GameMap extends BaseWorld implements Plugin
 {
 	private static final long serialVersionUID = -2742145729445081906L;
@@ -58,12 +57,7 @@ public class GameMap extends BaseWorld implements Plugin
 	private CollisionSystem cs;
 	private boolean visible = true;
 	
-	private CuinaObject scrollTarget;
-	
-	private Sprite light1;
-	private Sprite light2;
-	private Sprite lightMap;
-
+//	private CuinaObject scrollTarget;
 	private Interpreter mapInterpreter;
 	
 	@Override
@@ -368,25 +362,25 @@ public class GameMap extends BaseWorld implements Plugin
 		return collisionMap[x / getTileSize()][y / getTileSize()] == 0;
 	}
 
-	public CuinaObject getScrollTarget()
-	{
-		return scrollTarget;
-	}
-
-	public void setScrollTarget(CuinaObject scrollTarget)
-	{
-		System.out.println("setScrollTarget: " + scrollTarget);
-		this.scrollTarget = scrollTarget;
-
-		updateView();
-		
-//		if (scrollTarget.getModel() != null)
-//		{
-//			scrollTarget.getModel().setPosition(scrollTarget.getX() - getScrollX(),
-//												scrollTarget.getY() - getScrollY(),
-//												scrollTarget.getZ());
-//		}
-	}
+//	public CuinaObject getScrollTarget()
+//	{
+//		return scrollTarget;
+//	}
+//
+//	public void setScrollTarget(CuinaObject scrollTarget)
+//	{
+//		System.out.println("setScrollTarget: " + scrollTarget);
+//		this.scrollTarget = scrollTarget;
+//
+//		updateView();
+//		
+////		if (scrollTarget.getModel() != null)
+////		{
+////			scrollTarget.getModel().setPosition(scrollTarget.getX() - getScrollX(),
+////												scrollTarget.getY() - getScrollY(),
+////												scrollTarget.getZ());
+////		}
+//	}
 
 	public CuinaObject getArea(int key)
 	{
@@ -475,36 +469,18 @@ public class GameMap extends BaseWorld implements Plugin
 	{
 		if (map == null) return;
 		
-		if (scrollTarget != null)
-		{
-			scrollTo((int) scrollTarget.getX(), (int) scrollTarget.getY(), tileset.getTileSize());
-		}
+//		if (scrollTarget != null)
+//		{
+//			scrollTo((int) scrollTarget.getX(), (int) scrollTarget.getY(), tileset.getTileSize());
+//		}
 		
 		tilemap.update();
 		super.postUpdate();
-		for (Panorama p : panoramas)
-		{
-			if (p != null)
-				p.setOffset(getScrollX(), getScrollY());
-		}
-		
-		if (lightMap != null)
-		{
-			lightMap.setX(-getScrollX());
-			lightMap.setY(-getScrollY());	
-		}
-
-		if (light1 != null)
-		{
-			light1.setX(-getScrollX());
-			light1.setY(-getScrollY());
-		}
-		
-		if (light2 != null)
-		{
-			light2.setX(-getScrollX());
-			light2.setY(-getScrollY());
-		}
+//		for (Panorama p : panoramas)
+//		{
+//			if (p != null)
+//				p.setOffset(getScrollX(), getScrollY());
+//		}
 	}
 	
 	public void setVisible(boolean value)

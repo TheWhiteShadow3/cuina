@@ -1,8 +1,6 @@
 package cuina;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 
 public class GameSession implements Serializable

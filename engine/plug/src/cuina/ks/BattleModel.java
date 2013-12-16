@@ -71,14 +71,14 @@ public class BattleModel implements CuinaModel
             case HIT:
             	 button.setBackground(Color.RED);
                 break;
-            case SELECT:
+            case ACTIVE:
             	 button.setBackground(new Color(0, 255, 0));
                 break;
             case ATTACK:
             	 button.setBackground(new Color(0, 128, 255));
                 break;
             default:
-                if (lastType == AnimationType.SELECT)
+                if (lastType == AnimationType.ACTIVE)
                 	 button.setBackground(new Color(0, 255, 0));
                 else
                 	 button.setBackground(Color.WHITE);

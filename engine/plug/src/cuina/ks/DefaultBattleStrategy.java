@@ -23,7 +23,7 @@ public class DefaultBattleStrategy implements BattleStrategy
     public static final String ATT_INT  = "INT";
     public static final String ATT_DEF  = "DEF";
     public static final String ATT_ATK  = "ATK";
-    public static final String ATT_RES = "RES"; //XXX: Geändert von MDEF nach RES (Analogie zu disgaea)
+    public static final String ATT_RES	= "RES"; //XXX: Geändert von MDEF nach RES (Analogie zu disgaea)
     
     // benutzte Zustands-Effekte für diese Battlestrategy:
     public static final String EFF_POISON       = "poison";
@@ -251,7 +251,7 @@ public class DefaultBattleStrategy implements BattleStrategy
         ActionResult result = new ActionResult();
         result.message = "Gift";
         result.damage = actor.getAttribut(ATT_HP).subRel(value);
-        battle.getCurrentBattler().performBattleAnimation(AnimationType.HIT, result);
+        battle.getCurrentBattler().performAction(AnimationType.HIT, null, result);
         System.out.println("Gilfteffekt bei " + actor.getName() + ": " + result.damage + " Schaden");
     }
     

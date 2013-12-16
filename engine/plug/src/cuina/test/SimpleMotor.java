@@ -1,7 +1,7 @@
 package cuina.test;
 
 import cuina.Input;
-import cuina.animation.Model;
+import cuina.animation.ModelImpl;
 import cuina.object.Instantiable;
 import cuina.plugin.LifeCycle;
 import cuina.world.CuinaMotor;
@@ -39,7 +39,7 @@ public class SimpleMotor implements CuinaMotor, LifeCycle, Instantiable
 		object.setX(object.getX() + dx);
         object.setY(object.getY() + dy);
         
-        Model model = (Model) object.getExtension("model");
+        ModelImpl model = (ModelImpl) object.getExtension("model");
         if (model != null)
         {
             int id = Math.round(dir / 45);

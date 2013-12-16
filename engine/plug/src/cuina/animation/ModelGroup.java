@@ -1,7 +1,7 @@
 package cuina.animation;
 
 
-public class ModelGroup<T extends ModelIF>// implements ModelIF
+public class ModelGroup<T extends Model>// implements ModelIF
 {
 //	private static final long serialVersionUID = -9211099124080086776L;
 //	

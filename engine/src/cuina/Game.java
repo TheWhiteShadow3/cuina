@@ -87,7 +87,6 @@ public final class Game
 
 	private static Game instance;
 	private static boolean debug = false;
-	private static Debugger debugger;
 	
 	private static String gameTitle;
 	private static int modules;
@@ -325,6 +324,7 @@ public final class Game
 		
 //		System.out.println("[Game] Zeit bis zum Start: " + FrameTimer.getTime());
 		start();
+		close();
 		dispose();
 	}
 	
@@ -407,6 +407,7 @@ public final class Game
 		setContext(Context.SESSION, new Context(Context.SESSION));
 		this.session = new GameSession(sessionContext);
 		InjectionManager.loadContextObjects(Context.SESSION);
+		fireEvent(GameEvent.OPEN_SESSION);
 		
 		callMainScript("newGame");
 	}
@@ -484,8 +485,6 @@ public final class Game
 	
 	public void dispose()
 	{
-		if (debugger != null) debugger.dispose();
-		
 		FrameTimer.stop();
 		ScriptExecuter.shutdown();
 		AudioSystem.dispose();
@@ -603,10 +602,9 @@ public final class Game
 		getInstance().session.vars[index] = value;
 	}
 	
-	static void initDebugger()
+	private static void initDebugger()
 	{
-		debugger = new Debugger(instance);
-		debugger.addDataMap("Global", getContext(GLOBAL).getData());
+		InjectionManager.injectObject(new Debugger(instance), "Debugger");
 	}
 	
 	private static String getLwjglPath(String os)
@@ -712,7 +710,8 @@ public final class Game
 	{
 		if (pathName == null) return null;
 		
-		Path path;
+		Path path = Paths.get(pathName);
+		if (path.isAbsolute()) return path;
 		// Suche Pfad im Projekt
 		path = Paths.get(Game.getRootPath(), pathName).toAbsolutePath();
 		if (Files.exists(path)) return path;

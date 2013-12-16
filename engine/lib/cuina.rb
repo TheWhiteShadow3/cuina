@@ -50,8 +50,14 @@ module Cuina
 	end
 end
 
-module Graphic
-	include_package 'cuina.graphics'
+module Graphics
+	def view
+		return Java::CuinaGraphics::Graphics.view
+	end
+	
+	def view=(value)
+		return Java::CuinaGraphics::Graphics.view = value
+	end
 end
 
 module Script

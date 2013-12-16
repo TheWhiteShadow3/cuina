@@ -162,7 +162,7 @@ public class InjectionManager
 	{
 		Object obj = container.getObject();
 		if (obj == null) return;
-			
+		
 		String name = container.getName();
 		if (name.length() > 0)
 		{

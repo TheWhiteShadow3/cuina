@@ -1,7 +1,7 @@
 package cuina.rpg;
 
 import cuina.animation.Animator;
-import cuina.animation.ModelIF;
+import cuina.animation.Model;
 import cuina.map.movement.Motor;
 import cuina.script.ScriptCallBack;
 import cuina.world.CuinaObject;
@@ -11,7 +11,7 @@ public class CharacterAnimator implements Animator
 	private static final long serialVersionUID = -1386279993223782693L;
 	
 	private CuinaObject      obj;
-    private ModelIF			model;
+    private Model			model;
     private ScriptCallBack  aniCallback;
     private float lastX;
     private float lastY;
@@ -43,7 +43,7 @@ public class CharacterAnimator implements Animator
     public int[] ANIMATION_MASK;
     
 	@Override
-	public void init(ModelIF model)
+	public void init(Model model)
 	{
 		this.model 	= model;
         this.obj 	= model.getObject();

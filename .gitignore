@@ -2,6 +2,6 @@
 *.zip
 */bin/*
 */build/*
-*/deploy/plugin/*
-*/deploy/lib/*
+engine/deploy/lib/*
+engine/deploy/plugins/*
 engine/deploy/cuina.engine.jar

@@ -4,7 +4,7 @@ import static cuina.test.TestObjectFactory.createDefaultPlayerObject;
 
 import cuina.Game;
 import cuina.Input;
-import cuina.animation.Model;
+import cuina.animation.ModelImpl;
 import cuina.map.movement.Motor;
 import cuina.map.movement.MovementUtil;
 import cuina.object.BaseObject;
@@ -31,7 +31,7 @@ public class AnimationFunctionTest
 	
 	public static void update()
 	{
-		Model model = (Model) obj.getExtension("model");
+		ModelImpl model = (ModelImpl) obj.getExtension("model");
 		Motor motor = (Motor) obj.getExtension("motor");
 		
 		if (Input.isPressed(Keyboard.KEY_NEXT))

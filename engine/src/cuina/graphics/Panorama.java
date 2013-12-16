@@ -17,7 +17,6 @@ public class Panorama extends Sprite
 	private static final long serialVersionUID = -4450304616595613882L;
 	
 	private static final String PANORAMA_CONTAINER_KEY = "cuina.panoramas";
-	private static final Transform2D matrix = new Transform2D();
 	
 	private String fileName	= null;
 	
@@ -102,7 +101,7 @@ public class Panorama extends Sprite
 			try
 			{
 				BufferedImage image = ResourceManager.loadImage(fileName);
-				setImage( new Image(TextureLoader.getInstance().getFilledTexture(image)) );
+				setImage( new Image(TextureLoader.getInstance().getFilledTexture(image, 0)) );
 			}
 			catch (LoadingException e)
 			{
@@ -117,13 +116,12 @@ public class Panorama extends Sprite
 		setOY(oy);
 	}
 
+	/* (non-Javadoc)
+	 * @see cuina.graphics.Sprite#render(cuina.graphics.Image, cuina.graphics.Transformation)
+	 */
 	@Override
-	public void draw()
+	protected void transformAndRender(Transformation matrix)
 	{
-		if (image == null) refresh();
-		
-		if (!visible || image == null) return;
-		
 		this.x -= speedX;
 		this.y -= speedY;
 		
@@ -132,23 +130,12 @@ public class Panorama extends Sprite
 		float realX  = ((this.x + ox) * scrollFactor) / width;
 		float realY  = ((this.y + oy) * scrollFactor) / height;
 		
-//		float width  = image.getWidth()  * zoomX;
-//		float height = image.getHeight() * zoomY;
-//		float realX  = (this.x - ox) / width;
-//		float realY  = (this.y - oy) / height;
-		matrix.clear();
-		matrix.setView(realX, realY);
+		Image.IMAGE_MATRIX.clear();
+		Image.IMAGE_MATRIX.setView(realX, realY);
 		
-		matrix.expand(Graphics.getWidth()  / (float)image.getWidth(),
-					  Graphics.getHeight() / (float)image.getHeight(), zoomX, zoomY);
-//		matrix.stretch(1 / zoomX, 1 / zoomY);
-//				realX + Graphics.getWidth() / width,
-//				realY + Graphics.getHeight() / height);
-
-		image.draw(matrix);
+		Image.IMAGE_MATRIX.expand(Graphics.getWidth()  / (float)image.getWidth(),
+								  Graphics.getHeight() / (float)image.getHeight(), zoomX, zoomY);
 		
-//		GL11.glMatrixMode(GL11.GL_TEXTURE);
-//		GL11.glLoadIdentity();
-//		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		super.transformAndRender(Image.IMAGE_MATRIX);
 	}
 }

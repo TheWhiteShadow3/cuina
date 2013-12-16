@@ -71,7 +71,7 @@ public abstract class Sprite extends AbstractGraphic
 	 */
 	public Sprite(Image image, GraphicContainer container)
 	{
-		setImage(image);
+		super.setImage(image);
 		if (container == null) return;
 		container.addGraphic(this);
 	}
@@ -173,7 +173,7 @@ public abstract class Sprite extends AbstractGraphic
 	}
 
 	@Override
-	protected void render(Transformation matrix)
+	protected void transformAndRender(Transformation matrix)
 	{
 		if (matrix == null)
 		{
@@ -184,7 +184,7 @@ public abstract class Sprite extends AbstractGraphic
 			Image.IMAGE_MATRIX.setScale(zoomX, zoomY);
 			matrix = Image.IMAGE_MATRIX;
 		}
-		image.draw(matrix);
+		super.transformAndRender(matrix);
 	}
 
 

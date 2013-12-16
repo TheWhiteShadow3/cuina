@@ -1,6 +1,6 @@
 package cuina.map;
 
-import cuina.animation.ModelIF;
+import cuina.animation.Model;
 import cuina.world.CuinaMask;
 import cuina.world.CuinaModel;
 import cuina.world.CuinaObject;
@@ -68,8 +68,8 @@ public class CollisionBox implements CuinaMask
 	private void createPixelData(int alphaLevel)
 	{
 		Object ext = object.getExtension(CuinaModel.EXTENSION_KEY);
-		if (ext == null || !(ext instanceof ModelIF)) return;
-		ModelIF model = (ModelIF) ext;
+		if (ext == null || !(ext instanceof Model)) return;
+		Model model = (Model) ext;
 		
 		BufferedImage image = model.getRawImage();
 		

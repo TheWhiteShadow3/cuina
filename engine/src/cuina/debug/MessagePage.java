@@ -1,6 +1,8 @@
 package cuina.debug;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.Writer;
 
 import javax.swing.JTextArea;
@@ -9,40 +11,42 @@ public class MessagePage extends JTextArea implements DebugPage
 {
 	private static final long serialVersionUID = 1L;
 	
-	private Writer writer;
+	private PrintStream writer;
 	
 	public MessagePage()
 	{
-		writer = new MessageWriter();
-//		EventExecuter.setEventWriter(writer);
+		writer = new PrintStream(new MessageWriter());
+		System.setOut(writer);
+		System.setErr(writer);
 		setEditable(false);
 	}
 	
 	@Override
 	public void update()
 	{
-		try
-		{
-			writer.flush();
-		}
-		catch (IOException e) { /* Da kommt nix */ }
+		writer.flush();
 	}
 
-	private class MessageWriter extends Writer
+	private class MessageWriter extends OutputStream
 	{
 		private StringBuilder builder = new StringBuilder();
+
+		@Override
+		public void write(byte[] b, int off, int len) throws IOException
+		{
+			builder.append(new String(b));
+		}
 		
 		@Override
-		public void write(char[] cbuf, int off, int len) throws IOException
+		public void write(int b) throws IOException
 		{
-			builder.append(cbuf, off, len);
+			builder.append((char) b);
 		}
 
 		@Override
 		public void flush() throws IOException
 		{
 			setText(builder.toString());
-//			builder = new StringBuilder();
 		}
 
 		@Override
@@ -50,6 +54,5 @@ public class MessagePage extends JTextArea implements DebugPage
 		{
 			builder = null;
 		}
-		
 	}
 }

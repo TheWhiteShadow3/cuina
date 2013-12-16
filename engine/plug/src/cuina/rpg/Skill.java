@@ -28,6 +28,7 @@ public class Skill extends Item
     public int flags;
     public float time = 1f;
     public float hit = 1f;
+    public String animationKey;
 
 	public Skill()
 	{

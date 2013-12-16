@@ -39,6 +39,9 @@ public class TileMap implements Serializable
 	private byte[] priorities;
 	private int x;
 	private int y;
+	private int atSpeed = 10;
+	private int atTime;
+	private int atFrame;
 	private boolean visible = true;
 
 //	private GraphicContainer container;
@@ -101,6 +104,16 @@ public class TileMap implements Serializable
 		this.y = y;
 	}
 	
+	public ImageSet getImageSet()
+	{
+		return imageSet;
+	}
+	
+	public ImageSet getAutotileImage(int index, int frame)
+	{
+		return autotileSets[index][frame];
+	}
+	
 	public void refresh()
 	{
 		if (sprites == null) return;
@@ -128,45 +141,41 @@ public class TileMap implements Serializable
 		int id;
 		Sprite sprite;
 		for(int x = 0; x < data.length; x++)
+		for(int y = 0; y < data[0].length; y++)
+		for(int z = 0; z < data[0][0].length; z++)
 		{
-			for(int y = 0; y < data[0].length; y++)
-			{
-				for(int z = 0; z < data[0][0].length; z++)
-				{
-					sprite = sprites[x][y][z];
+			sprite = sprites[x][y][z];
 //					if (sprite != null)
 //					{
 //						sprite.refresh();
 //						continue;
 //					}
-					
-					id = data[x][y][z] - 1;
-					if (id > -1)
-					{						
-						if((id + 1) < 30000)
-						{
-							sprite = imageSet.createSprite(
-									id % imageSet.getXCount(), id / imageSet.getXCount(), container);
-						}
-						else
-						{
-							int autotileID = (id - 30000) + 1;
-							// Prüfe, ob zur ID auch ein AutotileSet existiert.
-							if (autotileSets[autotileID / 48] == null) continue;
-							sprite = autotileSets[autotileID / 48][0]. // TODO: Frame-Umschaltung für Autotiles implementieren
-								createSprite((autotileID % 48) % imageSet.getXCount(),
-											 (autotileID % 48) / imageSet.getXCount(),
-											 container);
-						}
-						sprite.setX(x * tileSize);
-						sprite.setY(y * tileSize);
-						if ((priorities != null)&&(priorities.length > id+1))
-						{
-							sprite.setDepth((int)sprite.getY() + priorities[id] * (tileSize + 1));
-						}
-						sprites[x][y][z] = sprite;
-					}
+			
+			id = data[x][y][z] - 1;
+			if (id > -1)
+			{						
+				if((id + 1) < 30000)
+				{
+					sprite = imageSet.createSprite(
+							id % imageSet.getXCount(), id / imageSet.getXCount(), container);
 				}
+				else
+				{
+					int autotileID = (id - 30000) + 1;
+					// Prüfe, ob zur ID auch ein AutotileSet existiert.
+					if (autotileSets[autotileID / 48] == null) continue;
+					sprite = autotileSets[autotileID / 48][atFrame].
+						createSprite((autotileID % 48) % imageSet.getXCount(),
+									 (autotileID % 48) / imageSet.getXCount(),
+									 container);
+				}
+				sprite.setX(x * tileSize);
+				sprite.setY(y * tileSize);
+				if ((priorities != null)&&(priorities.length > id+1))
+				{
+					sprite.setDepth((int)sprite.getY() + priorities[id] * (tileSize + 1));
+				}
+				sprites[x][y][z] = sprite;
 			}
 		}
 	}
@@ -196,24 +205,33 @@ public class TileMap implements Serializable
 		int id;
 		Sprite sprite;
 		for(int x = 0; x < data.length; x++)
+		for(int y = 0; y < data[0].length; y++)
+		for(int z = 0; z < data[0][0].length; z++)
 		{
-			for(int y = 0; y < data[0].length; y++)
+			id = data[x][y][z];
+			sprite = sprites[x][y][z];
+			if (sprite != null && id > 0)
 			{
-				for(int z = 0; z < data[0][0].length; z++)
+//				sprite.setX(x * tileSize);
+//				sprite.setY(y * tileSize);
+				if ((id + 1) < 30000) // TODO: Implementiere Priorität für Autotiles
+					sprite.setDepth((int)sprite.getY() + priorities[id] * (tileSize + 1));
+				else
 				{
-					id = data[x][y][z];
-					sprite = sprites[x][y][z];
-					if (sprite != null && id > 0)
-					{
-						sprite.setX(x * tileSize - world.getScrollX());
-						sprite.setY(y * tileSize - world.getScrollY());
-						if ((id + 1) < 30000) // TODO: Implementiere Priorität für Autotiles
-							sprite.setDepth((int)sprite.getY() + priorities[id] * (tileSize + 1));
-						else
-							sprite.setDepth((int)sprite.getY());
-					}
+					int autotileID = (id - 30000) + 1;
+					int frame = atFrame % autotileSets[autotileID / 48].length;
+					ImageSet.setImage(sprite, autotileSets[autotileID / 48][frame],
+							(autotileID % 48) % imageSet.getXCount(),
+							(autotileID % 48) / imageSet.getXCount());
+					sprite.setDepth((int)sprite.getY());
 				}
 			}
+		}
+		atTime += atSpeed;
+		if (atTime > 100)
+		{
+			atTime -= 100;
+			atFrame += 1;
 		}
 	}
 
@@ -301,7 +319,7 @@ public class TileMap implements Serializable
 		private Texture getTexture(AutotileSetData data)
 		{
 			return TextureLoader.getInstance().getTexture(
-					data.set.getFrame(index), data.autotileName + Integer.toString(index));
+					data.set.getFrame(index), 0, data.autotileName + Integer.toString(index));
 		}
 
 		public static ImageSet[] createSetArray(String autotileName, int tileSize)

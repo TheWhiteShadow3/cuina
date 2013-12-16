@@ -1,21 +1,26 @@
 package cuina.graphics;
  
 import static org.lwjgl.opengl.GL11.*;
- 
+
+import cuina.util.LoadingException;
+import cuina.util.ResourceManager;
+
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
- 
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.Util;
- 
-import cuina.util.LoadingException;
-import cuina.util.ResourceManager;
  
 /**
  * A utility class to load textures for OpenGL.
@@ -24,29 +29,31 @@ import cuina.util.ResourceManager;
  */
 public class TextureLoader
 {
+	public static final int TEXTURE_2D = 1;
+	
+	public static final int ANIOTROPIC = 1;
+	
     private static TextureLoader instance = null;
  
     private TextureLoader() {}
  
-    /**
-     * Create a new texture ID
-     * 
-     * @return A new texture ID
-     */
-    private int createTextureID()
-    {
-        glGenTextures(CuinaGLUtil.TEMP_INT_BUFFER);
-        return CuinaGLUtil.TEMP_INT_BUFFER.get(0);
-    }
- 
-    public Texture getTexture(String fileName) throws LoadingException
+    public Texture getTexture(String fileName, int flags) throws LoadingException
     {
         Texture tex = TextureCache.get(fileName);
-        if (tex == null)
+        if (tex == null) try
         {
-            tex = getTexture(ResourceManager.loadImage(fileName));
+            tex = getTexture(ResourceManager.loadImage(fileName), flags);
             TextureCache.put(fileName, tex);
         }
+        catch(LoadingException e)
+        {
+        	throw(e);
+        }
+    	catch(Exception e)
+    	{
+    		throw new LoadingException(fileName, e);
+    	}
+    		
         return tex;
     }
  
@@ -57,12 +64,12 @@ public class TextureLoader
      * @param cacheKey Schlüssel nachdem gesucht werden soll.
      * @return die geladene Textur.
      */
-    public Texture getTexture(BufferedImage bufferedImage, String cacheKey)
+    public Texture getTexture(BufferedImage bufferedImage, int flags, String cacheKey)
     {
         Texture tex = TextureCache.get(cacheKey);
         if (tex == null)
         {
-            tex = getTexture(bufferedImage);
+            tex = getTexture(bufferedImage, flags);
             if (cacheKey != null) TextureCache.put(cacheKey, tex);
         }
         return tex;
@@ -100,12 +107,12 @@ public class TextureLoader
 //      return tex;
 //  }
  
-    public Texture getTexture(int width, int height)
+    public Texture getTexture(int width, int height, int flags)
     {
-        int textureID = createTextureID();
+        int textureID =  glGenTextures();
         Texture texture = new Texture(GL_TEXTURE_2D, textureID, width, height);
         
-        texture.bind();
+        GLCache.bindTexture(texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
@@ -125,55 +132,101 @@ public class TextureLoader
      * @param bufferedImage Image mit den Bildinformationen.
      * @return die geladene Textur.
      */
-    private Texture getTexture(BufferedImage bufferedImage)
+	private Texture getTexture(BufferedImage bufferedImage, int flags)
+	{
+		int textureID =  glGenTextures();
+		int srcWidth = bufferedImage.getWidth();
+		int srcHeight = bufferedImage.getHeight();
+		boolean alpha = bufferedImage.getColorModel().hasAlpha();
+		ColorSpace colorSpace = bufferedImage.getColorModel().getColorSpace();
+		switch(colorSpace.getType())
+		{
+			case ColorSpace.TYPE_RGB: break;
+			default: throw new IllegalArgumentException("unsupported color-format: " + getColorFormat(colorSpace));
+		}
+		int colorFormat = alpha ? GL_RGBA : GL_RGB;
+
+		Texture texture = new Texture(GL_TEXTURE_2D, textureID, srcWidth, srcHeight);
+
+		byte[] data = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
+		convertColorFormat(data, alpha);
+
+		ByteBuffer buffer = ByteBuffer.allocateDirect(data.length);
+		buffer.order(ByteOrder.nativeOrder());
+		buffer.put(data, 0, data.length);
+		buffer.flip();
+
+		GLCache.bindTexture(texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		if ((flags & ANIOTROPIC) != 0)
+		{
+			// Due to LWJGL buffer check, you can't use smaller sized buffers (min_size = 16 for glGetFloat()).
+			FloatBuffer max_a = BufferUtils.createFloatBuffer(16);
+			// Grab the maximum anisotropic filter.
+			GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, max_a);
+			System.out.println(max_a.get(0));
+			// Set up the anisotropic filter.
+			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,
+					max_a.get(0));
+		}
+
+		if (texture.getWidth() != srcWidth || texture.getHeight() != srcHeight)
+		{
+			GL11.glTexImage2D(GL_TEXTURE_2D, 0, colorFormat,
+					texture.getWidth(), texture.getHeight(), 0, colorFormat,
+					GL_UNSIGNED_BYTE, (ByteBuffer) null);
+			GL11.glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+					srcWidth, srcHeight, colorFormat, GL_UNSIGNED_BYTE, buffer);
+		}
+		else
+		{
+			GL11.glTexImage2D(GL_TEXTURE_2D, 0, colorFormat,
+					texture.getWidth(), texture.getHeight(), 0, colorFormat,
+					GL_UNSIGNED_BYTE, buffer);
+		}
+		Util.checkGLError();
+
+		return texture;
+	}
+    
+	private String getColorFormat(ColorSpace cs)
+	{
+		String[] str = new String[cs.getNumComponents()];
+		// Die Implementation von ColorSpace#getName(int) ist echt beschissen.
+		for (int i = 0; i < str.length; i++)
+			str[i] = cs.getName(i);
+		return Arrays.toString(str);
+	}
+	
+    private void convertColorFormat(byte[] data, boolean alpha)
     {
-        int textureID = createTextureID();
-        int srcWidth = bufferedImage.getWidth();
-        int srcHeight = bufferedImage.getHeight();
-        Texture texture = new Texture(GL_TEXTURE_2D, textureID, srcWidth, srcHeight);
- 
-        byte[] data = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
-        
-        // Bufferd Image hat die Komponentenabfolge: ABGR, benötigt wird aber RGBA.
         byte temp;
-        for(int i = 0; i < data.length; i += 4)
+        if (alpha)
         {
-            temp = data[i];
-            data[i] = data[i+3];
-            data[i+3] = temp;
-            
-            temp = data[i+1];
-            data[i+1] = data[i+2];
-            data[i+2] = temp;
-        }
- 
-        ByteBuffer buffer = ByteBuffer.allocateDirect(data.length);
-        buffer.order(ByteOrder.nativeOrder());
-        buffer.put(data, 0, data.length);
-        buffer.flip();
- 
-        texture.bind();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        
-        if (texture.getWidth() != srcWidth || texture.getHeight() != srcHeight)
-        {
-            GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                    texture.getWidth(), texture.getHeight(), 0, GL_RGBA,
-                    GL_UNSIGNED_BYTE, (ByteBuffer) null);
-            GL11.glTexSubImage2D(GL_TEXTURE_2D, 0,
-                    0, 0, srcWidth, srcHeight,
-                    GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        	// Bufferd Image hat die Komponentenabfolge: ABGR, benötigt wird aber RGBA.
+	        for(int i = 0; i < data.length; i += 4)
+	        {
+	            temp = data[i];
+	            data[i] = data[i+3];
+	            data[i+3] = temp;
+	            
+	            temp = data[i+1];
+	            data[i+1] = data[i+2];
+	            data[i+2] = temp;
+	        }
         }
         else
         {
-            GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                    texture.getWidth(), texture.getHeight(), 0, GL_RGBA,
-                    GL_UNSIGNED_BYTE, buffer);
+        	// Bufferd Image hat die Komponentenabfolge: BGR, benötigt wird aber RGB.
+	        for(int i = 0; i < data.length; i += 3)
+	        {
+	            temp = data[i];
+	            data[i] = data[i+2];
+	            data[i+2] = temp;
+	        }
         }
-        Util.checkGLError();
-        
-        return texture;
     }
     
     /**
@@ -181,7 +234,7 @@ public class TextureLoader
      * @param bufferedImage
      * @return The loaded texture.
      */
-    public Texture getFilledTexture(BufferedImage bufferedImage)
+    public Texture getFilledTexture(BufferedImage bufferedImage, int flags)
     {
         int width  = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
@@ -194,7 +247,7 @@ public class TextureLoader
             scaledImage.getGraphics().drawImage(bufferedImage, 0, 0, foldWidth, foldHeight, null);
             bufferedImage = scaledImage;
         }
-        return getTexture(bufferedImage);
+        return getTexture(bufferedImage, flags);
     }
  
     public static void clear()

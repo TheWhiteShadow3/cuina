@@ -8,7 +8,7 @@ import cuina.rpg.actor.Actor;
 import java.util.ArrayList;
  
 public class BattleAction implements NamedItem
-{
+{	
     private String      name;
     private Actor       user;
     private Skill       skill;
@@ -75,5 +75,10 @@ public class BattleAction implements NamedItem
     public float getExecutionTime()
     {
         return time;
+    }
+    
+    public static BattleAction getDefaultAction(Actor user)
+    {
+    	return new BattleAction(user, "Nichts", 1f);
     }
 }

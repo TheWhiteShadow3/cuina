@@ -55,7 +55,7 @@ public class WidgetFactory
 	// Einstellungen, die für alle Widget-Typen gültig sind.
 	private static void applyGeneralSettings(Widget widget, WidgetNode data)
 	{
-		buildMap.put(data.key, widget);
+		buildMap.put(data.name, widget);
 		widget.setPosition(data.x, data.y);
 		widget.setSize(data.width, data.height);
 		widget.setEnabled(data.enabled);
@@ -64,7 +64,7 @@ public class WidgetFactory
 
 	private static Widget createResizableFrame(FrameNode data)
 	{
-		Frame frame = new Frame(data.key);
+		Frame frame = new Frame(data.name);
 		frame.setTheme("/frame");
 		applyGeneralSettings(frame, data);
 		frame.setTitle(data.title);
@@ -84,7 +84,7 @@ public class WidgetFactory
 
 	private static Widget createButton(ButtonNode data)
 	{
-		Button button = new Button(data.key, data.toggleButton);
+		Button button = new Button(data.name, data.toggleButton);
 		button.setTheme("/button");
 		applyGeneralSettings(button, data);
 		button.setText(data.text);
@@ -94,7 +94,7 @@ public class WidgetFactory
 
 	private static Widget createPicture(PictureNode data)
 	{
-		Picture picture = new Picture(data.key);
+		Picture picture = new Picture(data.name);
 		picture.setTheme("/picture");
 		applyGeneralSettings(picture, data);
 		picture.setImage(data.imageName);
@@ -104,7 +104,7 @@ public class WidgetFactory
 	
 	private static Widget createMenu(MenuNode data)
 	{
-		Menu menu = new Menu(data.key, data.columns);
+		Menu menu = new Menu(data.name, data.columns);
 		menu.setTheme("/menu");
 		applyGeneralSettings(menu, data);
 		menu.setCommands(data.commands);
@@ -135,7 +135,7 @@ public class WidgetFactory
 		textArea.setStyleClassResolver(defaultStyleSheet);
 		for (cuina.widget.data.WidgetNode child : data.children)
 		{
-			textArea.registerWidget(data.key, createWidget(child));
+			textArea.registerWidget(data.name, createWidget(child));
 		}
 
 		return textArea;

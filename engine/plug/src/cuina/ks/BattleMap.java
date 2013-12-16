@@ -3,7 +3,6 @@ package cuina.ks;
 import cuina.Context;
 import cuina.Game;
 import cuina.database.Database;
-import cuina.map.GameMap;
 import cuina.object.BaseWorld;
 import cuina.plugin.ForSession;
 import cuina.plugin.LifeCycle;
@@ -26,7 +25,8 @@ public class BattleMap extends BaseWorld implements Plugin, LifeCycle
 	{
 		scene = Database.<BattleScene> get("BattleScene", battleKey);
 		ground = new BattleGround(Database.<BattleGroundData> get("BattleGround", scene.battlegroundKey));
-
+		battle.startBattle(scene);
+		
         //XXX: Debug-Loop (test nur für den sleep!)
 //        while(battle.isRunning() || true)  // Im Battle erfolgt ein System.exit
 //        {
@@ -39,21 +39,20 @@ public class BattleMap extends BaseWorld implements Plugin, LifeCycle
 //                e.printStackTrace();
 //            }
 //            
-//            FrameTimer.pseudoUpdate();
-//            update();
-//            Game.window.statusPanel.update();
+//            FrameTimer.nextFrame();
+////            update();
+////            Game.window.statusPanel.update();
 //        }
-//      update();
+		update();
     }
 
 	@Override
 	public void init()
 	{
-		battle = Game.getContext(Context.SCENE).<Battle> get("BattleController");
-		battle.startBattle(scene);
+		this.battle = Game.getContext(Context.SCENE).<Battle> get("BattleController");
 	}
 
-	public static GameMap getInstance()
+	public static BattleMap getInstance()
 	{
 		return Game.getContext(Context.SESSION).get(CuinaWorld.INSTANCE_KEY);
 	}

@@ -10,6 +10,7 @@ import cuina.script.ScriptExecuter;
 import cuina.widget.WidgetContainer;
 import cuina.widget.data.FrameNode;
 import cuina.widget.data.TextAreaNode;
+import cuina.widget.data.WidgetTree;
 
 import java.io.File;
 
@@ -31,7 +32,7 @@ public class TWLTest implements Plugin, LifeCycle
 	private cuina.widget.data.WidgetNode createWidgetData()
 	{
 		FrameNode frame = new FrameNode();
-		frame.key = "myRoot";
+		frame.name = "myRoot";
 		frame.x = 20;
 		frame.y = 20;
 		frame.width = 240;
@@ -39,7 +40,7 @@ public class TWLTest implements Plugin, LifeCycle
 		frame.title = "Frame";
 		
 		TextAreaNode textarea = new TextAreaNode();
-		frame.key = "myText";
+		frame.name = "myText";
 		textarea.x = 40;
 		textarea.y = 40;
 		textarea.width = 200;
@@ -48,8 +49,10 @@ public class TWLTest implements Plugin, LifeCycle
 		
 		frame.children.add(textarea);
 		
-		DataTable<cuina.widget.data.WidgetNode> table = new DataTable("Widget", cuina.widget.data.WidgetNode.class);
-		table.put(frame);
+		DataTable<cuina.widget.data.WidgetTree> table = new DataTable("Widget", cuina.widget.data.WidgetTree.class);
+		WidgetTree tree = new WidgetTree();
+		tree.root = frame;
+		table.put(tree);
 		Database.saveData(new File(Game.getRootPath() + "/data/Widget.cxd").getAbsoluteFile(), table);
 		return frame;
 	}

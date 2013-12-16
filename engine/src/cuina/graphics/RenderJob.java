@@ -140,8 +140,13 @@ public class RenderJob
 
 	private void renderImage()
 	{
-		image.draw(x1, Graphics.getHeight()-y1, 1f, -1f);
-//		image.draw(x1, Graphics.getHeight()-y1, 0, 0, image.getWidth(), -image.getHeight(), 0.0f, 1.0f);
+		Image.IMAGE_MATRIX.clear();
+		Image.IMAGE_MATRIX.setPosition(x1, Graphics.getHeight()-y1);
+		Image.IMAGE_MATRIX.setScale(1f, -1f);
+		
+		Image.IMAGE_MATRIX.pushTransformation();
+		Image.renderImage(image);
+		Image.IMAGE_MATRIX.popTransformation();
 	}
 	
 	private void renderLine()

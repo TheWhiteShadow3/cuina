@@ -54,7 +54,7 @@ public class ImageSet implements Serializable
 		this.fileName = fileName;
 		this.xCount = xCount;
 		this.yCount = yCount;
-		createImages(TextureLoader.getInstance().getTexture(fileName));
+		createImages(TextureLoader.getInstance().getTexture(fileName, 0));
 	}
 	
 	/**
@@ -91,10 +91,19 @@ public class ImageSet implements Serializable
 		int ch = texture.getSourceHeight() / yCount;
 		images = new Image[xCount][yCount];
 		for(int x=0; x < xCount; x++)
-			for(int y=0; y < yCount; y++)
-			{
-				images[x][y] = new Image(texture, x * cw, y * ch, cw, ch);
-			}
+		for(int y=0; y < yCount; y++)
+		{
+			images[x][y] = new Image(texture, x * cw, y * ch, cw, ch);
+		}
+	}
+	
+	public void addTexture(Texture texture, int mixMode)
+	{
+		for(int x=0; x < xCount; x++)
+		for(int y=0; y < yCount; y++)
+		{
+			images[x][y].addTexture(texture, mixMode);
+		}
 	}
 	
 	/**
@@ -107,7 +116,7 @@ public class ImageSet implements Serializable
 		{
 			try
 			{
-				createImages(TextureLoader.getInstance().getTexture(fileName));
+				createImages(TextureLoader.getInstance().getTexture(fileName, 0));
 				for(ImageSetSprite sprite : sprites)
 				{
 					sprite.refresh();
@@ -221,6 +230,25 @@ public class ImageSet implements Serializable
 		return texture == null;
 	}
 	
+	/**
+	 * Setzt das Image für ein übergebenes Sprite.
+	 * Das Sprite muss einem ImageSet angehören, ansonsten wird eine IllegalArgumentException geworfen.
+	 * @param sprite Das Sprite, dessen Image geändert werden soll.
+	 * @param set Das Imageset, dessen Image benutzt werden soll.
+	 * @param x X-Position.
+	 * @param y Y-Position.
+	 */
+	public static void setImage(Sprite sprite, ImageSet set, int x, int y)
+	{
+		if (!(sprite instanceof ImageSetSprite)) throw new IllegalArgumentException();
+		
+		ImageSetSprite s = (ImageSetSprite) sprite;
+		s.set = set;
+		s.sx = x;
+		s.sy = y;
+		s.refresh();
+	}
+	
 	private class ImageSetSprite extends Sprite
 	{
 		private static final long	serialVersionUID	= 3213337083050584786L;
@@ -242,7 +270,14 @@ public class ImageSet implements Serializable
 		{
 			if (set.images == null) set.refresh();
 			if (set.images == null) return;
-			setImage(set.getImage(sx, sy));
+			super.setImage(set.getImage(sx, sy));
+		}
+
+		@Override
+		public void setImage(Image image)
+		{
+			throw new UnsupportedOperationException(
+					"Can not set Image directly. Use ImageSet#setImage(Sprite, int, int) instead.");
 		}
 
 		@Override

@@ -3,12 +3,15 @@ package cuina.graphics;
 import cuina.Game;
 import cuina.Logger;
 import cuina.util.LoadingException;
+import cuina.util.Vector;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.opengl.GL20;
 
@@ -23,10 +26,11 @@ public class Shader implements Serializable
 //	private static HashMap<String, Shader> instances = new HashMap<String, Shader>();
 	
 	private String name;
-	transient private boolean valid = true;
 	transient private int program = 0;
+	transient private boolean valid = true;
 	transient private int vertShader = 0;
 	transient private int fragShader = 0;
+	private final Map<String, Object> attributs = new HashMap<String, Object>();
 //	private int geomShader = 0;
 
 	/**
@@ -40,8 +44,6 @@ public class Shader implements Serializable
 	 * 		<dd><code><i>ShaderName</i>.fx</code></dd>
 	 * </dl>
 	 * @param shaderName Name des Shaders.
-	 * @throws LoadingException
-	 * @throws ShaderException
 	 */
 	public Shader(String shaderName)
 	{
@@ -65,9 +67,14 @@ public class Shader implements Serializable
 //			if(geomShader != 0) GL20.glAttachShader(program, geomShader);
 			GL20.glDeleteShader(vertShader);
 			GL20.glDeleteShader(fragShader);
-			
+
 			GL20.glLinkProgram(program);
 			checkShaderLog(program);
+			
+			for (String name : attributs.keySet())
+			{
+				applyUniform(name);
+			}
 			
 			valid = true;
 		}
@@ -76,6 +83,49 @@ public class Shader implements Serializable
 			Logger.log(Shader.class, Logger.WARNING, e);
 			valid = false;
 		}
+	}
+	
+	public void setUniform(String name, int value)
+	{
+		attributs.put(name, value);
+		applyUniform(name);
+	}
+	
+	public void setUniform(String name, float value)
+	{
+		attributs.put(name, value);
+		applyUniform(name);
+	}
+	
+	public void setUniform(String name, Vector value)
+	{
+		attributs.put(name, value);
+		applyUniform(name);
+	}
+	
+	private void applyUniform(String name)
+	{
+		Object value = attributs.get(name);
+		bind();
+		int loc = GL20.glGetUniformLocation(program, name);
+		if (loc == -1)
+		{
+			Logger.log(Shader.class, Logger.WARNING, "Shader-Uniformvariable '" + name + "' existiert nicht.");
+			attributs.remove(name);
+			return;
+		}
+		
+		if (value instanceof Integer)
+			GL20.glUniform1i(loc,  (Integer) value);
+		else if (value instanceof Float)
+			GL20.glUniform1f(loc, (Float) value);
+		else if (value instanceof Vector)
+		{
+			Vector v = (Vector) value;
+			GL20.glUniform3f(loc, v.x, v.y, v.z);
+		}
+		else
+			throw new IllegalArgumentException(value.getClass().getName() + " can not used for uniform variable.");
 	}
 	
 	public boolean isValid()
@@ -102,7 +152,7 @@ public class Shader implements Serializable
 		if (log.length() > 0)
 		{
 			if (log.contains("error"))
-				throw new ShaderException("Shader-Program konnte nicht erstellt werden.\n" + log);
+				throw new ShaderException("Fehler in Shader " + name + ".\n" + log);
 			else
 				System.err.println("[Shader] " + log);
 		}

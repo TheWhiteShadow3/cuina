@@ -31,7 +31,7 @@ public class Picture extends Widget implements CuinaWidget
 	}
 
 	@Override
-	public String getKey()
+	public String getName()
 	{
 		return key;
 	}

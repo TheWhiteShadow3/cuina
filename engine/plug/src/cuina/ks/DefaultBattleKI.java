@@ -74,6 +74,11 @@ public class DefaultBattleKI implements BattleKI
         }
     }
     
+    public static class DefaultSetting implements KiSetting
+    {
+        public final ArrayList<Action> actions = new ArrayList<Action>();
+    }
+    
     @Override
     public BattleAction prepareAction(Battle battle, Enemy enemy)
     {
@@ -98,7 +103,10 @@ public class DefaultBattleKI implements BattleKI
  
     private Action findAction(Battle battle, Enemy enemy)
     {
-        ArrayList<Action> actions = ((Setting) enemy.getKiSetting()).actions;
+    	KiSetting kiSetting = enemy.getKiSetting();
+    	if (kiSetting == null) return null;
+    	
+        ArrayList<Action> actions = ((DefaultSetting) kiSetting).actions;
         Collections.sort(actions);
         
         Action action;
@@ -264,10 +272,5 @@ public class DefaultBattleKI implements BattleKI
             if (actor.containsState(getState(stateName)) == include) list.add(actor);
         }
         return list;
-    }
-    
-    public static class Setting implements KiSetting
-    {
-        public final ArrayList<Action> actions = new ArrayList<Action>();
     }
 }

@@ -6,7 +6,7 @@ import java.util.Comparator;
 /**
  * Vergleicher für die Z-order der Grafik-Elemente.
  * Wird vom Graphic-Manager benutzt um die Zeichenreihenfolge zu bestimmen.
- * Elemente mit höherem Z-Wert werden später gezeichnet und liegen somit über Elementen mit niedriegerem Z-Wert.
+ * Elemente mit höherem Z-Wert werden später gezeichnet und liegen somit über Elementen mit niedrigerem Z-Wert.
  * @author TheWhiteShadow
  * @version 1.0
  */

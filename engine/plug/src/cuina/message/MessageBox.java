@@ -34,18 +34,16 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	private boolean active;
 	private boolean closing;
 	
-	public MessageBox()
-	{
-		if (Game.contextExists(Context.SESSION))
-			history = Game.getContext(Context.SESSION).get("MessageHistory");
-		
-		if(history != null) history.setCapacity(100);
-	}
+	public MessageBox() {}
 	
 	@Override
 	public void init()
 	{
 		this.container = new WidgetContainer(this);
+		if (Game.contextExists(Context.SESSION))
+			history = Game.getContext(Context.SESSION).get("MessageHistory");
+		
+		if(history != null) history.setCapacity(100);
 	}
 	
 	public String getText()
@@ -168,7 +166,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	@Override
 	public Widget getWidget(String key)
 	{
-		if (widget.getKey().equals(key))
+		if (widget.getName().equals(key))
 			return widget;
 		
 		return null;

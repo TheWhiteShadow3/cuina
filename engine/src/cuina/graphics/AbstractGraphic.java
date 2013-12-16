@@ -2,6 +2,11 @@ package cuina.graphics;
 
 import org.lwjgl.opengl.GL11;
 
+/**
+ * Abstrakte Basis-Implementierung der Klasse {@link Graphic}.
+ * 
+ * @author TheWhiteShadow
+ */
 @SuppressWarnings("serial")
 public abstract class AbstractGraphic implements Graphic
 {
@@ -71,14 +76,14 @@ public abstract class AbstractGraphic implements Graphic
 			if (image == null) return;
 		}
 
-		if (!useGenList) render(matrix);
+		if (!useGenList) transformAndRender(matrix);
 		else
 		{
 			if (modelID == 0)
 			{
 				modelID = GL11.glGenLists(1);
 				GL11.glNewList(modelID, GL11.GL_COMPILE_AND_EXECUTE);
-				render(matrix);
+				transformAndRender(matrix);
 				GL11.glEndList();
 			}
 			else
@@ -88,9 +93,29 @@ public abstract class AbstractGraphic implements Graphic
 		}
 	}
 	
-	protected void render(Transformation matrix)
+	/**
+	 * Transformiert die Grafik mit der angegebenen Matrix-Transformation.
+	 * @param image Das Image.
+	 * @param matrix Die Transformation.
+	 */
+	protected void transformAndRender(Transformation matrix)
 	{
-		image.draw(matrix);
+		if (matrix != null) matrix.pushTransformation();
+		render(image);
+		if (matrix != null) matrix.popTransformation();
+	}
+	
+	/**
+	 * Rendert die Grafik mit dem angegebenen Image.
+	 * <p>
+	 * Die Default-Implementation zeichnet das Image in nativer Auflösung auf dem Bildschirm.
+	 * </p>
+	 * @param image Das Image.
+	 * @param matrix Die Transformation.
+	 */
+	protected void render(Image image)
+	{
+		Image.renderImage(image);
 	}
 	
 	@Override

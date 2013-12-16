@@ -39,8 +39,20 @@ public interface Graphic extends Serializable
 	 */
 	public void dispose();
 	
+	/**
+	 * Zeichnet die Grafik.
+	 */
 	public void draw();
 
+	/**
+	 * Setzt den Kontainer für die Grafik.
+	 * @param container Der Kontainer.
+	 */
 	public void setContainer(GraphicContainer container);
+	
+	/**
+	 * Gibt den Kontainer der Grafik zurück.
+	 * @return Der Kontainer.
+	 */
 	public GraphicContainer getContainer();
 }

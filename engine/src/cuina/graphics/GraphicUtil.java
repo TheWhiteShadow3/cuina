@@ -2,23 +2,53 @@ package cuina.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import cuina.util.Vector;
+
 import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
-import cuina.util.Vector;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.glu.Sphere;
 
 /**
- * Statische Library für OpenGl-Operationen, die noch nicht ie eine OO-Struktur eingebettet sind.
- * Darunter zählen Lichter, Renderings
+ * Statische Library für OpenGl-Operationen.
  */
-public class D3D
+public class GraphicUtil
 {
 	private static boolean d3d = true;
 	private static boolean light;
 	
-	private D3D() {}
+	/** 
+	 * Ein ein Int großer IntBuffer als Referenzübergabe für Textur- und FBO-IDs.
+	 * Dieses Objekt darf niemals über eine Methode hinaus benutzt werden,
+	 * da sich der Inhalt laufend ändern kann.
+	 */
+	public static final IntBuffer TEMP_INT_BUFFER = BufferUtils.createIntBuffer(1);
+	
+	private GraphicUtil() {}
+	
+	// intern genutzte swap-Objekt
+	static final float[] array4 = new float[4];
+
+    public static FloatBuffer vectorToBuffer(Vector v)
+    {
+    	return vectorToBuffer(v, 0);
+    }
+	
+    public static FloatBuffer vectorToBuffer(Vector v, float w)
+    {
+		array4[0] = v.x;
+		array4[1] = v.y;
+		array4[2] = v.z;
+		array4[3] = w;
+    	FloatBuffer fb = BufferUtils.createFloatBuffer(array4.length);
+    	fb.put(array4).flip();
+    	return fb;
+    }
 	
 	/**
 	 * Ermöglicht das Wechseln zwischen 2D und 3D-Modus.
@@ -34,18 +64,28 @@ public class D3D
 		{
 	        // restore the original positions and views
 			GLCache.setMatrix(GL_PROJECTION);
-	        glPopMatrix();
+//	        glPopMatrix();
+	        glLoadIdentity();
+	        GLU.gluPerspective(40f, Graphics.getAspectRatio(), 1f, 1000f);
+//			if (Graphics.camera != null)
+//			{
+//				Camera cam = Graphics.camera;
+//				GLU.gluLookAt(cam.fromX, cam.fromY, cam.fromZ,
+//							  cam.toX, cam.toY, cam.toZ,
+//							  cam.upX, cam.upY, cam.upZ);
+//			}
+			
 	        GLCache.setMatrix(GL_MODELVIEW);
-	        glPopMatrix();
+//	        glPopMatrix();
+	        glLoadIdentity();
 	        // turn Depth Testing back on
 	        glEnable(GL_DEPTH_TEST);
-	        if (light)
-	        	glEnable(GL_LIGHTING);
+//	        if (light)
+//	        	glEnable(GL_LIGHTING);
 	        
 	        // turn Depth Testing off and remove invisible sides
 //	        glDisable(GL_DEPTH_TEST);
 //	        glCullFace(GL_BACK);
-//	        glEnable(GL_CULL_FACE);
 	        
 	        // set new clear color and blend functions which works with polygon smoothing
 //	        glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
@@ -61,7 +101,7 @@ public class D3D
 		{
 			// prepare projection matrix to render in 2D
 			GLCache.setMatrix(GL_PROJECTION);
-	        glPushMatrix();                   // preserve perspective view
+//	        glPushMatrix();                   // preserve perspective view
 	        glLoadIdentity();                 // clear the perspective matrix
 	        glOrtho(                          // turn on 2D mode
 	        		////viewportX,viewportX+viewportW,    // left, right
@@ -71,48 +111,28 @@ public class D3D
 	        		-500,500);                        // Zfar, Znear
 	        // clear the modelview matrix
 	        GLCache.setMatrix(GL_MODELVIEW);
-	        glPushMatrix();				   // Preserve the Modelview Matrix
+//	        glPushMatrix();				   // Preserve the Modelview Matrix
 	        glLoadIdentity();				   // clear the Modelview Matrix
 			// disable depth test so further drawing will go over the current scene
 			glDisable(GL_DEPTH_TEST);
-			glDisable(GL_LIGHTING);
+//			glDisable(GL_LIGHTING);
 //			glDisable(GL_POLYGON_SMOOTH);
 		}
 	}
 	
-//	private static final float[] array3 = new float[3];
-	private static final float[] array4 = new float[4];
-	
-	private static float[] toArray(Color color)
-	{
-		return color.getRGBComponents(array4);
-	}
-	
-	
-	private static float[] toArray(Vector v)
+	private static float[] toArray(Vector v, float w)
 	{
 		array4[0] = v.x;
 		array4[1] = v.y;
 		array4[2] = v.z;
+		array4[3] = w;
 		return array4;
 	}
-	
-    public static void setLight( int GLLightHandle, Color diffuse, Color ambient, Color specular, Vector pos)
+    
+    public static void setLightPosition(int GLLightHandle, Vector pos)
     {
-        FloatBuffer ltDiffuse 	= arrayToBuffer(toArray(diffuse));
-        FloatBuffer ltAmbient 	= arrayToBuffer(toArray(ambient));
-        FloatBuffer ltSpecular 	= arrayToBuffer(toArray(specular));
-        toArray(pos);
-        array4[3] = 1;
-        FloatBuffer ltPosition 	= arrayToBuffer(array4);
-        glLight(GLLightHandle, GL_DIFFUSE, ltDiffuse);   // color of the direct illumination
-        glLight(GLLightHandle, GL_SPECULAR, ltSpecular); // color of the highlight
-        glLight(GLLightHandle, GL_AMBIENT, ltAmbient);   // color of the reflected light
-        glLight(GLLightHandle, GL_POSITION, ltPosition);
-        glEnable(GLLightHandle);	// Enable the light (GL_LIGHT1 - 7)
-        
-        light = true;
-//        glLightf(GLLightHandle, GL_QUADRATIC_ATTENUATION, .005F);    // how light beam drops off
+    	FloatBuffer ltPosition 	= arrayToBuffer(toArray(pos, 1));
+    	glLight(GLLightHandle, GL_POSITION, ltPosition);
     }
     
     public static FloatBuffer arrayToBuffer(float[] floatarray)
@@ -124,7 +144,7 @@ public class D3D
 	
     public static void drawCube(float size, Image image)
     {
-    	image.getTexture().bind();
+    	image.bind();
     	
 		float w = image.getWidth() / (float) image.getTexture().getWidth();
 		float h = image.getHeight() / (float) image.getTexture().getHeight();
@@ -167,5 +187,18 @@ public class D3D
         glTexCoord2f(w, h); glVertex3f(-1.0f,  1.0f,  1.0f);	// Top Right
         glTexCoord2f(0.0f, h); glVertex3f(-1.0f,  1.0f, -1.0f);	// Top Left
         glEnd();
+    }
+    
+    public static void drawSphere(int facets)
+    {
+        Sphere s = new Sphere();            // an LWJGL class
+        s.setOrientation(GLU.GLU_OUTSIDE);  // normals point outwards
+        s.setTextureFlag(true);             // generate texture coords
+//        GL11.glPushMatrix();
+//        {
+//	        GL11.glRotatef(-90f, 1,0,0);    // rotate the sphere to align the axis vertically
+	        s.draw(1, facets, facets);              // run GL commands to draw sphere
+//        }
+//        GL11.glPopMatrix();
     }
 }

@@ -37,4 +37,6 @@ public interface GraphicContainer
 	public String getName();
 
 	public void clear();
+
+	public void setFlag(int glFlag, boolean value);
 }

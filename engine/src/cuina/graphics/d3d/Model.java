@@ -7,26 +7,23 @@ import static org.lwjgl.opengl.GL11.glScalef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
 import cuina.graphics.AbstractGraphic;
-import cuina.graphics.D3D;
-import cuina.graphics.Graphic;
+import cuina.graphics.GraphicUtil;
+import cuina.graphics.GraphicContainer;
+import cuina.graphics.Graphics;
 import cuina.graphics.Image;
 import cuina.graphics.Images;
 import cuina.graphics.Mesh;
+import cuina.graphics.TextureLoader;
 import cuina.graphics.Transformation;
 import cuina.util.LoadingException;
 import cuina.util.Vector;
-
-import org.lwjgl.opengl.GL11;
 
 public class Model extends AbstractGraphic
 {
 	private static final long serialVersionUID = -5751146964157635096L;
 	
-	transient private Image 	image;
-	
 	private Mesh	mesh;
 	private String 	fileName = null;
-	private int 	modelID;
 	
 	public Vector 	pos = new Vector();
 	public int 		depth = 0;
@@ -36,12 +33,18 @@ public class Model extends AbstractGraphic
 	
 	public Model() {}
 	
-	public Model(Mesh mesh, String fileName)
+	public Model(Mesh mesh, String fileName, GraphicContainer container)
 	{
 		this.mesh = mesh;
 		this.fileName = fileName;
+		container.addGraphic(this);
 		
 		refresh();
+	}
+	
+	public Model(Mesh mesh, String fileName)
+	{
+		this(mesh, fileName, Graphics.GraphicManager);
 	}
 	
 	public Mesh getMesh()
@@ -52,18 +55,6 @@ public class Model extends AbstractGraphic
 	public void setMesh(Mesh mesh)
 	{
 		this.mesh = mesh;
-	}
-	
-	@Override
-	public Image getImage()
-	{
-		return image;
-	}
-
-	@Override
-	public void setImage(Image image)
-	{
-		this.image = image;
 	}
 
 	public Vector getPos()
@@ -117,7 +108,7 @@ public class Model extends AbstractGraphic
 	{
 		try
 		{
-			this.image = Images.createImage(fileName);
+			setImage(Images.createImage(fileName, TextureLoader.ANIOTROPIC));
 		}
 		catch (LoadingException e)
 		{
@@ -126,36 +117,23 @@ public class Model extends AbstractGraphic
 	}
 
 	@Override
-	public void draw()
+	protected void render(Image image)
 	{
-		if (image == null) return;
+		GraphicUtil.set3DView(true);
+		image.bind();
 		
-		D3D.set3DView(true);
+		//TODO: Transform3D Klasse importieren.
 		glPushMatrix();
-		
-		glTranslatef(pos.x, pos.y, pos.z);
-		glScalef(size.x, size.y, size.z);
-		
-		glRotatef(angle.x, 0.0f, 0.0f, 1.0f);
-		glRotatef(angle.y, 0.0f, 1.0f, 0.0f);
-		glRotatef(angle.z, 1.0f, 0.0f, 0.0f);
-		
-		GL11.glCallList(modelID);
+		{
+			glTranslatef(pos.x, pos.y, pos.z);
+			glScalef(size.x, size.y, size.z);
+			
+			glRotatef(angle.x, 1.0f, 0.0f, 0.0f);
+			glRotatef(angle.y, 0.0f, 1.0f, 0.0f);
+			glRotatef(angle.z, 0.0f, 0.0f, 1.0f);
+			
+			mesh.render(image);
+		}
         glPopMatrix();
-	}
-
-	@Override
-	protected void render(Transformation matrix)
-	{
-		if (matrix != null) matrix.pushTransformation();
-		mesh.render(image);
-		if (matrix != null) matrix.popTransformation();
-	}
-
-	@Override
-	public void dispose()
-	{
-		image.dispose();
-		image = null;
 	}
 }

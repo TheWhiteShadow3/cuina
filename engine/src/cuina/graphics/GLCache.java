@@ -2,13 +2,18 @@ package cuina.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.opengl.GL11;
+import cuina.graphics.Image.MultiTexture;
+
+import java.util.List;
+import java.util.Objects;
+
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.Color;
 import org.lwjgl.util.ReadableColor;
 
 /**
- * Ein Cache um Zustände von OPen-GL in der Anwendung zu speichern um die nativen Aufrufe zu minimieren.
+ * Ein Cache um Zustände von Open-GL in der Anwendung zu speichern um die nativen Aufrufe zu minimieren.
  * @author TheWhiteShadow
  */
 public class GLCache
@@ -17,6 +22,8 @@ public class GLCache
 	private static ReadableColor color = Color.WHITE;
 	private static int blendMode;
 	private static Texture currentTexture;
+	private static MultiTexture[] multiTextures = new MultiTexture[4];
+	private static Shader currentShader;
 	
 	public static void setMatrix(int mode)
 	{
@@ -81,15 +88,79 @@ public class GLCache
 		}
 	}
 	
+	public static void bindShader(Shader shader)
+	{
+		if (currentShader == shader) return;
+		
+		shader.bind();
+		currentShader = shader;
+	}
+	
 	public static void bindTexture(Texture tex)
 	{
+		unbindMultiTextures();
 		if (currentTexture == tex) return;
 		
 		if (tex != null)
-			GL11.glBindTexture(tex.target, tex.textureID);
+		{
+//			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(tex.target, tex.textureID);
+		}
 		else
-			GL11.glBindTexture(currentTexture.target, 0);
+		{
+			glDisable(GL_TEXTURE_2D);
+//			glBindTexture(currentTexture.target, 0);
+		}
 		currentTexture = tex;
+	}
+	
+	public static void bindMultiTextures(List<MultiTexture> textures)
+	{
+		for (int i = 3; i >= 0; i--)
+		{
+			if (textures.size() > i)
+			{
+				if (Objects.equals(textures.get(i), multiTextures[i])) continue;
+			}
+			else
+			{
+				if (multiTextures[i] == null) continue;
+			}
+				
+			GL13.glActiveTexture(GL13.GL_TEXTURE0 + i);
+			if (i >= textures.size())
+			{
+				glBindTexture(multiTextures[i].texture.target, 0);
+				glDisable(GL_TEXTURE_2D);
+				multiTextures[i] = null;
+			}
+			else
+			{
+				MultiTexture mt = textures.get(i);
+				glEnable(GL_TEXTURE_2D);
+				glBindTexture(mt.texture.target, mt.texture.textureID);
+				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mt.mixMode);
+				multiTextures[i] = mt;
+			}
+		}
+		currentTexture = multiTextures[0].texture;
+	}
+	
+	private static void unbindMultiTextures()
+	{
+		if (multiTextures[0] == null) return;
+		
+		for (int i = 3; i >= 1; i--)
+		{
+			if (multiTextures[i] == null) continue;
+			GL13.glActiveTexture(GL13.GL_TEXTURE0 + i);
+			glBindTexture(multiTextures[i].texture.target, 0);
+			glDisable(GL_TEXTURE_2D);
+			multiTextures[i] = null;
+		}
+		multiTextures[0] = null;
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 	}
 	
 	public static void restore()
@@ -98,6 +169,18 @@ public class GLCache
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GL14.glBlendEquation(GL14.GL_FUNC_ADD);
 		glMatrixMode(matrixMode);
-		currentTexture = null;
+		bindTexture(null);
 	}
+	
+//	private static int getTarget(int index)
+//	{
+//		switch(index)
+//		{
+//			case 0: return GL13.GL_TEXTURE0;
+//			case 1: return GL13.GL_TEXTURE1;
+//			case 2: return GL13.GL_TEXTURE2;
+//			case 3: return GL13.GL_TEXTURE3;
+//			default: throw new IllegalArgumentException();
+//		}
+//	}
 }

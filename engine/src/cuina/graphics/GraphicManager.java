@@ -314,4 +314,10 @@ public final class GraphicManager implements GraphicContainer, Serializable
 	{
 		return "GraphicManager";
 	}
+
+	@Override
+	public void setFlag(int glFlag, boolean value)
+	{
+		throw new UnsupportedOperationException();
+	}
 }

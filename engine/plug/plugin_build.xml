@@ -128,7 +128,7 @@
 		<echo message="Deploy Plugin: Test-Configuration" />
 		<jar destfile="${deploy.dir}/cuina.test.jar" includes="cuina/test/**" basedir="${build.dir}">
 			<manifest>
-				<attribute name="Plugin-Classes" value="cuina.test.TestConfiguration" />
+				<attribute name="Plugin-Classes" value="cuina.test.TestConfiguration;cuina.test.D3D_Demo" />
 				<attribute name="Plugin-Version" value="1.0" />
 			</manifest>
 		</jar>

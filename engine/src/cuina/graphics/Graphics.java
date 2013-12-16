@@ -15,8 +15,10 @@ import cuina.Logger;
 import cuina.util.LoadingException;
 
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -28,7 +30,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.Util;
 import org.lwjgl.util.Color;
 import org.lwjgl.util.ReadableColor;
-import org.lwjgl.util.glu.GLU;
 
 public final class Graphics
 {
@@ -38,7 +39,7 @@ public final class Graphics
 	 * Es wird immer nur der hier referenzierte GraphicManager und alle enthaltenden Elemente gezeichnet.
 	 */
 	public static final GraphicManager GraphicManager = new GraphicManager();
-	public static Camera camera;
+	public static final List<View> VIEWS = new ArrayList<View>();
 	private static GraphicManager storedGM;
 	
 	protected final static LinkedList<RenderJob> renderJobs = new LinkedList<RenderJob>();
@@ -174,7 +175,12 @@ public final class Graphics
 	{
 		return getInstance().height;
 	}
-	
+
+	public static float getAspectRatio()
+	{
+		return getInstance().aspectRatio;
+	}
+
 	public static Font getDefaultFont()
 	{
 		return getInstance().defaultFont;
@@ -220,7 +226,9 @@ public final class Graphics
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		glEnable(GL_LIGHTING);
-		glEnable(GL_NORMALIZE);
+		
+		glEnable(GL_CULL_FACE);
+		
 		// Setze Funktionen
 		glAlphaFunc(GL_GREATER, 0f);
 		glDepthFunc(GL_LEQUAL);
@@ -230,23 +238,25 @@ public final class Graphics
 		// glLightModeli(GL12.GL_LIGHT_MODEL_COLOR_CONTROL,
 		// GL12.GL_SEPARATE_SPECULAR_COLOR );
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		glViewport(0, 0, width, height);
+//		glViewport(0, 0, width, height);
 
-		GLCache.setMatrix(GL_PROJECTION);
-		glLoadIdentity();
-		GLU.gluPerspective(40f, aspectRatio, 1f, 1000f);
+//		System.out.println("Multitexturen: " + GL11.glGetInteger(ARBMultitexture.GL_MAX_TEXTURE_UNITS_ARB));
+		
+//		GLCache.setMatrix(GL_PROJECTION);
+//		glLoadIdentity();
+//		GLU.gluPerspective(40f, aspectRatio, 1f, 1000f);
+//
+//		GLCache.setMatrix(GL_MODELVIEW);
+//		glLoadIdentity();
+		
+		GraphicUtil.set3DView(false);
 
-		GLCache.setMatrix(GL_MODELVIEW);
-		glLoadIdentity();
-
-		// cube = new D3DCube("BlueSky.jpg", ResourceManager.IMG_BACKGROUND);
-		// cube.size = 0.6f;
-		// cube.setLocation(0.0f, 0.0f, 3.2f);
-
-		camera = new Camera();
-		camera.fromZ = 15;
-		camera.fromY = 20;
-		// camera.upY = -1;
+		//XXX: Definition der Kamera. In GraphicsUtil steht auch noch ein Part zur Kamera.
+//		camera = new Camera();
+//		camera.fromZ = 15;
+//		camera.fromY = 20;
+		
+		VIEWS.add(new View(width / 2, height));
 
 		Util.checkGLError();
 
@@ -294,49 +304,7 @@ public final class Graphics
 		currentShader = null;
 		renderShader = null;
 	}
-	
-//	private static float[] redDiffuse = { 1.0f, 0.0f, 0.0f, 1.0f };
-//	private static float[] greenDiffuse = { 0.0f, 1.0f, 0.0f, 1.0f };
-//	private static float[] blueDiffuse = { 10.0f, 25.0f, 75.0f, 1.0f };
-//	private static float[] posTopLeft = {-2.0f, 2.0f, 1.0f, 1.0f };
-//	private static float[] posTopRight = {2.0f, 2.0f, 1.0f, 1.0f };
-//	private static float[] posBottomFront = {100.0f, 100.0f, 2.0f, 1.0f };
-//	
-//	private static void debug3dSettings()
-//	{
-//		GL11.glShadeModel(GL11.GL_SMOOTH);
-////		GL11.glClearColor(0.0f,0.0f,0.0f,0.0f);
-////		GL11.glClearDepth(1.0f);
-////		GL11.glEnable(GL11.GL_DEPTH_TEST);
-////		GL11.glDepthFunc(GL11.GL_LEQUAL);
-////		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT,GL11.GL_NICEST);
-//
-//		GL11.glLight(GL11.GL_LIGHT0,GL11.GL_DIFFUSE, arrayToBuffer(redDiffuse));
-//	    GL11.glLight(GL11.GL_LIGHT0,GL11.GL_POSITION, arrayToBuffer(posTopLeft));
-//	    
-//
-//	    GL11.glLight(GL11.GL_LIGHT1,GL11.GL_DIFFUSE, arrayToBuffer(greenDiffuse));
-//	    GL11.glLight(GL11.GL_LIGHT1,GL11.GL_POSITION, arrayToBuffer(posTopRight));
-//
-//	    GL11.glLight(GL11.GL_LIGHT2,GL11.GL_DIFFUSE, arrayToBuffer(blueDiffuse));
-//	    GL11.glLight(GL11.GL_LIGHT2,GL11.GL_POSITION, arrayToBuffer(posBottomFront));
-//
-//	    GL11.glEnable(GL11.GL_LIGHT0);
-//	    GL11.glEnable(GL11.GL_LIGHT1);
-//	    GL11.glEnable(GL11.GL_LIGHT2);
-//	    GL11.glEnable(GL11.GL_LIGHTING);
-//	}
-//	
-//	private static FloatBuffer arrayToBuffer(float data[])
-//	{
-//	     FloatBuffer buffer = ByteBuffer.allocateDirect(
-//	     data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-//	     buffer.clear();
-//	     buffer.put(data);
-//	     buffer.rewind();
-//	     return buffer;
-//	}
-//	
+
 //	private static void reSizeGLScene(int width, int height)
 //	{
 //	     if (height == 0) height = 1;
@@ -352,6 +320,7 @@ public final class Graphics
 	public static void setShader(Shader shader)
 	{
 		currentShader = shader;
+		bindShader();
 	}
 
 	public static Shader getShader()
@@ -370,16 +339,6 @@ public final class Graphics
 			renderShader.bind();
 	}
 	
-	/**
-	 * Bereitet das zeichen eines 2D-Images vor.
-	 */
-	protected static void prepareImage()
-	{
-		// deaktiviere 3D
-		D3D.set3DView(false);
-		bindShader();
-	}
-	
 	public static int getCurrentFBO()
 	{
 		return currentFBO;
@@ -389,8 +348,8 @@ public final class Graphics
 	{
 		if (SecondFBO == 0)
 		{
-			EXTFramebufferObject.glGenFramebuffersEXT(CuinaGLUtil.TEMP_INT_BUFFER);
-			SecondFBO = CuinaGLUtil.TEMP_INT_BUFFER.get(0);
+			EXTFramebufferObject.glGenFramebuffersEXT(GraphicUtil.TEMP_INT_BUFFER);
+			SecondFBO = GraphicUtil.TEMP_INT_BUFFER.get(0);
 		}
 		if (currentFBO != SecondFBO)
 		{
@@ -401,7 +360,7 @@ public final class Graphics
         EXTFramebufferObject.glFramebufferTexture2DEXT(
         		EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
         		EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT,
-                GL11.GL_TEXTURE_2D, tex.getTextureID(), 0);
+                GL11.GL_TEXTURE_2D, tex.textureID, 0);
 	}
 	
 	public static void unbindFBO()
@@ -443,14 +402,8 @@ public final class Graphics
 //		camera.fromY = 0;//-GameMap.getInstance().getScrollY();
 //		camera.fromZ = 10;//200;
 		
-		if (camera != null)
-		{
-			GLU.gluLookAt(camera.fromX, camera.fromY, camera.fromZ,
-						  camera.toX, camera.toY, camera.toZ,
-						  camera.upX, camera.upY, camera.upZ);
-		}
 //		GLU.gluLookAt(0, 150, 150, 0,0,0, 0, 0, 1);
-	    D3D.set3DView(false);
+//	    D3D.set3DView(false);
 	    GLCache.restore();
 		while(renderJobs.size() > 0)
 		{
@@ -460,7 +413,6 @@ public final class Graphics
 		// setze das Rendertarget zurück auf das Fenster
 		unbindFBO();
 	    
-	    glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 //	    cube.pan += 0.5;
 //        GL11.glMatrixMode(GL11.GL_PROJECTION);
 //        GL11.glLoadIdentity();
@@ -472,8 +424,11 @@ public final class Graphics
 //        // return to modelview matrix
 //        GL11.glMatrixMode(GL11.GL_MODELVIEW);
 //        GL11.glLoadIdentity();
-		GraphicManager.draw();
-		D3D.set3DView(true);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		for (View view : VIEWS) view.draw();
+	    
+//		GraphicManager.draw();
+//		D3D.set3DView(true);
 //		
 
 //		GLU.gluLookAt(0, 5, 15, 0,0,0, 0, 1, 0);

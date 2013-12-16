@@ -7,12 +7,16 @@
 
 package cuina.graphics;
 
+import cuina.util.IntList;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.lwjgl.opengl.GL11;
 
 /**
  * Konkrete Implementierung eines Grafik-Kontainers.
@@ -34,6 +38,7 @@ public class GraphicSet implements Graphic, GraphicContainer
 	private Shader shader;
 	private GraphicContainer container;
 	private transient ArrayList<GraphicReference> elements = new ArrayList<GraphicReference>();
+	private final IntList flags = new IntList();
 	
 	public GraphicSet(String name)
 	{
@@ -202,6 +207,15 @@ public class GraphicSet implements Graphic, GraphicContainer
 		if (shader != null) Graphics.setShader(shader);
 		Collections.sort(elements, ZComparator.INSTANCE);
 		
+		if (flags.size() > 0)
+		{
+			GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+			for (int i = 0; i < flags.size(); i++)
+			{
+				GL11.glEnable(flags.get(i));
+			}
+		}
+		
 		Graphic e;
 		for (int i = 0; i < elements.size(); i++)
 		{
@@ -217,6 +231,10 @@ public class GraphicSet implements Graphic, GraphicContainer
 			else
 				elements.remove(i--);
 		}
+		
+		if (flags.size() > 0)
+			GL11.glPopAttrib();
+		
 		Graphics.setShader(tempShader);
 	}
 
@@ -254,6 +272,20 @@ public class GraphicSet implements Graphic, GraphicContainer
 	public void setShader(Shader shader)
 	{
 		this.shader = shader;
+	}
+	
+	@Override
+	public void setFlag(int glFlag, boolean value)
+	{
+		if (value)
+		{
+			if (flags.contains(glFlag)) return;
+			flags.add(glFlag);
+		}
+		else
+		{
+			flags.remove(glFlag);
+		}
 	}
 	
 	/**

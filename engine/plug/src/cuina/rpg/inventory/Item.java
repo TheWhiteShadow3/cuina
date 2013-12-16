@@ -2,8 +2,10 @@ package cuina.rpg.inventory;
 
 import cuina.database.DatabaseObject;
 import cuina.database.NamedItem;
+import cuina.plugin.Upgradeable;
 
 import java.util.HashMap;
+import java.util.Set;
 
 
 /**
@@ -12,7 +14,7 @@ import java.util.HashMap;
  * @author cuina team
  * 
  */
-public class Item implements DatabaseObject, NamedItem
+public class Item implements DatabaseObject, NamedItem, Upgradeable
 {
 	public static final String ITEM_DB = "Item";
 	
@@ -22,7 +24,7 @@ public class Item implements DatabaseObject, NamedItem
 	public String icon;
 	public String name;
 	public String description;
-	public final HashMap<String, Object> extensions = new HashMap<String, Object>(8);
+	public final HashMap<String, Object> extensions = new HashMap<String, Object>(4);
 
 	public Item() {}
 	
@@ -56,5 +58,23 @@ public class Item implements DatabaseObject, NamedItem
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	@Override
+	public Object getExtension(String key)
+	{
+		return extensions.get(key);
+	}
+
+	@Override
+	public void addExtension(String key, Object instance)
+	{
+		extensions.put(key, instance);
+	}
+
+	@Override
+	public Set<String> getExtensionKeys()
+	{
+		return extensions.keySet();
 	}
 }

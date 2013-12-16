@@ -1,7 +1,8 @@
 package cuina.widget.data;
 
-import cuina.database.DatabaseObject;
+import cuina.database.NamedItem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -10,11 +11,11 @@ import java.util.ArrayList;
  * @author fireandfuel
  *
  */
-public class WidgetNode implements DatabaseObject
+public class WidgetNode implements NamedItem, Serializable
 {
 	private static final long serialVersionUID = -5908853649088580099L;
 	
-	public String key;
+	public String name;
 	public int x;
 	public int y;
 	public int width;
@@ -28,24 +29,6 @@ public class WidgetNode implements DatabaseObject
 	@Override
 	public String getName()
 	{
-		return key;
-	}
-
-	@Override
-	public void setKey(String key)
-	{
-		this.key = key;
-	}
-
-	@Override
-	public String getKey()
-	{
-		return key;
-	}
-
-	@Override
-	public void setName(String name)
-	{
-		this.key = name;
+		return name;
 	}
 }

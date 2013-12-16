@@ -80,7 +80,7 @@ public class Battle implements Plugin, LifeCycle
      */
     public enum AnimationType
     {
-        NONE, ATTACK, GUARD, HIT, DIE, REVIVE, SELECT
+        STAND, ACTIVE, ATTACK, ITEM, MAGIC, GUARD, HIT, DIE, REVIVE
     }
     
     /**
@@ -203,47 +203,48 @@ public class Battle implements Plugin, LifeCycle
 //        System.exit(0);
     }
     
-    public void initObjects()
-    {
-    	BaseWorld world = BaseWorld.getInstance();
-        if (world == null) throw new NullPointerException("No World defined!");
-        
-        BattleObject battler;
-        for(Actor actor : getActors())
-        {
-            battler = new BattleObject(this, actor);
-            battler.addBattleTime((float) Math.random() * strategy.getActionTime(actor, null));
-//            world.addObject(battler);//FIXME: Muss wieder gehen!!!
-            addBattler(battler);
-        }
-    }
-    
-    private void addBattler(BattleObject battler)
-    {
-        objects.put(battler.getActor(), battler);
-    }
-    
-    public BattleObject getBattler(Actor actor)
-    {
-        return objects.get(actor);
-    }
-    
-    public int getRounds()
-    {
-        return rounds;
-    }
-    
-    public float getBattleTime()
-    {
-        return battleTime;
-    }
-    
-    public void newRound()
-    {
-        rounds++;
-        if (currentBattler != null) currentBattler.setAction(null);
-        currentBattler = null;
-    }
+	public void initObjects()
+	{
+		BaseWorld world = BaseWorld.getInstance();
+		if (world == null) throw new NullPointerException("No World defined!");
+
+		BattleObject battler;
+		for (Actor actor : getActors())
+		{
+			battler = new BattleObject(this, actor);
+			battler.addBattleTime((float) Math.random() * strategy.getActionTime(actor, null));
+			battler.setID(world.getAvilableID());
+			world.addObject(battler);
+			addBattler(battler);
+		}
+	}
+
+	private void addBattler(BattleObject battler)
+	{
+		objects.put(battler.getActor(), battler);
+	}
+
+	public BattleObject getBattler(Actor actor)
+	{
+		return objects.get(actor);
+	}
+
+	public int getRounds()
+	{
+		return rounds;
+	}
+
+	public float getBattleTime()
+	{
+		return battleTime;
+	}
+
+	public void newRound()
+	{
+		rounds++;
+		if (currentBattler != null) currentBattler.setAction(null);
+		currentBattler = null;
+	}
     
     public void setPhase(String name)
     {
@@ -593,7 +594,7 @@ public class Battle implements Plugin, LifeCycle
         private void playerInput(Battle battle, BattleObject battler)
         {
             battler.paused = true;
-            battler.performBattleAnimation(AnimationType.SELECT, null);
+            battler.performAction(AnimationType.ACTIVE, null, null);
             battleMenu.requestInput(battle, currentBattler);
         }
         
@@ -608,7 +609,7 @@ public class Battle implements Plugin, LifeCycle
             }
             else
             {
-                action = new BattleAction(currentBattler.getActor(), "normal");
+                action = new BattleAction(currentBattler.getActor(), "Angriff", 1f);
                 ArrayList<Actor> targets = createTargetList(party, action);
                 if (targets.size() == 0)
                 {
@@ -634,7 +635,7 @@ public class Battle implements Plugin, LifeCycle
         @Override
         public void start(Battle battle)
         {
-            action = currentBattler.getAction();
+            this.action = currentBattler.getAction();
             if (action == null)
             {
                 setPhase(PHASE_ROUND_START);
@@ -643,7 +644,7 @@ public class Battle implements Plugin, LifeCycle
             
             if (action.getSkill() != null) strategy.paySkillCost(action);
             currentBattler.addBattleTime(strategy.getActionTime(action.getUser(), action));
-            currentBattler.performBattleAnimation(AnimationType.ATTACK, null);
+            currentBattler.performAction(AnimationType.ATTACK, action, null);
             
             int size = action.targets.size();
             results = new ActionResult[size];
@@ -663,7 +664,7 @@ public class Battle implements Plugin, LifeCycle
             if (--waitCount > 0) return;
             for(int i = 0; i < action.targets.size(); i++)
             {
-                getBattler(action.targets.get(i)).performBattleAnimation(AnimationType.HIT, results[i]);
+                getBattler(action.targets.get(i)).performAction(AnimationType.HIT, action, results[i]);
             }
             
             setPhase(PHASE_ACTION_RESULT);
@@ -671,7 +672,7 @@ public class Battle implements Plugin, LifeCycle
     }
     
     /**
-     * Diese Phase zeigt das Ergebnis der zuvor ausfeführten Aktion an und führt evtl. Abschlussanimationen aus.
+     * Diese Phase zeigt das Ergebnis der zuvor ausgeführten Aktion an und führt evtl. Abschlussanimationen aus.
      * @author TheWhiteShadow
      */
     public class PostActionPhase implements BattlePhase
@@ -681,27 +682,29 @@ public class Battle implements Plugin, LifeCycle
         @Override
         public void start(Battle battle)
         {
-            targets = currentBattler.getAction().targets;
+        	BattleAction action = currentBattler.getAction();
+            targets = action.targets;
             for (int i = 0; i < targets.size(); i++)
             {
                 Actor target = targets.get(i);
-                BattleObject battler = getBattler(target);
+                BattleObject targetBattler = getBattler(target);
+                ActionResult result = results[i];
                 
-                if ((results[i].flags & BattleStrategy.DEATH) != 0)
+                if ((result.flags & BattleStrategy.DEATH) != 0)
                 {
-                    battler.setBattleTime(Float.MAX_VALUE);
-                    battler.performBattleAnimation(AnimationType.DIE, null);
+                    targetBattler.setBattleTime(Float.MAX_VALUE);
+                    targetBattler.performAction(AnimationType.DIE, action, result);
                     
-                    if (battler.paused)
+                    if (targetBattler.paused)
                     {
-                        battler.paused = false;
-                        battleMenu.cancelRequest(battle, battler);
+                        targetBattler.paused = false;
+                        battleMenu.cancelRequest(battle, targetBattler);
                     }
                 }
-                if ((results[i].flags & BattleStrategy.REANIMATE) != 0)
+                if ((result.flags & BattleStrategy.REANIMATE) != 0)
                 {
-                    battler.setBattleTime(battleTime + strategy.getActionTime(target, null));
-                    battler.performBattleAnimation(AnimationType.REVIVE, null);
+                    targetBattler.setBattleTime(battleTime + strategy.getActionTime(target, null));
+                    targetBattler.performAction(AnimationType.REVIVE, action, result);
                 }
             }
             

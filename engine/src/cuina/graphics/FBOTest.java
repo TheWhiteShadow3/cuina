@@ -71,9 +71,9 @@ public class FBOTest
         try
         {
         	BufferedImage image1 = ResourceManager.loadImage("Gras-Wasser2.png");
-            texture1 = TextureLoader.getInstance().getTexture(image1, "Gras-Wasser2.png");
+            texture1 = TextureLoader.getInstance().getTexture(image1, 0, "Gras-Wasser2.png");
             BufferedImage image2 = ResourceManager.loadImage("title.png");
-            texture2 = TextureLoader.getInstance().getTexture(image2, "title.png");
+            texture2 = TextureLoader.getInstance().getTexture(image2, 0, "title.png");
         }
         catch (IOException e)
         {
@@ -118,7 +118,7 @@ public class FBOTest
         
         EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, fbo );
         EXTFramebufferObject.glFramebufferTexture2DEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT,
-                        GL11.GL_TEXTURE_2D, texture2.getTextureID(), 0);
+                        GL11.GL_TEXTURE_2D, texture2.textureID, 0);
         
 //		int depthRenderBufferID = EXTFramebufferObject.glGenRenderbuffersEXT();
 //		EXTFramebufferObject.glBindRenderbufferEXT(EXTFramebufferObject.GL_RENDERBUFFER_EXT, depthRenderBufferID);
@@ -137,7 +137,7 @@ public class FBOTest
         System.out.println(texture2.getWidth() + ", " +  texture2.getHeight());
 //      glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        texture1.bind();
+        GLCache.bindTexture(texture1);
 //        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 //        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 //        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -173,7 +173,7 @@ public class FBOTest
     {
         EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, fbo );
         EXTFramebufferObject.glFramebufferTexture2DEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT,
-                GL_TEXTURE_2D, texture2.getTextureID(), 0);
+                GL_TEXTURE_2D, texture2.textureID, 0);
         
 //      glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
@@ -209,7 +209,7 @@ public class FBOTest
 //      glViewport(0, 0, width, height);
         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
         
-        texture2.bind();
+        GLCache.bindTexture(texture2);
         
         glPushMatrix();
         

@@ -20,14 +20,15 @@ public class Player implements Driver
 	
 	private static final long	serialVersionUID	= -8876917561357724127L;
 	
-//	private static int count = 0;
-//	private int index;
+	private static int count = 0;
+	private int index;
 
 	private Motor motor;
 	
 	public Player()
 	{
-//		this.index = count;
+		this.index = count;
+		count++;
 	}
 	
 	@Override
@@ -42,7 +43,7 @@ public class Player implements Driver
 //		Model playerModel = new Model();
 //		playerModel.setSprite(new Sprite(graphic_file), 4, 4);
 //		playerObject.setModel(playerModel);
-		return new Player();//TODO: hier muss wieder hochgezählt werden. 
+		return new Player();
 	}
 
 	@Override
@@ -56,16 +57,16 @@ public class Player implements Driver
 		}
 		
 		int dir = -1;
-		if (INPUT_8)
-			dir = Input.dir8();
-		else
-			dir = Input.dir4();
-//		switch(index)
-//		{
-//			case 0: dir = Input.dir8(Input.CONTROL_ARROWS); break;
-//			case 1: dir = Input.dir8(Input.CONTROL_WASD); break;
-//			case 2: dir = Input.dir8(Input.CONTROL_NUMPAD); break;
-//		}
+//		if (INPUT_8)
+//			dir = Input.dir8();
+//		else
+//			dir = Input.dir4();
+		switch(index)
+		{
+			case 0: dir = Input.dir8(Input.CONTROL_ARROWS); break;
+			case 1: dir = Input.dir8(Input.CONTROL_WASD); break;
+			case 2: dir = Input.dir8(Input.CONTROL_NUMPAD); break;
+		}
 		if (dir != -1)
 		{
 			motor.setDirection(dir);

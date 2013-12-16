@@ -56,19 +56,6 @@ public final class Texture
         this.texWidth  = TextureLoader.get2Fold(width);
         this.texHeight = TextureLoader.get2Fold(height);
     }
-
-	/**
-	 * Bindet die Textur in den GL-Kontext.
-	 */
-	public void bind()
-	{
-		GLCache.bindTexture(this);
-	}
-
-	public static void unbind()
-	{
-		GLCache.bindTexture(null);
-	}
 	
 	/**
 	 * Gibt die Breite der physikalischen Textur zurück.
@@ -109,12 +96,12 @@ public final class Texture
 	{
 		return srcHeight;
 	}
-	
-	/** Gibt die ID der Textur im Speicher zurück. */
-	protected int getTextureID()
-	{
-		return textureID;
-	}
+//	
+//	/** Gibt die ID der Textur im Speicher zurück. */
+//	protected int getTextureID()
+//	{
+//		return textureID;
+//	}
 
 	/**
 	 * Gibt die Anzahl der Sprites, die die Textur verwenden zurück.

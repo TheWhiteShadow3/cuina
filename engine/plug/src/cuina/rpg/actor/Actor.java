@@ -1,6 +1,7 @@
 package cuina.rpg.actor;
 
 import cuina.database.NamedItem;
+import cuina.plugin.Upgradeable;
 import cuina.rpg.Attributable;
 import cuina.rpg.Skill;
 
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 
-public class Actor implements Attributable, Serializable, NamedItem
+public class Actor implements Attributable, Serializable, NamedItem, Upgradeable
 {
 	private static final long serialVersionUID = -4707910212716248964L;
 	
@@ -23,32 +24,36 @@ public class Actor implements Attributable, Serializable, NamedItem
 	private int maxLevel = 99;
 	private long xp;
 	/** Liste der Attribute, wie HP, MP, ... */
-	private final HashMap<String, Attribut> atts;
+	private final HashMap<String, Attribut> atts = new HashMap<String, Attribut>();
 	/** Liste der Zustände, welche der Actor besitzt. */
 	private final ArrayList<ActorState> states = new ArrayList<ActorState>();
 	/** Wiederstandswerte gegen Elemente. */
 	private final HashMap<String, Float> elementResists = new HashMap<String, Float>();
 	private final HashMap<String, Float> stateResists = new HashMap<String, Float>();
+	private final HashMap<String, Object> extensions = new HashMap<String, Object>(4);
 	
 	private Equippable[] equipments;
-	private final ArrayList<Skill> skills;
+	private final ArrayList<Skill> skills = new ArrayList<Skill>();
 
 	public Actor()
 	{
 		equipments = new Equippable[8];
-		atts = new HashMap<String, Attribut>();
-		skills = new ArrayList<Skill>();
 	}
 
 	public Actor(ActorData data)
 	{
+		init(data);
+	}
+	
+	public void init(ActorData data)
+	{
 		this.key = data.getKey();
 		this.name = data.getName();
-		this.level = data.getInitialLevel();
-		this.maxLevel = data.getMaximumLevel();
-		this.atts = data.getAttributes();
-		// this.equipments = data.getEquipments();
-		this.skills = data.getSkills();
+		this.level = data.initialLevel;
+		this.maxLevel = data.maximumLevel;
+		this.atts.putAll(data.attributes);
+		this.equipments = data.equipments.toArray(new Equippable[data.equipments.size()]);
+		this.skills.addAll(data.skills);
 	}
 
 	public String getKey()
@@ -217,16 +222,16 @@ public class Actor implements Attributable, Serializable, NamedItem
 	{
 		for (Skill s : skills)
 		{
-			if (s.getName() == skill.getName()) return;
+			if (s.getKey().equals(skill.getKey())) return;
 		}
 		skills.add(skill);
 	}
 
-	public Skill removeSkill(String name)
+	public Skill removeSkill(String key)
 	{
 		for (int i = 0; i < skills.size(); i++)
 		{
-			if (skills.get(i).getName() == name) { return skills.remove(i); }
+			if (skills.get(i).getKey() == key) { return skills.remove(i); }
 		}
 		return null;
 	}
@@ -245,6 +250,24 @@ public class Actor implements Attributable, Serializable, NamedItem
 	public Equippable getEquipment(int index)
 	{
 		return equipments[index];
+	}
+	
+	@Override
+	public Object getExtension(String key)
+	{
+		return extensions.get(key);
+	}
+
+	@Override
+	public void addExtension(String key, Object instance)
+	{
+		extensions.put(key, instance);
+	}
+
+	@Override
+	public Set<String> getExtensionKeys()
+	{
+		return extensions.keySet();
 	}
 
 	@Override

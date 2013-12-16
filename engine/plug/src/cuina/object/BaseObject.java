@@ -148,16 +148,6 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 	{
 		getPos().z = z;
 	}
-	
-	public int getMapX()
-	{
-		return (int)getX() - BaseWorld.getInstance().getScrollX();
-	}
-	
-	public int getMapY()
-	{
-		return (int)getY() - BaseWorld.getInstance().getScrollY();
-	}
 
 	@Override
 	public void addTrigger(Trigger trigger)

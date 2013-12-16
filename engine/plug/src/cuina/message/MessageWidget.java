@@ -273,7 +273,7 @@ public class MessageWidget extends Frame
 	{
 		if (handler == null) return;
 		
-		handler.handleEvent(getKey(), this, type);
+		handler.handleEvent(getName(), this, type);
 	}
 
 //	@Override

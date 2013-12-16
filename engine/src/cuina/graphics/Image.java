@@ -12,9 +12,14 @@ import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL13.glMultiTexCoord2f;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.Color;
 import org.lwjgl.util.ReadableColor;
 
@@ -54,12 +59,10 @@ public class Image
 	
 	/** The texture that stores the image for this sprite */
 	private Texture texture;
-//	int modelID;
-
-//	BufferedImage rawImage;
 	
-//	 Koordinaten in der Textur
+	private List<MultiTexture> multiTextures;
 	
+//	Koordinaten in der Textur
 	private final Rectangle rect;
 //	private Font font = Graphics.getDefaultFont();
 	private Color color = new Color(Graphics.getDefaultColor());
@@ -132,6 +135,21 @@ public class Image
 	protected Image(Texture texture)
 	{
 		this(texture, 0, 0, texture.getSourceWidth(), texture.getSourceHeight());
+	}
+	
+	public void addTexture(Texture texture, int mixMode)
+	{
+		if (multiTextures == null)
+		{
+			multiTextures = new ArrayList<MultiTexture>(4);
+			multiTextures.add(new MultiTexture(this.texture, GL11.GL_REPLACE));
+		}
+		else
+		{
+			// FIXME: Hard codiertes Limit von 4 Texturen.
+			if (multiTextures.size() == 4) throw new IllegalArgumentException();
+		}
+		multiTextures.add(new MultiTexture(texture, mixMode));
 	}
 	
 //	public Image(BufferedImage rawImage)
@@ -346,24 +364,60 @@ public class Image
 		RenderJob.addText(this, x, y, width, text, align);
 	}
 	
-	public void draw(float x, float y)
+	/**
+	 * Gibt die prozentuale X-Position des Bildausschnitts auf der Textur zurück.
+	 * @return prozentuale X-Position des Bildausschnitts.
+	 */
+	public float getPercentageX()
 	{
-		IMAGE_MATRIX.clear();
-		IMAGE_MATRIX.setPosition(x, y);
-		
-		draw(IMAGE_MATRIX);
+		return rect.x / (float) texture.getWidth();
 	}
 	
-	/** Zeichnet das Image mit der angegebenen Position und Größe. */
-	public void draw(float x, float y, float width, float height)
+	/**
+	 * Gibt die prozentuale Y-Position des Bildausschnitts auf der Textur zurück.
+	 * @return prozentuale Y-Position des Bildausschnitts.
+	 */
+	public float getPercentageY()
 	{
-		IMAGE_MATRIX.clear();
-		IMAGE_MATRIX.setPosition(x, y);
-		IMAGE_MATRIX.setScale(width, height);
-		
-		draw(IMAGE_MATRIX);
-//		draw(x, y, width / (float)getTexture().getTextureWidth(), height / (float)getTexture().getTextureHeight()),
+		return rect.y / (float) texture.getHeight();
 	}
+	
+	/**
+	 * Gibt die prozentuale Breite des Bildausschnitts auf der Textur zurück.
+	 * @return prozentuale Breite des Bildausschnitts.
+	 */
+	public float getPercentageWidth()
+	{
+		return rect.width / (float) texture.getWidth();
+	}
+	
+	/**
+	 * Gibt die prozentuale Höhe des Bildausschnitts auf der Textur zurück.
+	 * @return prozentuale Höhe des Bildausschnitts.
+	 */
+	public float getPercentageHeight()
+	{
+		return rect.height / (float) texture.getHeight();
+	}
+	
+//	public void draw(float x, float y)
+//	{
+//		IMAGE_MATRIX.clear();
+//		IMAGE_MATRIX.setPosition(x, y);
+//		
+//		draw(IMAGE_MATRIX);
+//	}
+//	
+//	/** Zeichnet das Image mit der angegebenen Position und Größe. */
+//	public void draw(float x, float y, float width, float height)
+//	{
+//		IMAGE_MATRIX.clear();
+//		IMAGE_MATRIX.setPosition(x, y);
+//		IMAGE_MATRIX.setScale(width, height);
+//		
+//		draw(IMAGE_MATRIX);
+////		draw(x, y, width / (float)getTexture().getTextureWidth(), height / (float)getTexture().getTextureHeight()),
+//	}
 //	
 //	/** Zeichnet das Image mit der angegebenen Position und Größe. */
 //	protected void draw(float x, float y, float scaleX, float scaleY)
@@ -380,46 +434,183 @@ public class Image
 //	{
 //		draw(matrix, color, COMPOSITE_NORMAL);
 //	}
-
-	public void draw(Transformation matrix)
+	
+	/**
+	 * Bindet die Textur des Images an den Grefikkontext.
+	 */
+	public void bind()
 	{
-		if (texture == null)
-			System.out.println("null!");
-		Graphics.prepareImage();
-		
-		texture.bind();
-		
+		GLCache.bindTexture(texture);
 		GLCache.setColor(color);
 		GLCache.setBlendMode(blendMode);
-
-		if (matrix != null) matrix.pushTransformation();
-		render();
-		if (matrix != null) matrix.popTransformation();
 	}
 	
-	private void render()
+	public static void unbind()
 	{
-		float texX = rect.x / (float) texture.getWidth();
-		float texY = rect.y / (float) texture.getHeight();
-		float texWidth  = texX + rect.width  / (float) texture.getWidth();
-		float texHeight = texY + rect.height / (float) texture.getHeight();
+		GLCache.bindTexture(null);
+	}
+
+//	public void draw(Transformation matrix)
+//	{
+//		if (texture == null)
+//			System.out.println("null!");
+//		Graphics.prepareImage();
+//		
+//		texture.bind();
+//		
+//		GLCache.setColor(color);
+//		GLCache.setBlendMode(blendMode);
+//
+//		if (matrix != null) matrix.pushTransformation();
+//		render();
+//		if (matrix != null) matrix.popTransformation();
+//	}
+	
+	/**
+	 * Zeichnet das angegebenen Image in seiner natürlichen Größe.
+	 * @param image
+	 */
+	public static void renderImage(Image image)
+	{
+		GraphicUtil.set3DView(false);
+		if (image.multiTextures != null)
+		{
+			renderMultiTextureImage(image);
+			return;
+		}
+		image.bind();
 		
-		// draw a quad textured to match the sprite
+		Rectangle rect = image.getRectangle();
+		float x1 = image.getPercentageX();
+		float y1 = image.getPercentageY();
+		float x2 = x1 + image.getPercentageWidth();
+		float y2 = y1 + image.getPercentageHeight();
+		
 		glBegin(GL_QUADS);
 		{
-			glTexCoord2f(texX, texY);
+			glTexCoord2f(x1, y1);
 			glVertex2f(0, 0);
 
-			glTexCoord2f(texX, texHeight);
+			glTexCoord2f(x1, y2);
 			glVertex2f(0, rect.height);
 
-			glTexCoord2f(texWidth, texHeight);
+			glTexCoord2f(x2, y2);
 			glVertex2f(rect.width, rect.height);
 
-			glTexCoord2f(texWidth, texY);
+			glTexCoord2f(x2, y1);
 			glVertex2f(rect.width, 0);
 		}
 		glEnd();
+	}
+	
+	private static void renderMultiTextureImage(Image image)
+	{
+		GLCache.bindMultiTextures(image.multiTextures);
+		
+		Rectangle rect = image.getRectangle();
+		float x1 = image.getPercentageX();
+		float y1 = image.getPercentageY();
+		float x2 = x1 + image.getPercentageWidth();
+		float y2 = y1 + image.getPercentageHeight();
+		
+		glBegin(GL_QUADS);
+		{
+			for (int i = 0; i < image.multiTextures.size(); i++)
+				glMultiTexCoord2f(GL13.GL_TEXTURE0 + i, x1, y1);
+			glVertex2f(0, 0);
+
+			for (int i = 0; i < image.multiTextures.size(); i++)
+				glMultiTexCoord2f(GL13.GL_TEXTURE0 + i, x1, y2);
+			glVertex2f(0, rect.height);
+
+			for (int i = 0; i < image.multiTextures.size(); i++)
+				glMultiTexCoord2f(GL13.GL_TEXTURE0 + i, x2, y2);
+			glVertex2f(rect.width, rect.height);
+
+			for (int i = 0; i < image.multiTextures.size(); i++)
+				glMultiTexCoord2f(GL13.GL_TEXTURE0 + i, x2, y1);
+			glVertex2f(rect.width, 0);
+		}
+		glEnd();
+		
+//		glBegin(GL_QUADS);
+//		{
+//			glTexCoord2f(x1, y1);
+//			glVertex2f(0, 0);
+//
+//			glTexCoord2f(x1, y2);
+//			glVertex2f(0, rect.height);
+//
+//			glTexCoord2f(x2, y2);
+//			glVertex2f(rect.width, rect.height);
+//
+//			glTexCoord2f(x2, y1);
+//			glVertex2f(rect.width, 0);
+//		}
+//		glEnd();
+		
+		
+//		GLCache.unbindMultiTextures();
+//		
+//		for (int i = image.multiTextures.size()-1; i > 0; i++)
+//		{
+//			GL11.glDisable(GL11.GL_TEXTURE_2D);
+//			GL13.glActiveTexture(image.multiTextures.get(i-1).target);
+//		}
+	}
+	
+	protected static class MultiTexture
+	{
+		public Texture texture;
+		public int mixMode;
+		
+		public MultiTexture(Texture texture, int mixMode)
+		{
+			if (texture == null) throw new NullPointerException();
+			
+			this.texture = texture;
+			this.mixMode = mixMode;
+		}
+		
+//		private int getTarget(int index)
+//		{
+//			switch(index)
+//			{
+//				case 0: return GL13.GL_TEXTURE0;
+//				case 1: return GL13.GL_TEXTURE1;
+//				case 2: return GL13.GL_TEXTURE2;
+//				case 3: return GL13.GL_TEXTURE3;
+//				default: throw new IllegalArgumentException();
+//			}
+//		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode()
+		{
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + mixMode;
+			result = prime * result + texture.target;
+			return result;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj)
+		{
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			MultiTexture other = (MultiTexture) obj;
+			if (mixMode != other.mixMode) return false;
+			if (texture.target != other.texture.target) return false;
+			return true;
+		}
 	}
 	
 //	protected void drawTiled(float x, float y, float width, float height, float texOx, float texOy, float alpha)
