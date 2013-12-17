@@ -3,7 +3,7 @@
 		<key>title_menu</key>
 		<name>Title Menü</name>
 		<root class="cuina.widget.data.FrameNode">
-	      <key>frame</key>
+	      <name>frame</name>
 	      <title>Title Menü</title>
 	      <x>224</x>
 	      <y>164</y>
@@ -15,7 +15,7 @@
 	      <draggable>false</draggable>
 	      <children>
 	        <cuina.widget.data.MenuNode>
-	          <key>menu</key>
+	          <name>menu</name>
 	          <x>0</x>
 	          <y>2</y>
 	          <width>192</width>
@@ -39,7 +39,7 @@
 		<key>test_window</key>
 		<name>Test Fenster</name>
 		<root class="cuina.widget.data.FrameNode">
-	      <key>myRoot</key>
+	      <name>myRoot</name>
 	      <title>Frame</title>
 	      <x>20</x>
 	      <y>20</y>
@@ -51,7 +51,7 @@
 	      <draggable>true</draggable>
 	      <children>
 	        <cuina.widget.data.PictureNode>
-	          <key>myPicture</key>
+	          <name>myPicture</name>
 	          <imageName>faces/rosa.png</imageName>
 	          <x>10</x>
 	          <y>10</y>
@@ -62,7 +62,7 @@
 	          <children/>
 	        </cuina.widget.data.PictureNode>
 	        <cuina.widget.data.ButtonNode>
-	          <key>button</key>
+	          <name>button</name>
 	          <text>Drück mich</text>
 	          <x>140</x>
 	          <y>30</y>

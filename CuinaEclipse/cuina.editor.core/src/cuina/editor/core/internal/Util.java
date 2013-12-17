@@ -1,12 +1,21 @@
 package cuina.editor.core.internal;
 
+import cuina.editor.core.CuinaCore;
+import cuina.editor.core.CuinaProject;
+
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.osgi.service.prefs.BackingStoreException;
+
 public class Util
 {
+	private static IEclipsePreferences prefs;
+	
 //	public static String resolveEnviromentVariables(String rawString)
 //	{
 //		StringBuilder builder = new StringBuilder(rawString.length());
@@ -28,6 +37,17 @@ public class Util
 //		
 //		return builder.toString();
 //	}
+	
+	
+	public static IEclipsePreferences getProjectPreference(CuinaProject project) throws BackingStoreException
+	{
+		if (prefs == null)
+		{
+			prefs = new ProjectScope(project.getProject()).getNode(CuinaCore.PLUGIN_ID);
+			prefs.sync();
+		}
+		return prefs;
+	}
 	
 	public static void validateEnginePath(String pathString) throws FileNotFoundException
 	{

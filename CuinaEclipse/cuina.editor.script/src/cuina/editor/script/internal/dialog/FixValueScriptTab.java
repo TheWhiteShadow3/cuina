@@ -183,7 +183,7 @@ public class FixValueScriptTab implements CommandTab, Listener
 		if (tableName == null) return null;
 		try
 		{
-			return context.getProject().getService(Database.class).loadTable(tableName);
+			return context.getCuinaProject().getService(Database.class).loadTable(tableName);
 		}
 		catch (ResourceException e)
 		{
@@ -500,7 +500,7 @@ public class FixValueScriptTab implements CommandTab, Listener
 			@Override
 			public TreeLibrary getTreeLibrary() { return null; }
 			@Override
-			public CuinaProject getProject() { return null; }
+			public CuinaProject getCuinaProject() { return null; }
 			@Override
 			public Node getNode() { return null; }
 			@Override

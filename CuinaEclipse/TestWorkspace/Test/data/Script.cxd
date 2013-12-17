@@ -20,16 +20,16 @@
 		m2 = Maid.new(&quot;Anna&quot;)
 		Yuri.kiss(m1, m2)
 		puts(&quot;Hello Cuina!&quot;)
-		#Cuina.new_game()
-		OBJ_title.start
+		Cuina.new_game()
+		#OBJ_title.start
 	end
 	def loadGame(game)
 	end
 	def newGame(game)
 		Cuina.new_scene("Map")
-		Audio.play_bgm(1, "bgm/spring.mp3")
+		#Audio.play_bgm(1, "bgm/spring.mp3")
 		Map.load_map(&quot;schule&quot;)
-		Map.scrolltarget = Map.get_object(1)
+		#Map.scrolltarget = Map.get_object(1)
 		#party = Java::CuinaActor::ActorGroup.new
 		#actor = Java::CuinaKs::ActorFactory.createActor("Alice", 1, 1)
 		#party.addActor(actor)

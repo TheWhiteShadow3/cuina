@@ -5,6 +5,7 @@ import cuina.editor.core.CuinaProject;
 import cuina.resource.ResourceException;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -40,7 +41,7 @@ public class DatabaseInput implements IEditorInput, IPersistableElement
 	public Object getAdapter(Class adapter)
 	{
 		if (adapter == DatabaseInput.class) return this;
-		if (adapter == IFile.class) return file;
+		if (adapter == IFile.class || adapter == IResource.class) return file;
 		if (adapter == CuinaProject.class) return getCuinaProject();
 		
 		try

@@ -1,0 +1,16 @@
+
+varying vec3 faceNormal;
+varying vec3 position;
+
+void main()
+{
+	gl_TexCoord[0] =  gl_MultiTexCoord0;
+	gl_TexCoord[1] =  gl_MultiTexCoord1;
+	faceNormal = vec3(gl_ModelViewMatrix * vec4(gl_Normal, 0));
+	position = vec3(gl_ModelViewMatrix * gl_Vertex);
+	//faceTangent = tangent;
+	
+	//lightDist = length(vertexPosition - gl_LightSource[0].position.xyz);
+	
+	gl_Position = ftransform();
+}

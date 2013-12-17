@@ -125,7 +125,7 @@ public class DialogTester implements ScriptDialogContext
 	}
 
 	@Override
-	public CuinaProject getProject()
+	public CuinaProject getCuinaProject()
 	{
 		return null;
 	}

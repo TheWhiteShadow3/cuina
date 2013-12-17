@@ -27,7 +27,6 @@ public class EngineClassLoader extends URLClassLoader
 		{	// can't happen
 			throw new Error(e);
 		}
-//		addPlugins(path.getParent().resolve("plugins"));
 		addPlugins(engineReference.resolvePluginPath());
 	}
 
@@ -38,7 +37,6 @@ public class EngineClassLoader extends URLClassLoader
 
 	private void addPlugins(Path path) throws IOException
 	{
-		if (path == null || Files.notExists(path)) return;
 		for (Path p : Files.newDirectoryStream(path))
 		{
 			try

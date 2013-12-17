@@ -65,7 +65,7 @@
          point="cuina.database.types">
       <database
             class="cuina.script.Script"
-            editorID="org.eclipse.dltk.ruby.ui.editor.RubyEditor"
+            editorID="cuina.editor.script.ScriptEditor"
             image="icons/script.png"
             name="Script">
       </database>
@@ -116,6 +116,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
+            class="cuina.editor.script.internal.ScriptEditor"
             default="true"
             icon="icons/script.png"
             id="cuina.editor.script.ScriptEditor"

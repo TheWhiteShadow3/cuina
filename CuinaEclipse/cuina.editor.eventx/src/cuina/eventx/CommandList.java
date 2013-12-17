@@ -1,11 +1,9 @@
 package cuina.eventx;
 
 import cuina.database.DatabaseObject;
-import cuina.database.ui.TreeItem;
 import cuina.database.ui.properties.Property;
-import cuina.database.ui.tree.TreeRoot;
 
-public class CommandList implements DatabaseObject, TreeItem
+public class CommandList implements DatabaseObject
 {
 	private static final long serialVersionUID = -7940627382487928432L;
 
@@ -49,17 +47,5 @@ public class CommandList implements DatabaseObject, TreeItem
 	public void setName(String name)
 	{
 		this.name = name;
-	}
-	
-	@Override
-	public boolean hasChildren()
-	{
-		return commands.length > 0;
-	}
-	
-	@Override
-	public Object[] getChildren(TreeRoot root)
-	{
-		return commands;
 	}
 }

@@ -15,7 +15,7 @@ public interface ScriptDialogContext
 	public TreeEditor getTreeEditor();
 	public TreeLibrary getTreeLibrary();
 	public ScriptSelection getSelection();
-	public CuinaProject getProject();
+	public CuinaProject getCuinaProject();
 	public Shell getShell();
 	public Node getNode();
 	public ScriptPosition getPosition();

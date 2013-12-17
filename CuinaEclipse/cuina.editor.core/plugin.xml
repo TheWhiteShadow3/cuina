@@ -164,7 +164,7 @@
   <extension
         point="org.eclipse.core.variables.dynamicVariables">
      <variable
-           description="description"
+           description="Pfad zur Cuina Engine"
            name="engine_path"
            resolver="cuina.editor.debug.CuinaVariableResolver"
            supportsArgument="false">

@@ -28,7 +28,7 @@ public class PluginManager
 	
 	/**
 	 * Sucht nach Plugins und ladet diese in den Cache.
-	 * @param directory Verzeichnis für die Suche.
+	 * @param directory Verzeichnisse für die Suche.
 	 */
 	public void findPlugins(File directory)
 	{
@@ -81,7 +81,7 @@ public class PluginManager
 		for(File file : files)
 		{
 			String name = file.getName();
-			if (name.endsWith(".jar"))
+			if (name.endsWith(".jar") && !fileList.containsKey(name))
 			{
 				fileList.put(name, file);
 			}

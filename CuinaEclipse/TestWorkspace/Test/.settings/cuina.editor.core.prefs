@@ -1,0 +1,3 @@
+cuina.engine.path=${env_var:CUINA_HOME}
+cuina.plugin.path=${env_var:CUINA_HOME}/plugins
+eclipse.preferences.version=1

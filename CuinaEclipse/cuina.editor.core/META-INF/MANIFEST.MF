@@ -19,6 +19,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views.properties.tabbed
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: cuina.editor.core,
+ cuina.editor.core.engine,
  cuina.editor.core.util
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/cloning-1.7.9.jar,

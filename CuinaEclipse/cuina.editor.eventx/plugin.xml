@@ -1,17 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="cuina.eventx.types" name="cuina.eventx.types" schema="schema/cuina.eventx.types.exsd"/>
+   <extension-point id="cuina.eventx.functions" name="cuina.eventx.functions" schema="schema/cuina.eventx.functions.exsd"/>
+   <extension-point id="cuina.eventx.contexts" name="cuina.eventx.contexts" schema="schema/cuina.eventx.contexts.exsd"/>
+   <extension-point id="cuina.eventx.categories" name="cuina.eventx.categories" schema="schema/cuina.eventx.categories.exsd"/>
    <extension
          point="cuina.database.types">
       <database
             class="cuina.eventx.CommandList"
+            editorID="cuina.editor.eventx.CommandEditor"
             image="icons/event.png"
             name="Event">
-         <editor
-               class="cuina.editor.eventx.internal.CommandListEditor"
-               navigator="true">
-         </editor>
       </database>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="cuina.editor.eventx.CommandEditor">
+         <propertySection
+               class="cuina.editor.eventx.internal.CommandPropertySection"
+               id="cuina.editor.eventx.CommandSection"
+               tab="cuina.editor.eventx.CommandTab">
+            <input
+                  type="cuina.eventx.Command">
+            </input>
+         </propertySection>
+      </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="cuina.editor.eventx.CommandEditor">
+         <propertyTab
+               category="general"
+               id="cuina.editor.eventx.CommandTab"
+               label="command">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="cuina.editor.eventx.CommandEditor">
+         <propertyCategory
+               category="general">
+         </propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="cuina.editor.eventx.internal.FlowEditor"
+            default="false"
+            icon="icons/event.png"
+            id="cuina.editor.eventx.CommandEditor"
+            name="Cuina Command Editor">
+      </editor>
+   </extension>
+   <extension
+         point="cuina.core.project.extension">
+      <serviceFactory
+            class="cuina.editor.eventx.internal.CommandServiceFactory">
+         <Service
+               class="cuina.editor.eventx.internal.CommandLibrary">
+         </Service>
+      </serviceFactory>
+   </extension>
+   <extension
+         point="cuina.eventx.types">
+      <typedef
+            class="cuina.util.Vector"
+            editor="cuina.editor.eventx.internal.editors.VectorEditor"
+            id="Vector">
+      </typedef>
+      <typedef
+            class="java.awt.Color"
+            editor="cuina.editor.eventx.internal.editors.ColorEditor"
+            id="Color">
+      </typedef>
+   </extension>
+   <extension
+        point="cuina.eventx.functions">
+     <function
+           label="Methode 1"
+           categoryID="cuina.editor.eventx.Demo"
+           contextID="cuina.editor.message.Message"
+           name="doThings"
+           static="false">
+        <argument
+              label="Anzahl"
+              fixed="10"
+              type="int">
+        </argument>
+        <argument
+              label="Name"
+              type="java.lang.String">
+        </argument>
+        <argument
+              label="Position"
+              type="cuina.util.Vector">
+        </argument>
+        <argument
+              label="Farbe"
+              type="java.awt.Color">
+        </argument>
+     </function>
+   </extension>
+   <extension
+         point="cuina.eventx.categories">
+      <category
+            id="cuina.editor.eventx.Demo"
+            label="Demo">
+      </category>
+   </extension>
+   <extension
+         point="cuina.eventx.contexts">
+      <context
+            class="cuina.message.MessageBox"
+            id="cuina.editor.message.Message"
+            name="Message"
+            type="SESSION">
+      </context>
    </extension>
 
 </plugin>

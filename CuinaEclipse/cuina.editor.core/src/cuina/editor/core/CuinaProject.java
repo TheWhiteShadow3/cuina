@@ -8,8 +8,13 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Stellt ein Cuina-Projekt da.
@@ -66,7 +71,7 @@ public final class CuinaProject
 	}
 	
 	/**
-	 * Erstellt eine neue Projekt-Ressource und üffnet sie.
+	 * Erstellt eine neue Projekt-Ressource und öffnet sie.
 	 * @param monitor
 	 * @throws CoreException
 	 */
@@ -78,6 +83,18 @@ public final class CuinaProject
 		IProjectDescription description = project.getDescription();
 		description.setNatureIds(new String[] { CuinaCore.NATURE_ID });
 		project.setDescription(description, null);
+		
+		IEclipsePreferences prefs = new ProjectScope(project).getNode(CuinaCore.PLUGIN_ID);
+		prefs.put("cuina.engine.path", "${env_var:CUINA_HOME}");
+		prefs.put("cuina.plugin.path", "${env_var:CUINA_HOME}/plugins");
+		try
+		{
+			prefs.flush();
+		}
+		catch (BackingStoreException e)
+		{
+			throw new CoreException(new Status(IStatus.ERROR, CuinaCore.PLUGIN_ID, e.getMessage(), e));
+		}
 	}
 	
 	/**

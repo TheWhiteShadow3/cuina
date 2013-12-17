@@ -268,7 +268,7 @@
     	<param name=""><image>button.*</image></param>
     </theme>
     	
-	<theme name="messagewidget" ref="-defaults">
+	<theme name="messagewidget" ref="frame">
 		<param name="x"><int>16</int></param>
 		<param name="y"><int>300</int></param>
 		<param name="width"><int>608</int></param>

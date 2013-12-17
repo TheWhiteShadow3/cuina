@@ -4,6 +4,7 @@ import cuina.database.DatabaseObject;
 
 import org.eclipse.swt.widgets.Composite;
 
+@Deprecated
 public interface DataEditorPage<E extends DatabaseObject>
 {
 	public void setValue(E obj);

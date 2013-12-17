@@ -1,18 +1,22 @@
 package cuina.editor.core.engine;
 
 
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
+import cuina.editor.core.internal.Util;
 import cuina.editor.core.internal.engine.EngineClassLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.variables.VariablesPlugin;
 
 /**
  * Stellt eine Referenz zur Cuina-Engine da, die vom Projekt benutzt wird.
@@ -23,6 +27,7 @@ public class EngineReference
 	/** Name der System-Variable zum Cuina-Engine Homeverzeichnis */
 	public static final String CUINA_SYSTEM_VARIABLE = "CUINA_HOME";
 	
+	private static final String ENGINE_JAR = "cuina.engine.jar";
 	private static final String ENGINE_KEY = "cuina.engine.path";
 	private static final String PLUGIN_KEY = "cuina.plugin.path";
 
@@ -33,12 +38,24 @@ public class EngineReference
 	
 	private Path projectPath;
 
-	public EngineReference(CuinaProject project) throws IOException
+	public EngineReference(CuinaProject project) throws CoreException
 	{
-		this.project = project;
-		this.prefs = new ProjectScope(project.getProject()).getNode("cuina.editor.core");
-		this.projectPath = Paths.get(getProject().getProject().getLocation().toString());
-		this.classLoader = new EngineClassLoader(this);
+		try
+		{
+			this.project = project;
+			this.prefs = Util.getProjectPreference(project);
+			/* FIXME:
+			 * Preferenzen geben immer null zurück, egal bei welchem Schlüssel.
+			 * ein sync() mit impliziertem load brachte keine Lösung.
+			 * Die Werte sind mit der entsprechenden Methode angelegt worden.
+			 */
+			this.projectPath = Paths.get(getProject().getProject().getLocation().toString());
+			this.classLoader = new EngineClassLoader(this);
+		}
+		catch (Exception e)
+		{
+			new CoreException(new Status(IStatus.ERROR, CuinaCore.PLUGIN_ID, e.getMessage(), e));
+		}
 	}
 	
 	public CuinaProject getProject()
@@ -67,7 +84,7 @@ public class EngineReference
 	 */
 	public String getEnginePath()
     {
-    	return prefs.get(ENGINE_KEY, getDefaultPath());
+		return resolve(prefs.get(ENGINE_KEY, "${env_var:CUINA_HOME}"));
     }
 
 	/**
@@ -76,9 +93,34 @@ public class EngineReference
 	 */
 	public String getPluginPath()
 	{
-    	return prefs.get(PLUGIN_KEY, "plugins");
+    	return resolve(prefs.get(PLUGIN_KEY, "plugins"));
 	}
 	
+	private String resolve(String str)
+	{
+		try
+		{
+			return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(str);
+		}
+		catch (CoreException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Gibt den Pfad zur Engine zurück, wenn er gefunden wurde.
+	 * <p>
+	 * Die Implementation sucht zuerst im in den Projekt-Eigenschaften angegebenen Pfad.
+	 * Wenn keine Eigenschaft angegeben ist wird die Umgebungsvariable CUINA_HOME genommen.
+	 * Ist der Pfad relativ, wird er zum Projekt aufgelöst.
+	 * Bei einem Verzeichnis wird der Pfad um <i>cuina.engine.jar</i> erweitert.
+	 * Existiert die Datei nicht wird eine <code>FileNotFoundException</code> geworfen.
+	 * </p>
+	 * @return Den Pfad zur Engine. Niemals <code>null</code>.
+	 * @throws FileNotFoundException, wenn der Pfad nicht gefunden wurde.
+	 */
 	public Path resolveEnginePath() throws FileNotFoundException
     {
 		Path path = Paths.get(getEnginePath());
@@ -91,30 +133,45 @@ public class EngineReference
 		
 		if (Files.isDirectory(path))
 		{
-			path = path.resolve("cuina.engine.jar");
+			path = path.resolve(ENGINE_JAR);
 			if (Files.notExists(path))
 				throw new FileNotFoundException(path.toString());
 		}
     	return path;
     }
 	
-	public Path resolvePluginPath()
+	/**
+	 * Gibt das Plugin-Verzeichniss zurück, wenn Eins gefunden wurde.
+	 * <p>
+	 * Die Implementation sucht zuerst im in den Projekt-Eigenschaften angegebenen Pfad.
+	 * Wenn keine Eigenschaft angegeben ist wird der Pfad <i>plugins</i> genommen.
+	 * Ist der Pfad relativ, wird es zum Projekt aufgelöst.
+	 * Existiert der Pfad nicht, wird das Verzeichnis zur Engine aufgelöst.
+	 * Existiert er auch nicht wird eine <code>FileNotFoundException</code> geworfen.
+	 * </p>
+	 * @return Das Plugin-Verzeichniss. Niemals <code>null</code>.
+	 * @throws FileNotFoundException, wenn kein Verzeichnis gefunden wurde.
+	 */
+	public Path resolvePluginPath() throws FileNotFoundException
     {
 		Path path = Paths.get(getPluginPath());
 		if (!path.isAbsolute())
 		{
-			path = projectPath.resolve(path);
+			Path absolutePath = projectPath.resolve(path);
+			if (Files.exists(absolutePath)) return absolutePath;
+			
+			path = resolveEnginePath().getParent().resolve(path);
 		}
-		if (Files.notExists(path)) return null;
+		if (Files.notExists(path)) throw new FileNotFoundException(path.toString());
 		
-    	return path;
+		return path;
     }
 	
-	private String getDefaultPath()
-	{
-		String value = System.getenv(CUINA_SYSTEM_VARIABLE);
-		return (value == null) ? "." : value;
-	}
+//	private String getDefaultPath()
+//	{
+//		String value = System.getenv(CUINA_SYSTEM_VARIABLE);
+//		return (value == null) ? "." : value;
+//	}
 	
 	/**
 	 * Setzt den Pfad zur Engine. Wenn der Pfad <code>null</code> ist,
@@ -138,6 +195,8 @@ public class EngineReference
 		{
 			File file = new File(getPluginPath());
 			if (file.equals(pluginManager.getDirectory())) return;
+			
+			pluginManager.clear();
 			pluginManager.findPlugins(file);
 		}
 	}

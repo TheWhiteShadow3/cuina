@@ -311,12 +311,12 @@ public class PluginBlock
 	
 	private File getPluginDirectory() throws CoreException
 	{
-		String path;
+		String pathName;
 		try
 		{
-			path = VariablesPlugin.getDefault().getStringVariableManager().
+			pathName = VariablesPlugin.getDefault().getStringVariableManager().
 					performStringSubstitution(inPlugin.getText());
-			File directory = new File(path);
+			File directory = new File(pathName);
 			if (!directory.isAbsolute())
 			{
 				CuinaProject project = cuinaTab.getProject();

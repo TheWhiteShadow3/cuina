@@ -11,6 +11,7 @@ import org.eclipse.ui.IEditorSite;
  * Handlet Daten-Change Events.
  * @author TheWhiteShadow
  */
+@Deprecated
 public interface IDatabaseEditor
 {
 	public static final String ID = "cuina.editor.editors.DatabaseEditor";

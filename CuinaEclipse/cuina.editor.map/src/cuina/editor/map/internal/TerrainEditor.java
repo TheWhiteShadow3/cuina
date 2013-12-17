@@ -76,6 +76,7 @@ public class TerrainEditor extends EditorPart implements
 	private TerrainPanel panel;
 	private boolean dirty;
 	
+	private IFile file;
 	private Map map;
 	private CuinaProject project;
 	private Tileset tileset;
@@ -98,7 +99,15 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public void doSave(IProgressMonitor monitor)
 	{
-		System.out.println("[TerrainEditor] doSave");
+		try
+		{
+			SerializationManager.save(map, file);
+			setDirty(false);
+		}
+		catch (ResourceException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -124,7 +133,6 @@ public class TerrainEditor extends EditorPart implements
 	{
 		try
 		{
-			IFile file;
 			if (input instanceof DatabaseInput)
 				file = getMapFile((DatabaseInput) input);
 			else

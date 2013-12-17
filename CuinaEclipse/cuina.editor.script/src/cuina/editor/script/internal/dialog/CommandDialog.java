@@ -370,9 +370,9 @@ public final class CommandDialog extends TitleAreaDialog implements ScriptDialog
 	}
 	
 	@Override
-	public CuinaProject getProject()
+	public CuinaProject getCuinaProject()
 	{
-		return context.getProject();
+		return context.getCuinaProject();
 	}
 	
 	@Override

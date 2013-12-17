@@ -4,9 +4,10 @@ import cuina.editor.core.CuinaProject;
 import cuina.editor.core.ProjectServiceFactory;
 import cuina.editor.core.engine.EngineReference;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
 
 public class EngineServiceFactory implements ProjectServiceFactory
 {
@@ -22,7 +23,7 @@ public class EngineServiceFactory implements ProjectServiceFactory
 			{
 				ref = new EngineReference(cuinaProject);
 			}
-			catch (IOException e)
+			catch (CoreException e)
 			{
 				e.printStackTrace();
 				return null;

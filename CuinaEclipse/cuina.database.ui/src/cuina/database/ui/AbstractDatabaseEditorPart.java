@@ -66,7 +66,7 @@ public abstract class AbstractDatabaseEditorPart extends EditorPart
 			setPartName(table.getName() + " - " + data.getName());
 			init(data);
 		}
-		catch (ResourceException e)
+		catch (Exception e)
 		{
 			throw new PartInitException(e.getMessage(), e);
 		}

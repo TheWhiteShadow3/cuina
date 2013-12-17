@@ -2,7 +2,6 @@ package cuina.editor.script.internal;
 
 import cuina.database.DatabaseObject;
 import cuina.database.ui.AbstractDatabaseEditorPart;
-import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.core.ObjectUtil;
 import cuina.editor.script.Scripts;
@@ -72,7 +71,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDialogContext, ISelectionProvider
@@ -86,7 +84,6 @@ public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDi
 	private TreeLibrary treeLibary;
 
 	private RubyNodeConverter converter;
-	private IDatabaseEditor context;
 	private int pageIndex = -1;
 	private final ArrayList<ScriptPage> scriptPages = new ArrayList<ScriptPage>();
 	private ScriptEditorEventHandler handler;
@@ -120,11 +117,12 @@ public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDi
 	{
 		if (this.script == obj) return;
 		
+		this.library = getCuinaProject().getService(StaticScriptLibrary.class);
+		this.treeLibary = new TreeLibrary(library);
 		this.script = (Script) obj;
 		modified = false;
 		
 		if (script != null) parseScriptCode();
-		refresh();
 	}
 
 	@Override
@@ -225,7 +223,7 @@ public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDi
 			script.setCode(builder.toString());
 		}
 		
-		treeEditor = Scripts.getScriptCache(context.getProject()).getTreeEditor(script);
+		treeEditor = Scripts.getScriptCache(getCuinaProject()).getTreeEditor(script);
 		treeEditor.addTreeEditorListener(handler);
 		converter = new RubyNodeConverter(treeEditor);
 	}
@@ -240,8 +238,6 @@ public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDi
 	public void createPartControl(Composite parent)
 	{
 		this.shell = parent.getShell();
-		this.library = getCuinaProject().getService(StaticScriptLibrary.class);
-		this.treeLibary = new TreeLibrary(library);
 		
 		parent.setLayout(new GridLayout(3, false));
 		
@@ -300,7 +296,8 @@ public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDi
         new int[] {50}, true);
 	
 		buttonBlock.createControl(group);
-		context.getEditorSite().setSelectionProvider(this);
+		getEditorSite().setSelectionProvider(this);
+		refresh();
 	}
 
 	public void update()
@@ -363,9 +360,9 @@ public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDi
 	}
 	
 	@Override
-	public CuinaProject getProject()
+	public CuinaProject getCuinaProject()
 	{
-		return context.getProject();
+		return super.getCuinaProject();
 	}
 	
 	RubyNodeConverter getNodeConverter()
@@ -401,7 +398,7 @@ public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDi
 	private void fireScriptChanged()
 	{
 		modified = true;
-		context.fireDataChanged(this, script);
+		firePropertyChange(PROP_DIRTY);
 	}
 
 	private void fireSelectionChanged()
