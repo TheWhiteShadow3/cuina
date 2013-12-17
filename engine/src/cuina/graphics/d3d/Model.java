@@ -14,7 +14,7 @@ import cuina.graphics.Image;
 import cuina.graphics.Images;
 import cuina.graphics.Mesh;
 import cuina.graphics.TextureLoader;
-import cuina.graphics.Transformation;
+import cuina.graphics.transform.Transformation;
 import cuina.util.LoadingException;
 import cuina.util.Vector;
 

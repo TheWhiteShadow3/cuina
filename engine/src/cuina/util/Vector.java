@@ -153,4 +153,13 @@ public class Vector implements Serializable
 //		GL11.glm
 //		x = x * (n.x*n.x * (1 - cosA) + cosA) + n.x*n.y * (1- cosA)
 //	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "V(" + x + ", " + y + ", " + z + ")";
+	}
 }

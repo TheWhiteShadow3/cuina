@@ -1,4 +1,4 @@
-package cuina.graphics;
+package cuina.graphics.transform;
 
 public interface Transformation
 {

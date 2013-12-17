@@ -7,6 +7,8 @@
 
 package cuina.graphics;
 
+import cuina.graphics.transform.Transformation;
+
 
 /**
  * Abstrakte Sprite-Klasse für die Verwaltung von Images.

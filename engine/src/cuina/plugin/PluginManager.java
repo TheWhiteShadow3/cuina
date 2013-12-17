@@ -82,8 +82,6 @@ public class PluginManager
 	
 	/**
 	 * Sucht nach Plugins und ladet diese in den Cache.
-	 * Wenn die Systemproperty "cuina.plugin.path" angegeben wurde, wird diese standardmäßig benutzt.
-	 * Nur wenn diese <code>null</code> ist oder ein leerer String, wird das angegebene Verzeichnis benutzt.
 	 * @param file Verzeichnis für die Suche.
 	 */
 	public static void findPlugins(File file)

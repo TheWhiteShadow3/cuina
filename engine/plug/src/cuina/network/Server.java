@@ -4,7 +4,6 @@ import cuina.plugin.ForGlobal;
 import cuina.plugin.LifeCycleAdapter;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -25,7 +24,7 @@ public class Server extends LifeCycleAdapter
 	private ConnectionListener listener;
 	private ConnectionIdentifier identifier;
 	
-	private final Map<String, Client> clients = new HashMap<String, Client>();
+	private final Map<Integer, ServerClient> clients = new HashMap<Integer, ServerClient>();
 	private final Map<String, NetworkSession> sessions = new HashMap<String, NetworkSession>();
 
 	public Server()
@@ -39,6 +38,11 @@ public class Server extends LifeCycleAdapter
 	{
 		listener.start();
 		identifier.start();
+	}
+
+	public boolean disconnect(ServerClient client)
+	{
+		return clients.remove(client.getID()) != null;
 	}
 
 	@Override
@@ -106,15 +110,15 @@ public class Server extends LifeCycleAdapter
 		private void addPendingClient(Socket socket) throws IOException
 		{
 			int id = RANDOM.nextInt();
-			Client client = new ServerClient(server, socket, id);
-			OutputStream out = client.getOutputStream();
-			out.write(IDENTIFIER_SEQUENCE);
-			out.write(0);
-			// Wir brauchen nur die letzen Zahlen für einen Abgleich. Das deckt gut einen Monat ab.
-			out.write(StreamUtil.intToByteArray((int) System.currentTimeMillis()));
-			out.write(StreamUtil.intToByteArray(id));
-			out.write(255);
-			out.flush();
+			ServerClient client = new ServerClient(server, socket, id);
+//			OutputStream out = client.getOutputStream();
+//			out.write(IDENTIFIER_SEQUENCE);
+//			out.write(0);
+//			// Wir brauchen nur die letzen Zahlen für einen Abgleich. Das deckt gut einen Monat ab.
+//			out.write(StreamUtil.intToByteArray((int) System.currentTimeMillis()));
+//			out.write(StreamUtil.intToByteArray(id));
+//			out.write(255);
+//			out.flush();
 			
 			server.identifier.pendingClients.add(client);
 		}
@@ -124,7 +128,7 @@ public class Server extends LifeCycleAdapter
 	{
 		private Server server;
 		private boolean stop;
-		private Queue<Client> pendingClients = new ConcurrentLinkedQueue<Client>();
+		private Queue<ServerClient> pendingClients = new ConcurrentLinkedQueue<ServerClient>();
 		
 		public ConnectionIdentifier(Server server)
 		{
@@ -141,11 +145,11 @@ public class Server extends LifeCycleAdapter
 				{
 					while(pendingClients.size() == 0) doSleep(100);
 					
-					Iterator<Client> itr = pendingClients.iterator();
+					Iterator<ServerClient> itr = pendingClients.iterator();
 					while(itr.hasNext())
 					{
-						Client client = itr.next();
-						if (identifyClient(client))
+						ServerClient client = itr.next();
+						if (client.identify(null))
 						{
 							addClient(client);
 							itr.remove();
@@ -158,13 +162,9 @@ public class Server extends LifeCycleAdapter
 				}
 			}
 			// Schließe alle wartenden Klienten.
-			for (Client client : pendingClients) try
+			for (ServerClient client : pendingClients)
 			{
 				client.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
 			}
 		}
 			
@@ -173,26 +173,26 @@ public class Server extends LifeCycleAdapter
 			try { Thread.sleep(millis); } catch(InterruptedException e) {}
 		}
 		
-		private void addClient(Client client)
+		private void addClient(ServerClient client)
 		{
-			System.out.println("[Server] registriere Client (" + client.id + ") " + client.getName());
-			server.clients.put(client.getName(), client);
+			System.out.println("[Server] registriere Client (" + client.getID() + ") " + client.getName());
+			server.clients.put(client.getID(), client);
 		}
 		
-		private boolean identifyClient(Client client) throws IOException
-		{
-			if (client.in.available() > 0)
-			{
-				byte[] buffer = new byte[256];
-				client.in.read(buffer);
-				
-				String name = StreamUtil.readString(buffer, 0);
-				if (name == null || name.length() < 2 || name.length() > 64) return false;
-				
-				client.setName(name);
-				return true;
-			}
-			return false;
-		}
+//		private boolean identifyClient(ServerClient client) throws IOException
+//		{
+//			if (client.in.available() > 0)
+//			{
+//				byte[] buffer = new byte[256];
+//				client.in.read(buffer);
+//				
+//				String name = StreamUtil.readString(buffer, 0);
+//				if (name == null || name.length() < 2 || name.length() > 64) return false;
+//				
+//				client.setName(name);
+//				return true;
+//			}
+//			return false;
+//		}
 	}
 }

@@ -328,6 +328,11 @@ public final class Game
 		dispose();
 	}
 	
+	/**
+	 * Ladet die Plugins.
+	 * Wenn die Property "cuina.plugin.path" angegeben wurde, wird diese standardmäßig benutzt.
+	 * Nur wenn diese <code>null</code> ist oder ein leerer String, wird das Verzeichnis <i>plugins</i> durchsucht.
+	 */
 	public void loadPlugins()
 	{
 		String name = getProperty(PluginManager.CUINA_PLUGINPATH_KEY, "plugins");

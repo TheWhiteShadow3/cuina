@@ -7,6 +7,7 @@
 
 package cuina.graphics;
 
+import cuina.graphics.transform.Transformation;
 import cuina.util.LoadingException;
 import cuina.util.ResourceManager;
 

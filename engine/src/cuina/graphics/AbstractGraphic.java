@@ -1,5 +1,7 @@
 package cuina.graphics;
 
+import cuina.graphics.transform.Transformation;
+
 import org.lwjgl.opengl.GL11;
 
 /**

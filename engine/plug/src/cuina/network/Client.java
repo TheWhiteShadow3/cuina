@@ -1,85 +1,31 @@
 package cuina.network;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
+import cuina.database.NamedItem;
 
-public class Client
+public class Client implements NamedItem
 {
-	protected int id;
-	protected Socket socket;
+	public final int id;
 	private String name;
-	protected InputStream in;
-	protected OutputStream out;
-	
-//	private Thread messageListener;
-//	private Queue<byte[]> messageQueue = new LinkedList<byte[]>();
 
-	public Client()
+	public Client(int id)
 	{
-		
-	}
-	
-	public void open(Socket socket) throws IOException
-	{
-		this.socket = socket;
-		
-		this.in = socket.getInputStream();
-		this.out = socket.getOutputStream();
-		
-//		messageListener = new MessageThread();
-//		messageListener.start();
+		this.id = id;
 	}
 
-	public int getID()
-	{
-		return id;
-	}
-
-	protected void setName(String name)
-	{
-		this.name = name;
-	}
-
+	/**
+	 * @return Der Name.
+	 */
+	@Override
 	public String getName()
 	{
 		return name;
 	}
 
-	public OutputStream getOutputStream()
+	/**
+	 * @param name Der Name.
+	 */
+	public void setName(String name)
 	{
-		return out;
+		this.name = name;
 	}
-	
-	public InputStream getInputStream()
-	{
-		return in;
-	}
-	
-	public void close() throws IOException
-	{
-		socket.close();
-	}
-	
-//	class MessageThread extends Thread
-//	{
-//		private byte[] buffer = new byte[1 << 16];
-//		
-//		@Override
-//		public void run()
-//		{
-//			try
-//			{
-//				while (in.available() > 0)
-//				{
-//					in.read(buffer);
-//				}
-//			}
-//			catch (IOException e)
-//			{
-//				e.printStackTrace();
-//			}
-//		}
-//	}
 }

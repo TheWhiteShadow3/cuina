@@ -1,5 +1,6 @@
 package cuina.network;
 
+
 public class NetworkTester
 {
 	private static Server server;
@@ -16,7 +17,7 @@ public class NetworkTester
 		Thread.sleep(10);
 		
 		int port = Server.PORT;
-		Connection con = new Connection("localhost", port, "TWS");
+		Connection con = new Connection("localhost", port, "TWS", null);
 		System.out.println("Verbunden? " + con.isConnected());
 		
 		Thread.sleep(100);

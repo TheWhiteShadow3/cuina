@@ -1,4 +1,4 @@
-package cuina.graphics;
+package cuina.graphics.transform;
 
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE;
@@ -7,53 +7,21 @@ import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glScalef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
+import cuina.graphics.GLCache;
+import cuina.util.Vector;
 
-import java.awt.Rectangle;
-
-public class Transform2D implements Transformation
+public class Transform3D implements Transformation
 {
-	/** X-Position vom Image. */
-	public float x;
-	/** Y-Position vom Image. */
-	public float y;
-	
-	/** Drehwinkel des Images. */
-	public float angle;
-	
-	/** Origin-X-Position vom Image. */
-	public float ox;
-	/** Origin-Y-Position vom Image. */
-	public float oy;
-	
-	public float sx = 1;
-	public float sy = 1;
+	public final Vector pos		= new Vector();
+	public final Vector origin	= new Vector();
+	public final Vector scale	= new Vector(1, 1, 1);
+	public final Vector angle	= new Vector();
 	
 	public float texX;
 	public float texY;
 	public float texAngle;
 	public float texSX = 1;
 	public float texSY = 1;
-
-//	// Die Port-Vektoren
-//	/** Obere linke Ecke der Zeichenfläche. */
-//	public float vecX1;
-//	/** Obere rechte Ecke der Zeichenfläche. */
-//	public float vecY1;
-//	/** Untere linke Ecke der Zeichenfläche. */
-//	public float vecX2;
-//	/** Untere rechte Ecke der Zeichenfläche. */
-//	public float vecY2;
-	
-//	// Die View-Vektoren
-//	/** Obere linke Ecke der Textur. */
-//	public float texX1;
-//	/** Obere rechte Ecke der Textur. */
-//	public float texY1;
-//	/** Untere linke Ecke der Textur. */
-//	public float texX2 = 1;
-//	/** Untere rechte Ecke der Textur. */
-//	public float texY2 = 1;
-	
 	
 	public void clear()
 	{
@@ -79,44 +47,38 @@ public class Transform2D implements Transformation
 	
 	public void clearPosition()
 	{
-		x = 0;
-		y = 0;
-		ox = 0;
-		oy = 0;
+		pos.set(0, 0, 0);
+		origin.set(0, 0, 0);
 	}
 	
 	public void clearRotation()
 	{
-		angle = 0;
+		angle.set(0, 0, 0);
 	}
 	
 	public void clearScale()
 	{
-		this.sx = 1;
-		this.sy = 1;
+		this.scale.set(1, 1, 1);
 	}
 	
-	public void setPosition(float x, float y)
+	public void setPosition(Vector v)
 	{
-		this.x = x;
-		this.y = y;
+		this.pos.set(v);
 	}
 	
-	public void setOrigion(float ox, float oy)
+	public void setOrigion(Vector v)
 	{
-		this.ox = ox;
-		this.oy = oy;
+		this.origin.set(v);
 	}
 	
-	public void setRotation(float angle)
+	public void setRotation(Vector v)
 	{
-		this.angle = angle;
+		this.angle.set(v);
 	}
 	
-	public void setScale(float scaleX, float scaleY)
+	public void setScale(Vector v)
 	{
-		this.sx = scaleX;
-		this.sy = scaleY;
+		this.scale.set(v);
 	}
 	
 	public void setTexturPosition(float x, float y)
@@ -138,34 +100,34 @@ public class Transform2D implements Transformation
 //		vecY2 -= oy;
 //	}
 	
-	/** Legt einen Port mit dem angegebnen Bildausschnitt fest. */
-	public void setPort(Rectangle rect)
-	{
-		setPort(rect.x, rect.y, rect.width, rect.height);
-	}
-	
-	/** Legt einen Port mit dem angegebnen Bildausschnitt fest. */
-	public void setPort(int x, int y, float scaleX, float scaleY)
-	{
-		this.ox = x;
-		this.oy = y;
-		this.sx = scaleX;
-		this.sy = scaleY;
-//		vecX2 = x + width;
-//		vecY2 = y + height;
-	}
-	
-	/** Legt einen Port in dem angegebnen Größe fest. */
-	public void setPort(int width, int height)
-	{
-		setPort(0, 0, width, height);
-	}
-	
-	/** Legt einen Port für ein Image fest. */
-	public void setPort(Image image)
-	{
-		setPort(0, 0, image.getWidth(), image.getHeight());
-	}
+//	/** Legt einen Port mit dem angegebnen Bildausschnitt fest. */
+//	public void setPort(Rectangle rect)
+//	{
+//		setPort(rect.x, rect.y, rect.width, rect.height);
+//	}
+//	
+//	/** Legt einen Port mit dem angegebnen Bildausschnitt fest. */
+//	public void setPort(int x, int y, float scaleX, float scaleY)
+//	{
+//		this.ox = x;
+//		this.oy = y;
+//		this.sx = scaleX;
+//		this.sy = scaleY;
+////		vecX2 = x + width;
+////		vecY2 = y + height;
+//	}
+//	
+//	/** Legt einen Port in dem angegebnen Größe fest. */
+//	public void setPort(int width, int height)
+//	{
+//		setPort(0, 0, width, height);
+//	}
+//	
+//	/** Legt einen Port für ein Image fest. */
+//	public void setPort(Image image)
+//	{
+//		setPort(0, 0, image.getWidth(), image.getHeight());
+//	}
 
 	/** Legt einen View über die ganze Textur fest. */
 	public void setDefaultView()
@@ -199,28 +161,28 @@ public class Transform2D implements Transformation
 		this.texSY = scaleY;
 	}
 	
-	/**
-	 * Steckt das Image.
-	 * @param scaleX
-	 * @param scaleY
-	 */
-	public void expand(float scaleX, float scaleY, float texScaleX, float texScaleY)
-	{
-		this.sx = scaleX;
-		this.sy = scaleY;
-		this.texSX = scaleX / texScaleX;
-		this.texSY = scaleY / texScaleY;
-	}
+//	/**
+//	 * Steckt das Image.
+//	 * @param scaleX
+//	 * @param scaleY
+//	 */
+//	public void expand(float scaleX, float scaleY, float texScaleX, float texScaleY)
+//	{
+//		this.sx = scaleX;
+//		this.sy = scaleY;
+//		this.texSX = scaleX / texScaleX;
+//		this.texSY = scaleY / texScaleY;
+//	}
 	
-	/** Legt einen View für ein Image fest. */
-	public void setView(Image image, float zoomX, float zoomY)
-	{
-		this.texX = image.getX() / (float)image.getTexture().getWidth();
-		this.texY = image.getY() / (float)image.getTexture().getHeight();
-		this.texSX = zoomX;
-		this.texSY = zoomX;
-		this.sx = zoomX;
-		this.sy = zoomY;
+//	/** Legt einen View für ein Image fest. */
+//	public void setView(Image image, float zoomX, float zoomY)
+//	{
+//		this.texX = image.getX() / (float)image.getTexture().getWidth();
+//		this.texY = image.getY() / (float)image.getTexture().getHeight();
+//		this.texSX = zoomX;
+//		this.texSY = zoomX;
+//		this.sx = zoomX;
+//		this.sy = zoomY;
 
 //		setView(image.getTexture(), image.getRect());
 //		Rectangle rect = image.getRect();
@@ -228,7 +190,7 @@ public class Transform2D implements Transformation
 //		texY1 = rect.y / (float) image.getHeight();
 //		texX2 = (rect.x +
 //		texY2 = (rect.y + rect.height) / (float) image.getHeight();
-	}
+//	}
 //	
 //	/** Legt einen View für eine Textur fest. */
 //	public void setView(Texture texture)
@@ -259,10 +221,12 @@ public class Transform2D implements Transformation
 		GLCache.setMatrix(GL_MODELVIEW);
 		glPushMatrix();
 			
-		if (x != 0 || y != 0)	glTranslatef(x, y, 0);
-		if (angle != 0) 		glRotatef(angle, 0, 0, 1);
-		if (ox != 0 || oy != 0) glTranslatef(-ox, -oy, 0);
-		if (sx != 1 || sy != 1) glScalef(sx, sy, 1);
+		if (pos.x != 1 || pos.y != 1 || pos.z != 1)				glTranslatef(pos.x, pos.y, pos.z);
+		if (angle.x != 0) 		glRotatef(angle.x, 1, 0, 0);
+		if (angle.y != 0) 		glRotatef(angle.y, 0, 1, 0);
+		if (angle.z != 0) 		glRotatef(angle.z, 0, 0, 1);
+		if (origin.x != 1 || origin.y != 1 || origin.z != 1)	glTranslatef(origin.x, origin.y, origin.z);
+		if (scale.x != 1 || scale.y != 1 || scale.z != 1)		glScalef(scale.x, scale.y, scale.z);
 		
 		GLCache.setMatrix(GL_TEXTURE);
 		glPushMatrix();
@@ -275,10 +239,10 @@ public class Transform2D implements Transformation
 	@Override
 	public void popTransformation()
 	{
-		GLCache.setMatrix(GL_MODELVIEW);
+		GLCache.setMatrix(GL_TEXTURE);
 		glPopMatrix();
 		
-		GLCache.setMatrix(GL_TEXTURE);
+		GLCache.setMatrix(GL_MODELVIEW);
 		glPopMatrix();
 	}
 }

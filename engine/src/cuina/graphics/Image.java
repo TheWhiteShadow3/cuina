@@ -14,6 +14,8 @@ import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 import static org.lwjgl.opengl.GL13.glMultiTexCoord2f;
 
+import cuina.graphics.transform.Transform2D;
+
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;

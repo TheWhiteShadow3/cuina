@@ -23,8 +23,7 @@ public class RemoteDriver implements Driver
 	@Override
 	public void update()
 	{
-		// TODO Auto-generated method stub
-
+		session.update();
 	}
 
 	@Override

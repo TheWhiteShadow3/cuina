@@ -1,5 +1,9 @@
 package cuina.network;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
 public class StreamUtil
 {
 	public static int byteArrayToInt(byte[] buffer)
@@ -32,6 +36,16 @@ public class StreamUtil
 		return buffer;
 	}
 	
+	private static final byte[] LENGTH_BUFFER = new byte[4];
+	
+	public static Message read(InputStream in) throws IOException
+	{
+		int flag = in.read();
+		int lenght = StreamUtil.byteArrayToInt(LENGTH_BUFFER);
+		byte[] buffer = new byte[lenght];
+		in.read(buffer);
+		return new Message(flag, buffer);
+	}
 	
 	public static String readString(byte[] buffer, int start)
 	{
@@ -41,4 +55,10 @@ public class StreamUtil
 		if (pos == start || pos == buffer.length) return null;
 		return new String(buffer, start, pos - start);
 	}
+	
+//	public static Map<String, String> readData(byte[] buffer)
+//	{
+//		String data = new String(buffer);
+//		data.split(regex)
+//	}
 }
