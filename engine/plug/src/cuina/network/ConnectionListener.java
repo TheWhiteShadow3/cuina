@@ -17,5 +17,5 @@ public interface ConnectionListener
 	
 	public void roomJoined(Chatroom room);
 	
-	public void roomLeaved(Chatroom room);
+	public void roomLeaved(Chatroom room, boolean forced);
 }

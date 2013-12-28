@@ -1,40 +1,31 @@
-package cuina.network;
+package cuina.network.test;
 
+import cuina.network.Chatroom;
+import cuina.network.ChatroomListener;
+import cuina.network.Client;
+import cuina.network.Connection;
+import cuina.network.ConnectionListener;
+import cuina.network.NetworkSession;
 import cuina.network.server.Server;
 
 import java.io.IOException;
 
 
-public class NetworkTester
+public class TestClient
 {
-	private static Server server;
-
-	/**
-	 * @param args
-	 * @throws Exception 
-	 */
 	public static void main(String[] args) throws Exception
 	{
-		server = new Server();
-		server.init();
-		
-		Thread.sleep(5);
-		
 		int port = Server.PORT;
 		Connection con = new Connection("localhost", port, "TWS", null);
 		con.addConnectionListener(new MyConnectionListener());
-		System.out.println("[NetworkTester] Trete Chatroom bei.");
+		System.out.println("[TestClient] Trete Chatroom bei.");
 		con.joinChatroom("blub", null);
-		Thread.sleep(100);
+		// 10 Sekunden um zu reagieren bis Timeout erfolgt (Serverstatus prüfen, Zweiten Klienten starten, etc.)
+		Thread.sleep(10000);
 		
 		con.close();
 		
 		// Warte auf erfolgreiches Verbindungsende vom Klienten.
-		Thread.sleep(100);
-		
-		server.dispose();
-		
-		// Damit Deamon-Threads Zeit haben Fehlermeldungen zu schreiben.
 		Thread.sleep(100);
 	}
 	
@@ -79,12 +70,12 @@ public class NetworkTester
 				{}
 
 				@Override
-				public void memberLeaved(Chatroom room, Client client)
+				public void memberLeaved(Chatroom room, Client client, boolean forced)
 				{}
 			});
 			try
 			{
-				System.out.println("[NetworkTester] Sende Nachicht");
+				System.out.println("[TestClient] Sende Nachicht");
 				room.send("Eine Nachicht.");
 			}
 			catch (IOException e)
@@ -94,7 +85,7 @@ public class NetworkTester
 		}
 
 		@Override
-		public void roomLeaved(Chatroom room)
+		public void roomLeaved(Chatroom room, boolean forced)
 		{
 			if (this.room == room) this.room = null;
 		}

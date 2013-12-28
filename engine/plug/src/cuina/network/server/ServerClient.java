@@ -41,7 +41,7 @@ public class ServerClient implements ChannelListener
 		boolean acepted = (csp != null) ? csp.newClient(this, name, password) : true;
 		if (acepted)
 		{
-			channel.send(Channel.FLAG_ACK, "login", Integer.toString(getID()));
+			channel.send(Channel.FLAG_INFO, "login", Integer.toString(getID()));
 			channel.addChannelListener(this);
 		}
 		else
@@ -62,7 +62,7 @@ public class ServerClient implements ChannelListener
 	@Override
 	public void messageRecieved(Message msg)
 	{
-//		System.out.println("[ServerClient.messageRecieved] " + msg);
+		System.out.println("[ServerClient.messageRecieved] " + msg);
 		switch(msg.flag)
 		{
 			case Channel.FLAG_EOF:
@@ -127,10 +127,11 @@ public class ServerClient implements ChannelListener
 				if (room == null)
 					server.createChatroom(this, arguments[0]);
 				else
-					room.join(this, arguments[1]);
+					room.join(this, arguments[0]);
 				break;
 			
 			case "lock": room.lock(this, arguments[1]); break;
+			case "kick": room.kick(this, arguments[1]); break;
 			case "leave": room.leave(this); break;
 			case "msg": room.send(getID(), arguments[1]); break;
 			default: System.out.println("[ServerClient] Unknown Command room." + cmd);
@@ -141,5 +142,11 @@ public class ServerClient implements ChannelListener
 	{
 		channel.close();
 		server.disconnect(this);
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Client (" + getID() + ") " + name;
 	}
 }

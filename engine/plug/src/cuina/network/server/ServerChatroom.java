@@ -42,24 +42,15 @@ public class ServerChatroom
 		return members.get(0);
 	}
 	
-	void addClient(ServerClient client)
-	{
-		members.add(client);
-	}
-	
-	void removeClient(ServerClient client)
-	{
-		members.remove(client);
-	}
-	
 	public boolean join(ServerClient client, String password) throws IOException
 	{
 		if (this.password != null && this.password != password) return false;
 		
+		sendBroadcast("room.joined", name, Integer.toString(client.getID()), client.getName());
 		members.add(client);
 		String[] args = new String[members.size()*2+1];
 		args[0] = name;
-		for (int i = 0; i < args.length; i++)
+		for (int i = 0; i < members.size(); i++)
 		{
 			ServerClient c = members.get(i);
 			args[i*2+1] = Integer.toString(c.getID());
@@ -70,33 +61,31 @@ public class ServerChatroom
 		return true;
 	}
 	
-	public boolean kick(ServerClient client)
+	public boolean kick(ServerClient from, String targetID) throws IOException
 	{
-		if (client != getOwner()) return false;
+		if (from != getOwner()) return false;
 		
+		sendBroadcast("room.kicked", name, targetID);
+		members.remove(from);
+		
+		if (members.size() == 0)
+			server.destroyChatroom(name);
+
 		return true;
 	}
 	
 	public void leave(ServerClient client)
 	{
+		sendBroadcast("room.leaved", name, Integer.toString(client.getID()));
 		members.remove(client);
+		
 		if (members.size() == 0)
-		{
 			server.destroyChatroom(name);
-		}
 	}
 	
 	public void send(int fromID, String text) throws IOException
 	{
-		for(ServerClient client : members)
-		{
-			sendMsg(client, fromID, text);
-		}
-	}
-	
-	private void sendMsg(ServerClient client, int fromID, String text) throws IOException
-	{
-		client.getChannel().send(Channel.FLAG_CMD, "room.msg", name, Integer.toString(fromID), text);
+		sendBroadcast("room.msg", name, Integer.toString(fromID), text);
 	}
 
 	public boolean lock(ServerClient client, String password) throws IOException
@@ -104,10 +93,22 @@ public class ServerChatroom
 		if (client != getOwner()) return false;
 		
 		this.password = password;
-		for(ServerClient c : members)
-		{
-			c.getChannel().send(Channel.FLAG_CMD, "room.lock", name, password);
-		}
+		sendBroadcast("room.locked", name, password);
 		return true;
+	}
+	
+	private void sendBroadcast(String cmd, String... args)
+	{
+		for(ServerClient c : members) try
+		{
+			c.getChannel().send(Channel.FLAG_INFO, cmd, args);
+		}
+		catch(IOException e) {}
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Room '" + name + '\'';
 	}
 }

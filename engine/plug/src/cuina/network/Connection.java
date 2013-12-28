@@ -82,10 +82,10 @@ public class Connection implements ChannelListener
 			l.roomJoined(room);
 	}
 	
-	void fireRoomLeaved(Chatroom room)
+	void fireRoomLeaved(Chatroom room, boolean forced)
 	{
 		for(ConnectionListener l : listeners)
-			l.roomLeaved(room);
+			l.roomLeaved(room, forced);
 	}
 
 	public void update()
@@ -110,7 +110,7 @@ public class Connection implements ChannelListener
 	{
 		Message msg = channel.read();
 		msg.checkException();
-		if (msg.flag != Channel.FLAG_ACK)
+		if (msg.flag != Channel.FLAG_INFO)
 			throw new NetworkException(NetworkException.UNEXPECTET_RESPONSE);
 		
 		return msg;
@@ -133,13 +133,15 @@ public class Connection implements ChannelListener
 	@Override
 	public void messageRecieved(Message msg)
 	{
-//		System.out.println("[Connection.messageRecieved] " + msg);
+		System.out.println("[Connection.messageRecieved] " + msg);
 		switch(msg.flag)
 		{
 			case Channel.FLAG_CLOSE:
 			case Channel.FLAG_EOF: close(); break;
-			case Channel.FLAG_CMD: handleAck(msg); break;
-			case Channel.FLAG_ACK: handleAck(msg); break;
+			
+//			case Channel.FLAG_CMD:
+			case Channel.FLAG_ACK:
+			case Channel.FLAG_INFO: handleAck(msg); break;
 		}
 	}
 
@@ -162,19 +164,8 @@ public class Connection implements ChannelListener
 			}
 			break;
 			
-			case "room.leaved":
-			{
-				Chatroom room = rooms.get(msg.arguments[0]);
-				if (room != null)
-				{
-					int id = Integer.parseInt(msg.arguments[1]);
-					if (id == channel.getID())
-						fireRoomLeaved(room);
-					else
-						room.fireMemberLeaved(id);
-				}
-			}
-			break;
+			case "room.leaved": leavingEvent(msg, false); break;
+			case "room.kicked": leavingEvent(msg, true); break;
 			
 			case "room.msg":
 			{
@@ -183,5 +174,17 @@ public class Connection implements ChannelListener
 					room.fireMessageRecieved(Integer.valueOf(msg.arguments[1]), msg.arguments[2]);
 			}
 		}
+	}
+	
+	private void leavingEvent(Message msg, boolean forced)
+	{
+		Chatroom room = rooms.get(msg.arguments[0]);
+		if (room == null) return;
+		
+		int id = Integer.parseInt(msg.arguments[1]);
+		if (id == channel.getID())
+			fireRoomLeaved(room, true);
+		else
+			room.fireMemberLeaved(id, true);
 	}
 }

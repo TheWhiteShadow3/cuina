@@ -79,14 +79,14 @@ public class Chatroom implements NamedItem
 		}
 	}
 	
-	void fireMemberLeaved(int id)
+	void fireMemberLeaved(int id, boolean forced)
 	{
 		Client client = members.remove(id);
 		
 		if (client == null || listeners.size() == 0) return;
 		for (ChatroomListener l : listeners)
 		{
-			l.memberLeaved(this, client);
+			l.memberLeaved(this, client, forced);
 		}
 	}
 	

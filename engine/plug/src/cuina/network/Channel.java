@@ -13,10 +13,12 @@ public class Channel
 	public static final int FLAG_EOF		= -1;
 	/** Gibt an, dass die Nachicht leer ist. */
 	public static final int FLAG_EMPTY		= 0;
-	/** Gibt an, dass die Nachicht eine Bestätigung zu einer vorhergehenden Nachicht ist. */
+	/** Gibt an, dass die Nachicht eine Rückmeldung ist. */
 	public static final int FLAG_ACK		= 1;
 	/** Gibt an, dass die Verbindung beendet werden soll. */
-	public static final int FLAG_CLOSE		= 2;
+	public static final int FLAG_INFO		= 2;
+	/** Gibt an, dass die Verbindung beendet werden soll. */
+	public static final int FLAG_CLOSE		= 3;
 	public static final int FLAG_CMD		= 4;
 	public static final int FLAG_EXCEPTION	= 5;
 	public static final int FLAG_BYTES		= 6;

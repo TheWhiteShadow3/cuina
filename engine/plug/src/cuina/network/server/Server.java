@@ -7,9 +7,10 @@ import cuina.plugin.LifeCycleAdapter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
@@ -52,22 +53,44 @@ public class Server extends LifeCycleAdapter
 	{
 		listener.start();
 		identifier.start();
+		System.out.println("[Server] started on port " + PORT);
+	}
+
+	public boolean isRunning()
+	{
+		return !(listener.stop || identifier.stop);
 	}
 	
 	public ServerClient getClient(int id)
 	{
 		return clients.get(id);
 	}
-	
 
-	public Map<Integer, ServerClient> getClients()
+	public ConnectionSecurityPolicy getSecurityPolicy()
 	{
-		return Collections.unmodifiableMap(clients);
+		return null;
+	}
+
+	public List<ServerClient> getClients()
+	{
+		return new ArrayList(clients.values());
+	}
+	
+	public List<ServerChatroom> getChatrooms()
+	{
+		return new ArrayList(rooms.values());
+	}
+	
+	public List<ServerSession> getSessions()
+	{
+		return new ArrayList(sessions.values());
 	}
 
 	boolean disconnect(ServerClient client)
 	{
 		System.out.println("[Server] Disconnect von " + client.getName());
+		for(ServerChatroom room : rooms.values()) room.leave(client);
+		for(ServerSession session : sessions.values()) session.leave(client);
 		return clients.remove(client.getID()) != null;
 	}
 
@@ -131,6 +154,7 @@ public class Server extends LifeCycleAdapter
 		@Override
 		public void run()
 		{
+			stop = false;
 			while(!stop)
 			{
 				try
@@ -155,7 +179,12 @@ public class Server extends LifeCycleAdapter
 		
 		private void addPendingClient(Socket socket) throws IOException
 		{
-			int id = RANDOM.nextInt();
+			int id;
+			do
+			{
+				id = RANDOM.nextInt();
+			}
+			while(server.clients.get(id) != null);
 			ServerClient client = new ServerClient(server, socket, id);
 //			OutputStream out = client.getOutputStream();
 //			out.write(IDENTIFIER_SEQUENCE);
@@ -185,6 +214,7 @@ public class Server extends LifeCycleAdapter
 		@Override
 		public void run()
 		{
+			stop = false;
 			while(!stop)
 			{
 				try
@@ -240,10 +270,5 @@ public class Server extends LifeCycleAdapter
 //			}
 //			return false;
 //		}
-	}
-
-	public ConnectionSecurityPolicy getSecurityPolicy()
-	{
-		return null;
 	}
 }
