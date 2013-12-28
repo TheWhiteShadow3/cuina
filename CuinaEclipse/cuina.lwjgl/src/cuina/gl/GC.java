@@ -14,7 +14,7 @@ public class GC
 {
 	private boolean useTextures;
 	private Object owner;
-	private Color color = new Color(Color.WHITE);
+	private Color color = new Color(ReadableColor.WHITE);
 	private Rectangle clip;
 	
 	public GC(Object owner, Rectangle clip)

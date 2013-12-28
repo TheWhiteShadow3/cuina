@@ -118,8 +118,8 @@ public class CommandLibrary
         	String type = conf.getAttribute("type");
         	String name = conf.getAttribute("name");
         	
-        	Class clazz = engineClassloader.loadClass(conf.getAttribute("class"));
-        	ContextTarget target = new ContextTarget(type, name, clazz);
+//        	Class clazz = engineClassloader.loadClass();
+        	ContextTarget target = new ContextTarget(type, name, conf.getAttribute("class"));
         	contexts.put(id, target);
 		}
     	catch (Exception e)
@@ -162,8 +162,8 @@ public class CommandLibrary
 			argNames[i] = childs[i].getAttribute("label");
 		}
 		boolean isStatic = Boolean.parseBoolean(conf.getAttribute("static"));
-		category.addFunktion(new FunctionEntry(
-				context.getTarget(isStatic), context.clazz, name, label, argTypes, argNames));
+		addFunction(new FunctionEntry(category, context.getTarget(isStatic),
+				context.className, name, label, argTypes, argNames));
 	}
 	
 	private Class getClass(String className) throws ClassNotFoundException
@@ -179,6 +179,7 @@ public class CommandLibrary
 			case "long": return long.class;
 			case "double": return double.class;
 			case "void": return void.class;
+			case "string": return String.class;
 		}
 		return engineClassloader.loadClass(className);
 	}
@@ -220,20 +221,6 @@ public class CommandLibrary
 		return new Command(function.target, function.name, 0, new Object[function.argTypes.length]);
 	}
 	
-	public Category findCategory(FunctionEntry function)
-	{
-		if (function == null) throw new NullPointerException();
-		
-		for (Category category : categories.values())
-		{
-			for (FunctionEntry f : category.getFunctions())
-			{
-				if (f == function) return category;
-			}
-		}
-		return null;
-	}
-	
 	public FunctionEntry getFunction(Command cmd)
 	{
 		String key = cmd.target + '.' + cmd.name;
@@ -243,14 +230,20 @@ public class CommandLibrary
 	private void addInternalFunction(String name, Class<?> paramTypes, String paramNames)
 	{
 		Category category = categories.get(null);
-		category.addFunktion(new FunctionEntry(
-				null, null, name, name, new Class[] {paramTypes}, new String[] {paramNames}));
+		addFunction(new FunctionEntry(
+				category, INTERNAL_CONTEXT, null, name, name, new Class[] {paramTypes}, new String[] {paramNames}));
 	}
 	
 	private void addInternalFunction(String name)
 	{
 		Category category = categories.get(null);
-		category.addFunktion(new FunctionEntry(null, null, name, name, new Class[0], new String[0]));
+		addFunction(new FunctionEntry(category, INTERNAL_CONTEXT, null, name, name, new Class[0], new String[0]));
+	}
+	
+	private void addFunction(FunctionEntry function)
+	{
+		functions.put(function.target + '.' + function.name, function);
+		function.category.addFunktion(function);
 	}
 	
 	private void loadInternalFunctions()

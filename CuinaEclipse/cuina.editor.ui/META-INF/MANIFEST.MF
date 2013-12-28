@@ -16,4 +16,5 @@ Require-Bundle: cuina.editor.core,
  cuina.database,
  cuina.database.ui
 Export-Package: cuina.editor.ui,
+ cuina.editor.ui.prefs,
  cuina.editor.ui.selection

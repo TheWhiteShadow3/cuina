@@ -22,6 +22,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PartInitException;
 
+@Deprecated
 public class MapEditorDelegationPage implements DataEditorPage<MapInfo>
 {
 	private TerrainEditor editor;

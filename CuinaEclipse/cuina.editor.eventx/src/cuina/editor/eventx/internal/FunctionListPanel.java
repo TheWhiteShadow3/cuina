@@ -15,9 +15,9 @@ public class FunctionListPanel
 {
 	private CommandLibrary library;
 	private TreeViewer viewer;
-	private CommandDialogContext context;
+	private CommandEditorContext context;
 	
-	public FunctionListPanel(CuinaProject project, CommandDialogContext context)
+	public FunctionListPanel(CuinaProject project, CommandEditorContext context)
 	{
 		this.library = project.getService(CommandLibrary.class);
 		this.context = context;
@@ -37,7 +37,7 @@ public class FunctionListPanel
 		argsColumn.setText("Argumente");
 		argsColumn.setWidth(200);
 		
-		viewer.setContentProvider(new FunctionContentProvider(library));
+		viewer.setContentProvider(new FunctionContentProvider());
 		viewer.setLabelProvider(new FunctionLabelProvider());
 		viewer.setInput(library);
 		
@@ -60,6 +60,7 @@ public class FunctionListPanel
 				{
 					
 					System.out.println("Command erstellt: " + dialog.getCommand());
+					context.addCommand(dialog.getCommand());
 				}
 			}
 		}

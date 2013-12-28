@@ -1,4 +1,4 @@
-package cuina.editor.script.internal.prefs;
+package cuina.editor.ui.prefs;
 
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.FieldEditor;

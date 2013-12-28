@@ -56,7 +56,9 @@ public class BackgroundLayer implements TerrainLayer
 		
 		try
 		{
-			backgroundImage = editor.loadImage(editor.getGLCanvas(), tileset.getBackgroundName());
+			String bgNanme = tileset.getBackgroundName();
+			if (bgNanme != null && bgNanme.length() > 0)
+				backgroundImage = editor.loadImage(editor.getGLCanvas(), bgNanme);
 		}
 		catch (ResourceException e)
 		{
@@ -106,12 +108,14 @@ public class BackgroundLayer implements TerrainLayer
 		gc.fillRectangle(0, 0, rect.width, rect.height);
 		// Zeichne Raster
 		int bgTileSize = tileSize / 2;
+		int minX = Math.max(clip.x / bgTileSize, 0);
+		int minY = Math.max(clip.y / bgTileSize, 0);
 		int maxX = Math.min((clip.x + clip.width) / bgTileSize + 1, rect.width / bgTileSize);
 		int maxY = Math.min((clip.y + clip.height) / bgTileSize + 1, rect.height / bgTileSize);
 		gc.setColor(BACK_COLOR2);
-		for (int x = clip.x / bgTileSize; x < maxX; x++)
+		for (int x = minX; x < maxX; x++)
 		{
-			for (int y = clip.y / bgTileSize; y < maxY; y++)
+			for (int y = minY; y < maxY; y++)
 			{
 				if ((x + y) % 2 == 0)
 				{
@@ -124,7 +128,7 @@ public class BackgroundLayer implements TerrainLayer
 	@Override
 	public void dispose()
 	{
-		backgroundImage.dispose();
+		if (backgroundImage != null) backgroundImage.dispose();
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package cuina.editor.map.internal.views;
 
 import cuina.database.DatabaseInput;
-import cuina.database.ui.IDatabaseEditor;
 import cuina.editor.core.CuinaCore;
 import cuina.editor.core.EditorContextChangeListener;
 import cuina.editor.map.ITerrainEditor;

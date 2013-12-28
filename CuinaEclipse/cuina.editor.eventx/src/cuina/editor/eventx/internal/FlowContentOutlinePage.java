@@ -20,8 +20,8 @@ public class FlowContentOutlinePage extends ContentOutlinePage
 	{
 		super.createControl(parent);
 		TreeViewer viewer = getTreeViewer();
-		viewer.setContentProvider(new FlowContentProvider());
-		viewer.setLabelProvider(new FlowLabelProvider());
+		viewer.setContentProvider(new FlowContentProvider(null));
+		viewer.setLabelProvider(new FlowLabelProvider(null));
 		viewer.addSelectionChangedListener(this);
 		viewer.setInput(list);
 	}

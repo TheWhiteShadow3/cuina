@@ -71,7 +71,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDialogContext, ISelectionProvider
 {
@@ -919,10 +918,5 @@ public class ScriptEditor extends AbstractDatabaseEditorPart implements ScriptDi
 		{
 			return scriptLabelProvider.getBackground(element);
 		}
-	}
-	
-	private class Myp extends AbstractDecoratedTextEditor
-	{
-		
 	}
 }

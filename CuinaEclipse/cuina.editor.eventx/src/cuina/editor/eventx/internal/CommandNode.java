@@ -12,6 +12,7 @@ public class CommandNode
 	private CommandList list;
 	private int index;
 	private int type;
+	private String colorKey;
 	
 	/**
 	 * Erstellt einen neuen Command-Knoten.
@@ -30,10 +31,13 @@ public class CommandNode
 	 * @param index Index des Knoten, oder des zugehörigen Knotens.
 	 * @param type Typ, des Knotens.
 	 */
-	public CommandNode(CommandList list, int index, int type)
+	public CommandNode(CommandList list, int index, String colorKey, int type)
 	{
+		if (list == null) throw new NullPointerException("list is null.");
+		if (colorKey == null) throw new NullPointerException("colorKey is null.");
 		if (index < 0 || index >= list.commands.length) throw new IndexOutOfBoundsException();
 		
+		this.colorKey = colorKey;
 		this.list = list;
 		this.index = index;
 		this.type = type;
@@ -89,6 +93,11 @@ public class CommandNode
 		if (index < 0 || index >= list.commands.length) return null;
 		
 		return list.commands[index];
+	}
+
+	public String getColorKey()
+	{
+		return colorKey;
 	}
 	
 //	private List<CommandNode> getListChildren(int indent)

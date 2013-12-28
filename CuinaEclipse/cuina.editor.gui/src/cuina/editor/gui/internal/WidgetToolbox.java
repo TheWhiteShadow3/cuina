@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+@Deprecated
 public class WidgetToolbox implements Toolbox
 {
 	private DataEditorPage editorPage;

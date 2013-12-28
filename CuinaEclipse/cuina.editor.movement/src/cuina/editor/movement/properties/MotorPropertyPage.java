@@ -21,7 +21,7 @@ public class MotorPropertyPage extends ObjectPropertyPage
     private Spinner directionSpinner;
     private Spinner frictionSpinner;
 	private Combo driverCombo;
-	private boolean update;
+//	private boolean update;
 	
 	@Override
 	protected Control createContents(Composite parent)
@@ -89,7 +89,7 @@ public class MotorPropertyPage extends ObjectPropertyPage
     
 	private void setValues()
 	{
-		update = true;
+//		update = true;
 		MotorData motor = (MotorData) getElement().getAdapter(MotorData.class);
 		if (motor == null)
 		{
@@ -102,7 +102,7 @@ public class MotorPropertyPage extends ObjectPropertyPage
 		frictionSpinner.setSelection((int) (motor.friction * 1000));
 		driverCombo.setText(motor.driver);
 		
-		update = false;
+//		update = false;
 	}
     
     //XXX: Debug-Methode. Kann später vollständig raus.

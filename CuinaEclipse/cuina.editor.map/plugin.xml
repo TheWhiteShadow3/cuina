@@ -63,10 +63,14 @@
     </category>
     <wizard
           category="cuina.editor"
-          class="cuina.editor.map.internal.MapWizard"
+          class="cuina.editor.map.internal.wizard.MapWizard"
+          hasPages="true"
           icon="icons/map.png"
           id="cuina.editor.map.new.map"
           name="Cuina Map">
+       <selection
+             class="org.eclipse.core.resources.IResource">
+       </selection>
     </wizard>
  </extension>
  <extension

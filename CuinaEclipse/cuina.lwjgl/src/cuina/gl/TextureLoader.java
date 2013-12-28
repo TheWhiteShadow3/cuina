@@ -107,8 +107,9 @@ public class TextureLoader
 	/**
 	 * Load a texture into OpenGL from a image reference on disk.
 	 * 
-	 * @param resourceName
+	 * @param context
 	 *            The location of the resource to load
+	 * @param bufferedImage Das Image
 	 * @param target
 	 *            The GL target to load the texture against
 	 * @return The loaded texture.

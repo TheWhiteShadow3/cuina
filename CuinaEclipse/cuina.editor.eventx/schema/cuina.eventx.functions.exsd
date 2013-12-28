@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <choice>
-            <element ref="function"/>
+            <element ref="function" minOccurs="1" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -76,7 +76,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="static" type="boolean" use="default" value="false">
+         <attribute name="static" type="boolean" use="required">
             <annotation>
                <documentation>
                   Gibt an, ob die Methode statisch ist oder nicht. Der Default-Wert ist false.
@@ -100,6 +100,16 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="cuina.eventx.contexts/context/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -176,5 +186,6 @@ Der Interpreter wird versuchen den Wert als Ausdruck aufzulösen.
          [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
+
 
 </schema>

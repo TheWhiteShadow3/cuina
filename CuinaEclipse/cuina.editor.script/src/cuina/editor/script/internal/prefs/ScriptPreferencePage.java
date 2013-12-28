@@ -7,6 +7,7 @@ import cuina.editor.script.ruby.ast.CallNode;
 import cuina.editor.script.ruby.ast.CaseNode;
 import cuina.editor.script.ruby.ast.IfNode;
 import cuina.editor.script.ruby.ast.WhileNode;
+import cuina.editor.ui.prefs.ColorListEditor;
 
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;

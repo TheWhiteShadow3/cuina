@@ -8,12 +8,20 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import cuina.editor.eventx.internal.prefs.EventPreferences;
 import cuina.eventx.Command;
 import cuina.eventx.CommandList;
 
 public class FlowContentProvider implements IStructuredContentProvider
 {
 	private static final Object[] EMPTY = new Object[0];
+	
+	private CommandLibrary library;
+	
+	public FlowContentProvider(CommandLibrary library)
+	{
+		this.library = library;
+	}
 	
 	@Override
 	public void dispose() {}
@@ -41,8 +49,10 @@ public class FlowContentProvider implements IStructuredContentProvider
 		int indent = 0;
 		for (int i = 0; i < cmdList.commands.length; i++)
 		{
-			CommandNode node = new CommandNode(cmdList, i, CommandNode.COMMAND);
-			Command cmd = node.getCommand();
+			Command cmd = cmdList.commands[i];
+			String colorKey = getColor(cmd);
+			CommandNode node = new CommandNode(cmdList, i, colorKey, CommandNode.COMMAND);
+			
 			list.add(node);
 			
 			if (cmd.indent > indent)
@@ -53,13 +63,29 @@ public class FlowContentProvider implements IStructuredContentProvider
 			else if (cmd.indent < indent)
 			{
 				CommandNode parent = stack.pop();
-				list.add(new CommandNode(cmdList, i, CommandNode.MARK));
-				list.add(new CommandNode(cmdList, parent.getIndex(), CommandNode.BLOCK_END));
+				list.add(new CommandNode(cmdList, i, colorKey, CommandNode.MARK));
+				list.add(new CommandNode(cmdList, parent.getIndex(), colorKey, CommandNode.BLOCK_END));
 				indent = cmd.indent;
 			}
 		}
-		list.add(new CommandNode(cmdList, cmdList.commands.length-1, CommandNode.MARK));
+		list.add(new CommandNode(cmdList, cmdList.commands.length-1,
+				EventPreferences.CMDLINE_COLOR_DEFAULT, CommandNode.MARK));
 		
 		return list.toArray();
+	}
+	
+	private String getColor(Command cmd)
+	{
+		FunctionEntry func = library.getFunction(cmd);
+		if (func != null)
+		{
+			switch(func.category.name)
+			{
+				case "Demo": return EventPreferences.CMDLINE_COLOR_FUNCTION;
+				case "Message": return EventPreferences.CMDLINE_COLOR_FUNCTION;
+				case "Default": return EventPreferences.CMDLINE_COLOR_CONTROL;
+			}
+		}
+		return EventPreferences.CMDLINE_COLOR_DEFAULT;
 	}
 }

@@ -288,14 +288,14 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		return new ObjectTemplate(data, data.name);
 	}
 	
-	private ObjectData getObject(int id)
-	{
-		Object obj = map.objects.get(id);
-		if (obj instanceof ObjectData)
-			return (ObjectData) obj;
-		else
-			return null;
-	}
+//	private ObjectData getObject(int id)
+//	{
+//		Object obj = map.objects.get(id);
+//		if (obj instanceof ObjectData)
+//			return (ObjectData) obj;
+//		else
+//			return null;
+//	}
 	
 	private ObjectData getObject(int x, int y)
 	{

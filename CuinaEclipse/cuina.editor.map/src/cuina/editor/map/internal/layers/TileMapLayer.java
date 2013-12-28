@@ -83,7 +83,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	private int drawMode = DRAWMODE_NONE;
 	private Rectangle tileSelection;
 	private int currentLayer;
-	private TileSelection[] copyBuffer;	// Für Kopier-Operationen auf der Karte.
+//	private TileSelection[] copyBuffer;	// Für Kopier-Operationen auf der Karte.
 	//TODO: Könnte mit dem sourceLayer verbunden werden.
 	
 	private TileSelection sourceLayer;	// Für die QuellDaten.

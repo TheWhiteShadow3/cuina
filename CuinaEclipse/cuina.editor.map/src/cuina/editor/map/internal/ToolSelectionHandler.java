@@ -7,6 +7,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.RadioState;
 
+@Deprecated
 public class ToolSelectionHandler extends AbstractHandler
 {
     @Override

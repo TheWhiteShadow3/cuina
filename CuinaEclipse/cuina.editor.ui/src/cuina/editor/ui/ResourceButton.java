@@ -5,7 +5,7 @@ import cuina.resource.ResourceException;
 import cuina.resource.ResourceManager.Resource;
 import cuina.resource.ResourceProvider;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -67,7 +67,7 @@ public class ResourceButton extends Composite implements Listener
 		Resource res = getResource();
 		
 		ResourceDialog rd = new ResourceDialog(ev.widget.getDisplay().getActiveShell(), project, type, res);
-		if (rd.open() == Dialog.OK)
+		if (rd.open() == Window.OK)
 		{
 			if (rd.getResource() != null)
 			{
