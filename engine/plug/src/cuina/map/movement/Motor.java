@@ -1,6 +1,6 @@
 package cuina.map.movement;
 
-import cuina.object.BaseObject;
+
 import cuina.plugin.LifeCycleAdapter;
 import cuina.world.CuinaMask;
 import cuina.world.CuinaMotor;
@@ -162,7 +162,7 @@ public class Motor extends LifeCycleAdapter implements CuinaMotor
         return moveDir(direction, getSpeed(), turn);
     }
     
-    public float turn(BaseObject obj, float value)
+    public float turn(CuinaObject obj, float value)
     {
         if (obj == null) return -1;
         

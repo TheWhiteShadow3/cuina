@@ -63,7 +63,6 @@ public class Database
 	
 	/**
 	 * Gibt die XStream-Instanz zurück, die zum laden von Datenbanken benutzt wird.
-	 * @return
 	 */
 	public static XStream getXMLSerilizer()
 	{

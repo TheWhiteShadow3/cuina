@@ -1,7 +1,5 @@
 package cuina.graphics;
 
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 
@@ -9,12 +7,8 @@ import cuina.util.LoadingException;
 
 import java.nio.FloatBuffer;
 
-import jnr.ffi.util.BufferUtil;
-
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
 
 public class Mesh
 {

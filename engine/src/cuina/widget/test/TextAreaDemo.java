@@ -7,10 +7,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-
 import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.Rect;

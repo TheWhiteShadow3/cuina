@@ -274,10 +274,7 @@ public final class ResourceManager
 						ress.extern = i > 0;
 						addToCache(key, fileName, ress);
 					}
-					if (ress != null)
-					{
-						list.add(ress);
-					}
+					list.add(ress);
 				}
 			}
 			catch (IOException e)

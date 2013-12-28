@@ -1,7 +1,6 @@
 package cuina.map.movement;
 
 import cuina.Logger;
-import cuina.object.BaseObject;
 import cuina.world.CuinaMask;
 import cuina.world.CuinaObject;
 import cuina.world.CuinaWorld;
@@ -215,7 +214,7 @@ public class CollisionSystem implements Serializable
 		}
 	}
 	
-	public BaseObject[] findObjects(CollisionArea a)
+	public CuinaObject[] findObjects(CollisionArea a)
 	{
 		if (a  == null) return null;
 		HashSet<CuinaObject> founds = new HashSet<CuinaObject>();
@@ -242,7 +241,7 @@ public class CollisionSystem implements Serializable
 				Logger.log(CollisionSystem.class, Logger.WARNING, "Fehlerhaftes Ergebnis von CollisionSystem.getAreas()");
 			}
 		}
-		return founds.toArray(new BaseObject[founds.size()]);
+		return founds.toArray(new CuinaObject[founds.size()]);
 	}
 	
 	public int areaCount()
@@ -309,8 +308,8 @@ public class CollisionSystem implements Serializable
 		Rectangle rect = new Rectangle(x, y, width, height);
 		for (CollisionArea area : getAreas(rect))
 		{
-			BaseObject[] objects = findObjects(area);
-			for (BaseObject obj : objects)
+			CuinaObject[] objects = findObjects(area);
+			for (CuinaObject obj : objects)
 			{
 				CuinaMask box = getBoxFrom(obj);
 				if (box == null) continue;
