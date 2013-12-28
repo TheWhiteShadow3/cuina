@@ -1,11 +1,13 @@
-package cuina.network;
+package cuina.network.server;
 
+import cuina.network.ConnectionSecurityPolicy;
 import cuina.plugin.ForGlobal;
 import cuina.plugin.LifeCycleAdapter;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,8 +18,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @ForGlobal(name="Server")
 public class Server extends LifeCycleAdapter
 {
-	public static int PORT = 1234;
-	private static final byte[] IDENTIFIER_SEQUENCE = Server.class.getName().getBytes();
+	public static final int PORT = 1234;
+//	static
+//	{
+//		int port = 1234;
+//		try
+//		{
+//			port = Integer.parseInt(Game.getIni().get("Server", "Port"));
+//		}
+//		catch(NumberFormatException e) {}
+//		PORT = port;
+//	}
+	
+//	private static final byte[] IDENTIFIER_SEQUENCE = Server.class.getName().getBytes();
 	
 	private static final Random RANDOM = new Random();
 	
@@ -25,7 +38,8 @@ public class Server extends LifeCycleAdapter
 	private ConnectionIdentifier identifier;
 	
 	private final Map<Integer, ServerClient> clients = new HashMap<Integer, ServerClient>();
-	private final Map<String, NetworkSession> sessions = new HashMap<String, NetworkSession>();
+	private final Map<String, ServerChatroom> rooms = new HashMap<String, ServerChatroom>();
+	private final Map<String, ServerSession> sessions = new HashMap<String, ServerSession>();
 
 	public Server()
 	{
@@ -39,9 +53,21 @@ public class Server extends LifeCycleAdapter
 		listener.start();
 		identifier.start();
 	}
-
-	public boolean disconnect(ServerClient client)
+	
+	public ServerClient getClient(int id)
 	{
+		return clients.get(id);
+	}
+	
+
+	public Map<Integer, ServerClient> getClients()
+	{
+		return Collections.unmodifiableMap(clients);
+	}
+
+	boolean disconnect(ServerClient client)
+	{
+		System.out.println("[Server] Disconnect von " + client.getName());
 		return clients.remove(client.getID()) != null;
 	}
 
@@ -54,10 +80,30 @@ public class Server extends LifeCycleAdapter
 		listener.interrupt();
 		System.out.println("[Server] closed");
 	}
-
-	public NetworkSession createNetworkSession(String name, int port, int memberCount)
+	
+	public ServerChatroom getChatroom(String name)
 	{
-		NetworkSession session = new NetworkSession(this, name, memberCount);
+		return rooms.get(name);
+	}
+	
+	public boolean createChatroom(ServerClient client, String name) throws IOException
+	{
+		ServerChatroom room = rooms.get(name);
+		if (room != null) return false;
+		
+		room = new ServerChatroom(this, client, name);
+		rooms.put(name, room);
+		return true;
+	}
+	
+	public boolean destroyChatroom(String name)
+	{
+		return rooms.remove(name) != null;
+	}
+
+	public ServerSession createNetworkSession(ServerClient owner, String name, int port, int memberCount)
+	{
+		ServerSession session = new ServerSession(this, name, memberCount);
 		sessions.put(name, session);
 		return session;
 	}
@@ -149,7 +195,7 @@ public class Server extends LifeCycleAdapter
 					while(itr.hasNext())
 					{
 						ServerClient client = itr.next();
-						if (client.identify(null))
+						if (client.identify())
 						{
 							addClient(client);
 							itr.remove();
@@ -194,5 +240,10 @@ public class Server extends LifeCycleAdapter
 //			}
 //			return false;
 //		}
+	}
+
+	public ConnectionSecurityPolicy getSecurityPolicy()
+	{
+		return null;
 	}
 }

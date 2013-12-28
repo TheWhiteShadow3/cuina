@@ -12,6 +12,12 @@ public class Client implements NamedItem
 		this.id = id;
 	}
 
+	public Client(int id, String name)
+	{
+		this(id);
+		this.name = name;
+	}
+
 	/**
 	 * @return Der Name.
 	 */
@@ -27,5 +33,29 @@ public class Client implements NamedItem
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		return 271 * id;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (obj instanceof Client)
+		{
+			return (id == ((Client) obj).id);
+		}
+		return false;
 	}
 }

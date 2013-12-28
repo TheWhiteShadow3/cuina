@@ -4,6 +4,8 @@ import java.io.IOException;
 
 public class NetworkException extends IOException
 {
+	public static final String UNEXPECTET_RESPONSE = "Unexpected response from Server.";
+	
 	private static final long serialVersionUID = -4457402030103230250L;
 
 	public NetworkException()
