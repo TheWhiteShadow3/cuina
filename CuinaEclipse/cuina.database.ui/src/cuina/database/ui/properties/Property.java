@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Definiewrt Eine Eigenschaft für ein Datenbank-Objekt.
+ * Definiert eine Eigenschaft für ein Datenbank-Objekt.
  * Die Eigenschaft kann
  * @author TheWhiteShadow
  */
