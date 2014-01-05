@@ -117,9 +117,6 @@ public class Panorama extends Sprite
 		setOY(oy);
 	}
 
-	/* (non-Javadoc)
-	 * @see cuina.graphics.Sprite#render(cuina.graphics.Image, cuina.graphics.Transformation)
-	 */
 	@Override
 	protected void transformAndRender(Transformation matrix)
 	{
@@ -138,5 +135,11 @@ public class Panorama extends Sprite
 								  Graphics.getHeight() / (float)image.getHeight(), zoomX, zoomY);
 		
 		super.transformAndRender(Image.IMAGE_MATRIX);
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Panorama [fileName=" + fileName + ", speedX=" + speedX + ", speedY=" + speedY + "]";
 	}
 }

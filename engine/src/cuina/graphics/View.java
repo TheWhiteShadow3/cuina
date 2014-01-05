@@ -14,11 +14,17 @@ public class View
 	public int height;
 	
 	public final Rectangle port;
-//	public Camera camera;
+	public Camera camera;
 	
+	/**
+	 * Die Grafik, die der View zeichen soll.
+	 * Ist das Feld <code>null</code>, wird {@link Graphics#GraphicManager} gezeichnet.
+	 */
+	public Graphic graphic;
 	public CuinaObject target;
 	public Rectangle border;
 	public int threshold = 32;
+	public boolean visible = true;
 	
 	public View()
 	{
@@ -41,21 +47,34 @@ public class View
 	
 	public void draw()
 	{
+		if (!visible) return;
+		
 		glViewport(port.x, port.y, port.width, port.height);
 		
 		scroll();
 		
 		GLCache.setMatrix(GL_PROJECTION);
 		glLoadIdentity();
-		// left, right, bottom, top, Zfar, Znear
-		glOrtho(x, x + width, y + height, y, -500, 500);
-
+		
+		if (camera != null)
+		{
+			camera.apply();
+			glEnable(GL_DEPTH_TEST);
+		}
+		else
+		{
+			// left, right, bottom, top, Zfar, Znear
+			glOrtho(x, x + width, y + height, y, -500, 500);
+			glDisable(GL_DEPTH_TEST);
+		}
+		
 		GLCache.setMatrix(GL_MODELVIEW);
 		glLoadIdentity();
-		
-		glDisable(GL_DEPTH_TEST);
-		
-		Graphics.GraphicManager.draw();
+
+		if (graphic != null)
+			graphic.draw();
+		else
+			Graphics.GraphicManager.draw();
 	}
 	
 	public void scroll()

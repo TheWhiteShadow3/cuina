@@ -31,12 +31,22 @@ import org.lwjgl.opengl.Util;
 import org.lwjgl.util.Color;
 import org.lwjgl.util.ReadableColor;
 
+/**
+ * Haupt-Schnittstelle für die OpenGL-API.
+ * <p>
+ * Das Cuina Graphic-Framework kapselt OpenGL-Befehle in eine praktikable OO-Struktur.
+ * </p>
+ * @author TheWhiteShadow
+ */
 public final class Graphics
 {
 	private static Graphics instance;
 	/**
-	 * Aktuell gültiger GraphicManager der alle zu zeichnenden Elemente enthält.
-	 * Es wird immer nur der hier referenzierte GraphicManager und alle enthaltenden Elemente gezeichnet.
+	 * Der hier referenzierte GraphicManager dient als Standard-Referenz für Grafiken.
+	 * <p>
+	 * Jede Grafik, die nicht explizit einem Kontainer zugewiesen wird, wird diesem hier hinzugefügt.
+	 * Außerdem werden alle Elemente in jedem View gezeichnet, dem keine Grafik zugewiesen wurde.
+	 * </p>
 	 */
 	public static final GraphicManager GraphicManager = new GraphicManager();
 	public static final List<View> VIEWS = new ArrayList<View>();
@@ -58,6 +68,7 @@ public final class Graphics
 	transient private static Shader renderShader;
 	transient private static Shader currentShader;
 	transient private static Thread graphicThread;
+	transient private static View currentView;
 		
 	private Graphics() {}
 	
@@ -71,7 +82,6 @@ public final class Graphics
 	
 	private static void setupDisplay(String title)
 	{
-		graphicThread = Thread.currentThread();
 		int width  = Game.getProperty("Screen-Width", 640);
 		int height = Game.getProperty("Screen-Height", 480);
 		
@@ -138,6 +148,7 @@ public final class Graphics
 	
 	public static void setupDisplay(String title, DisplayMode mode)
 	{
+		graphicThread = Thread.currentThread();
 		Logger.log(Graphics.class, Logger.INFO, "set Graphicmode: " + mode);
 		try
 		{
@@ -238,25 +249,18 @@ public final class Graphics
 		// glLightModeli(GL12.GL_LIGHT_MODEL_COLOR_CONTROL,
 		// GL12.GL_SEPARATE_SPECULAR_COLOR );
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		// Wir brauchen eine initiale Matrix.
+		GLCache.setMatrix(GL_PROJECTION);
 //		glViewport(0, 0, width, height);
 
 //		System.out.println("Multitexturen: " + GL11.glGetInteger(ARBMultitexture.GL_MAX_TEXTURE_UNITS_ARB));
-		
-//		GLCache.setMatrix(GL_PROJECTION);
-//		glLoadIdentity();
-//		GLU.gluPerspective(40f, aspectRatio, 1f, 1000f);
-//
-//		GLCache.setMatrix(GL_MODELVIEW);
-//		glLoadIdentity();
-		
-		GraphicUtil.set3DView(false);
 
 		//XXX: Definition der Kamera. In GraphicsUtil steht auch noch ein Part zur Kamera.
 //		camera = new Camera();
 //		camera.fromZ = 15;
 //		camera.fromY = 20;
 		
-		VIEWS.add(new View(width / 2, height));
+		VIEWS.add(new View(width, height));
 
 		Util.checkGLError();
 
@@ -425,7 +429,12 @@ public final class Graphics
 //        GL11.glMatrixMode(GL11.GL_MODELVIEW);
 //        GL11.glLoadIdentity();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		for (View view : VIEWS) view.draw();
+		for (View view : VIEWS)
+		{
+			currentView = view;
+			view.draw();
+		}
+		currentView = null;
 	    
 //		GraphicManager.draw();
 //		D3D.set3DView(true);
@@ -441,6 +450,20 @@ public final class Graphics
 //        GL11.glPopMatrix();
 		
 		Display.update();
+	}
+	
+	/**
+	 * Gibt den aktuellen View zurück, der gezeichnet wird.
+	 * <p>
+	 * Die Methode gibt nur innerhalb der Zeichenroutine im aktuellen Thread ein View-Objekt zurück.
+	 * Außerhalb davon ist der Rückgabewert immer <code>null</code>.
+	 * </p>
+	 * @return Der aktuelle View.
+	 */
+	public static View getCurrentView()
+	{
+		if (graphicThread != Thread.currentThread()) return null;
+		return currentView;
 	}
 	
 	public static Graphics getInstance()

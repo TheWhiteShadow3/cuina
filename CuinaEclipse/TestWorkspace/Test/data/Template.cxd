@@ -25,12 +25,12 @@
           </entry>
           <entry>
             <string>motor</string>
-            <cuina.map.movement.MotorData>
+            <cuina.movement.MotorData>
               <speed>0.0</speed>
               <direction>270.0</direction>
               <friction>0.0</friction>
               <driver>cuina.rpg.CharacterDriver</driver>
-            </cuina.map.movement.MotorData>
+            </cuina.movement.MotorData>
           </entry>
           <entry>
             <string>box</string>

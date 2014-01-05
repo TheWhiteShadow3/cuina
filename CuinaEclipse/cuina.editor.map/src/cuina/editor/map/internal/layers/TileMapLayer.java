@@ -1,14 +1,13 @@
 package cuina.editor.map.internal.layers;
 
-import cuina.editor.map.EditorToolAction;
 import cuina.editor.map.ITerrainEditor;
 import cuina.editor.map.MapEvent;
 import cuina.editor.map.TerrainLayer;
 import cuina.editor.map.TileSelection;
-import cuina.editor.map.internal.Activator;
+import cuina.editor.map.internal.EditorActionManager;
 import cuina.editor.map.internal.TileFactory;
-import cuina.editor.map.internal.TileSelectionMode;
 import cuina.editor.map.internal.TileFactory.AutotileSet;
+import cuina.editor.map.internal.TileSelectionMode;
 import cuina.editor.map.util.MapOperation;
 import cuina.editor.map.util.MapSavePoint;
 import cuina.editor.ui.selection.SelectionEvent;
@@ -27,20 +26,13 @@ import cuina.resource.ResourceProvider;
 import java.util.Arrays;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -58,6 +50,8 @@ import org.lwjgl.util.Color;
  */
 public class TileMapLayer implements TerrainLayer, ISelectionListener, SelectionListener
 {
+	public static final String LAYER_NAME = "cuina.map.TileMapLayer";
+	
 	// Der Zeichenmodus definiert das ausgewählte Werkzeug.
 	public static final int DRAWMODE_NONE 		= 0;
 	public static final int DRAWMODE_PENCIL 	= 1;
@@ -70,7 +64,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	public static final String ACTION_FILLER 	= "cuina.editor.map.tilemap.fillerAction";
 	public static final String ACTION_ELLIPSE 	= "cuina.editor.map.tilemap.ellipseAction";
 	public static final String ACTION_RECTANGLE = "cuina.editor.map.tilemap.rectangleAction";
-
+	
 	/** Instanz des Auswahlmodus für die Tile-Auswahl */
 	private static final SpanSelectionMode TILE_SELECTION_MODE_INSTANCE = new SpanSelectionMode();
 
@@ -80,7 +74,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	private ITerrainEditor editor;
 	private TileSelectionMode tileSelectionMode = new TileSelectionMode();
 
-	private int drawMode = DRAWMODE_NONE;
+	private int currentTool = DRAWMODE_NONE;
 	private Rectangle tileSelection;
 	private int currentLayer;
 //	private TileSelection[] copyBuffer;	// Für Kopier-Operationen auf der Karte.
@@ -96,15 +90,11 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	private MapSavePoint savePoint;
 	private boolean changed;
 	private final Point drawOrigin = new Point(0, 0);
-	private EditorToolAction pencilAction;
-	private EditorToolAction elliAction;
-	private EditorToolAction rectAction;
-	private EditorToolAction fillAction;
 	
 	@Override
 	public String getName()
 	{
-		return "TileMapLayer";
+		return LAYER_NAME;
 	}
 
 	@Override
@@ -117,7 +107,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	public void paint(GC gc)
 	{
 		if (map == null || tilesetImage == null) return;
-		
+
 		paintTiles(gc, true);
 		if (showRaster) paintRaster(gc);
 	}
@@ -138,6 +128,20 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	public void setCurrentLayer(int currentLayer)
 	{
 		this.currentLayer = currentLayer;
+	}
+	
+	void toogleDimFade()
+	{
+		dimLayers = !dimLayers;
+		fadeLayers = !fadeLayers;
+		editor.getGLCanvas().redraw();
+	}
+	
+	void setDimFade(boolean value)
+	{
+		dimLayers = value;
+		fadeLayers = value;
+		editor.getGLCanvas().redraw();
 	}
 
 	private void paintTiles(GC gc, boolean useTempLayer)
@@ -352,14 +356,14 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		}
 	}
 	
-	private void setSelectionMode(int mode)
+	void setSelectionMode(int tool)
 	{
-		if (drawMode == mode) return;
+		if (currentTool == tool) return;
 		
-		System.out.println("[TileMapLayer] Zeichenmodus: " + mode);
+		System.out.println("[TileMapLayer] Zeichenmodus: " + tool);
 		SelectionManager sh = editor.getSelectionManager();
 		sh.clearSelections();
-		switch(mode)
+		switch(tool)
 		{
 			case DRAWMODE_NONE: sh.clearSeletionMode(); break;
 			case DRAWMODE_PENCIL:
@@ -382,7 +386,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 				break;
 			}
 		}
-		this.drawMode = mode;
+		currentTool = tool;
 	}
 	
 	private void updateSelection()
@@ -495,164 +499,164 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		menu.add(createTileSelectionAction(point));
 	}
 
-	@Override
-	public void fillActionBars(IActionBars actionBars)
-	{
-		pencilAction = new EditorToolAction(editor, this)
-		{
-			@Override
-			public void activate()
-			{
-				setSelectionMode(DRAWMODE_PENCIL);
-			}
-
-			@Override
-			public void deactivate()
-			{
-				setSelectionMode(DRAWMODE_NONE);
-			}
-		};
-		pencilAction.setId(ACTION_PENCIL);
-		pencilAction.setText("Stift");
-		pencilAction.setToolTipText("Aktiviert den Stift Modus");
-		pencilAction.setImageDescriptor(Activator.getImageDescriptor("pencil.png"));
-		
-		rectAction = new EditorToolAction(editor, this)
-		{
-			@Override
-			public void activate()
-			{
-				setSelectionMode(DRAWMODE_RECTANGLE);
-			}
-			
-			@Override
-			public void deactivate()
-			{
-				setSelectionMode(DRAWMODE_NONE);
-			}
-		};
-		rectAction.setId(ACTION_RECTANGLE);
-		rectAction.setText("Rechteck");
-		rectAction.setToolTipText("Aktiviert den Rechteck Zeichenmodus.");
-		rectAction.setImageDescriptor(Activator.getImageDescriptor("rectangle.png"));
-		
-		elliAction = new EditorToolAction(editor, this)
-		{
-			@Override
-			public void activate()
-			{
-				setSelectionMode(DRAWMODE_ELLISPE);
-			}
-			
-			@Override
-			public void deactivate()
-			{
-				setSelectionMode(DRAWMODE_NONE);
-			}
-		};
-		elliAction.setId(ACTION_ELLIPSE);
-		elliAction.setText("Ellipse");
-		elliAction.setToolTipText("Aktiviert den Ellipsen Zeichenmodus.");
-		elliAction.setImageDescriptor(Activator.getImageDescriptor("ellipse.png"));
-		
-		fillAction = new EditorToolAction(editor, this)
-		{
-			@Override
-			public void activate()
-			{
-				setSelectionMode(DRAWMODE_FILLER);
-			}
-			
-			@Override
-			public void deactivate()
-			{
-				setSelectionMode(DRAWMODE_NONE);
-			}
-		};
-		fillAction.setId(ACTION_FILLER);
-		fillAction.setText("Filler");
-		fillAction.setToolTipText("Aktiviert den Ausfüll Zeichenmodus.");
-		fillAction.setImageDescriptor(Activator.getImageDescriptor("filler.png"));
-
-		editor.addEditorTool(pencilAction);
-		editor.addEditorTool(rectAction);
-		editor.addEditorTool(elliAction);
-		editor.addEditorTool(fillAction);
-		
-		Action layerAction = new LayerDropDownAction();
-		IToolBarManager manager = actionBars.getToolBarManager();
-		manager.appendToGroup(ITerrainEditor.TOOLBAR_VIEWOPTIONS, layerAction);
-	}
-	
-	// Ebenenauswahl-menü
-	private class LayerDropDownAction extends Action implements IMenuCreator
-	{
-		private Menu layerMenu;
-		
-		public LayerDropDownAction()
-		{
-			super("Ebene", IAction.AS_DROP_DOWN_MENU);
-			setImageDescriptor(Activator.getImageDescriptor("layer.png"));
-			setMenuCreator(this);
-			setEnabled(true);
-		}
-		
-		@Override
-		public void run()
-		{
-			dimLayers = !dimLayers;
-			fadeLayers = !fadeLayers;
-			editor.getGLCanvas().redraw();
-		}
-		
-		@Override
-		public Menu getMenu(Menu parent)
-		{
-			return null;
-		}
-		
-		@Override
-		public Menu getMenu(Control parent)
-		{
-			layerMenu = new Menu(parent);
-			
-			for(int i = 0; i < Map.LAYERS; i++)
-			{
-				new ActionContributionItem(new LayerAction(i)).fill(layerMenu, -1);
-			}
-			return layerMenu;
-		}
-		
-		@Override
-		public void dispose()
-		{
-			if (layerMenu != null) layerMenu.dispose();
-		}
-	}
-	
-	private class LayerAction extends Action
-	{
-		private final int layer;
-
-		public LayerAction(int layer)
-		{
-			super("Ebene " + (layer + 1), IAction.AS_RADIO_BUTTON);
-			this.layer = layer;
-			setChecked(this.layer == TileMapLayer.this.currentLayer);
-		}
-		
-		@Override
-		public void run()
-		{
-			if (isChecked())
-			{
-				TileMapLayer.this.currentLayer = layer;
-				dimLayers = true;
-				fadeLayers = true;
-				editor.getGLCanvas().redraw();
-			}
-		}
-	}
+//	@Override
+//	public void fillActionBars(IActionBars actionBars)
+//	{
+//		pencilAction = new EditorToolAction(editor, this)
+//		{
+//			@Override
+//			public void activate()
+//			{
+//				setSelectionMode(DRAWMODE_PENCIL);
+//			}
+//
+//			@Override
+//			public void deactivate()
+//			{
+//				setSelectionMode(DRAWMODE_NONE);
+//			}
+//		};
+//		pencilAction.setId(ACTION_PENCIL);
+//		pencilAction.setText("Stift");
+//		pencilAction.setToolTipText("Aktiviert den Stift Modus");
+//		pencilAction.setImageDescriptor(Activator.getImageDescriptor("pencil.png"));
+//		
+//		rectAction = new EditorToolAction(editor, this)
+//		{
+//			@Override
+//			public void activate()
+//			{
+//				setSelectionMode(DRAWMODE_RECTANGLE);
+//			}
+//			
+//			@Override
+//			public void deactivate()
+//			{
+//				setSelectionMode(DRAWMODE_NONE);
+//			}
+//		};
+//		rectAction.setId(ACTION_RECTANGLE);
+//		rectAction.setText("Rechteck");
+//		rectAction.setToolTipText("Aktiviert den Rechteck Zeichenmodus.");
+//		rectAction.setImageDescriptor(Activator.getImageDescriptor("rectangle.png"));
+//		
+//		elliAction = new EditorToolAction(editor, this)
+//		{
+//			@Override
+//			public void activate()
+//			{
+//				setSelectionMode(DRAWMODE_ELLISPE);
+//			}
+//			
+//			@Override
+//			public void deactivate()
+//			{
+//				setSelectionMode(DRAWMODE_NONE);
+//			}
+//		};
+//		elliAction.setId(ACTION_ELLIPSE);
+//		elliAction.setText("Ellipse");
+//		elliAction.setToolTipText("Aktiviert den Ellipsen Zeichenmodus.");
+//		elliAction.setImageDescriptor(Activator.getImageDescriptor("ellipse.png"));
+//		
+//		fillAction = new EditorToolAction(editor, this)
+//		{
+//			@Override
+//			public void activate()
+//			{
+//				setSelectionMode(DRAWMODE_FILLER);
+//			}
+//			
+//			@Override
+//			public void deactivate()
+//			{
+//				setSelectionMode(DRAWMODE_NONE);
+//			}
+//		};
+//		fillAction.setId(ACTION_FILLER);
+//		fillAction.setText("Filler");
+//		fillAction.setToolTipText("Aktiviert den Ausfüll Zeichenmodus.");
+//		fillAction.setImageDescriptor(Activator.getImageDescriptor("filler.png"));
+//
+//		editor.addEditorTool(pencilAction);
+//		editor.addEditorTool(rectAction);
+//		editor.addEditorTool(elliAction);
+//		editor.addEditorTool(fillAction);
+//		
+//		Action layerAction = new LayerDropDownAction();
+//		IToolBarManager manager = actionBars.getToolBarManager();
+//		manager.appendToGroup(ITerrainEditor.TOOLBAR_VIEWOPTIONS, layerAction);
+//	}
+//	
+//	// Ebenenauswahl-menü
+//	private class LayerDropDownAction extends Action implements IMenuCreator
+//	{
+//		private Menu layerMenu;
+//		
+//		public LayerDropDownAction()
+//		{
+//			super("Ebene", IAction.AS_DROP_DOWN_MENU);
+//			setImageDescriptor(Activator.getImageDescriptor("layer.png"));
+//			setMenuCreator(this);
+//			setEnabled(true);
+//		}
+//		
+//		@Override
+//		public void run()
+//		{
+//			dimLayers = !dimLayers;
+//			fadeLayers = !fadeLayers;
+//			editor.getGLCanvas().redraw();
+//		}
+//		
+//		@Override
+//		public Menu getMenu(Menu parent)
+//		{
+//			return null;
+//		}
+//		
+//		@Override
+//		public Menu getMenu(Control parent)
+//		{
+//			layerMenu = new Menu(parent);
+//			
+//			for(int i = 0; i < Map.LAYERS; i++)
+//			{
+//				new ActionContributionItem(new LayerAction(i)).fill(layerMenu, -1);
+//			}
+//			return layerMenu;
+//		}
+//		
+//		@Override
+//		public void dispose()
+//		{
+//			if (layerMenu != null) layerMenu.dispose();
+//		}
+//	}
+//	
+//	private class LayerAction extends Action
+//	{
+//		private final int layer;
+//
+//		public LayerAction(int layer)
+//		{
+//			super("Ebene " + (layer + 1), IAction.AS_RADIO_BUTTON);
+//			this.layer = layer;
+//			setChecked(this.layer == TileMapLayer.this.currentLayer);
+//		}
+//		
+//		@Override
+//		public void run()
+//		{
+//			if (isChecked())
+//			{
+//				TileMapLayer.this.currentLayer = layer;
+//				dimLayers = true;
+//				fadeLayers = true;
+//				editor.getGLCanvas().redraw();
+//			}
+//		}
+//	}
 	
 	/**
 	 * Setzt die Daten für das Quell-TileLayer.
@@ -662,15 +666,15 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	{
 		sourceLayer = tiles;
 		
-		if (drawMode == DRAWMODE_NONE)
+		if (currentTool == DRAWMODE_NONE)
 		{
 			System.out.println("[TileMapLayer] Zeichenmodus (durch Quell-Daten): DRAWMODE_PENCIL");
-			editor.activateTool(ACTION_PENCIL);
+			EditorActionManager actionManager = editor.getActionManager();
+			actionManager.activate(ACTION_PENCIL);
 		}
 		
-		if (drawMode == DRAWMODE_PENCIL)
+		if (currentTool == DRAWMODE_PENCIL)
 		{
-//			SelectionHandler sh = editor.getSelectionHandler();
 			tileSelectionMode.setSize(
 					sourceLayer.getWidth() * tileset.getTileSize(), sourceLayer.getHeight() * tileset.getTileSize());
 		}
@@ -784,12 +788,12 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	@Override
 	public void startSelection(SelectionEvent event)
 	{
-		if (editor.getActiveLayer() != TileMapLayer.this || drawMode == DRAWMODE_NONE) return;
+		if (editor.getActiveLayer() != TileMapLayer.this || currentTool == DRAWMODE_NONE) return;
 		
 		if (event.mouseEvent.button == 1)
 		{
 			updateSelection();
-			switch (drawMode)
+			switch (currentTool)
 			{
 				case DRAWMODE_PENCIL:
 					Point p = new Point(tileSelection.x, tileSelection.y);
@@ -814,13 +818,13 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	@Override
 	public void updateSelection(SelectionEvent event)
 	{
-		if (editor.getActiveLayer() != TileMapLayer.this || drawMode == DRAWMODE_NONE) return;
+		if (editor.getActiveLayer() != TileMapLayer.this || currentTool == DRAWMODE_NONE) return;
 //		System.out.println("[TileMapLayer] updateSelection");
 		
 		if (event.mouseEvent.button == 1)
 		{
 			updateSelection();
-			switch (drawMode)
+			switch (currentTool)
 			{
 				case DRAWMODE_PENCIL:
 					setTiles(tileSelection.x, tileSelection.y, sourceLayer, null);
@@ -845,7 +849,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 			tempLayer = null;
 		}
 		addSavePoint();
-		setSelectionMode(drawMode);
+		setSelectionMode(currentTool);
 	}
 	
 	@Override

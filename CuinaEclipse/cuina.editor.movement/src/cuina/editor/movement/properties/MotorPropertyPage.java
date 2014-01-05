@@ -1,7 +1,7 @@
 package cuina.editor.movement.properties;
 
 import cuina.editor.object.ObjectPropertyPage;
-import cuina.map.movement.MotorData;
+import cuina.movement.MotorData;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

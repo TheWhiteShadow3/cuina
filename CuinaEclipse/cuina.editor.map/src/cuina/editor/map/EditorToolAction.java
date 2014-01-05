@@ -1,35 +1,36 @@
 package cuina.editor.map;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.internal.Workbench;
 
 public abstract class EditorToolAction extends Action
 {
-	private TerrainLayer layer;
+	private String layerName;
 	private ITerrainEditor editor;
-//	private boolean selected;
+	private TerrainLayer layer;
 	
-	public EditorToolAction(ITerrainEditor editor, TerrainLayer layer)
+	public EditorToolAction(String id, String layerName, int style)
 	{
-		super(null, AS_RADIO_BUTTON);
-		this.editor = editor;
-		this.layer = layer;
+		super(null, style);
+		setId(id);
+		this.layerName = layerName;
 	}
 	
-	public TerrainLayer getLayer()
-	{
-		return layer;
-	}
-
-	/**
-	 * Überprüft den Zustand des Tools und delegiert den Aufruf weiter nach
-	 * {@link #activate()} bzw. {@link #deactivate()}.
-	 * Wenn das Tool aktiviert wird, bekommt die assoziierte Ebene den Fokus, falls vorhanden.
-	 */
 	@Override
 	public void run()
 	{
-//		setSelected(!selected);
-		if (isChecked())
+		execute(!isChecked());
+	}
+	
+	public void execute(boolean activate)
+	{
+		this.editor = (ITerrainEditor) Workbench.getInstance().
+				getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		if (editor == null) return;
+		
+		this.layer = editor.getLayerByName(layerName);
+		if (activate)
 		{
 			System.out.println("activate " + getId());
 			if (layer != null) editor.setActiveLayer(layer);
@@ -40,19 +41,20 @@ public abstract class EditorToolAction extends Action
 			System.out.println("deactivate " + getId());
 			deactivate();
 		}
+		if (getListeners().length == 0) System.out.println("Kein Schwein interessiert der Button.");
+		setChecked(activate);
 	}
-
-//	public boolean isSelected()
-//	{
-//		return selected;
-//	}
-//
-//	public void setSelected(boolean selected)
-//	{
-//		this.selected = selected;
-//		super.setChecked(selected);
-//	}
-
+	
+	public ITerrainEditor getEditor()
+	{
+		return editor;
+	}
+	
+	public TerrainLayer getLayer()
+	{
+		return layer;
+	}
+	
 	public abstract void activate();
 	public void deactivate() {}
 }

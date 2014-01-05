@@ -5,6 +5,7 @@ import cuina.Game;
 import cuina.plugin.LifeCycleAdapter;
 import cuina.widget.WidgetContainer;
 import cuina.widget.WidgetDescriptor;
+import cuina.widget.WidgetEventHandler;
 
 import de.matthiasmann.twl.Label;
 import de.matthiasmann.twl.Widget;
@@ -47,6 +48,10 @@ public class ValueDisplay extends LifeCycleAdapter
 
 			@Override
 			public void postBuild()
+			{}
+
+			@Override
+			public void setGlobalEventHandler(WidgetEventHandler handler)
 			{}
 		});
 		if (Game.contextExists(Context.SESSION))

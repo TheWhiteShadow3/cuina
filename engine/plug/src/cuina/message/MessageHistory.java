@@ -3,8 +3,6 @@ package cuina.message;
 import cuina.plugin.ForSession;
 import cuina.plugin.Plugin;
 
-import java.util.ArrayList;
-
 @ForSession(name="MessageHistory")
 public class MessageHistory implements Plugin
 {

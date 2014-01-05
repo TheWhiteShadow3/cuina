@@ -32,9 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -48,7 +46,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -59,6 +56,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelectionListener, SelectionListener
 {
+	public static final String LAYER_NAME = "cuina.map.ObjectLayer";
 	public static final String ACTION_SELECTION = "cuina.editor.object.objects.selectionAction";
 	
 	/**
@@ -73,7 +71,6 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 	private final ArrayList<ISelectionChangedListener> listener = new ArrayList<ISelectionChangedListener>();
 	private final HashMap<ObjectData, ObjectGraphic> graphicCache = new HashMap<ObjectData, ObjectGraphic>();
 
-	private Action selectionAction;
 	private Action copyAction;
 	private Action pasteAction;
 	private Action deleteAction;
@@ -88,7 +85,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 	@Override
 	public String getName()
 	{
-		return "Objects";
+		return LAYER_NAME;
 	}
 
 	@Override
@@ -355,25 +352,6 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		{
 			menu.add(new SelectionAction(d));
 		}
-	}
-	
-	@Override
-	public void fillActionBars(IActionBars actionBars)
-	{
-		selectionAction = new Action("Objekte", IAction.AS_RADIO_BUTTON)
-		{
-			@Override
-			public void run()
-			{
-				editor.setActiveLayer(ObjectLayer.this);
-//				setObjectSelectionMode();
-			}
-		};
-		selectionAction.setId(ACTION_SELECTION);
-		selectionAction.setImageDescriptor(Activator.getImageDescriptor("object.png"));
-		
-		IToolBarManager manager = actionBars.getToolBarManager();
-		manager.appendToGroup(ITerrainEditor.TOOLBAR_TOOLS, selectionAction);
 	}
 
 	@Override

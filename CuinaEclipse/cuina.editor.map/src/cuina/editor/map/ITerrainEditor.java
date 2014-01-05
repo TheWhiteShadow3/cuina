@@ -1,6 +1,7 @@
 package cuina.editor.map;
  
 import cuina.editor.core.CuinaProject;
+import cuina.editor.map.internal.EditorActionManager;
 import cuina.editor.ui.selection.SelectionManager;
 import cuina.editor.ui.selection.SelectionMode;
 import cuina.editor.ui.selection.SpanSelectionMode;
@@ -78,9 +79,16 @@ public interface ITerrainEditor
 
 	public void setRasterVisible(boolean showRaster);
 
-	public void activateTool(String id);
+	public EditorActionManager getActionManager();
+	
+//	public void activateTool(String id);
 
-	public void addEditorTool(EditorToolAction tool);
+//	public void addEditorTool(EditorToolAction tool);
 
-	public EditorToolAction getEditorTool(String id);
+//	public EditorToolAction getEditorTool(String id);
+
+	public TerrainLayer getLayerByName(String layerName);
+	
+//	public IEditorActionBarContributor getLayerActionBarContributor(String layerName);
+	
 }

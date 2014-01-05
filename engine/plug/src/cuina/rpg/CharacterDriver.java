@@ -1,9 +1,9 @@
 package cuina.rpg;
 
 import cuina.Game;
-import cuina.map.movement.Driver;
-import cuina.map.movement.MovementUtil;
-import cuina.map.movement.Motor;
+import cuina.movement.Driver;
+import cuina.movement.Motor;
+import cuina.movement.MovementUtil;
 import cuina.rpg.MoveRoute.MoveCommand;
 import cuina.world.CuinaObject;
 

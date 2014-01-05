@@ -2,7 +2,7 @@ package cuina.test;
 
 import cuina.animation.ModelData;
 import cuina.event.Trigger;
-import cuina.map.movement.MotorData;
+import cuina.movement.MotorData;
 import cuina.object.ObjectData;
 
 import java.util.ArrayList;

@@ -4,7 +4,6 @@ import cuina.gl.GC;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.IActionBars;
 
 /**
  * Ein ViewLayer stellt eine Ebene auf einer Zeichenfläche da.
@@ -37,5 +36,5 @@ public interface ViewLayer
 	
 	public void fillContextMenu(IMenuManager menu, Point point);
 
-	public void fillActionBars(IActionBars actionBars);
+//	public void fillActionBars(IActionBars actionBars);
 }

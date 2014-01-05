@@ -5,6 +5,7 @@ import cuina.Logger;
 import cuina.util.ResourceManager;
 import cuina.util.ResourceManager.Resource;
 import cuina.widget.Frame;
+import cuina.widget.Menu;
 import cuina.widget.Picture;
 import cuina.widget.WidgetEventHandler;
 
@@ -32,10 +33,10 @@ public class MessageWidget extends Frame
 	
 	private static final String WIDGET_KEY = "Message";
 	
-	private MessageBox messageBox;
 	private String name;
 	private String faceImage;
 	private String text;
+	private int index;
 	
 	private boolean hasFace;
 	private int faceAlign;
@@ -43,6 +44,7 @@ public class MessageWidget extends Frame
 	private int faceY;
 	private Picture faceWidget;
 	private TextArea textWidget;
+	private Menu menu;
 	private HTMLTextAreaModel textModel;
 
 	private int messageX;
@@ -53,27 +55,17 @@ public class MessageWidget extends Frame
 
 	private Runnable closeCB;
 	
-	public MessageWidget(MessageBox mb)
+	public MessageWidget()
 	{
 		super(WIDGET_KEY);
 		setResizableAxis(ResizableAxis.NONE);
-		setEnabled(true);
-		setFocusKeyEnabled(true);
 		setDraggable(true);
-		this.messageBox = mb;
-		
-		addCloseCallback(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				messageBox.widgetClosed();
-			}
-		});
+		setEnabled(true);
 		
 		createTextWidget();
 	}
 	
+	@Override
 	public String getName()
 	{
 		return name;
@@ -101,6 +93,18 @@ public class MessageWidget extends Frame
 		if (faceWidget != null) faceWidget.setImage(faceImage);
 	}
 	
+	public int getSelection()
+	{
+		return index;
+	}
+	
+	public void setSelection(int index)
+	{
+		this.index = index;
+		menu.setIndex(index);
+		menu.setVisible(index != -1);
+	}
+	
 	public void setText(String text)
 	{
 		this.text = text;
@@ -118,7 +122,7 @@ public class MessageWidget extends Frame
 				@Override
 				public void run()
 				{
-					fireCallBack(EventType.CLOSE);
+					fireCallback(EventType.CLOSE);
 				}
 			};
 			addCloseCallback(closeCB);
@@ -147,6 +151,10 @@ public class MessageWidget extends Frame
 		}
 		
 		add(textWidget);
+		
+		menu = new Menu("menu", 1);
+		menu.setTheme("menu");
+		add(menu);
 	}
 	
 	protected void applyThemeMessageWidget(ThemeInfo themeInfo)
@@ -190,11 +198,8 @@ public class MessageWidget extends Frame
 		if (messageHeight < minHeight) messageHeight = minHeight;
 		setPosition(messageX, messageY);
 		setSize(messageWidth, messageHeight);
+		super.layout();
 		
-		layoutTitle();
-		layoutCloseButton();
-		layoutResizeHandle();
-
 		layoutFace();
 		layoutText();
 	}
@@ -246,11 +251,11 @@ public class MessageWidget extends Frame
 				switch (ev.getKeyCode())
 				{
 					case Event.KEY_RETURN:
-						fireCallBack(EventType.RETURN);
+						fireCallback(EventType.RETURN);
 						return true;
 						
 					case Event.KEY_ESCAPE:
-						fireCallBack(EventType.ESCAPE);
+						fireCallback(EventType.ESCAPE);
 						return true;
 				}
 				break;
@@ -258,10 +263,10 @@ public class MessageWidget extends Frame
 				switch (ev.getMouseButton())
 				{
 					case Event.MOUSE_LBUTTON:
-						fireCallBack(EventType.CLICK_OK);
+						fireCallback(EventType.CLICK_OK);
 						return true;
 					case Event.MOUSE_RBUTTON:
-						fireCallBack(EventType.CLICK_CANCEL);
+						fireCallback(EventType.CLICK_CANCEL);
 						return true;
 				}
 				break;
@@ -269,11 +274,23 @@ public class MessageWidget extends Frame
 		return false;
 	}
 	
-	private void fireCallBack(EventType type)
+	private void fireCallback(EventType type)
 	{
 		if (handler == null) return;
 		
 		handler.handleEvent(getName(), this, type);
+	}
+
+	@Override
+	public boolean canHandleEvents()
+	{
+		return true;
+	}
+
+	@Override
+	public WidgetEventHandler getEventHandler()
+	{
+		return handler;
 	}
 
 //	@Override

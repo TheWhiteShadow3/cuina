@@ -11,7 +11,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.ui.IActionBars;
 import org.lwjgl.util.Color;
 
 /**
@@ -133,9 +132,6 @@ public class BackgroundLayer implements TerrainLayer
 
 	@Override
 	public void fillContextMenu(IMenuManager menu, Point p) {}
-
-	@Override
-	public void fillActionBars(IActionBars actionBars) {}
 
 	@Override
 	public boolean selectionPerformed(Rectangle rect)

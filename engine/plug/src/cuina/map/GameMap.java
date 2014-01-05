@@ -14,7 +14,7 @@ import cuina.database.Database;
 import cuina.event.Event;
 import cuina.eventx.Interpreter;
 import cuina.graphics.Panorama;
-import cuina.map.movement.CollisionSystem;
+import cuina.movement.CollisionSystem;
 import cuina.object.BaseObject;
 import cuina.object.BaseWorld;
 import cuina.object.ObjectData;
@@ -209,22 +209,22 @@ public class GameMap extends BaseWorld implements Plugin
 	}
 	
 	/**
-	 * @param id ID des Panoramas 1-10.
+	 * @param id ID des Panoramas 0-9.
 	 * @return Das Panorama oder null.
 	 */
 	public Panorama getPanorama(int id)
 	{
-		return panoramas[id-1];
+		return panoramas[id];
 	}
 
 	/**
 	 * Setzt das Panorama für dem angegebenen Index.
-	 * @param id ID des Panoramas 1-10.
+	 * @param id ID des Panoramas 0-9.
 	 * @param panorama das zu setzende Panoramam oder null.
 	 */
 	public void setPanorama(int id, Panorama panorama)
 	{
-		this.panoramas[id-1] = panorama;
+		this.panoramas[id] = panorama;
 	}
 
 //	public void refresh()

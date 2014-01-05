@@ -1,9 +1,9 @@
 package cuina.graphics;
 
+import org.lwjgl.util.glu.GLU;
+
 /**
  * Kamera für den 3D-Modus
- * 
- * Es wird bereits eine in Graphics erstellt.
  * 
  * @author TheWhiteShadow
  */
@@ -24,5 +24,10 @@ public class Camera
 	public Camera()
 	{
 		
+	}
+	
+	void apply()
+	{
+		GLU.gluLookAt(fromX, fromY, fromZ,  toX, toY, toZ,  upX, upY, upZ);
 	}
 }

@@ -1,7 +1,7 @@
 package cuina.network;
 
-import cuina.map.movement.Driver;
-import cuina.map.movement.Motor;
+import cuina.movement.Driver;
+import cuina.movement.Motor;
 import cuina.world.CuinaObject;
 
 import java.nio.ByteBuffer;

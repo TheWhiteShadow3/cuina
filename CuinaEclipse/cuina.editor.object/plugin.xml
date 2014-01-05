@@ -30,6 +30,7 @@
          point="cuina.mapeditor.layers">
       <layer
             class="cuina.editor.object.internal.ObjectLayer"
+            contributorClass="cuina.editor.object.internal.ObjectLayerContributor"
             name="Objects"
             selectable="true">
       </layer>

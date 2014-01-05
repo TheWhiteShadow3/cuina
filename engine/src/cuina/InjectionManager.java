@@ -39,7 +39,7 @@ import java.util.Map;
 public class InjectionManager
 {	
 	/* Szenen-Objekte, dessen Instanz wieder verwendet werden soll. */
-	static HashMap<String, Object> persistentObjects = new HashMap<String, Object>();
+//	static HashMap<String, Object> persistentObjects = new HashMap<String, Object>();
 	
 	static Map<String, ObjectContainer> globalClasses = new HashMap<String, ObjectContainer>();
 	static Map<String, ObjectContainer> sessionClasses = new HashMap<String, ObjectContainer>();
@@ -47,6 +47,30 @@ public class InjectionManager
 
 	private InjectionManager() {}
 
+	public static void addObject(Object obj, String name)
+	{
+		addObject(obj, name, Context.SCENE, new String[] {Game.getScene().getName()});
+	}
+	
+	/**
+	 * Fügt dem InjektionManager ein Objekt hinzu.
+	 * Das Objekt wird fortan automatisch dem angegebenen Kontext hinzugefügt.
+	 * @param obj Das Objekt.
+	 * @param name Name im Kontext.
+	 * @param contextType Der Kontext-Typ.
+	 * @param scenes Ein String-Array mit den Namen der Szenen, in denen das Objekt gültig ist.
+	 */
+	public static void addObject(Object obj, String name, int contextType, String[] scenes)
+	{
+		if (name == null) throw new NullPointerException("name is null");
+		if (obj == null) throw new NullPointerException("obj is null");
+		
+		ObjectContainer container = new ObjectContainer(obj, name, scenes, contextType);
+		addContextObject(contextType, container);
+		
+		inject(container, Game.getContext(contextType));
+	}
+	
 	static void loadPluginClasses()
 	{
 		Annotation an;
@@ -70,7 +94,7 @@ public class InjectionManager
 		}
 	}
 	
-	public static void addContextObject(int contextType, ObjectContainer container)
+	private static void addContextObject(int contextType, ObjectContainer container)
 	{
 		getContainerMap(contextType).put(container.getName(), container);
 	}
@@ -141,23 +165,6 @@ public class InjectionManager
 //		}
 //	}
 	
-	public static void injectObject(Object obj, String name)
-	{
-		injectObject(obj, name, new String[] {Game.getScene().getName()}, Context.SCENE);
-	}
-
-	public static void injectObject(Object obj, String name, String[] scenes, int contextType)
-	{
-		if (name == null) throw new NullPointerException("name is null");
-		if (obj == null) throw new NullPointerException("obj is null");
-//		if (!SceneContext.exists()) throw new IllegalStateException("Scene-Context do not exists.");
-		
-		ObjectContainer container = new ObjectContainer(obj, name, scenes, contextType);
-		addContextObject(contextType, container);
-		
-		inject(container, Game.getContext(contextType));
-	}	
-	
 	private static void inject(ObjectContainer container, Context context)
 	{
 		Object obj = container.getObject();
@@ -196,7 +203,7 @@ public class InjectionManager
 		return false;
 	}
 	
-	static Map<String, ObjectContainer> getContainerMap(int contextType)
+	private static Map<String, ObjectContainer> getContainerMap(int contextType)
 	{
 		switch(contextType)
 		{

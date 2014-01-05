@@ -110,6 +110,24 @@
             <param name="font"><font>black</font></param>
         </theme>
     </theme>
+    
+    <theme name="invisible_frame" ref="-defaults" allowWildcard="true">
+        <param name="titleAreaTop"><int>0</int></param>
+        <param name="titleAreaLeft"><int>0</int></param>
+        <param name="titleAreaRight"><int>0</int></param>
+        <param name="titleAreaBottom"><int>0</int></param>
+        <param name="hasCloseButton"><bool>false</bool></param>
+        <param name="closeButtonX"><int>0</int></param>
+        <param name="closeButtonY"><int>0</int></param>
+        <param name="hasResizeHandle"><bool>false</bool></param>
+        <param name="resizeHandleX"><int>0</int></param>
+        <param name="resizeHandleY"><int>0</int></param>
+        <param name="fadeColorInactive"><color>white</color></param>
+        <param name="fadeDurationActivate"><int>0</int></param>
+        <param name="fadeDurationDeactivate"><int>0</int></param>
+        <theme name="closeButton" ref="-defaults">
+        </theme>
+    </theme>
 
     <theme name="frame" ref="-defaults" allowWildcard="true">
         <param name="background"><image>frame.background</image></param>
@@ -268,7 +286,19 @@
     	<param name=""><image>button.*</image></param>
     </theme>
     	
-	<theme name="messagewidget" ref="frame">
+   <theme name="menu" ref="-defaults">
+		<param name="animation">
+			<map>
+				<param name="color"><color>#FFADD8E6</color></param>
+				<param name="duration"><int>1000</int></param>
+			</map>
+		</param>
+		<param name="hGap"><int>10</int></param>
+		<param name="vGap"><int>10</int></param>
+		<theme name="menuitem" ref="button"/>
+	</theme>
+	
+	<theme name="messagewidget" ref="invisible_frame">
 		<param name="x"><int>16</int></param>
 		<param name="y"><int>300</int></param>
 		<param name="width"><int>608</int></param>
@@ -279,24 +309,16 @@
 		<param name="faceX"><int>-16</int></param>
 		<param name="faceY"><int>-300</int></param>
 		<param name="faceAlign"><string>back</string></param>
-		<theme name="face" ref="-defaults">
+		<theme name="face" ref="picture">
 			<!--param name="background"><image>innerframe.background</image></param>
         	<param name="border"><border>background.border</border></param-->
 		</theme>
 		<theme name="text" ref="textarea">
 			<param name="font"><font>black</font></param>
 		</theme>
-	</theme>
-	
-	<theme name="menu" ref="-defaults">
-		<param name="animation">
-			<map>
-				<param name="color"><color>#FFADD8E6</color></param>
-				<param name="duration"><int>1000</int></param>
-			</map>
-		</param>
-		<param name="hGap"><int>10</int></param>
-		<param name="vGap"><int>10</int></param>
-		<theme name="menuitem" ref="button"/>
+		<theme name="menu" ref="menu">
+			<param name="hGap"><int>0</int></param>
+			<param name="vGap"><int>8</int></param>
+		</theme>
 	</theme>
 </themes>

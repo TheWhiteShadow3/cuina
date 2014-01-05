@@ -60,11 +60,20 @@
 			</manifest>
 		</jar>
 		
+		<echo message="Deploy Plugin: Widget" />
+		<jar destfile="${deploy.dir}/cuina.widget.jar" includes="cuina/widget/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
 		<echo message="Deploy Plugin: Hud" />
 		<jar destfile="${deploy.dir}/cuina.hud.jar" includes="cuina/hud/**" basedir="${build.dir}">
 			<manifest>
 				<attribute name="Plugin-Classes" value="" />
 				<attribute name="Plugin-Version" value="1.0" />
+				<attribute name="Plugin-Dependency" value="cuina.widget-1.0" />
 			</manifest>
 		</jar>
 			
@@ -76,12 +85,20 @@
 			</manifest>
 		</jar>
 		
+		<echo message="Deploy Plugin: Movement" />
+		<jar destfile="${deploy.dir}/cuina.movement.jar" includes="cuina/movement/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar>
+		
 		<echo message="Deploy Plugin: Map" />
 		<jar destfile="${deploy.dir}/cuina.map.jar" includes="cuina/map/**, Map.rb, Map.xml" basedir="${build.dir}">
 			<manifest>
 				<attribute name="Plugin-Classes" value="cuina.map.GameMap;cuina.map.MapUtil" />
 				<attribute name="Plugin-Version" value="1.0" />
-				<attribute name="Plugin-Dependency" value="cuina.animation-1.0;cuina.object-1.0;cuina.eventx-1.0" />
+				<attribute name="Plugin-Dependency" value="cuina.animation-1.0;cuina.object-1.0;cuina.eventx-1.0;cuina.movement-1.0" />
 				<attribute name="Script-Library" value="Map.rb" />
 				<attribute name="Script-Description" value="Map.xml" />
 			</manifest>
@@ -92,6 +109,7 @@
 			<manifest>
 				<attribute name="Plugin-Classes" value="cuina.message.MessageBox;cuina.message.MessageHistory" />
 				<attribute name="Plugin-Version" value="1.0" />
+				<attribute name="Plugin-Dependency" value="cuina.widget-1.0" />
 				<attribute name="Script-Library" value="Message.rb" />
 				<attribute name="Script-Description" value="Message.xml" />
 			</manifest>
@@ -100,7 +118,7 @@
 		<echo message="Deploy Plugin: RPG" />
 		<jar destfile="${deploy.dir}/cuina.rpg.jar" includes="cuina/rpg/**, RPG.rb" basedir="${build.dir}">
 			<manifest>
-				<attribute name="Plugin-Dependency" value="cuina.animation-1.0;cuina.map-1.0" />
+				<attribute name="Plugin-Dependency" value="cuina.animation-1.0;cuina.movement-1.0;cuina.map-1.0" />
 				<attribute name="Plugin-Version" value="1.0" />
 				<attribute name="Script-Library" value="RPG.rb" />
 			</manifest>
@@ -140,6 +158,14 @@
 				<attribute name="Plugin-Version" value="1.0" />
 			</manifest>
 		</jar>
+		
+		<!--echo message="Deploy Plugin: Network" />
+		<jar destfile="${deploy.dir}/cuina.network.jar" includes="cuina/network/**" basedir="${build.dir}">
+			<manifest>
+				<attribute name="Plugin-Classes" value="cuina.network.server.Server" />
+				<attribute name="Plugin-Version" value="1.0" />
+			</manifest>
+		</jar-->
 	</target>
 	
 	<target name="main" depends="build">
