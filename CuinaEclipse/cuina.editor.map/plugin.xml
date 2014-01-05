@@ -25,6 +25,7 @@
        point="org.eclipse.ui.editors">
     <editor
           class="cuina.editor.map.internal.TerrainEditor"
+          contributorClass="cuina.editor.map.internal.MapEditorActionBarContributor"
           default="true"
           extensions="cxm, cxmz"
           icon="icons/map.png"
@@ -50,6 +51,7 @@
     </layer>
     <layer
           class="cuina.editor.map.internal.layers.TileMapLayer"
+          contributorClass="cuina.editor.map.internal.layers.TileMapLayerContributor"
           name="Tileset"
           selectable="true">
     </layer>
@@ -63,10 +65,14 @@
     </category>
     <wizard
           category="cuina.editor"
-          class="cuina.editor.map.internal.MapWizard"
+          class="cuina.editor.map.internal.wizard.MapWizard"
+          hasPages="true"
           icon="icons/map.png"
           id="cuina.editor.map.new.map"
           name="Cuina Map">
+       <selection
+             class="org.eclipse.core.resources.IResource">
+       </selection>
     </wizard>
  </extension>
  <extension
@@ -99,7 +105,7 @@
           name="maps">
     </directory>
  </extension>
- <extension
+ <!--extension
        point="org.eclipse.ui.commands">
     <command
           defaultHandler="cuina.editor.map.internal.ToolSelectionHandler"
@@ -127,5 +133,5 @@
           </class>
        </state>
     </command>
- </extension>
+ </extension-->
 </plugin>

@@ -34,14 +34,14 @@ public class CommandDialog extends TitleAreaDialog
 	private List<TypeEditor> editors;
 	private Composite[] editorBlocks;
 	
-	private CommandDialog(CommandDialogContext context)
+	private CommandDialog(CommandEditorContext context)
 	{
 		super(context.getShell());
 		this.COLOR_RED = context.getShell().getDisplay().getSystemColor(SWT.COLOR_RED);
 		this.library = context.getCuinaProject().getService(CommandLibrary.class);
 	}
 	
-	public CommandDialog(CommandDialogContext context, Command cmd)
+	public CommandDialog(CommandEditorContext context, Command cmd)
 	{
 		this(context);
 		if (cmd == null) throw new NullPointerException();
@@ -51,7 +51,7 @@ public class CommandDialog extends TitleAreaDialog
 		init(context);
 	}
 	
-	public CommandDialog(CommandDialogContext context, FunctionEntry func)
+	public CommandDialog(CommandEditorContext context, FunctionEntry func)
 	{
 		this(context);
 		if (func == null) throw new NullPointerException();
@@ -69,7 +69,7 @@ public class CommandDialog extends TitleAreaDialog
 //		shell.setSize(320, 320);
 	}
 	
-	private void init(CommandDialogContext context)
+	private void init(CommandEditorContext context)
 	{
 		setHelpAvailable(false);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);

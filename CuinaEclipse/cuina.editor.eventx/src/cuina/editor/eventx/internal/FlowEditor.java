@@ -1,33 +1,43 @@
 package cuina.editor.eventx.internal;
 
+import cuina.database.DatabaseObject;
+import cuina.database.ui.AbstractDatabaseEditorPart;
+import cuina.editor.core.CuinaProject;
+import cuina.editor.eventx.internal.prefs.EventPreferences;
+import cuina.eventx.Command;
+import cuina.eventx.CommandList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
-import cuina.database.DatabaseObject;
-import cuina.database.ui.AbstractDatabaseEditorPart;
-import cuina.editor.core.CuinaProject;
-import cuina.eventx.CommandList;
-
-public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPropertySheetPageContributor, IAdaptable, CommandDialogContext
+public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPropertySheetPageContributor, IAdaptable, CommandEditorContext
 {
 	private Shell shell;
 	private CommandList list;
+	private List<Command> commands;
 	private TableViewer viewer;
 	private FlowContentOutlinePage outlinePage;
-	
-	public void setValue(CommandList list)
-	{
-		this.list = list;
-		if (viewer != null) viewer.setInput(list);
-	}
+	private CommandLibrary library;
 
 	@Override
 	public void createPartControl(Composite parent)
@@ -49,11 +59,18 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 		composite.setLayout(new FillLayout());
 		
 		this.viewer = new TableViewer(composite, SWT.BORDER);
-		viewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		viewer.setContentProvider(new FlowContentProvider());
-		viewer.setLabelProvider(new FlowLabelProvider());
+		Control ctl = viewer.getControl();
+		ctl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		Font font = new Font(ctl.getDisplay(), EventPreferences.getFontData(EventPreferences.CMDLINE_FONT));
+		ctl.setFont(font);
+		
+		viewer.setContentProvider(new FlowContentProvider(library));
+		viewer.setLabelProvider(new FlowLabelProvider(library));
 		viewer.setInput(list);
+		
+		EventHandler handler = new EventHandler();
+		viewer.addDoubleClickListener(handler);
+		ctl.addKeyListener(handler);
 	}
 	
 	private void createToolBox(Composite parent)
@@ -90,11 +107,14 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 	protected void init(DatabaseObject obj)
 	{
 		this.list = (CommandList) obj;
+		this.commands = new ArrayList<Command>(Arrays.asList(list.commands));
+		this.library = getCuinaProject().getService(CommandLibrary.class);
 	}
 
 	@Override
 	protected boolean applySave()
 	{
+		list.commands = commands.toArray(new Command[commands.size()]);
 		return true;
 	}
 
@@ -114,5 +134,69 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 	public CuinaProject getCuinaProject()
 	{
 		return super.getCuinaProject();
+	}
+	
+	private CommandNode getSelectedNode()
+	{
+		Object item = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+		if (item instanceof CommandNode)
+			return (CommandNode) item;
+		else
+			return null;
+	}
+	
+	private class EventHandler implements IDoubleClickListener, KeyListener
+	{
+		@Override
+		public void doubleClick(DoubleClickEvent event)
+		{
+			CommandNode node = getSelectedNode();
+			
+			FunctionEntry func = library.getFunction(node.getCommand());
+			if (func != null)
+			{
+				CommandDialog dialog = new CommandDialog(FlowEditor.this, func);
+				int result = dialog.open();
+				if (result == TitleAreaDialog.OK)
+				{
+					
+//					System.out.println("Command erstellt: " + dialog.getCommand());
+					commands.add(node.getIndex(), dialog.getCommand());
+					viewer.refresh();
+				}
+			}
+			
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e)
+		{
+			if (e.keyCode == SWT.DEL)
+			{
+				CommandNode node = getSelectedNode();
+				if (node == null) return;
+				
+				commands.remove(node.getIndex());
+				viewer.refresh();
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+	}
+
+	@Override
+	public void addCommand(Command cmd)
+	{
+		CommandNode node = getSelectedNode();
+		if (node != null)
+			commands.add(node.getIndex(), cmd);
+		else
+			commands.add(commands.size()-1, cmd);
+		viewer.refresh();
 	}
 }

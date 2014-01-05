@@ -43,7 +43,7 @@
 	</target>
 	
 	<target name="build_engine" depends="setup_files">
-		<javac debug="on" srcdir="${src.dir}" destdir="${build.dir}" classpathref="CuinaEngine.classpath" includeantruntime="false" />
+		<javac debug="on" srcdir="${src.dir}" destdir="${build.dir}" classpathref="CuinaEngine.classpath" includeantruntime="false"/>
 
 		<jar destfile="${deploy.dir}\cuina.engine.jar" basedir="${build.dir}">
 			<manifest>

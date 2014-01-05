@@ -53,7 +53,7 @@ public class IntList implements Serializable, Iterable<Integer>
 	}
 
 	@Override
-	public Iterator iterator()
+	public Iterator<Integer> iterator()
 	{
 		return new Iterator<Integer>()
 		{

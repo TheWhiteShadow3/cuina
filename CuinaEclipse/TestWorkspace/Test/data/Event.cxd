@@ -17,7 +17,7 @@
         <indent>0</indent>
       </cuina.eventx.Command>
       <cuina.eventx.Command>
-        <target>SZENE:Message</target>
+        <target>SCENE:Message</target>
         <name>setFaceImage</name>
         <args>
         	<string>faces/Reimu smile.png</string>
@@ -25,7 +25,7 @@
         <indent>0</indent>
       </cuina.eventx.Command>
       <cuina.eventx.Command>
-        <target>SZENE:Message</target>
+        <target>SCENE:Message</target>
         <name>setName</name>
         <args>
         	<string>???</string>
@@ -33,7 +33,7 @@
         <indent>0</indent>
       </cuina.eventx.Command>
       <cuina.eventx.Command>
-        <target>SZENE:Message</target>
+        <target>SCENE:Message</target>
         <name>showMessage</name>
         <args>
         	<string>&lt;span class=&quot;yellow&quot;&gt;Reimu&lt;/span&gt;&lt;br/&gt;My name is &lt;b&gt;Reimu&lt;/b&gt; and I am new here.</string>
@@ -41,15 +41,15 @@
         <indent>0</indent>
       </cuina.eventx.Command>
       <cuina.eventx.Command>
-        <target>SZENE</target>
-        <name>Message:setName</name>
+        <target>SCENE:Message</target>
+        <name>setName</name>
         <args>
         	<string>Rosa</string>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
       <cuina.eventx.Command>
-        <target>SZENE:Message</target>
+        <target>SCENE:Message</target>
         <name>showMessage</name>
          <args>
         	<string>I don&apos;t wearing &lt;span class=&quot;rosa&quot;&gt;panties&lt;/span&gt; today because it&apos;s so hot.</string>
@@ -77,7 +77,7 @@
         <indent>0</indent>
       </cuina.eventx.Command>
       <cuina.eventx.Command>
-        <target>SZENE:Message</target>
+        <target>SCENE:Message</target>
         <name>showMessage</name>
         <args>
         	<string>But it would still be nice if you are not constantly staring at my &lt;i&gt;pussy&lt;/i&gt;.&lt;img src=&quot;herz.png&quot; align=&quot;bottom&quot;/&gt;</string>

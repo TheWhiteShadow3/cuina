@@ -202,7 +202,7 @@ public class PluginManager
 			String[] classNames = plugin.getClassNames();
 			for(String str : classNames)
 			{
-				Class c = CuinaClassLoader.getInstance().loadClass(str);
+				Class<?> c = CuinaClassLoader.getInstance().loadClass(str);
 				if (isPluginClass(c)) classes.add(c);
 			}
 		}

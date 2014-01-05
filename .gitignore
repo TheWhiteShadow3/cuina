@@ -6,5 +6,4 @@
 engine/deploy/lib/*
 engine/deploy/plugins/*
 engine/deploy/cuina.engine.jar
-.metadata
-*.launch
+/CuinaEclipse/TestWorkspace/.metadata

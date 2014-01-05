@@ -28,6 +28,7 @@ public abstract class AbstractDatabaseEditorPart extends EditorPart
 		{
 			table.getDatabase().saveTable(table);
 			dirty = false;
+			firePropertyChange(PROP_DIRTY);
 		}
 		catch (ResourceException e)
 		{

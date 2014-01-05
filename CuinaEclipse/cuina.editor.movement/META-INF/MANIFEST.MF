@@ -9,5 +9,5 @@ Require-Bundle: cuina.editor.object,
  cuina.resource,
  org.eclipse.ui,
  org.eclipse.core.runtime
-Export-Package: cuina.map.movement
+Export-Package: cuina.movement
 Bundle-ActivationPolicy: lazy

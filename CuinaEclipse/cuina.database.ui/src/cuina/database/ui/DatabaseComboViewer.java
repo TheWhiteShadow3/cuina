@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 public class DatabaseComboViewer<E extends DatabaseObject> extends ComboViewer
 {
 	/** NULL-Element. */
-	private static Object NULL = new Object(); 
+	private static Object NULL = new String();
 	
 	public DatabaseComboViewer(Composite parent, int style)
 	{

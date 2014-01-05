@@ -4,7 +4,6 @@ import static org.lwjgl.opengl.GL11.*;
 
 import cuina.util.Vector;
 
-import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;

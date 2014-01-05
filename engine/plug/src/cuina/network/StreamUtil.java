@@ -2,13 +2,17 @@ package cuina.network;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 public class StreamUtil
 {
-	public static int byteArrayToInt(byte[] buffer)
+	public static float byteArrayToFloat(byte[] buffer, int pos)
 	{
-		return byteArrayToInt(buffer, 0);
+		return Float.intBitsToFloat(byteArrayToInt(buffer, pos));
+	}
+	
+	public static byte[] floatToByteArray(float val)
+	{
+		return intToByteArray(Float.floatToIntBits(val));
 	}
 	
 	public static int byteArrayToInt(byte[] buffer, int pos)
@@ -41,9 +45,17 @@ public class StreamUtil
 	public static Message read(InputStream in) throws IOException
 	{
 		int flag = in.read();
-		int lenght = StreamUtil.byteArrayToInt(LENGTH_BUFFER);
-		byte[] buffer = new byte[lenght];
-		in.read(buffer);
+		if (flag == Channel.FLAG_EMPTY) return null;
+		
+		byte[] buffer = null;
+		if (flag != Channel.FLAG_EOF)
+		{
+			in.read(LENGTH_BUFFER);
+			int lenght = StreamUtil.byteArrayToInt(LENGTH_BUFFER, 0);
+			buffer = new byte[lenght];
+			in.read(buffer);
+			if (buffer.length == 0) return null;
+		}
 		return new Message(flag, buffer);
 	}
 	

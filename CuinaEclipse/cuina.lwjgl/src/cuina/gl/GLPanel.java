@@ -122,7 +122,10 @@ public class GLPanel
 //				System.out.println("[GLPanel] firePaintEvent");
 				clear();
 				
-				GC gc = new GC(canvas, viewport);
+				Rectangle clip = getViewportBounds();
+				clip.x -= margin;
+				clip.y -= margin;
+				GC gc = new GC(canvas, clip);
 				
 				gc.translate2D(-viewport.x + margin, -viewport.y + margin);
 				for (PaintListener l : listeners)

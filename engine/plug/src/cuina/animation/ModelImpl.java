@@ -1,7 +1,8 @@
 package cuina.animation;
- 
+
 import cuina.Context;
 import cuina.Game;
+import cuina.Logger;
 import cuina.graphics.GraphicContainer;
 import cuina.graphics.PictureSprite;
 import cuina.graphics.Sprite;
@@ -14,65 +15,76 @@ import cuina.world.CuinaWorld;
 
 import java.awt.image.BufferedImage;
 
-@Priority(updatePriority=-100)
+@Priority(updatePriority = -100)
 public class ModelImpl implements Model, LifeCycle
 {
-    private static final long   serialVersionUID    = 1688441863984748766L;
-    
-    private CuinaObject		object;
-    private PictureSprite     sprite;
-    private String          fileName;
-    private Animator        animator;
-    private int frames;
-    private int animations;
-    private int cw; // Cell-Width
-    private int ch; // Cell-Height
- 
-    private int frameIndex = 0;
-    private int animationIndex = 0;
-    private int frameTime = 10;
-    private int animationTimer = -1;
-    private float x;
-    private float y;
-    private float z;
-    private boolean animate;
-//  private int ox; // Offset-X
-//  private int oy; // Offset-Y
-    
-    public ModelImpl() {}
-    
-    public ModelImpl(String fileName, int frames, int directions, boolean animate)
-    {
-//      this.object = object;
-        this.fileName = fileName;
-        this.animate = animate;
-        this.frames = frames;
-        this.animations = directions;
-        this.animate = animate;
-        loadImage();
-    }
-    
-    public ModelImpl(ModelImpl clone)
-    {
-        this.animator       = clone.animator;
-        this.fileName       = clone.fileName;
-        this.frames         = clone.frames;
-        this.animations     = clone.animations;
-        this.frameIndex     = clone.frameIndex;
-        this.animationIndex = clone.animationIndex;
-        this.x              = clone.x;
-        this.y              = clone.y;
-        this.z              = clone.z;
-        
-        loadImage();
-    }
-    
+	private static final long serialVersionUID = 1688441863984748766L;
+
+	private CuinaObject object;
+	private PictureSprite sprite;
+	private String fileName;
+	private Animator animator;
+	private int frames;
+	private int animations;
+	private int cw; // Cell-Width
+	private int ch; // Cell-Height
+
+	private int frameIndex = 0;
+	private int animationIndex = 0;
+	private int frameTime = 10;
+	private int animationTimer = -1;
+	private float x;
+	private float y;
+	private float z;
+	private boolean animate;
+
+	public ModelImpl()
+	{}
+
+	public ModelImpl(String fileName)
+	{
+		this(fileName, 1, 1, false);
+	}
+
+	public ModelImpl(String fileName, int frames, int directions, boolean animate)
+	{
+		this.fileName = fileName;
+		this.animate = animate;
+		this.frames = frames;
+		this.animations = directions;
+		this.animate = animate;
+		loadImage();
+	}
+
+	public ModelImpl(ModelImpl clone)
+	{
+		if (clone.animator != null) try
+		{
+			this.animator	= clone.animator.getClass().newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			Logger.log(ModelImpl.class, Logger.ERROR, "Can not clone class.");
+		}
+		this.fileName 		= clone.fileName;
+		this.frames 		= clone.frames;
+		this.animations 	= clone.animations;
+		this.frameIndex 	= clone.frameIndex;
+		this.animationIndex = clone.animationIndex;
+		this.x 				= clone.x;
+		this.y 				= clone.y;
+		this.z 				= clone.z;
+		this.animate 		= clone.animate;
+
+		loadImage();
+	}
+	
 	@Override
 	public void init()
 	{
 		update();
 	}
-    
+
 	@Override
 	public CuinaObject getObject()
 	{
@@ -98,11 +110,6 @@ public class ModelImpl implements Model, LifeCycle
 		}
 	}
 
-//  public Model(MapObject object, String fileName, int frames, int directions)
-//  {
-//      this(object, fileName, frames, directions, "");
-//  }
-    
 	@Override
 	public Animator getAnimator()
 	{
@@ -116,172 +123,172 @@ public class ModelImpl implements Model, LifeCycle
 		if (animator != null) animator.init(this);
 	}
  
-    @Override
-    public void refresh()
-    {
-        loadImage();
-    }
-    
-    private void loadImage()
-    {
-        if (frames == 0 || animations == 0)
-        {
-            int frameStart = fileName.indexOf("+");
-            if (frameStart > 0)
-            {
-                int ul = fileName.lastIndexOf("_");
-                int dot = fileName.lastIndexOf(".");
-                int frameEnd = (ul == -1) ? dot : ul;
-                String countStr = fileName.substring(frameStart + 1, frameEnd);
-                frames = Integer.parseInt(countStr.substring(0, countStr.length() / 2));
-                animations = Integer.parseInt(countStr.substring(countStr.length() / 2, frameEnd - frameStart - 1));
-            }
-            else
-            {
-                frames = 1;
-                animations = 1;
-            }
-        }
-        
-        try
-        {
-        	GraphicContainer container = Game.getContext(Context.SESSION).
-        			<CuinaWorld>get(CuinaWorld.INSTANCE_KEY).getGraphicContainer();
-            sprite = new PictureSprite(fileName, container);
-            cw = sprite.getImage().getWidth() / frames;
-            ch = sprite.getImage().getHeight() / animations;
-            setOffset(cw / 2, ch);
-            
-//          setPosition();
-        }
-        catch (LoadingException e)
-        {
-            e.printStackTrace();
-        }
-    }
-    
-    @Override
-    public int getWidth()
-    {
-        return cw;
-    }
-    
-    @Override
-    public int getHeight()
-    {
-        return ch;
-    }
- 
-    @Override
-    public int getFrameCount()
-    {
-        return frames;
-    }
- 
-    @Override
-    public int getAnimationCount()
-    {
-        return animations;
-    }
- 
-    @Override
-    public void setFrame(int frame)
-    {
-        this.frameIndex = frame;
-    }
-    
-    @Override
+	@Override
+	public void refresh()
+	{
+		loadImage();
+	}
+
+	private void loadImage()
+	{
+		if (fileName == null) return;
+		
+		if (frames == 0 || animations == 0)
+		{ // Sucht nach möglichen Angaben im Dateinamen (Muster: abc+12.png oder abc+3456_def.png)
+			int frameStart = fileName.indexOf("+");
+			if (frameStart > 0)
+			{
+				int ul = fileName.lastIndexOf("_");
+				int dot = fileName.lastIndexOf(".");
+				int frameEnd = (ul == -1) ? dot : ul;
+				String countStr = fileName.substring(frameStart + 1, frameEnd);
+				frames = Integer.parseInt(countStr.substring(0, countStr.length() / 2));
+				animations = Integer.parseInt(countStr.substring(countStr.length() / 2, frameEnd - frameStart - 1));
+			}
+			else
+			{
+				frames = 1;
+				animations = 1;
+			}
+		}
+
+		try
+		{
+			GraphicContainer container = Game.getContext(Context.SESSION).
+					<CuinaWorld>get(CuinaWorld.INSTANCE_KEY).getGraphicContainer();
+			sprite = new PictureSprite(fileName, container);
+			cw = sprite.getImage().getWidth() / frames;
+			ch = sprite.getImage().getHeight() / animations;
+			setOffset(cw / 2, ch);
+		}
+		catch (LoadingException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public int getWidth()
+	{
+		return cw;
+	}
+
+	@Override
+	public int getHeight()
+	{
+		return ch;
+	}
+
+	@Override
+	public int getFrameCount()
+	{
+		return frames;
+	}
+
+	@Override
+	public int getAnimationCount()
+	{
+		return animations;
+	}
+
+	@Override
+	public void setFrame(int frame)
+	{
+		this.frameIndex = frame;
+	}
+
+	@Override
 	public int getFrame()
-    {
-        return this.frameIndex;
-    }
-    
-    @Override
-    public void setAnimationIndex(int index)
-    {
-        this.animationIndex = index;
-    }
-    
-    @Override
+	{
+		return this.frameIndex;
+	}
+
+	@Override
+	public void setAnimationIndex(int index)
+	{
+		this.animationIndex = index;
+	}
+
+	@Override
 	public int getAnimationIndex()
-    {
-        return animationIndex;
-    }
-    
-    @Override
+	{
+		return animationIndex;
+	}
+
+	@Override
 	public void setFrameTime(int frameTime)
-    {
-        this.frameTime = frameTime;
-    }
- 
-    @Override
-    public Sprite getSprite()
-    {
-        return sprite;
-    }
-    
-    @Override
-    public boolean isAnimate()
-    {
-        return animate;
-    }
-    
-    @Override
-    public void setAnimate(boolean animate)
-    {
-        this.animate = animate;
-    }
-    
-    @Override
-    public void setOffset(float ox, float oy)
-    {
-        sprite.setOX(ox);
-        sprite.setOY(oy);
-    }
- 
-    @Override
-    public void update()
-    {
-        if (animator != null) animator.update();
-        
-        if (animate)
-        {
-            // überbrücke Startverzögerung der Animation
-            if (animationTimer == -1)
-            {
-                animationTimer = frameTime / 2;
-                frameIndex = 0;
-                return;
-            }
-            
-            animationTimer++;
-            if (animationTimer >= frameTime)
-            {
-                frameIndex++;
-                if (frameIndex >= frames)
-                {
-                    if (animator != null) animator.animationFinished();
-                    frameIndex = 0;
-                }
-                animationTimer = 0;
-            }
-        }
-    }
-    
+	{
+		this.frameTime = frameTime;
+	}
+
+	@Override
+	public Sprite getSprite()
+	{
+		return sprite;
+	}
+
+	@Override
+	public boolean isAnimate()
+	{
+		return animate;
+	}
+
+	@Override
+	public void setAnimate(boolean animate)
+	{
+		this.animate = animate;
+	}
+
+	@Override
+	public void setOffset(float ox, float oy)
+	{
+		sprite.setOX(ox);
+		sprite.setOY(oy);
+	}
+
+	@Override
+	public void update()
+	{
+		if (animator != null) animator.update();
+
+		if (animate)
+		{
+			// überbrücke Startverzögerung der Animation
+			if (animationTimer == -1)
+			{
+				animationTimer = frameTime / 2;
+				frameIndex = 0;
+				return;
+			}
+
+			animationTimer++;
+			if (animationTimer >= frameTime)
+			{
+				frameIndex++;
+				if (frameIndex >= frames)
+				{
+					if (animator != null) animator.animationFinished();
+					frameIndex = 0;
+				}
+				animationTimer = 0;
+			}
+		}
+	}
+
 	@Override
 	public void postUpdate()
 	{
 		setPosition(object.getX(), object.getY(), object.getZ());
 	}
-    
-    /**
-     * Setzt die Animations-Zeit zurück.
-     */
-    @Override
+
+	/**
+	 * Setzt die Animations-Zeit zurück.
+	 */
+	@Override
 	public void resetAnimation()
-    {
-        animationTimer = -1;
-    }
+	{
+		animationTimer = -1;
+	}
 //  
 //  /**
 //   * Animiert das Model entsprechend dem Zustand und der bewegten Entfernung.
@@ -356,34 +363,34 @@ public class ModelImpl implements Model, LifeCycle
 ////        }
 //  }
 
-    @Override
+	@Override
 	public float getZ()
-    {
-        return z;
-    }
- 
-    public void setZ(float z)
-    {
-        this.z = z;
-    }
- 
-    @Override
-    public float getX()
-    {
-        return x;
-    }
- 
-    @Override
-    public float getY()
-    {
-        return y;
-    }
- 
-    @Override
-    public void setVisible(boolean value)
-    {
-        sprite.setVisible(value);
-    }
+	{
+		return z;
+	}
+
+	public void setZ(float z)
+	{
+		this.z = z;
+	}
+
+	@Override
+	public float getX()
+	{
+		return x;
+	}
+
+	@Override
+	public float getY()
+	{
+		return y;
+	}
+
+	@Override
+	public void setVisible(boolean value)
+	{
+		sprite.setVisible(value);
+	}
 
 	@Override
 	public boolean isVisible()
@@ -414,30 +421,28 @@ public class ModelImpl implements Model, LifeCycle
 	{
 		sprite.setAngle(angle);
 	}
-    
-    @Override
-    public void dispose()
-    {
-        if (sprite != null) sprite.dispose();
-    }
- 
-    @Override
-    public String toString()
-    {
-        return "Model[" + fileName + ", frames=" +
-                          frames + ", directions=" +
-                          animations + "]";
-    }
- 
-    @Override
-    public float getOX()
-    {
-        return sprite.getOX();
-    }
- 
-    @Override
-    public float getOY()
-    {
-        return sprite.getOY();
-    }
+
+	@Override
+	public void dispose()
+	{
+		if (sprite != null) sprite.dispose();
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Model[" + fileName + ", frames=" + frames + ", directions=" + animations + "]";
+	}
+
+	@Override
+	public float getOX()
+	{
+		return sprite.getOX();
+	}
+
+	@Override
+	public float getOY()
+	{
+		return sprite.getOY();
+	}
 }

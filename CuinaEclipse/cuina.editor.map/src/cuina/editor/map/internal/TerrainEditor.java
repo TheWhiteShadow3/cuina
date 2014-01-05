@@ -9,9 +9,7 @@ import cuina.editor.map.ITerrainEditor;
 import cuina.editor.map.MapChangeListener;
 import cuina.editor.map.MapEvent;
 import cuina.editor.map.TerrainLayer;
-import cuina.editor.map.internal.layers.TerrainPanel;
 import cuina.editor.map.util.MapOperation;
-import cuina.editor.ui.ViewLayer;
 import cuina.editor.ui.selection.Selection;
 import cuina.editor.ui.selection.SelectionEvent;
 import cuina.editor.ui.selection.SelectionListener;
@@ -39,13 +37,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -80,14 +75,11 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	private Map map;
 	private CuinaProject project;
 	private Tileset tileset;
-	private IToolBarManager toolbarManager;
 	private static final HashMap<String, EditorToolAction> tools = new HashMap<String, EditorToolAction>();
 	private final ArrayList<MapChangeListener> listeners = new ArrayList<MapChangeListener>();
 	private IOperationHistory operationHistory;
-	private static EditorToolAction cursorMode;
 	private boolean exclusiveLayer;
 	protected boolean showRaster;
-
 	private Point menuPoint;
 
 	@Override
@@ -216,6 +208,19 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	{
 		this.showRaster = showRaster;
 	}
+//
+//	public void setEditorState(EditorState editorState)
+//	{
+//		this.editorState = editorState;
+//	}
+//
+//	@Override
+//	public EditorState getEditorState()
+//	{
+//		return editorState;
+//	}
+	
+//	public EditorActionBarContributor getActionBarContributor()
 
 	@Override
 	public void addListener(int eventType, Listener listener)
@@ -273,8 +278,6 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 		operationHistory = workbench.getOperationSupport().getOperationHistory();
 		operationHistory.addOperationHistoryListener(this);
 
-		// setze Commands
-		this.toolbarManager = getEditorSite().getActionBars().getToolBarManager();
 		fillActionBars(getEditorSite().getActionBars());
 		hookContextMenu();
 	}
@@ -382,61 +385,16 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 
 	public void fillActionBars(IActionBars actionBars)
 	{
-		toolbarManager.add(new Separator(ITerrainEditor.TOOLBAR_VIEWOPTIONS));
-		toolbarManager.add(new Separator(ITerrainEditor.TOOLBAR_TOOLS));
+//		toolbarManager.add(new Separator(ITerrainEditor.TOOLBAR_VIEWOPTIONS));
+//		toolbarManager.add(new Separator(ITerrainEditor.TOOLBAR_TOOLS));
 
 		IAction undoAction = new UndoActionHandler(getSite(), MapOperation.MapContext.INSTANCE);
 		IAction redoAction = new RedoActionHandler(getSite(), MapOperation.MapContext.INSTANCE);
 		actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), undoAction);
 		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), redoAction);
-
-		Action rasterAction = new Action("Raster", IAction.AS_CHECK_BOX)
-		{
-			@Override
-			public void run()
-			{
-				showRaster = isChecked();
-			}
-		};
-		rasterAction.setId(ACTION_RASTER);
-		rasterAction.setText("Raster");
-		rasterAction.setToolTipText("Stellt das Karten-Raster an/aus.");
-		rasterAction.setImageDescriptor(Activator.getImageDescriptor("raster.png"));
-
-		toolbarManager.appendToGroup(TOOLBAR_VIEWOPTIONS, rasterAction);
-
-		cursorMode = new EditorToolAction(this, null)
-		{
-			@Override
-			public void activate()
-			{
-				System.out.println("[TerrainEditor] Set Cursor Mode");
-				initSelectionMode();
-			}
-		};
-		cursorMode.setId(ACTION_CURSOR);
-		cursorMode.setText("Cursor");
-		cursorMode.setToolTipText("Aktiviert den Auswahl-Modus.");
-		cursorMode.setImageDescriptor(Activator.getImageDescriptor("cursor.png"));
-		cursorMode.setChecked(true);
-
-		addEditorTool(cursorMode);
-
-		// manager.appendToGroup(TOOLBAR_TOOLS, cursorMode);
-
-		for(ViewLayer layer : panel.getLayers())
-		{
-			try
-			{
-				layer.fillActionBars(actionBars);
-			} catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
 	}
 
-	private void initSelectionMode()
+	void initSelectionMode()
 	{
 		SelectionManager handler = getSelectionManager();
 		handler.setDisableOutside(false);
@@ -531,6 +489,18 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	}
 
 	@Override
+	public TerrainLayer getLayerByName(String layerName)
+	{
+		if (layerName == null) return null;
+		for(TerrainLayer layer : panel.getLayers())
+		{
+			if (layerName.equals(layer.getName())) return layer;
+		}
+		
+		return null;
+	}
+	
+	@Override
 	public GLCanvas getGLCanvas()
 	{
 		return panel.getGLCanvas();
@@ -547,62 +517,10 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	}
 
 	@Override
-	public void addEditorTool(EditorToolAction tool)
+	public EditorActionManager getActionManager()
 	{
-		/*
-		 * XXX
-		 * CommandContributionItem Übergibt den Parameter nicht korrekt.
-		 * Daher alternativ wieder mit Actions.
-		 */
-
-		// CommandContributionItemParameter cmdParameters = new
-		// CommandContributionItemParameter(
-		// getEditorSite(), tool.getID(), TOOL_COMMAND_ID,
-		// CommandContributionItem.STYLE_RADIO);
-		// cmdParameters.icon = tool.getAction().getImageDescriptor();
-		// cmdParameters.label = tool.getAction().getText();
-		// cmdParameters.tooltip = tool.getAction().getToolTipText();
-		// cmdParameters.parameters = new HashMap();
-		// cmdParameters.parameters.put("org.eclipse.ui.commands.radioStateParameter",
-		// tool.getID());
-		// CommandContributionItem item = new
-		// CommandContributionItem(cmdParameters);
-
-		if(!tools.containsKey(tool.getId()))
-		{
-			toolbarManager.appendToGroup(TOOLBAR_TOOLS, new ActionContributionItem(tool));
-			tools.put(tool.getId(), tool);
-		}
-	}
-
-	@Override
-	public EditorToolAction getEditorTool(String id)
-	{
-		return tools.get(id);
-	}
-
-	@Override
-	public void activateTool(String id)
-	{
-		EditorToolAction tool = tools.get(id);
-		if(tool == null)
-			throw new NullPointerException("Tool " + id + " does not exists.");
-
-		if(tool.isChecked())
-			return;
-
-		for(EditorToolAction t : tools.values())
-		{
-			if(t.isChecked())
-			{
-				t.setChecked(false);
-				t.run();
-			}
-		}
-
-		tool.setChecked(true);
-		tool.run();
-		toolbarManager.update(true);
+		MapEditorActionBarContributor c = (MapEditorActionBarContributor) getEditorSite().getActionBarContributor();
+		return c.getActionManager();
 	}
 
 	@Override

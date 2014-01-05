@@ -19,7 +19,7 @@ public interface ObjectGraphic
 	/**
 	 * Gibt das Image zurück.
 	 * Zuvor muss erstmalig {@link #setGLCanvas(GLCanvas)} aufgerufen werden um den Kontext festzulegen.
-	 * @return
+	 * @return Das Image.
 	 * @throws IllegalStateException Wenn der Grafik-Kontext nicht festgelegt wurde.
 	 */
 	public Image getImage() throws IllegalStateException;
@@ -47,7 +47,7 @@ public interface ObjectGraphic
 	
 	/**
 	 * Gibt den Dateinamen der Grafik zurück, sofern vorhanden.
-	 * @return
+	 * @return Den Dateinamen.
 	 */
 	public String getFilename();
 }

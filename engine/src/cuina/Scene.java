@@ -16,7 +16,7 @@ import java.util.Collections;
  * Damit ist sicher gestellt, dass die neue Szene auch dem <code>FrameTimer</code> übergeben wird.
  * </p>
  * <p>
- * Szenen erlauben zudem die selektierte Benutzung von Plugins,
+ * Szenen erlauben zudem die selektive Benutzung von Plugins,
  * in welchen eine Anzahl von Szenen definiert werden kann,
  * in denen dieses als gültig angesehen wird.
  * <br><b>Beachte:</b> Plugin-Instanzen können auch außerhalb ihrer gültigen Szenen existent und über den
@@ -26,7 +26,7 @@ import java.util.Collections;
  * Der Update-Zyklus einer Szene unterteilt sich in zwei Phasen:
  * <ol>
  * <li>Ausführung der Skripte in der Skript-Queue.</li>
- * <li>Aufruf der Methoden <code>update</code> und <code>postUpdate</code> aller injektierten LifeCycle-Instanzen.</li>
+ * <li>Aufruf der Methoden <code>update</code> und <code>postUpdate</code> aller injizierten LifeCycle-Instanzen.</li>
  * </ol>
  * </p>
  * @author TheWhiteShadow
@@ -57,17 +57,6 @@ public class Scene
 	public String getName()
 	{
 		return name;
-	}
-	
-	public void injectIntoScene(Object obj, String name)
-	{
-		ObjectContainer container = new ObjectContainer(obj, name, new String[] {this.name}, Context.SCENE);
-		InjectionManager.addContextObject(Context.SCENE, container);
-		if (obj instanceof LifeCycle && started)
-		{
-			//TODO: Einsortieren entsprechend der Prioritäten.
-			initLifeCycle(container);
-		}
 	}
 	
 	void initLifeCycle(ObjectContainer container)

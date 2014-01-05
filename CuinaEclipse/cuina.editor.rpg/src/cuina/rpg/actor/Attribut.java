@@ -55,8 +55,6 @@ public class Attribut implements Serializable, NamedItem
 	 *            Name des Attributs.
 	 * @param value
 	 *            Wert des Attributs.
-	 * @param priotity
-	 *            Anzeige-Priotität.
 	 */
 	public Attribut(String name, long value)
 	{
@@ -75,8 +73,6 @@ public class Attribut implements Serializable, NamedItem
 	 *            Maximaler Attribut-Wert.
 	 * @param value
 	 *            Anfangswert des Attributs. Muss zwischen 0 und max liegen.
-	 * @param priotity
-	 *            Anzeige-Priotität.
 	 */
 	public Attribut(String name, long max, long value)
 	{

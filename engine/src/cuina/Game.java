@@ -609,7 +609,7 @@ public final class Game
 	
 	private static void initDebugger()
 	{
-		InjectionManager.injectObject(new Debugger(instance), "Debugger");
+		InjectionManager.addObject(new Debugger(instance), "Debugger", Context.GLOBAL, Scene.ALL_SCENES);
 	}
 	
 	private static String getLwjglPath(String os)
@@ -623,27 +623,12 @@ public final class Game
 		rootDirectory = System.getProperty(CUINA_GAMEPATH_KEY);
 		if (rootDirectory == null)
 			rootDirectory = System.getProperty("user.dir");
-		
-		checkPath(Paths.get(rootDirectory, CONFIG_FILE), "Project-File");
 		Logger.log(Game.class, Logger.INFO, "Project-Directory is: " + rootDirectory);
-
-		try
-		{
-			File iniFile = new File(rootDirectory, CONFIG_FILE);
-			Logger.log(Game.class, Logger.DEBUG, "lese Ini-Datei: " + iniFile.getAbsolutePath());
-			if (iniFile.exists())
-			{
-				ini = new Ini(iniFile);
-
-				gameTitle 		= ini.get("Game", "Title", "");
-				modules			= getProperty(CUINA_MODULE_KEY, MODULE_ALL);
-			}
-			else throw new FileNotFoundException(iniFile.getPath());
-		}
-		catch (IOException | InvalidFileFormatException e)
-		{
-			Logger.log(Game.class, Logger.WARNING, e);
-		}
+		
+		ini = getIni(rootDirectory);
+		
+		gameTitle 	= ini.get("Game", "Title", "");
+		modules		= getProperty(CUINA_MODULE_KEY, MODULE_ALL);
 
 		String path;
 		path = ResourceManager.getResourcePath(ResourceManager.KEY_GRAPHICS);
@@ -686,6 +671,25 @@ public final class Game
 			}
 		}
 		checkPath(Paths.get(lwjglPath), "lwjgl-Library");
+	}
+	
+	private static Ini getIni(String pathname) throws LoadingException
+	{
+		Ini ini;
+		File iniFile = new File(pathname, CONFIG_FILE);
+		checkPath(iniFile.toPath(), "Config-File");
+		try
+		{
+			Logger.log(Game.class, Logger.DEBUG, "lese Ini-Datei: " + iniFile.getAbsolutePath());
+			
+			ini = new Ini(iniFile);
+		}
+		catch (IOException | InvalidFileFormatException e)
+		{
+			throw new LoadingException(iniFile, e);
+		}
+
+		return ini;
 	}
 	
 	public static int getProperty(String key, int def)
@@ -742,7 +746,7 @@ public final class Game
 	
 	private static void checkPath(Path path, String resourceName) throws LoadingException
 	{
-		if (Files.notExists(path))
+		if (!Files.exists(path))
 			throw new LoadingException(resourceName);
 	}
 

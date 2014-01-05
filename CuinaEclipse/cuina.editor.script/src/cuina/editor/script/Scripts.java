@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,8 +31,8 @@ public class Scripts extends AbstractUIPlugin
 
 	// The shared instance
 	private static Scripts plugin;
-	private HashMap<CuinaProject, ScriptCache> scriptCaches = new HashMap<CuinaProject, ScriptCache>();
-	private HashMap<CuinaProject, StaticScriptLibrary> libaries = new HashMap<CuinaProject, StaticScriptLibrary>();
+	private Map<CuinaProject, ScriptCache> scriptCaches = new HashMap<CuinaProject, ScriptCache>();
+	private Map<CuinaProject, StaticScriptLibrary> libaries = new HashMap<CuinaProject, StaticScriptLibrary>();
 	
 	private Image PAGE_REQUIRED_IMAGE;
 	private Image PAGE_OPTIONAL_IMAGE;
@@ -74,9 +75,8 @@ public class Scripts extends AbstractUIPlugin
 	}
 
 	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
+	 * Gibt die einzige Instanz zurück.
+	 * @return Die einzige Instanz.
 	 */
 	public static Scripts getPlugin()
 	{

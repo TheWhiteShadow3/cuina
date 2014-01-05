@@ -75,7 +75,7 @@ public class PluginTest
 		FrameTimer.syncScene();
 		
 		SimplePlugin plugin = new SimplePlugin();
-		Game.getScene().injectIntoScene(plugin, "blub");
+		InjectionManager.addObject(plugin, "blub");
 		
 		assertEquals(1, SimplePlugin.init_value);
 		

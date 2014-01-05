@@ -96,12 +96,12 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 		return id;
 	}
 
-	public Vector getPos()
+	public Vector getPosition()
 	{
 		return pos;
 	}
 	
-	public void setPosition(int x, int y, int z)
+	public void setPosition(float x, float y, float z)
 	{
 		pos.x = x;
 		pos.y = y;
@@ -116,37 +116,37 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 	@Override
 	public float getX()
 	{
-		return getPos().x;
+		return getPosition().x;
 	}
 
 	@Override
 	public void setX(float x)
 	{
-		getPos().x = x;
+		getPosition().x = x;
 	}
 
 	@Override
 	public float getY()
 	{
-		return getPos().y;
+		return getPosition().y;
 	}
 
 	@Override
 	public void setY(float y)
 	{
-		getPos().y = y;
+		getPosition().y = y;
 	}
 
 	@Override
 	public float getZ()
 	{
-		return (int)getPos().z;
+		return (int)getPosition().z;
 	}
 
 	@Override
 	public void setZ(float z)
 	{
-		getPos().z = z;
+		getPosition().z = z;
 	}
 
 	@Override

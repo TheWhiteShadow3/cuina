@@ -17,7 +17,7 @@ import cuina.world.CuinaWorld;
 
 import de.matthiasmann.twl.Widget;
 
-@ForScene(name=MessageBox.MESSAGE_KEY, persistent=true)
+@ForScene(name=MessageBox.MESSAGE_KEY)
 @Priority(updatePriority=200)
 public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEventHandler
 {
@@ -27,6 +27,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	
 	private MessageHistory history;
 	private WidgetContainer container;
+//	private CuinaModel backgroundModel;
 	private transient MessageWidget widget;
 	private String text;
 	private String[] choises;
@@ -70,6 +71,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 				if (index >= choises.length) index = 0;
 			}
 		}
+//		if (backgroundModel != null) backgroundModel.update();
 		
 //		if (Input.isPressed(Input.OK) || Input.isPressed(Input.CANCEL))
 //		{
@@ -87,6 +89,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	public void dispose()
 	{
 		container.dispose();
+//		if (backgroundModel != null) backgroundModel.dispose();
 	}
 	
 	@EventMethod
@@ -102,6 +105,30 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 		widget.setFaceImage(faceImage);
 		return Result.DEFAULT;
 	}
+
+//	public CuinaModel getBackgroundModel()
+//	{
+//		return backgroundModel;
+//	}
+//	
+//	/**
+//	 * Setzt ein Hintergrundmodel für die MessageBox.
+//	 * <p>
+//	 * Diese Methode ist Abhängig vom Plugin <b>cuina.animation-1.0</b>
+//	 * </p>
+//	 * @param imageName der Name der Bilddatei.
+//	 */
+//	@EventMethod
+//	public void setBackgroundModel(String imageName)
+//	{
+//		setBackgroundModel(new StaticModel(imageName));
+//	}
+//
+//	public void setBackgroundModel(CuinaModel model)
+//	{
+//		this.backgroundModel = model;
+//		model.setPosition(0, Graphics.getHeight(), 0);
+//	}
 
 	@EventMethod
 	public Result showMessage(String text)
@@ -146,7 +173,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	@Override
 	public Widget createRoot()
 	{
-		this.widget = new MessageWidget(this);
+		this.widget = new MessageWidget();
 		widget.setEventHandler(this);
 		widget.setVisible(false);
 		return widget;
@@ -189,5 +216,11 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	public void postBuild()
 	{
 		
+	}
+
+	@Override
+	public void setGlobalEventHandler(WidgetEventHandler handler)
+	{
+		throw new UnsupportedOperationException();
 	}
 }

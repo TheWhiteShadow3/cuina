@@ -1,7 +1,7 @@
 package cuina.map;
 
 import cuina.eventx.EventMethod;
-import cuina.map.movement.Motor;
+import cuina.movement.Motor;
 import cuina.object.BaseObject;
 import cuina.plugin.Plugin;
 

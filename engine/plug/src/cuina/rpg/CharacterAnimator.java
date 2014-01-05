@@ -2,7 +2,7 @@ package cuina.rpg;
 
 import cuina.animation.Animator;
 import cuina.animation.Model;
-import cuina.map.movement.Motor;
+import cuina.movement.Motor;
 import cuina.script.ScriptCallBack;
 import cuina.world.CuinaObject;
 

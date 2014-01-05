@@ -69,6 +69,16 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="contributorClass" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.IEditorActionBarContributor"/>
+               </appinfo>
+            </annotation>
+         </attribute>
          <attribute name="selectable" type="boolean" use="default" value="true">
             <annotation>
                <documentation>

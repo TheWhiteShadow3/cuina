@@ -81,47 +81,111 @@
       </typedef>
    </extension>
    <extension
-        point="cuina.eventx.functions">
-     <function
-           label="Methode 1"
-           categoryID="cuina.editor.eventx.Demo"
-           contextID="cuina.editor.message.Message"
-           name="doThings"
-           static="false">
-        <argument
-              label="Anzahl"
-              fixed="10"
-              type="int">
-        </argument>
-        <argument
-              label="Name"
-              type="java.lang.String">
-        </argument>
-        <argument
-              label="Position"
-              type="cuina.util.Vector">
-        </argument>
-        <argument
-              label="Farbe"
-              type="java.awt.Color">
-        </argument>
-     </function>
+         point="cuina.eventx.functions">
+      <function
+            categoryID="cuina.eventx.category.Demo"
+            contextID="cuina.eventx.TestContext"
+            description="Demo Funktion. Tut nichts und gibt es nicht einmal."
+            label="Methode 1"
+            name="doThings"
+            static="false">
+         <argument
+               fixed="10"
+               label="Anzahl"
+               type="int">
+         </argument>
+         <argument
+               label="Name"
+               type="string">
+         </argument>
+         <argument
+               label="Position"
+               type="cuina.util.Vector">
+         </argument>
+         <argument
+               label="Farbe"
+               type="java.awt.Color">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.eventx.category.Messages"
+            contextID="cuina.message.context.Message"
+            description="Setzt den Namen vom Nahichtenfenster."
+            label="setze Name"
+            name="setName"
+            return="void"
+            static="false">
+         <argument
+               label="Name"
+               type="string">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.eventx.category.Messages"
+            contextID="cuina.message.context.Message"
+            description="Zeigt eine Nachicht im Nahichtenfenster an."
+            label="zeige Nachicht"
+            name="showMessage"
+            return="void"
+            static="false">
+         <argument
+               label="Text"
+               type="string">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.eventx.category.Messages"
+            contextID="cuina.message.context.Message"
+            description="Setzt den Avatar vom Nahichtenfenster "
+            label="setze Avatar"
+            name="setFaceImage"
+            return="void"
+            static="false">
+         <argument
+               label="Image"
+               type="string">
+         </argument>
+      </function>
    </extension>
    <extension
          point="cuina.eventx.categories">
       <category
-            id="cuina.editor.eventx.Demo"
+            id="cuina.eventx.category.Demo"
             label="Demo">
+      </category>
+      <category
+            id="cuina.eventx.category.Messages"
+            label="Message">
       </category>
    </extension>
    <extension
          point="cuina.eventx.contexts">
       <context
             class="cuina.message.MessageBox"
-            id="cuina.editor.message.Message"
+            id="cuina.message.context.Message"
             name="Message"
-            type="SESSION">
+            type="SCENE">
       </context>
+      <context
+            class="cuina.eventx.InterpreterTest"
+            id="cuina.eventx.TestContext"
+            name="InterpreterTest"
+            type="GLOBAL">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="cuina.editor.eventx.internal.prefs.EventPreferences">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="cuina.editor.eventx.internal.prefs.EventPreferencePage"
+            id="cuina.editor.eventx.prefs.EventPreferencePage"
+            name="EventX Editor">
+      </page>
    </extension>
 
 </plugin>

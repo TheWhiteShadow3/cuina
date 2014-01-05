@@ -3,17 +3,12 @@ package cuina.editor.map.internal;
 import cuina.resource.ResourceException;
 import cuina.resource.ResourceManager.Resource;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 /** Angepasste Version */
 public class TileFactory
@@ -195,8 +190,8 @@ public class TileFactory
 		}
 	}
 
-	public static void main(String[] args) throws ResourceException
-	{
+//	public static void main(String[] args) throws ResourceException
+//	{
 		// for(int i = 0; i < EXPANSION_TABLE.length; i++)
 		// {
 		// if (i % 16 == 0) System.out.println();
@@ -210,30 +205,30 @@ public class TileFactory
 //		AutotileSet autotileSet = createAutotileSet(res, 32);
 //		
 //		showAutotileSet(autotileSet);
-	}
+//	}
 	
-	@SuppressWarnings("serial")
-	private static void showAutotileSet(final AutotileSet autotileSet)
-	{
-		JFrame frame = new JFrame("Autotile-Expansion");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		JPanel panel = new JPanel()
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				g.setColor(Color.BLACK);
-				g.fillRect(0, 0, getWidth(), getHeight());
-
-				g.drawImage(autotileSet.getFrame(0), 0, 0, this);
-			}
-		};
-		panel.setPreferredSize(new Dimension(256, 192));
-		frame.add(panel);
-
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-	}
+//	@SuppressWarnings({ "serial" })
+//	private static void showAutotileSet(final AutotileSet autotileSet)
+//	{
+//		JFrame frame = new JFrame("Autotile-Expansion");
+//		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//
+//		JPanel panel = new JPanel()
+//		{
+//			@Override
+//			protected void paintComponent(Graphics g)
+//			{
+//				g.setColor(Color.BLACK);
+//				g.fillRect(0, 0, getWidth(), getHeight());
+//
+//				g.drawImage(autotileSet.getFrame(0), 0, 0, this);
+//			}
+//		};
+//		panel.setPreferredSize(new Dimension(256, 192));
+//		frame.add(panel);
+//
+//		frame.pack();
+//		frame.setLocationRelativeTo(null);
+//		frame.setVisible(true);
+//	}
 }

@@ -7,18 +7,18 @@ public class FunctionContentProvider implements ITreeContentProvider
 {
 	private static final Object[] EMPTY = new Object[0];
 	
-	private CommandLibrary library;
-	
-	public FunctionContentProvider(CommandLibrary library)
-	{
-		this.library = library;
-	}
+//	private CommandLibrary library;
+//	
+//	public FunctionContentProvider(CommandLibrary library)
+//	{
+//		this.library = library;
+//	}
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
 	{
-		if (newInput instanceof CommandLibrary)
-			this.library = (CommandLibrary) newInput;
+//		if (newInput instanceof CommandLibrary)
+//			this.library = (CommandLibrary) newInput;
 
 	}
 
@@ -47,7 +47,7 @@ public class FunctionContentProvider implements ITreeContentProvider
 	{
 		if (element instanceof FunctionEntry)
 		{
-			return library.findCategory((FunctionEntry) element);
+			return ((FunctionEntry) element).category;
 		}
 		return null;
 	}
@@ -63,5 +63,5 @@ public class FunctionContentProvider implements ITreeContentProvider
 	}
 
 	@Override
-	public void dispose() { library = null; }
+	public void dispose() {}
 }

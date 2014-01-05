@@ -50,9 +50,9 @@ public class SessionTest
 		Game.newScene("junit"); // ab hier existiert die Szene.
 		
 		// Jeder Kontext bekommt ein Objekt mit einer Grafik injiziert.
-		InjectionManager.injectObject(new GlobalObject(), "global_object", Scene.ALL_SCENES, Context.GLOBAL);
-		InjectionManager.injectObject(new SessionObject(), "session_object", Scene.ALL_SCENES, Context.SESSION);
-		InjectionManager.injectObject(new SceneObject(), "scene_object", Scene.ALL_SCENES, Context.SCENE);
+		InjectionManager.addObject(new GlobalObject(), "global_object", Context.GLOBAL, Scene.ALL_SCENES);
+		InjectionManager.addObject(new SessionObject(), "session_object", Context.SESSION, Scene.ALL_SCENES);
+		InjectionManager.addObject(new SceneObject(), "scene_object", Context.SCENE, Scene.ALL_SCENES);
 		// Ab hier ist nur die globale Grafik und der Session-Kontainer vorhanden.
 		assertEquals(2, Graphics.GraphicManager.toList().size());
 		

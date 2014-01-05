@@ -1,13 +1,22 @@
 package cuina.editor.map.internal;
 
+import cuina.editor.map.TerrainLayer;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -19,9 +28,12 @@ public class Activator extends AbstractUIPlugin
 	public static final String PLUGIN_ID = "cuina.editor.map"; //$NON-NLS-1$
 
 	public static final String MAPS_DIRECTORY_ID = "cuina.maps.path";
+	
+	static final String LAYERS_EXTENSION_POINT = "cuina.mapeditor.layers";
 
 	// The shared instance
 	private static Activator plugin;
+	private Map<String, LayerDefinition> layerDefinitions = new HashMap<String, LayerDefinition>();
 
 	/**
 	 * The constructor
@@ -39,6 +51,29 @@ public class Activator extends AbstractUIPlugin
 	{
 		super.start(context);
 		plugin = this;
+		
+		registrateLayers();
+	}
+
+	private void registrateLayers()
+	{
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().
+				getConfigurationElementsFor(LAYERS_EXTENSION_POINT);
+
+		for (IConfigurationElement conf : elements) try
+		{
+			LayerDefinition def = new LayerDefinition(conf);
+			layerDefinitions.put(def.getName(), def);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static Map<String, LayerDefinition> getLayerDefinitions()
+	{
+		return Collections.unmodifiableMap(plugin.layerDefinitions);
 	}
 
 	/*
@@ -92,5 +127,42 @@ public class Activator extends AbstractUIPlugin
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public class LayerDefinition
+	{
+		private String name;
+		private Class<? extends TerrainLayer> layerClass;
+		private Class<? extends IEditorActionBarContributor> contributorClass;
+		
+		public LayerDefinition(IConfigurationElement conf) throws Exception
+		{
+			this.name = conf.getAttribute("name");
+			Bundle plugin = Platform.getBundle(conf.getContributor().getName());
+
+			this.layerClass = (Class<? extends TerrainLayer>) plugin.loadClass(conf.getAttribute("class"));
+			System.out.println("[Activator] Registriere Layer: " + layerClass.getName());
+			
+			if (conf.getAttribute("contributorClass") != null)
+			{
+				this.contributorClass = (Class<? extends IEditorActionBarContributor>)
+						plugin.loadClass(conf.getAttribute("contributorClass"));
+			}
+		}
+
+		public String getName()
+		{
+			return name;
+		}
+
+		public Class<? extends TerrainLayer> getLayerClass()
+		{
+			return layerClass;
+		}
+
+		public Class<? extends IEditorActionBarContributor> getActionBarContributorClass()
+		{
+			return contributorClass;
+		}
 	}
 }

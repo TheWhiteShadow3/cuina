@@ -358,7 +358,7 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 		String[] data = text.split("-");
 		if (data.length != 4) throw new IllegalArgumentException("Invalid field format.");
 		
-		short passage = Short.parseShort(data[0], 16);
+		short passage = (short) Integer.parseInt(data[0], 16);
 		byte priority = Byte.parseByte(data[1], 16);
 		byte tags = Byte.parseByte(data[2], 16);
 		byte flags = Byte.parseByte(data[3], 16);

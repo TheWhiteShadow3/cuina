@@ -3,7 +3,7 @@ package cuina.eventx;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public  class Command implements Serializable
+public class Command implements Serializable
 {
 	private static final long serialVersionUID = -2740462535751840405L;
 	

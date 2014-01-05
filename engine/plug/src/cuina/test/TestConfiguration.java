@@ -10,7 +10,7 @@ import cuina.graphics.TextureLoader;
 import cuina.graphics.View;
 import cuina.map.GameMap;
 import cuina.map.TileMap;
-import cuina.map.movement.Motor;
+import cuina.movement.Motor;
 import cuina.object.BaseObject;
 import cuina.plugin.ForScene;
 import cuina.plugin.LifeCycle;
@@ -70,6 +70,8 @@ public class TestConfiguration implements Plugin, LifeCycle
 			view.port.x = Graphics.getWidth() / 2;
 			view.target = map.getObject(2);
 			view.border = new Rectangle(map.getWidth(), map.getHeight());
+			Graphics.VIEWS.get(0).width = view.width;
+			Graphics.VIEWS.get(0).port.width = view.port.width;
 			Graphics.VIEWS.add(view);
 			
 			((Motor) view.target.getExtension(Motor.EXTENSION_KEY)).setDriver(Player.newInstance());
