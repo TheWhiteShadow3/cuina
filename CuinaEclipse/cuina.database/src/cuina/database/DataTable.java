@@ -72,7 +72,7 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 	{
 		nullCheck(key);
 		nullCheck(obj);
-		if (data.containsKey(key)) throw new IllegalArgumentException("dublicate Key");
+//		if (data.containsKey(key)) throw new IllegalArgumentException("duplicate Key");
 
 		obj.setKey(key);
 		data.put(key, obj);

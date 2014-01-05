@@ -17,7 +17,7 @@ public class TreeRoot extends TreeGroup
 		root = this;
 	}
 
-	public TreeRoot(DataTable table)
+	public TreeRoot(DataTable<?> table)
 	{
 		this();
 		if (table == null) throw new NullPointerException("table must be not null.");
@@ -49,7 +49,7 @@ public class TreeRoot extends TreeGroup
 	}
 
 	@Override
-	public DataTable getTable()
+	public DataTable<?> getTable()
 	{
 		return table;
 	}

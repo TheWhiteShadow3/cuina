@@ -6,6 +6,8 @@ import cuina.plugin.PluginManager;
 import cuina.util.CuinaClassLoader;
 import cuina.util.LoadingException;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,6 +15,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
+import com.jcraft.jzlib.GZIPInputStream;
+import com.jcraft.jzlib.GZIPOutputStream;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 
@@ -20,9 +24,15 @@ public class Database
 {
 	public static final String CUINA_DATABASEPATH_KEY 	= "cuina.database.path";
 	
-	private static HashMap<String, DataTable<?>> data = new HashMap<String, DataTable<?>>();
-	private static XStream xstream;
+	private final static HashMap<String, DataTable<?>> data = new HashMap<String, DataTable<?>>();
+	private final static XStream X_STREAM;
 	private static File dataDirectory;
+	
+	static{
+		X_STREAM = new XStream(null, new XppDriver(), CuinaClassLoader.getInstance());
+		X_STREAM.registerConverter(new DataTableConverter());
+		X_STREAM.setMode(XStream.ID_REFERENCES);
+	}
 	
 	private Database() {}
 	
@@ -62,21 +72,6 @@ public class Database
 	}
 	
 	/**
-	 * Gibt die XStream-Instanz zurück, die zum laden von Datenbanken benutzt wird.
-	 * @return
-	 */
-	public static XStream getXMLSerilizer()
-	{
-		if (xstream == null)
-		{
-			xstream = new XStream(null, new XppDriver(), CuinaClassLoader.getInstance());
-			xstream.registerConverter(new DataTableConverter());
-			xstream.setMode(XStream.ID_REFERENCES);
-		}
-		return xstream;
-	}
-	
-	/**
 	 * Gibt die Dateierweiterung eines übergebenen File-Objekts an.
 	 * Wenn es sich um ein Verzeichnis handelt, oder die Datei keine Endung hat wird ein Leer-String zurückgegeben.
 	 * @param file File-Objekt mit Pfad zur Datei.
@@ -87,7 +82,7 @@ public class Database
 	{
 		int lastDot = file.getPath().lastIndexOf('.');
 		if (lastDot < 1) return ""; // ignoriert führenden Punkt bei unix-Dateien
-		return file.getPath().substring(lastDot + 1);
+		return file.getPath().substring(lastDot + 1).toLowerCase();
 	}
 	
 	public static Object loadData(File file)
@@ -95,11 +90,19 @@ public class Database
 		try (FileInputStream stream = new FileInputStream(file))
 		{
 			String ext = getExtension(file);
+			if ("xmlz".equals(ext) || "cxdz".equals(ext) || "cxmz".equals(ext))
+			{
+				BufferedInputStream ois = new BufferedInputStream(stream);
+				Object obj = X_STREAM.fromXML(new GZIPInputStream(ois));
+				ois.close();
+				
+				return obj;
+			}
 			if ("xml".equals(ext) || "cxd".equals(ext) || "cxm".equals(ext))
 			{
-				return getXMLSerilizer().fromXML(stream);
+				return X_STREAM.fromXML(stream);
 			}
-			else// if ("ser".equals(ext))
+			if ("ser".equals(ext))
 			{
 				ObjectInputStream in = new ObjectInputStream(stream);
 				Object obj = in.readObject();
@@ -113,14 +116,28 @@ public class Database
 		return null;
 	}
 	
+	public final static XStream getXStream()
+	{
+		return X_STREAM;
+	} 
+	
 	public static void saveData(File file, Object obj)
 	{
 		try (FileOutputStream stream = new FileOutputStream(file))
 		{
 			String ext = getExtension(file);
+			if ("xmlz".equals(ext) || "cxdz".equals(ext) || "cxmz".equals(ext))
+			{
+				BufferedOutputStream oos = new BufferedOutputStream(new GZIPOutputStream(stream));
+				X_STREAM.toXML(obj, oos);
+				
+				oos.flush();
+				oos.close();
+			} 
+			else
 			if ("xml".equals(ext) || "cxd".equals(ext) || "cxm".equals(ext))
 			{
-				getXMLSerilizer().toXML(obj, stream);
+				X_STREAM.toXML(obj, stream);
 			}
 			else
 			{

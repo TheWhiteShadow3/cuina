@@ -68,34 +68,34 @@ import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.EditorPart;
 import org.lwjgl.LWJGLException;
 
-public class TerrainEditor extends EditorPart implements
-		ITerrainEditor, IOperationHistoryListener, MenuDetectListener, KeyListener
+public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperationHistoryListener, MenuDetectListener,
+		KeyListener
 {
 	public static final String TOOL_COMMAND_ID = "cuina.editor.map.tool";
-	
+
 	private TerrainPanel panel;
 	private boolean dirty;
-	
+
 	private IFile file;
 	private Map map;
 	private CuinaProject project;
 	private Tileset tileset;
 	private IToolBarManager toolbarManager;
-	private final HashMap<String, EditorToolAction> tools = new HashMap<String, EditorToolAction>();
+	private static final HashMap<String, EditorToolAction> tools = new HashMap<String, EditorToolAction>();
 	private final ArrayList<MapChangeListener> listeners = new ArrayList<MapChangeListener>();
 	private IOperationHistory operationHistory;
-	private EditorToolAction cursorMode;
+	private static EditorToolAction cursorMode;
 	private boolean exclusiveLayer;
 	protected boolean showRaster;
 
 	private Point menuPoint;
-	
+
 	@Override
 	public void addOperation(IUndoableOperation op)
 	{
 		operationHistory.add(op);
 	}
-	
+
 	@Override
 	public void doSave(IProgressMonitor monitor)
 	{
@@ -103,8 +103,7 @@ public class TerrainEditor extends EditorPart implements
 		{
 			SerializationManager.save(map, file);
 			setDirty(false);
-		}
-		catch (ResourceException e)
+		} catch(ResourceException e)
 		{
 			e.printStackTrace();
 		}
@@ -122,64 +121,67 @@ public class TerrainEditor extends EditorPart implements
 		LWJGL.init(null);
 		setSite(site);
 		setInput(input);
-		
+
 		readInput(input);
-		
-		if (map == null) throw new PartInitException("Map not found!");
-		if (tileset == null) throw new PartInitException("Tileset '" + map.tilesetKey + "' not found!");
+
+		if(map == null)
+			throw new PartInitException("Map not found!");
+		if(tileset == null)
+			throw new PartInitException("Tileset '" + map.tilesetKey + "' not found!");
 	}
 
 	private void readInput(IEditorInput input) throws PartInitException
 	{
 		try
 		{
-			if (input instanceof DatabaseInput)
+			if(input instanceof DatabaseInput)
 				file = getMapFile((DatabaseInput) input);
 			else
 				file = (IFile) input.getAdapter(IFile.class);
-			
-			if (file == null) throw new PartInitException("Input must adapt an IFile.");
-			
+
+			if(file == null)
+				throw new PartInitException("Input must adapt an IFile.");
+
 			project = (CuinaProject) input.getAdapter(CuinaProject.class);
-			if (project == null) project = CuinaCore.getCuinaProject(file.getProject());
-			
+			if(project == null)
+				project = CuinaCore.getCuinaProject(file.getProject());
+
 			this.map = (Map) SerializationManager.load(file, Map.class.getClassLoader());
-			
+
 			Database db = project.getService(Database.class);
 			tileset = db.<Tileset> loadTable("Tileset").get(map.tilesetKey);
-		}
-		catch (ResourceException e)
+		} catch(ResourceException e)
 		{
 			throw new PartInitException("read Editor Input faild!", e);
 		}
 		setPartName(input.getName());
 	}
-	
+
 	private IFile getMapFile(DatabaseInput dbInput) throws ResourceException
 	{
 		CuinaProject project = (CuinaProject) dbInput.getAdapter(CuinaProject.class);
 		IFolder folder = project.getProject().getFolder(
 				project.getIni().get(Activator.PLUGIN_ID, Activator.MAPS_DIRECTORY_ID, "maps"));
-		
+
 		IFile found = null;
 		try
 		{
 			IResource[] elements = folder.members();
-			for (IResource r : elements)
+			for(IResource r : elements)
 			{
-				if (r instanceof IFile && r.getName().startsWith(dbInput.getKey()) )
+				if(r instanceof IFile && r.getName().startsWith(dbInput.getKey()))
 				{
 					String ext = r.getFileExtension();
-					if (ext != null && ext.equals("cxm"))
+					if(ext != null && (ext.equals("cxm") || ext.equals("cxmz")))
 					{
 						return (IFile) r;
 					}
-					if (found == null) found = (IFile) r;
+					if(found == null)
+						found = (IFile) r;
 				}
 			}
 			return found;
-		}
-		catch (CoreException e)
+		} catch(CoreException e)
 		{
 			throw new ResourceException("Map '" + dbInput.getKey() + "' not found!", e);
 		}
@@ -190,7 +192,7 @@ public class TerrainEditor extends EditorPart implements
 	{
 		return dirty;
 	}
-	
+
 	public void setDirty(boolean value)
 	{
 		dirty = value;
@@ -202,13 +204,13 @@ public class TerrainEditor extends EditorPart implements
 	{
 		return false;
 	}
-	
+
 	@Override
 	public boolean isRasterVisible()
 	{
 		return showRaster;
 	}
-	
+
 	@Override
 	public void setRasterVisible(boolean showRaster)
 	{
@@ -220,7 +222,7 @@ public class TerrainEditor extends EditorPart implements
 	{
 		panel.getGLCanvas().addListener(eventType, listener);
 	}
-	
+
 	@Override
 	public void removeListener(int eventType, Listener listener)
 	{
@@ -240,30 +242,32 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public void fireMapChanged(Object source, int props)
 	{
-		if (props != 0) setDirty(true);
-		if ((props & MapEvent.PROP_SIZE) != 0) updateMapSize();
-		
+		if(props != 0)
+			setDirty(true);
+		if((props & MapEvent.PROP_SIZE) != 0)
+			updateMapSize();
+
 		MapEvent event = new MapEvent(source, map, props);
-		for (MapChangeListener l : listeners)
+		for(MapChangeListener l : listeners)
 		{
 			l.mapChanged(event);
 		}
-		
+
 		panel.refresh();
 	}
-	
+
 	@Override
 	public void createPartControl(Composite parent)
 	{
 		panel = new TerrainPanel(parent, map.width * tileset.getTileSize(), map.height * tileset.getTileSize());
 		initSelectionMode();
 		addSelectionHandling();
-		
+
 		panel.installLayers(this);
 		panel.setMargin(tileset.getTileSize());
 		panel.getGLCanvas().addMenuDetectListener(this);
 		panel.getGLCanvas().addKeyListener(this);
-		
+
 		// setze Operation-Handler
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		operationHistory = workbench.getOperationSupport().getOperationHistory();
@@ -274,49 +278,52 @@ public class TerrainEditor extends EditorPart implements
 		fillActionBars(getEditorSite().getActionBars());
 		hookContextMenu();
 	}
-	
+
 	private void addSelectionHandling()
 	{
 		panel.getSelectionManager().addSelectionListener(new SelectionListener()
 		{
-//			@Override
-//			public void selectionModeChanged(Object source, SelectionMode oldMode, SelectionMode newMode)
-//			{
-//				if (oldMode == CURSOR_SELECTION_MODE)
-//				{
-//					Selection s = panel.getSelectionHandler().getSelection();
-//					List<ViewLayer> layers = panel.getLayers();
-//
-//					if (s.getWidth() == 1 && s.getHeight() == 1)
-//					{
-//						Point p = new Point(s.getX(), s.getY());
-//						for (int i = layers.size() - 1; i >= 0; i--)
-//						{
-//							if ( ((TerrainLayer) layers.get(i)).selectionPerformed(p) ) break;
-//						}
-//					}
-//					else
-//					{
-//						Rectangle r = s.getBounds();
-//						for (int i = layers.size() - 1; i >= 0; i--)
-//						{
-//							if ( ((TerrainLayer) layers.get(i)).selectionPerformed(r) ) break;
-//						}
-//					}
-//				}
-//			}
+			// @Override
+			// public void selectionModeChanged(Object source, SelectionMode
+			// oldMode, SelectionMode newMode)
+			// {
+			// if (oldMode == CURSOR_SELECTION_MODE)
+			// {
+			// Selection s = panel.getSelectionHandler().getSelection();
+			// List<ViewLayer> layers = panel.getLayers();
+			//
+			// if (s.getWidth() == 1 && s.getHeight() == 1)
+			// {
+			// Point p = new Point(s.getX(), s.getY());
+			// for (int i = layers.size() - 1; i >= 0; i--)
+			// {
+			// if ( ((TerrainLayer) layers.get(i)).selectionPerformed(p) )
+			// break;
+			// }
+			// }
+			// else
+			// {
+			// Rectangle r = s.getBounds();
+			// for (int i = layers.size() - 1; i >= 0; i--)
+			// {
+			// if ( ((TerrainLayer) layers.get(i)).selectionPerformed(r) )
+			// break;
+			// }
+			// }
+			// }
+			// }
 
 			@Override
 			public void startSelection(SelectionEvent event)
 			{
-				if (getActiveLayer() != null) return;
-				
-				if (event.mouseEvent.button == 1)
+				if(getActiveLayer() != null)
+					return;
+
+				if(event.mouseEvent.button == 1)
 				{
 					System.out.println("[TerrainEditor] change Selection-Mode");
 					event.manager.setSelectionMode(CURSOR_SELECTION_MODE, false);
-				}
-				else
+				} else
 				{
 					event.manager.clearSeletionMode();
 					event.doIt = false;
@@ -326,43 +333,47 @@ public class TerrainEditor extends EditorPart implements
 			@Override
 			public void updateSelection(SelectionEvent event)
 			{
-				if (exclusiveLayer) return;
-//				List<ViewLayer> layers = panel.getLayers();
-//				
-//				for (int i = layers.size() - 1; i >= 0; i--)
-//				{
-//					if ( ((TerrainLayer) layers.get(i)).updateSelection(event) ) break;
-//				}
+				if(exclusiveLayer)
+					return;
+				// List<ViewLayer> layers = panel.getLayers();
+				//
+				// for (int i = layers.size() - 1; i >= 0; i--)
+				// {
+				// if ( ((TerrainLayer) layers.get(i)).updateSelection(event) )
+				// break;
+				// }
 			}
 
 			@Override
 			public void endSelection(SelectionEvent event)
 			{
-				if (event.manager.getSelectionMode() != ITerrainEditor.CURSOR_SELECTION_MODE) return;
-				
+				if(event.manager.getSelectionMode() != ITerrainEditor.CURSOR_SELECTION_MODE)
+					return;
+
 				System.out.println("[TerrainEditor] change Selection-Mode");
 				event.manager.setSelectionMode(null, false);
-				
+
 				Selection s = event.manager.getSelection();
 				List<TerrainLayer> layers = panel.getLayers();
 
-				if (s.getWidth() == 1 && s.getHeight() == 1)
+				if(s.getWidth() == 1 && s.getHeight() == 1)
 				{
 					Point p = new Point(s.getX(), s.getY());
-					for (int i = layers.size() - 1; i >= 0; i--)
+					for(int i = layers.size() - 1; i >= 0; i--)
 					{
-						if ( layers.get(i).selectionPerformed(p) ) return;
+						if(layers.get(i).selectionPerformed(p))
+							return;
 					}
-				}
-				else
+				} else
 				{
 					Rectangle r = s.getBounds();
-					for (int i = layers.size() - 1; i >= 0; i--)
+					for(int i = layers.size() - 1; i >= 0; i--)
 					{
-						if ( layers.get(i).selectionPerformed(r) ) return;
+						if(layers.get(i).selectionPerformed(r))
+							return;
 					}
 				}
-				
+
 				event.manager.clearSelections();
 				event.doIt = false;
 			}
@@ -373,12 +384,12 @@ public class TerrainEditor extends EditorPart implements
 	{
 		toolbarManager.add(new Separator(ITerrainEditor.TOOLBAR_VIEWOPTIONS));
 		toolbarManager.add(new Separator(ITerrainEditor.TOOLBAR_TOOLS));
-		
+
 		IAction undoAction = new UndoActionHandler(getSite(), MapOperation.MapContext.INSTANCE);
 		IAction redoAction = new RedoActionHandler(getSite(), MapOperation.MapContext.INSTANCE);
 		actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), undoAction);
 		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), redoAction);
-		
+
 		Action rasterAction = new Action("Raster", IAction.AS_CHECK_BOX)
 		{
 			@Override
@@ -391,9 +402,9 @@ public class TerrainEditor extends EditorPart implements
 		rasterAction.setText("Raster");
 		rasterAction.setToolTipText("Stellt das Karten-Raster an/aus.");
 		rasterAction.setImageDescriptor(Activator.getImageDescriptor("raster.png"));
-		
+
 		toolbarManager.appendToGroup(TOOLBAR_VIEWOPTIONS, rasterAction);
-		
+
 		cursorMode = new EditorToolAction(this, null)
 		{
 			@Override
@@ -408,18 +419,17 @@ public class TerrainEditor extends EditorPart implements
 		cursorMode.setToolTipText("Aktiviert den Auswahl-Modus.");
 		cursorMode.setImageDescriptor(Activator.getImageDescriptor("cursor.png"));
 		cursorMode.setChecked(true);
-		
+
 		addEditorTool(cursorMode);
 
-//		manager.appendToGroup(TOOLBAR_TOOLS, cursorMode);
+		// manager.appendToGroup(TOOLBAR_TOOLS, cursorMode);
 
-		for (ViewLayer layer : panel.getLayers())
+		for(ViewLayer layer : panel.getLayers())
 		{
 			try
 			{
 				layer.fillActionBars(actionBars);
-			}
-			catch (Exception e)
+			} catch(Exception e)
 			{
 				e.printStackTrace();
 			}
@@ -477,8 +487,8 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public Rectangle getViewBounds()
 	{
-		return new Rectangle(panel.getMargin(), panel.getMargin(),
-				map.width * tileset.getTileSize(), map.height * tileset.getTileSize());
+		return new Rectangle(panel.getMargin(), panel.getMargin(), map.width * tileset.getTileSize(), map.height
+				* tileset.getTileSize());
 	}
 
 	@Override
@@ -496,14 +506,12 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public Image loadImage(GLCanvas context, String imageName) throws ResourceException
 	{
-		Resource res = project.getService(ResourceProvider.class).
-		getResource(ResourceManager.KEY_GRAPHICS, imageName);
-		
+		Resource res = project.getService(ResourceProvider.class).getResource(ResourceManager.KEY_GRAPHICS, imageName);
+
 		try
 		{
 			return new Image(context, res.getPath().toString());
-		}
-		catch (LWJGLException e)
+		} catch(LWJGLException e)
 		{
 			e.printStackTrace();
 		}
@@ -531,51 +539,61 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public void historyNotification(OperationHistoryEvent event)
 	{
-		if (event.getOperation() instanceof MapOperation)
+		if(event.getOperation() instanceof MapOperation)
 		{
 			System.out.println("Undo-History Event: " + event);
 			panel.refresh();
 		}
 	}
-	
+
 	@Override
 	public void addEditorTool(EditorToolAction tool)
 	{
-		/* XXX
+		/*
+		 * XXX
 		 * CommandContributionItem Übergibt den Parameter nicht korrekt.
 		 * Daher alternativ wieder mit Actions.
 		 */
-		
-//        CommandContributionItemParameter cmdParameters = new CommandContributionItemParameter(
-//        		getEditorSite(), tool.getID(), TOOL_COMMAND_ID, CommandContributionItem.STYLE_RADIO);
-//        cmdParameters.icon = tool.getAction().getImageDescriptor();
-//        cmdParameters.label = tool.getAction().getText();
-//        cmdParameters.tooltip = tool.getAction().getToolTipText();
-//        cmdParameters.parameters = new HashMap();
-//        cmdParameters.parameters.put("org.eclipse.ui.commands.radioStateParameter", tool.getID());
-//        CommandContributionItem item = new CommandContributionItem(cmdParameters);
-        
-		toolbarManager.appendToGroup(TOOLBAR_TOOLS, new ActionContributionItem(tool));
-		tools.put(tool.getId(), tool);
+
+		// CommandContributionItemParameter cmdParameters = new
+		// CommandContributionItemParameter(
+		// getEditorSite(), tool.getID(), TOOL_COMMAND_ID,
+		// CommandContributionItem.STYLE_RADIO);
+		// cmdParameters.icon = tool.getAction().getImageDescriptor();
+		// cmdParameters.label = tool.getAction().getText();
+		// cmdParameters.tooltip = tool.getAction().getToolTipText();
+		// cmdParameters.parameters = new HashMap();
+		// cmdParameters.parameters.put("org.eclipse.ui.commands.radioStateParameter",
+		// tool.getID());
+		// CommandContributionItem item = new
+		// CommandContributionItem(cmdParameters);
+
+		if(!tools.containsKey(tool.getId()))
+		{
+			toolbarManager.appendToGroup(TOOLBAR_TOOLS, new ActionContributionItem(tool));
+			tools.put(tool.getId(), tool);
+		}
 	}
-	
+
 	@Override
 	public EditorToolAction getEditorTool(String id)
 	{
 		return tools.get(id);
 	}
-	
+
 	@Override
 	public void activateTool(String id)
 	{
 		EditorToolAction tool = tools.get(id);
-		if (tool == null) throw new NullPointerException("Tool " + id + " does not exists.");
+		if(tool == null)
+			throw new NullPointerException("Tool " + id + " does not exists.");
 
-		if (tool.isChecked()) return;
+		if(tool.isChecked())
+			return;
 
-		for (EditorToolAction t : tools.values())
+		for(EditorToolAction t : tools.values())
 		{
-			if (t.isChecked())
+			if(t.isChecked())
 			{
 				t.setChecked(false);
 				t.run();
@@ -597,11 +615,14 @@ public class TerrainEditor extends EditorPart implements
 	public void keyPressed(KeyEvent e)
 	{
 		TerrainLayer layer = getActiveLayer();
-		if (layer == null) return;
-		
+		if(layer == null)
+			return;
+
 		layer.keyActionPerformed(e);
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {}
+	public void keyReleased(KeyEvent e)
+	{
+	}
 }

@@ -50,7 +50,7 @@ public class TerrainPanel extends AbstractSelectionPanel
 			{
 				Bundle plugin = Platform.getBundle(e.getContributor().getName());
 
-				Class clazz = plugin.loadClass(e.getAttribute("class"));
+				Class<?> clazz = plugin.loadClass(e.getAttribute("class"));
 				System.out.println("[MapEditor] Registriere Layer: " + clazz.getName());
 
 				TerrainLayer layer = (TerrainLayer) clazz.newInstance();

@@ -4,7 +4,7 @@ import cuina.editor.core.CuinaCore;
 import cuina.editor.core.EditorContextChangeListener;
 import cuina.editor.map.ITerrainEditor;
 import cuina.editor.map.TileSelection;
-import cuina.editor.map.internal.MapEditor;
+import cuina.editor.map.internal.TerrainEditor;
 import cuina.editor.map.internal.layers.TilemapUtil;
 import cuina.editor.ui.AbstractSelectionPanel;
 import cuina.editor.ui.selection.SelectionEvent;
@@ -60,9 +60,9 @@ public class AutotileView extends ViewPart implements EditorContextChangeListene
 		
 		IWorkbenchPage page = getViewSite().getPage();
 		IEditorPart editor = page.getActiveEditor();
-		if (editor instanceof MapEditor)
+		if (editor instanceof TerrainEditor)
 		{
-			setEditor( ((MapEditor) editor).getTerrainEditor());
+			setEditor( (TerrainEditor) editor);
 		}
 		CuinaCore.getDefault().addEditorContextChangeListener(this);
 		getSite().setSelectionProvider(panel);
@@ -137,8 +137,8 @@ public class AutotileView extends ViewPart implements EditorContextChangeListene
 	@Override
 	public void editorContextChange(IEditorPart part, IProject project)
 	{
-		if (part instanceof MapEditor)
-			setEditor( ((MapEditor) part).getTerrainEditor() );
+		if (part instanceof TerrainEditor)
+			setEditor( (TerrainEditor) part);
 		else
 			setEditor(null);
 	}

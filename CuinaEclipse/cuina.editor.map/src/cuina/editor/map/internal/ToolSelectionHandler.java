@@ -15,13 +15,13 @@ public class ToolSelectionHandler extends AbstractHandler
         if(HandlerUtil.matchesRadioState(event)) return null;
         
         IEditorPart editor = HandlerUtil.getActiveEditorChecked(event);
-        if (!(editor instanceof MapEditor))
+        if (!(editor instanceof TerrainEditor))
             throw new ExecutionException("Incorrect editor for command " + event.getCommand().getId());
         
         String toolID = event.getParameter(RadioState.PARAMETER_ID);
         System.out.println("[SelectionModeHandler] Change State: " + toolID);
  
-        TerrainEditor terrainEditor = ((MapEditor) editor).getTerrainEditor();
+        TerrainEditor terrainEditor = (TerrainEditor) editor;
         terrainEditor.activateTool(toolID);
         
         HandlerUtil.updateRadioState(event.getCommand(), toolID);

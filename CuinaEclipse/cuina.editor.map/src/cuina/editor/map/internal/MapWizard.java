@@ -9,6 +9,7 @@ import cuina.map.Tileset;
 import cuina.resource.ResourceException;
 import cuina.resource.SerializationManager;
 
+import java.io.File;
 import java.net.URI;
 
 import org.eclipse.core.resources.IContainer;
@@ -44,7 +45,7 @@ public class MapWizard extends Wizard implements INewWizard
 {
 	public static final String ID = "cuina.editor.map.new.map";
 
-	public static final String DEFAULT_EXTENSION = "cxm";
+	public static final String DEFAULT_EXTENSION = "cxmz";
 	private MapCreationPage creationPage;
 	private Database db;
 	private IWorkbench workbench;
@@ -163,7 +164,7 @@ public class MapWizard extends Wizard implements INewWizard
 			tilesetName.setText("Tileset");
 			try
 			{
-				combo = new DatabaseComboViewer(container, SWT.NONE);
+				combo = new DatabaseComboViewer<Tileset>(container, SWT.NONE);
 				combo.getCombo().setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1));
 				combo.setTable(db.<Tileset>loadTable("Tileset"));
 			}
@@ -216,9 +217,9 @@ public class MapWizard extends Wizard implements INewWizard
 			if(db == null) return;
 
 			Map newMap = new Map(key, width, height);
-			newMap.tilesetKey = combo.getSelectedElement().getTilesetName();
+			newMap.tilesetKey = combo.getSelectedElement().getName();
 
-			IPath path = new Path(folder + key + "." + DEFAULT_EXTENSION);
+			IPath path = folder.getFullPath().append(key + "." + DEFAULT_EXTENSION);
 			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			SerializationManager.save(newMap, file);
 			db.loadTable("MapInfo").put(new MapInfo(key, name));

@@ -6,11 +6,17 @@ import static org.lwjgl.opengl.GL11.*;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.opengl.GLCanvas;
 import org.eclipse.swt.opengl.GLData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
@@ -111,7 +117,7 @@ public class GLPanel
 			@Override
 			public void run()
 			{
-				if (listeners.size() == 0) return;
+				if (canvas.isDisposed() || listeners.size() == 0) return;
 				
 //				System.out.println("[GLPanel] firePaintEvent");
 				clear();
@@ -123,7 +129,7 @@ public class GLPanel
 				{
 					l.paint(gc);
 				}
-				canvas.swapBuffers();
+					canvas.swapBuffers();
 			}
 		};
 	}
@@ -184,7 +190,7 @@ public class GLPanel
 		return result;
 	}
 	
-	private static class CuinaGLCanvas extends GLCanvas
+	private static class CuinaGLCanvas extends GLCanvas implements FocusListener, Listener
 	{
 		private final Runnable painter;
 		private final Point scrollPos = new Point(0, 0);
@@ -193,18 +199,17 @@ public class GLPanel
 		{
 			super(parent, SWT.NO_BACKGROUND | style, data);
 			this.painter = painter;
+			this.addFocusListener(this);
+			this.addListener(SWT.RESIZE, this);
 			
-//			Canvas c = new Canvas(this, SWT.DEFAULT);
-//			
-//			
 //			//XXX: Teste Drag-Support. Bisher ohne Erfolg. Keins der Events wird getriggert.
 //			Listener listener = getListener();
-//			c.addListener(DND.DragEnter, listener);
-//			c.addListener(DND.DragLeave, listener);
-//			c.addListener(DND.DragEnd, listener);
-//			c.addListener(DND.DragOver, listener);
-//			c.addListener(DND.DragStart, listener);
-//			c.addListener(SWT.DragDetect, listener);
+			this.addListener(DND.DragEnter, this);
+			this.addListener(DND.DragLeave, this);
+			this.addListener(DND.DragEnd, this);
+			this.addListener(DND.DragOver, this);
+			this.addListener(DND.DragStart, this);
+			this.addListener(SWT.DragDetect, this);
 		}
 		
 		@Override
@@ -240,11 +245,21 @@ public class GLPanel
 		}
 
 		@Override
-		public boolean setFocus()
+		public void focusGained(FocusEvent e)
 		{
-			boolean result = super.setFocus();
 			redraw();
-			return result;
+		}
+
+		@Override
+		public void focusLost(FocusEvent e)
+		{
+			redraw();
+		}
+
+		@Override
+		public void handleEvent(Event event)
+		{
+			redraw();
 		}
 	}
 }

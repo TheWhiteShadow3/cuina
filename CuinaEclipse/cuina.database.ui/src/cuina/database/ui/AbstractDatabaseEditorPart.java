@@ -16,7 +16,7 @@ import org.eclipse.ui.part.EditorPart;
 public abstract class AbstractDatabaseEditorPart extends EditorPart
 {
 	private CuinaProject project;
-	private DataTable table;
+	private DataTable<?> table;
 	private DatabaseObject data;
 	private boolean dirty;
 	
@@ -93,7 +93,7 @@ public abstract class AbstractDatabaseEditorPart extends EditorPart
 	 * Gibt die Tabelle zurück.
 	 * @return die Tabelle.
 	 */
-	protected DataTable getTable()
+	protected DataTable<?> getTable()
 	{
 		return table;
 	}

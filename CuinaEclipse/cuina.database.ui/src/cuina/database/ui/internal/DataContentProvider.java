@@ -18,9 +18,9 @@ public class DataContentProvider implements ITreeContentProvider
 	
 //	private Viewer viewer;
 	private TreeRoot root;
-	private DataTable table;
+	private DataTable<?> table;
 
-	public DataTable getTable()
+	public DataTable<?> getTable()
 	{
 		return table;
 	}
@@ -109,7 +109,7 @@ public class DataContentProvider implements ITreeContentProvider
 		// parent ist ein Wurzel-Element
 		if (parent instanceof DataTable)
 		{
-			this.table = (DataTable) parent;
+			this.table = (DataTable<?>) parent;
 			this.root = new TreeRoot(table);
 		}
 		else if (parent instanceof IAdaptable)

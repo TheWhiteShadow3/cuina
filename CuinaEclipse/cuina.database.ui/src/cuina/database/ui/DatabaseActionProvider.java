@@ -48,7 +48,7 @@ public class DatabaseActionProvider extends CommonActionProvider implements Tree
 
 	private void treeChanged(TreeRoot root)
 	{
-		DataTable table = root.getTable();
+		DataTable<?> table = root.getTable();
 		try
 		{
 			table.getDatabase().saveTable(table);

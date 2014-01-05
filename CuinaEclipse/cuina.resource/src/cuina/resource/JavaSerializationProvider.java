@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 
-public class JavaSerialisationProvider implements SerializationProvider
+public class JavaSerializationProvider implements SerializationProvider
 {
 	@Override
 	public Object load(InputStream in, final ClassLoader cl) throws IOException, ClassNotFoundException

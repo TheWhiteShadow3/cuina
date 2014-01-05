@@ -14,7 +14,7 @@ public interface TreeNode extends IAdaptable, NamedItem
 
 	public void setParent(TreeNode node);
 
-	public DataTable getTable();
+	public DataTable<?> getTable();
 
 	public void remove();
 

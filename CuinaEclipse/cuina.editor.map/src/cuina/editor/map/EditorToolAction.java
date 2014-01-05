@@ -19,6 +19,8 @@ public abstract class EditorToolAction extends Action
 	{
 		return layer;
 	}
+	
+	
 
 	/**
 	 * Überprüft den Zustand des Tools und delegiert den Aufruf weiter nach

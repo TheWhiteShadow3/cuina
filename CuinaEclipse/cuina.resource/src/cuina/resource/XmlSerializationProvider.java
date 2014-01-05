@@ -11,20 +11,20 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 
-public class XMLSerialisationProvider implements SerializationProvider
+public class XmlSerializationProvider implements SerializationProvider
 {
-	public final static XStream xStream;
+	public final static XStream X_STREAM;
 	
 	static
 	{
-		xStream = new XStream();
+		X_STREAM = new XStream();
 //		xStream.useAttributeFor("key", String.class);
 //		xStream.setClassLoader(XMLSerialisationProvider.class.getClassLoader());
 		
-		registRules();
+		registerRules();
 	}
 	
-	private static void registRules()
+	private static void registerRules()
 	{
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().
 				getConfigurationElementsFor("cuina.resource.serialisation.XML");
@@ -38,19 +38,19 @@ public class XMLSerialisationProvider implements SerializationProvider
 				if ( "alias".equals(rule.getName()) )
 				{
 					String name = rule.getAttribute("name");
-					Class clazz = plugin.loadClass(rule.getAttribute("class"));
-					xStream.aliasType(name, clazz);
+					Class<?> clazz = plugin.loadClass(rule.getAttribute("class"));
+					X_STREAM.aliasType(name, clazz);
 					System.out.println("[XML-SP] registriere Alias: " + name + " -> " + clazz.getName());
 				}
 				else if ( "converter".equals(rule.getName()) )
 				{
-					Class clazz = plugin.loadClass(rule.getAttribute("class"));
+					Class<?> clazz = plugin.loadClass(rule.getAttribute("class"));
 					Object converter = clazz.newInstance();
 					
 					if (converter instanceof Converter)
-						xStream.registerConverter( (Converter) converter );
+						X_STREAM.registerConverter( (Converter) converter );
 					else if (converter instanceof SingleValueConverter)
-						xStream.registerConverter( (SingleValueConverter) converter );
+						X_STREAM.registerConverter( (SingleValueConverter) converter );
 					else throw new IllegalArgumentException("Attribut 'class' must be a valid Converter.");
 					System.out.println("[XML-SP] registriere Konverter: " + clazz.getName());
 				}
@@ -67,12 +67,12 @@ public class XMLSerialisationProvider implements SerializationProvider
 	{
 //		xStream.setClassLoader(XMLSerialisationProvider.class.getClassLoader());
 //		xStream.setClassLoader(cl);
-		return xStream.fromXML(in);
+		return X_STREAM.fromXML(in);
 	}
 
 	@Override
 	public void save(Object obj, OutputStream out)
 	{
-		xStream.toXML(obj, out);
+		X_STREAM.toXML(obj, out);
 	}
 }
