@@ -14,9 +14,9 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
-import com.jcraft.jzlib.GZIPInputStream;
-import com.jcraft.jzlib.GZIPOutputStream;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 
@@ -92,8 +92,8 @@ public class Database
 			String ext = getExtension(file);
 			if ("xmlz".equals(ext) || "cxdz".equals(ext) || "cxmz".equals(ext))
 			{
-				BufferedInputStream ois = new BufferedInputStream(stream);
-				Object obj = X_STREAM.fromXML(new GZIPInputStream(ois));
+				BufferedInputStream ois = new BufferedInputStream(stream, 65536);
+				Object obj = X_STREAM.fromXML(new GZIPInputStream(ois, 65536));
 				ois.close();
 				
 				return obj;
@@ -128,7 +128,7 @@ public class Database
 			String ext = getExtension(file);
 			if ("xmlz".equals(ext) || "cxdz".equals(ext) || "cxmz".equals(ext))
 			{
-				BufferedOutputStream oos = new BufferedOutputStream(new GZIPOutputStream(stream));
+				BufferedOutputStream oos = new BufferedOutputStream(new GZIPOutputStream(stream, 65536), 65536);
 				X_STREAM.toXML(obj, oos);
 				
 				oos.flush();

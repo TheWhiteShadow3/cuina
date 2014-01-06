@@ -15,8 +15,8 @@ public class ZippedXmlSerializationProvider implements SerializationProvider
 	@Override
 	public Object load(InputStream in, ClassLoader cl) throws IOException, ClassNotFoundException
 	{
-		BufferedInputStream ois = new BufferedInputStream(in);
-		Object obj = XML_SERIALIZAZION_PROVIDER.load(new GZIPInputStream(ois), cl);
+		BufferedInputStream ois = new BufferedInputStream(in, 65536);
+		Object obj = XML_SERIALIZAZION_PROVIDER.load(new GZIPInputStream(ois, 65536), cl);
 		ois.close();
 		
 		return obj;
@@ -25,7 +25,7 @@ public class ZippedXmlSerializationProvider implements SerializationProvider
 	@Override
 	public void save(Object obj, OutputStream out) throws IOException
 	{
-		BufferedOutputStream oos = new BufferedOutputStream(new GZIPOutputStream(out));
+		BufferedOutputStream oos = new BufferedOutputStream(new GZIPOutputStream(out, 65536), 65536);
 		XML_SERIALIZAZION_PROVIDER.save(obj, oos);
 		
 		oos.flush();
