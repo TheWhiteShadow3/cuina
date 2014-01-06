@@ -41,6 +41,7 @@ public class TerrainPanel extends AbstractSelectionPanel
 	{
 		for (LayerDefinition def : Activator.getLayerDefinitions().values()) try
 		{
+
 			TerrainLayer layer = (TerrainLayer) def.getLayerClass().newInstance();
 			layer.install(editor);
 			layers.add(layer);

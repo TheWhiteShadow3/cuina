@@ -27,8 +27,8 @@ public class ReferenceCounter
 	
 	public void scanDatabase(Database db)
 	{
-		IDatabaseDescriptor[] descriptors = DatabasePlugin.getDescriptors();
-		for (IDatabaseDescriptor descriptor : descriptors) try
+		IDatabaseDescriptor<?>[] descriptors = DatabasePlugin.getDescriptors();
+		for (IDatabaseDescriptor<?> descriptor : descriptors) try
 		{
 			DataTable<?> table = db.loadTable(descriptor.getName());
 			if(table != null)

@@ -93,7 +93,7 @@ public class DatabaseUtil
         return builder.toString();
     }
     
-    public static Object getAdapter(Object sourceObject, Class adapterType)
+    public static Object getAdapter(Object sourceObject, Class<IWorkbenchAdapter> adapterType)
     {
         Assert.isNotNull(adapterType);
         if (sourceObject == null) return null;
@@ -408,8 +408,8 @@ public class DatabaseUtil
 					if (!(obj instanceof TreeDataNode)) return;
 					
 					TreeDataNode node = (TreeDataNode) obj;
-					DataTable table = node.getTable();
-					IDatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(table.getName());
+					DataTable<?> table = node.getTable();
+					IDatabaseDescriptor<?> descriptor = DatabasePlugin.getDescriptor(table.getName());
 					if (descriptor.getEditorID() == null) return;
 					
 					String key = node.getData().getKey();
