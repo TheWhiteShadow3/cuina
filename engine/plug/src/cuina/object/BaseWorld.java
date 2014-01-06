@@ -5,6 +5,7 @@ import cuina.Logger;
 import cuina.graphics.GraphicContainer;
 import cuina.graphics.GraphicSet;
 import cuina.graphics.Graphics;
+import cuina.graphics.View;
 import cuina.plugin.LifeCycle;
 import cuina.plugin.LifeCycleAdapter;
 import cuina.world.CuinaObject;
@@ -173,52 +174,22 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	{
 		this.height = height;
 	}
-//
-//	@Override
-//	public int getScrollX()
-//	{
-//		return scrollX;
-//	}
-
-//	@Override
-//	public void setScrollX(int scrollX)
-//	{
-//		this.scrollX = scrollX;
-//	}
-
-//	@Override
-//	public int getScrollY()
-//	{
-//		return scrollY;
-//	}
-//
-//	@Override
-//	public void setScrollY(int scrollY)
-//	{
-//		this.scrollY = scrollY;
-//	}
 	
-//	public void scrollTo(int x, int y, int threshold)
-//	{
-//		int diffX = x - Graphics.getWidth() / 2 - scrollX;
-//		int diffY = y - Graphics.getHeight() / 2 - scrollY;
-//
-//		if (Math.abs(diffX) > threshold)
-//		{
-//			x += (diffX < 0) ? threshold : -threshold;
-//			scrollX = Math.max(0, Math.min(x - Graphics.getWidth() / 2 , getWidth() - Graphics.getWidth()));
-//		}
-//		if (Math.abs(diffY) > threshold)
-//		{
-//			y += (diffY < 0) ? threshold : -threshold;
-//			scrollY = Math.max(0, Math.min(y - Graphics.getHeight() / 2 , getHeight() - Graphics.getHeight()));
-//		}
-//	}
-//	
-//	public void scrollTo(int x, int y)
-//	{
-//		scrollTo(x, y, 0);
-//	}
+	public void follow(int objectID)
+	{
+		follow(objectID, 0);
+	}
+	
+	public void follow(int objectID, int viewID)
+	{
+		CuinaObject obj = getObject(objectID);
+		if (obj != null)
+		{
+			View view = Graphics.VIEWS.get(viewID);
+			view.border = new Rectangle(getWidth(), getHeight());
+			view.target = obj;
+		}
+	}
 
 	/**
 	 * Prüft, ob die Position auf der Karte gültig ist. Wird auch in

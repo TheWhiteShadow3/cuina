@@ -27,7 +27,7 @@ public class PictureSprite extends Sprite
 		this.rect = getImage().getRectangle();
 		this.fileName = fileName;
 	}
-	
+
 	public PictureSprite(String fileName, int x, int y, int width, int height, GraphicContainer container)
 			throws LoadingException
 	{

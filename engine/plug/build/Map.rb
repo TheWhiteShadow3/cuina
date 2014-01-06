@@ -23,8 +23,8 @@ module Map
 		return map.getObject(id)
   	end
   	
-	def self.scrolltarget=(obj)
-    	map.setScrollTarget(obj)
+	def self.follow(obj_id, view_id=0)
+    	map.follow(obj_id, view_id)
 	end
   
 	def self.show_animation(id, target_id)

@@ -11,12 +11,12 @@ import cuina.graphics.transform.Transformation;
 
 
 /**
- * Abstrakte Sprite-Klasse für die Verwaltung von Images.
- * Stellt verschiedene Methoden zur Darstellung eines Images bereit.
+ * Abstrakte Sprite-Klasse für die Anzeige von Images.
+ * Stellt verschiedene Methoden zur Positionierung und Transformation von Bildern bereit.
  * Implementationen dieses Klasse müssen die Methode <code>{@link #refresh()}</code> überschreiben.
- * Sprites werden automatisch über einen <code>{@link GraphicManager}</code> verwaltet.
- * Der Default-GraphicManager kann über <code>{@link Graphics#GraphicManager}</code>
- * gesetzt werden.
+ * <p>
+ * Sprites werden, wenn nicht anders angegeben, dem aktuellen {@link GraphicManager} übergeben.
+ * </p>
  * 
  * @author TheWhiteShadow
  * @version 1.2
@@ -25,10 +25,7 @@ public abstract class Sprite extends AbstractGraphic
 {
 	private static final long	serialVersionUID	= -8939421838969852563L;
 	
-	/** The width in pixels of this sprite */
 	protected float		zoomX = 1.0f;
-
-	/** The height in pixels of this sprite */
 	protected float		zoomY = 1.0f;
 
 	protected float		angle = 0f;
@@ -39,18 +36,6 @@ public abstract class Sprite extends AbstractGraphic
 	protected float  	ox = 0; // Origin-X
 	protected float 	oy = 0; // Origin-Y
 
-	//XXX: Entfernt wegen implizitem Aufruf. Führt zu Leicht zu Fehlern.
-//	/**
-//	 * Erstellt ein neues Sprite ohne Image.
-//	 * <p>
-//	 * Das neu erstellte Sprite wird dem aktuellen {@link #GraphicManager} hinzugefügt.
-//	 * </p>
-//	 */
-//	public Sprite()
-//	{
-//		this(null, Graphics.GraphicManager);
-//	}
-	
 	/**
 	 * Erstellt ein neues Sprite aus dem übergebenen Image. Dieses darf <code>null</code> sein.
 	 * <p>
@@ -65,9 +50,8 @@ public abstract class Sprite extends AbstractGraphic
 	
 	/**
 	 * Erstellt ein neues Sprite aus dem übergebenen Image. Dieses darf <code>null</code> sein.
-	 * <p>
 	 * Fügt das Sprite dem angegebenen Kontainer hinzu, anstatt dem aktuellen {@link GraphicManager}.
-	 * </p>
+	 * 
 	 * @param image Das Bild, was das Sprite anzeigen soll.
 	 * @param container Der Grafik-Kontainer, dem das Sprite hinzugefügt werden soll.
 	 */
@@ -78,61 +62,109 @@ public abstract class Sprite extends AbstractGraphic
 		container.addGraphic(this);
 	}
 
+	/**
+	 * Gibt den Faktor der horizontalen Größe des Sprites zurück.
+	 * @return Größe in X-Richtung.
+	 */
 	public float getZoomX()
 	{
 		return zoomX;
 	}
 
+	/**
+	 * Setzt den Faktor der horizontalen Größe des Sprites. <i>Default ist 1.</i>
+	 * @param zoomX Größe in X-Richtung.
+	 */
 	public void setZoomX(float zoomX)
 	{
 		this.zoomX = zoomX;
 	}
 
+	/**
+	 * Gibt den Faktor der vertikalen Größe des Sprites zurück.
+	 * @return Größe in Y-Richtung.
+	 */
 	public float getZoomY()
 	{
 		return zoomY;
 	}
 
+	/**
+	 * Setzt den Faktor der vertikalen Größe des Sprites. <i>Default ist 1.</i>
+	 * @param zoomY Größe in Y-Richtung.
+	 */
 	public void setZoomY(float zoomY)
 	{
 		this.zoomY = zoomY;
 	}
 
+	/**
+	 * Gibt den Winkel des Sprites zurück. Gegen dem Urzeigersinn ist positiv.
+	 * @return Winkel des Sprites in Grad.
+	 */
 	public float getAngle()
 	{
 		return angle;
 	}
 
+	/**
+	 * Setzt den Winkel des Sprites. Gegen dem Urzeigersinn ist positiv.
+	 * @param angle Winkel in Grad.
+	 */
 	public void setAngle(float angle)
 	{
 		this.angle = angle;
 	}
 
+	/**
+	 * Gibt die Transparenz des Sprites zurück.
+	 * @return Transparenz von 0-255.
+	 */
 	public int getAlpha()
 	{
 		return image.getColor().getAlpha();
 	}
 
+	/**
+	 * Setzt die Transparenz des Sprites.
+	 * @param alpha Transparenz von 0-255.
+	 */
 	public void setAlpha(int alpha)
 	{
 		image.getColor().setAlpha(alpha);
 	}
 
+	/**
+	 * Gibt die X-Position vom Sprite zurück.
+	 * @return X-Position.
+	 */
 	public float getX()
 	{
 		return x;
 	}
 
+	/**
+	 * Setzt die X-Position vom Sprite.
+	 * @param x X-Position.
+	 */
 	public void setX(float x)
 	{
 		this.x = x;
 	}
 
+	/**
+	 * Gibt die Y-Position vom Sprite zurück.
+	 * @return Y-Position.
+	 */
 	public float getY()
 	{
 		return y;
 	}
 
+	/**
+	 * Setzt die Y-Position vom Sprite.
+	 * @param y Y-Position.
+	 */
 	public void setY(float y)
 	{
 		this.y = y;
@@ -188,33 +220,4 @@ public abstract class Sprite extends AbstractGraphic
 		}
 		super.transformAndRender(matrix);
 	}
-
-
-//	@Override
-//	protected void render()
-//	{
-//		Texture texture = image.getTexture();
-//		float width = image.getWidth();
-//		float height = image.getHeight();
-//		float texX = image.getX() / (float) texture.getWidth();
-//		float texY = image.getY() / (float) texture.getHeight();
-//		float texWidth  = texX + width  / texture.getWidth();
-//		float texHeight = texY + height / texture.getHeight();
-//		
-//		glBegin(GL_QUADS);
-//		{
-//			glTexCoord2f(texX, texY);
-//			glVertex2f(0, 0);
-//
-//			glTexCoord2f(texX, texHeight);
-//			glVertex2f(0, height);
-//
-//			glTexCoord2f(texWidth, texHeight);
-//			glVertex2f(width, height);
-//
-//			glTexCoord2f(texWidth, texY);
-//			glVertex2f(width, 0);
-//		}
-//		glEnd();
-//	}
 }

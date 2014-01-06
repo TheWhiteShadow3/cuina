@@ -27,7 +27,7 @@ import org.lwjgl.opengl.GL11;
 /**
  * Klasse für diverse Tests
  */
-@ForScene(name="TestConfiguration", scenes="Map")
+@ForScene(name="TestConfiguration", scenes="Mapp")
 public class TestConfiguration implements Plugin, LifeCycle
 {
 	private static final long serialVersionUID = 1L;
@@ -66,15 +66,15 @@ public class TestConfiguration implements Plugin, LifeCycle
 			view.target = map.getObject(1);
 			view.border = new Rectangle(map.getWidth(), map.getHeight());
 			
-			view = new View(Graphics.getWidth() / 2, Graphics.getHeight());
-			view.port.x = Graphics.getWidth() / 2;
-			view.target = map.getObject(2);
-			view.border = new Rectangle(map.getWidth(), map.getHeight());
-			Graphics.VIEWS.get(0).width = view.width;
-			Graphics.VIEWS.get(0).port.width = view.port.width;
-			Graphics.VIEWS.add(view);
+			View view2 = new View(Graphics.getWidth() / 2, Graphics.getHeight());
+			view2.port.x = Graphics.getWidth() / 2;
+			view2.target = map.getObject(2);
+			view2.border = new Rectangle(map.getWidth(), map.getHeight());
+			view.width = view2.width;
+			view.port.width = view2.port.width;
+			Graphics.VIEWS.add(view2);
 			
-			((Motor) view.target.getExtension(Motor.EXTENSION_KEY)).setDriver(Player.newInstance());
+			((Motor) view2.target.getExtension(Motor.EXTENSION_KEY)).setDriver(Player.newInstance());
 //			Graphics.view.target = map.getObject(2);
 			
 //			map.getGraphicContainer().setFlag(GL11.GL_LIGHTING, true);

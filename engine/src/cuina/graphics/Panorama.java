@@ -22,8 +22,8 @@ public class Panorama extends Sprite
 	private String fileName	= null;
 	
 	private float 	scrollFactor = 1/4f;
-	private int 	speedX = 0;
-	private int 	speedY = 0;
+	private float 	speedX = 0;
+	private float 	speedY = 0;
 	
 	public static GraphicContainer getPanoramaContainer()
 	{
@@ -74,22 +74,22 @@ public class Panorama extends Sprite
 		this.visible = visible;
 	}
 	
-	public int getSpeedX()
+	public float getSpeedX()
 	{
 		return speedX;
 	}
 
-	public void setSpeedX(int speedX)
+	public void setSpeedX(float speedX)
 	{
 		this.speedX = speedX;
 	}
 
-	public int getSpeedY()
+	public float getSpeedY()
 	{
 		return speedY;
 	}
 
-	public void setSpeedY(int speedY)
+	public void setSpeedY(float speedY)
 	{
 		this.speedY = speedY;
 	}
@@ -123,13 +123,16 @@ public class Panorama extends Sprite
 		this.x -= speedX;
 		this.y -= speedY;
 		
+		View view = Graphics.getCurrentView();
 		float width  = image.getWidth()  * zoomX;
 		float height = image.getHeight() * zoomY;
-		float realX  = ((this.x + ox) * scrollFactor) / width;
-		float realY  = ((this.y + oy) * scrollFactor) / height;
+		float realX  = ((this.x + view.x) * scrollFactor) / width;
+		float realY  = ((this.y + view.y) * scrollFactor) / height;
 		
 		Image.IMAGE_MATRIX.clear();
-		Image.IMAGE_MATRIX.setView(realX, realY);
+		Image.IMAGE_MATRIX.x = view.x;
+		Image.IMAGE_MATRIX.y = view.y;
+		Image.IMAGE_MATRIX.setTexturPosition(realX, realY);
 		
 		Image.IMAGE_MATRIX.expand(Graphics.getWidth()  / (float)image.getWidth(),
 								  Graphics.getHeight() / (float)image.getHeight(), zoomX, zoomY);

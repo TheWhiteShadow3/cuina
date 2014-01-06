@@ -52,6 +52,11 @@ public interface Graphic extends Serializable
 	
 	/**
 	 * Gibt den Kontainer der Grafik zurück.
+	 * <p>
+	 * Es ist wichtig, dass diese Methode den Kontainer zurück gibt,
+	 * der mit {@link #setContainer(GraphicContainer)} gesetzt wurde um sicher zu sellen,
+	 * dass eine Grafik nicht von zwei Kontainern gleichzeitig referenziert wird.
+	 * </p>
 	 * @return Der Kontainer.
 	 */
 	public GraphicContainer getContainer();

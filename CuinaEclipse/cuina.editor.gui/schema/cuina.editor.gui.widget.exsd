@@ -47,7 +47,7 @@
       </complexType>
    </element>
 
-   <element name="widget">
+   <!--element name="widget">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -66,6 +66,51 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.ui.views.properties.IPropertySourceProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element-->
+   
+   <element name="widget">
+      <complexType>
+         <attribute name="nodeClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Eine Klasse, die cuina.widget.data.WidgetNode erweitert.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="cuina.widget.data.WidgetNode:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="widgetClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Eine Klasse, die de.matthiasmann.twl.Widget erweitert.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="de.matthiasmann.twl.Widget:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="propertySource" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Eine Klasse, die org.eclipse.ui.views.properties.IPropertySourceProvider implementiert. Die zurückgegebene PropertySource wird benutzt um im Editor die Eigenschaften des GUI-Elements anzuzeigen.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.views.properties.IPropertySourceProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Ein Icon für das Widget Toolkit
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
                </appinfo>
             </annotation>
          </attribute>

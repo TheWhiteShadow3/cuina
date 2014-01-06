@@ -236,7 +236,6 @@ public final class Graphics
 		// Setze Flags
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
-		glEnable(GL_LIGHTING);
 		
 		glEnable(GL_CULL_FACE);
 		

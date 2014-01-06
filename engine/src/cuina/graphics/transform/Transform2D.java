@@ -128,6 +128,17 @@ public class Transform2D implements Transformation
 		this.texY = y;
 	}
 	
+	/**
+	 * Legt einen View in der angegebenen Größe fest.
+	 */
+	public void setView(float x, float y, float scaleX, float scaleY)
+	{
+		this.texX = x;
+		this.texY = y;
+		this.texSX = scaleX;
+		this.texSY = scaleY;
+	}
+	
 	public void setTexturAngle(float angle)
 	{
 		this.texAngle = angle;
@@ -192,18 +203,7 @@ public class Transform2D implements Transformation
 	}
 	
 	/**
-	 * Legt einen View in der angegebenen Größe fest.
-	 */
-	public void setView(float x, float y, float scaleX, float scaleY)
-	{
-		this.texX = x;
-		this.texY = y;
-		this.texSX = scaleX;
-		this.texSY = scaleY;
-	}
-	
-	/**
-	 * Steckt das Image.
+	 * Streckt das Image auf die angegebene Größe.
 	 * @param scaleX
 	 * @param scaleY
 	 */

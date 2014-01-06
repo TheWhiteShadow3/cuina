@@ -51,12 +51,11 @@ module Cuina
 end
 
 module Graphics
-	def view
-		return Java::CuinaGraphics::Graphics.view
-	end
+	#include_package 'cuina.graphics'
+	@@view = Java::CuinaGraphics::Graphics::VIEWS
 	
-	def view=(value)
-		return Java::CuinaGraphics::Graphics.view = value
+	def self.view
+		return @@view
 	end
 end
 

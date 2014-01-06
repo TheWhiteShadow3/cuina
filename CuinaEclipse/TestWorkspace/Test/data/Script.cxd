@@ -29,7 +29,8 @@
 		Cuina.new_scene("Map")
 		#Audio.play_bgm(1, "bgm/spring.mp3")
 		Map.load_map(&quot;schule&quot;)
-		#Map.scrolltarget = Map.get_object(1)
+		Map.follow(1)
+		
 		#party = Java::CuinaActor::ActorGroup.new
 		#actor = Java::CuinaKs::ActorFactory.createActor("Alice", 1, 1)
 		#party.addActor(actor)

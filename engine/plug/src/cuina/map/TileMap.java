@@ -144,24 +144,18 @@ public class TileMap implements Serializable
 		for(int y = 0; y < data[0].length; y++)
 		for(int z = 0; z < data[0][0].length; z++)
 		{
-			sprite = sprites[x][y][z];
-//					if (sprite != null)
-//					{
-//						sprite.refresh();
-//						continue;
-//					}
-			
-			id = data[x][y][z] - 1;
-			if (id > -1)
-			{						
-				if((id + 1) < 30000)
+			id = data[x][y][z];
+			if (id > 0)
+			{
+				sprite = sprites[x][y][z];
+				if(id < 30000)
 				{
 					sprite = imageSet.createSprite(
-							id % imageSet.getXCount(), id / imageSet.getXCount(), container);
+							(id-1) % imageSet.getXCount(), (id-1) / imageSet.getXCount(), container);
 				}
 				else
 				{
-					int autotileID = (id - 30000) + 1;
+					int autotileID = (id - 30000);
 					// Prüfe, ob zur ID auch ein AutotileSet existiert.
 					if (autotileSets[autotileID / 48] == null) continue;
 					sprite = autotileSets[autotileID / 48][atFrame].
@@ -171,9 +165,9 @@ public class TileMap implements Serializable
 				}
 				sprite.setX(x * tileSize);
 				sprite.setY(y * tileSize);
-				if ((priorities != null)&&(priorities.length > id+1))
+				if (priorities != null && priorities.length > id)
 				{
-					sprite.setDepth((int)sprite.getY() + priorities[id] * (tileSize + 1));
+					sprite.setDepth((int) sprite.getY() + priorities[id] * (tileSize + 1));
 				}
 				sprites[x][y][z] = sprite;
 			}
@@ -214,11 +208,13 @@ public class TileMap implements Serializable
 			{
 //				sprite.setX(x * tileSize);
 //				sprite.setY(y * tileSize);
-				if ((id + 1) < 30000) // TODO: Implementiere Priorität für Autotiles
+				if (id < 30000) // TODO: Implementiere Priorität für Autotiles
+				{
 					sprite.setDepth((int)sprite.getY() + priorities[id] * (tileSize + 1));
+				}
 				else
 				{
-					int autotileID = (id - 30000) + 1;
+					int autotileID = (id - 30000);
 					int frame = atFrame % autotileSets[autotileID / 48].length;
 					ImageSet.setImage(sprite, autotileSets[autotileID / 48][frame],
 							(autotileID % 48) % imageSet.getXCount(),

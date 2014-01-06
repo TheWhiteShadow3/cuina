@@ -7,7 +7,11 @@ import cuina.Logger;
 import cuina.graphics.Graphic;
 import cuina.graphics.GraphicContainer;
 import cuina.graphics.Graphics;
+import cuina.graphics.Images;
 import cuina.graphics.Panorama;
+import cuina.graphics.PictureSprite;
+import cuina.graphics.Sprite;
+import cuina.graphics.TextureLoader;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -16,7 +20,9 @@ import org.lwjgl.opengl.GL11;
 public class MenuTest
 {
 	private static Panorama background;
-
+	private static Sprite sprite;
+	
+	@SuppressWarnings("serial")
 	public static void main(String[] args)
 	{
 		try
@@ -31,12 +37,14 @@ public class MenuTest
 			Graphics.setupDisplay("TWL Menu Demo", new DisplayMode(800, 600));
 			Graphics.getInstance().createDisplay();
 			
-//			TestMenu testMenu = new TestMenu();
-//			InjectionManager.addObject(testMenu, "testMenu");
+			TestMenu testMenu = new TestMenu();
+			InjectionManager.addObject(testMenu, "testMenu");
+			
 
+			
 			background = new Panorama("backgrounds/BlueSky.jpg");
-			background.setSpeedX(1);
-			background.setSpeedY(1);
+			background.setSpeedX(0.5f);
+			background.setSpeedY(0.4f);
 			
 			FrameTimer.nextFrame();
 			

@@ -12,6 +12,7 @@ import cuina.Game;
 import cuina.Logger;
 import cuina.database.Database;
 import cuina.event.Event;
+import cuina.eventx.EventMethod;
 import cuina.eventx.Interpreter;
 import cuina.graphics.Panorama;
 import cuina.movement.CollisionSystem;
@@ -360,6 +361,13 @@ public class GameMap extends BaseWorld implements Plugin
 		if (!isValid(x, y)) return false;
 		
 		return collisionMap[x / getTileSize()][y / getTileSize()] == 0;
+	}
+	
+	@Override
+	@EventMethod
+	public void follow(int objectID, int viewID)
+	{
+		super.follow(objectID, viewID);
 	}
 
 //	public CuinaObject getScrollTarget()
