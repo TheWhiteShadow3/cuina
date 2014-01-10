@@ -80,15 +80,6 @@ public interface ITerrainEditor
 	public void setRasterVisible(boolean showRaster);
 
 	public EditorActionManager getActionManager();
-	
-//	public void activateTool(String id);
-
-//	public void addEditorTool(EditorToolAction tool);
-
-//	public EditorToolAction getEditorTool(String id);
 
 	public TerrainLayer getLayerByName(String layerName);
-	
-//	public IEditorActionBarContributor getLayerActionBarContributor(String layerName);
-	
 }

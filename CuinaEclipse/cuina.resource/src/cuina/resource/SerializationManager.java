@@ -26,7 +26,7 @@ public class SerializationManager
 	
 	private SerializationManager() {}
 	
-	private static void registSerializationProviders()
+	private static void registerSerializationProviders()
 	{
 		providers = new HashMap<String, SerializationProvider>();
 		
@@ -43,9 +43,9 @@ public class SerializationManager
 				boolean isDefault = "true".equals(e.getAttribute("default"));
 				if (extList == null) throw new NullPointerException("attribut extensions is null");
 				
-				Class clazz = plugin.loadClass(e.getAttribute("class"));
+				Class<?> clazz = plugin.loadClass(e.getAttribute("class"));
 				
-				System.out.println("[ResourceManager] Registriere SerializationProvider: " + clazz.getName() + " für Datei-Endungen: " + extList);
+				System.out.println("[SerializationManager] Registriere SerializationProvider: " + clazz.getName() + " für Datei-Endungen: " + extList);
 				SerializationProvider provider = (SerializationProvider)clazz.newInstance();
 				for(String ext : extList.split(","))
 				{
@@ -71,7 +71,7 @@ public class SerializationManager
 	 */
 	public static String getDefaultExtension()
 	{
-		if (defaultExtension == null) registSerializationProviders();
+		if (defaultExtension == null) registerSerializationProviders();
 		return defaultExtension;
 	}
 
@@ -83,24 +83,34 @@ public class SerializationManager
 
 	public static Object load(IFile file, ClassLoader cl) throws ResourceException
 	{
-		if (providers == null) registSerializationProviders();
+		if (providers == null) registerSerializationProviders();
 		String ext = file.getFileExtension();
 		SerializationProvider provider = providers.get(ext);
 		if (provider == null) throw new ResourceException("No Provider available!");
 		
-		try (InputStream in = file.getContents(true))
-		{
+		InputStream in = null;
+		try{
+			in = file.getContents(true);
 			return provider.load(in, cl);
 		}
 		catch (IOException | CoreException | ClassNotFoundException e)
 		{
 			throw new ResourceException(file, ResourceException.LOAD, e);
 		}
+		finally{
+			if(in != null)
+				try
+				{
+					in.close();
+				} catch(IOException e)
+				{
+				}
+		}
 	}
 	
 	public static void save(final Object obj, final IFile file) throws ResourceException
 	{
-		if (providers == null) registSerializationProviders();
+		if (providers == null) registerSerializationProviders();
 		String ext = file.getFileExtension();
 		final SerializationProvider provider = providers.get(ext);
 		if (provider == null) throw new ResourceException("No Provider available!");
@@ -116,6 +126,8 @@ public class SerializationManager
 					try (OutputStream out = new FileOutputStream(f))
 					{
 						provider.save(obj, out);
+						out.flush();
+						out.close();
 					}
 					catch (IOException e)
 					{

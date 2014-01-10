@@ -17,7 +17,7 @@ public class DatabaseInput implements IEditorInput, IPersistableElement
 {
 	private IFile file;
 	private String key;
-	private DataTable table;
+	private DataTable<?> table;
 	
 	public DatabaseInput(IFile file, String key)
 	{
@@ -27,7 +27,7 @@ public class DatabaseInput implements IEditorInput, IPersistableElement
 		this.key = key;
 	}
 	
-	public DatabaseInput(DataTable table, String key)
+	public DatabaseInput(DataTable<?> table, String key)
 	{
 		this(getFile(table), key);
 	}
@@ -89,7 +89,7 @@ public class DatabaseInput implements IEditorInput, IPersistableElement
 		return CuinaCore.getCuinaProject(file.getProject());
 	}
 	
-	public DataTable getTable() throws ResourceException
+	public DataTable<?> getTable() throws ResourceException
 	{
 		if (table == null)
 			table = getCuinaProject().getService(Database.class).loadTable(file);
@@ -118,12 +118,12 @@ public class DatabaseInput implements IEditorInput, IPersistableElement
 		return "Datenbankelement: " + getName();
 	}
 
-	private static IFile getFile(DataTable table)
+	private static IFile getFile(DataTable<?> table)
 	{
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(table.getFileName()));
 	}
 	
-	private static DataTable getDataTable(CuinaProject project, String tableName) throws ResourceException 
+	private static DataTable<?> getDataTable(CuinaProject project, String tableName) throws ResourceException 
 	{
 		return project.getService(Database.class).loadTable(tableName);
 	}

@@ -27,7 +27,7 @@
           class="cuina.editor.map.internal.TerrainEditor"
           contributorClass="cuina.editor.map.internal.MapEditorActionBarContributor"
           default="true"
-          extensions="cxm"
+          extensions="cxm, cxmz"
           icon="icons/map.png"
           id="cuina.editor.map.MapEditor"
           name="Cuina Map Editor">
@@ -37,7 +37,7 @@
           default="true"
           icon="icons/tileset.png"
           id="cuina.editor.map.TilesetEditor"
-          name="Cuina Tilset Editor">
+          name="Cuina Tileset Editor">
     </editor>
  </extension>
  <extension

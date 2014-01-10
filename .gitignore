@@ -1,7 +1,9 @@
 *.class
+*.log
 *.zip
 */bin/*
 */build/*
 engine/deploy/lib/*
 engine/deploy/plugins/*
 engine/deploy/cuina.engine.jar
+/CuinaEclipse/TestWorkspace/.metadata

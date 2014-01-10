@@ -42,7 +42,7 @@ import org.eclipse.ui.part.EditorPart;
 
 public class DatabaseEditor extends EditorPart implements TreeListener
 {
-	private DataTable table;
+	private DataTable<?> table;
 	private String key;
 	private DatabaseViewer viewer;
 	private TreeDataNode currentLeaf;
@@ -92,7 +92,7 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 	{
 		if (table == null)
 		{
-			IDatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(table.getName());
+			IDatabaseDescriptor<?> descriptor = DatabasePlugin.getDescriptor(table.getName());
 			if (descriptor.getEditorID() != null)
 			{
 				IEditorReference[] refs = getSite().getPage().findEditors(null,
@@ -103,6 +103,8 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 					if (editor != null) return;
 				}
 			}
+			
+			return;
 		}
 		
 		throw new PartInitException(
@@ -239,7 +241,7 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 		if (input instanceof DatabaseInput)
 		{
 			DatabaseInput dbInput = (DatabaseInput) input;
-			this.table = (DataTable) dbInput.getAdapter(DataTable.class);
+			this.table = (DataTable<?>) dbInput.getAdapter(DataTable.class);
 			this.key = dbInput.getKey();
 		}
 		else if (input instanceof IAdaptable)
@@ -276,7 +278,7 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 		viewer.removeDataChangeListener(l);
 	}
 
-	public DataTable getTable()
+	public DataTable<?> getTable()
 	{
 		return table;
 	}
