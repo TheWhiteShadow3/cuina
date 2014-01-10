@@ -11,6 +11,7 @@ import org.lwjgl.opengl.Display;
  * Überwacht Benutzereingaben und ermöglicht erfolgte Eingaben abzuprüfen.
  * @author TheWhiteShadow
  */
+@Deprecated
 public class Input
 {
 	public static int[] OK 		= { Keyboard.KEY_RETURN, Keyboard.KEY_NUMPAD0 };

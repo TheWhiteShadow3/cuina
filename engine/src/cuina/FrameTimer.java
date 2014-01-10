@@ -1,10 +1,8 @@
 package cuina;
 
 import cuina.graphics.Graphics;
+import cuina.input.Input;
 
-import java.io.File;
-
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
 /**
@@ -110,11 +108,11 @@ public final class FrameTimer
 		Input.update();
 		scene.update();
 		
-		if (Input.isPressed(Keyboard.KEY_F11))
-			Game.saveGame(new File("save.ser"));
-		
-		if (Input.isPressed(Keyboard.KEY_F12))
-			Game.loadGame(new File("save.ser"));
+//		if (Input.isPressed(Keyboard.KEY_F11))
+//			Game.saveGame(new File("save.ser"));
+//		
+//		if (Input.isPressed(Keyboard.KEY_F12))
+//			Game.loadGame(new File("save.ser"));
 		
 		if (Game.getScene() != scene)
 		{

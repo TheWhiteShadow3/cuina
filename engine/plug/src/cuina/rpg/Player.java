@@ -1,8 +1,9 @@
 package cuina.rpg;
 
 import cuina.Game;
-import cuina.Input;
 import cuina.event.Event;
+import cuina.input.DirectionalControl;
+import cuina.input.Input;
 import cuina.map.CollisionBox;
 import cuina.movement.Driver;
 import cuina.movement.Motor;
@@ -20,15 +21,14 @@ public class Player implements Driver
 	
 	private static final long	serialVersionUID	= -8876917561357724127L;
 	
-	private static int count = 0;
-	private int index;
-
+	public String CONTROL_MOVE 		= "a1";
+	public String CONTROL_ACTION 	= "c2";
+	public String CONTROL_RUN 		= "c3";
+	
 	private Motor motor;
 	
 	public Player()
 	{
-		this.index = count;
-		count++;
 	}
 	
 	@Override
@@ -36,67 +36,45 @@ public class Player implements Driver
 	{
 		this.motor = motor;
 	}
-	
-	public static Player newInstance()
-	{
-//		MapObject playerObject = new MapObject();
-//		Model playerModel = new Model();
-//		playerModel.setSprite(new Sprite(graphic_file), 4, 4);
-//		playerObject.setModel(playerModel);
-		return new Player();
-	}
 
 	@Override
 	public void update()
 	{
+		handleDebugMovement();
+		
+		DirectionalControl c = (DirectionalControl) Input.getControl(CONTROL_MOVE);
+		if (c != null)
+		{
+			motor.setDirection(c.getDirection());
+			float speed = 1.5f * c.getValue();
+			if (Input.isDown(CONTROL_RUN)) speed *= 2;
+			motor.setSpeed(speed);
+		}
+		
+		handleCollisions();
+	}
+	
+	private CollisionBox getCollisionBox()
+	{
 		CuinaObject object = motor.getObject();
-		CollisionBox box = (CollisionBox) object.getExtension(CollisionBox.EXTENSION_KEY);
-		if (box != null)
-		{
-			box.setThrough(Input.isDown(Keyboard.KEY_LCONTROL));
-		}
+		return (CollisionBox) object.getExtension(CollisionBox.EXTENSION_KEY);
+	}
+	
+	private void handleDebugMovement()
+	{
+		CollisionBox box = getCollisionBox();
+		if (box == null) return;
 		
-		int dir = -1;
-//		if (INPUT_8)
-//			dir = Input.dir8();
-//		else
-//			dir = Input.dir4();
-		switch(index)
-		{
-			case 0: dir = Input.dir8(Input.CONTROL_ARROWS); break;
-			case 1: dir = Input.dir8(Input.CONTROL_WASD); break;
-			case 2: dir = Input.dir8(Input.CONTROL_NUMPAD); break;
-		}
-		if (dir != -1)
-		{
-			motor.setDirection(dir);
-			if (Input.isDown(Keyboard.KEY_LSHIFT))
-				motor.setSpeed(3);
-			else
-				motor.setSpeed(1.5f);
-//			System.out.println(getObject().getModel().getY());
-		}
-		else
-		{
-			motor.setSpeed(0);
-		}
-		
-//		Model model = (Model) object.getExtension("model");
-//		if (Input.isDown(Keyboard.KEY_Q))
-//		{
-//			object.setZ(object.getZ() + 1);
-//			System.out.println("Model.Z = " + model.getZ());
-////			Sprite sprite = object.getModel().getSprite();
-////			sprite.setAngle(sprite.getAngle() + 0.5f);
-//		}
-//		if (Input.isDown(Keyboard.KEY_A))
-//		{
-//			object.setZ(object.getZ() - 1);
-//			System.out.println("Model.Z = " + model.getZ());
-//		}
+		box.setThrough(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT));
+	}
+	
+	private void handleCollisions()
+	{
+		CollisionBox box = getCollisionBox();
+		if (box == null) return;
 		
 		CuinaWorld world = Game.getWorld();
-		if (Input.isPressed(Keyboard.KEY_RETURN) && (world == null || !world.isFreezed()))
+		if (Input.isPressed(CONTROL_ACTION) && (world == null || !world.isFreezed()))
 		{
 			CuinaObject other = box.testRelativePosition(motor.getDX(2), motor.getDY(2));
 			if (other != null && other instanceof CuinaObject)

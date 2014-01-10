@@ -10,8 +10,10 @@ package cuina.graphics;
 import static org.lwjgl.opengl.GL11.*;
 
 import cuina.Game;
-import cuina.Input;
 import cuina.Logger;
+import cuina.input.Control;
+import cuina.input.Control.Key;
+import cuina.input.Input;
 import cuina.util.LoadingException;
 
 import java.awt.Font;
@@ -51,6 +53,8 @@ public final class Graphics
 	public static final GraphicManager GraphicManager = new GraphicManager();
 	public static final List<View> VIEWS = new ArrayList<View>();
 	private static GraphicManager storedGM;
+	
+	private static final String FULLSCREEN_BUTTON = "fullscreen";
 	
 	protected final static LinkedList<RenderJob> renderJobs = new LinkedList<RenderJob>();
 	
@@ -226,6 +230,8 @@ public final class Graphics
 			Display.create();
 			Keyboard.create();
 			Mouse.create();
+//			Controllers.create();
+			registControls();
 		}
 		catch (LWJGLException e)
 		{
@@ -264,6 +270,12 @@ public final class Graphics
 		Util.checkGLError();
 
 		Logger.log(Graphics.class, Logger.INFO, "Setup complete.");
+	}
+
+	private void registControls()
+	{
+		Input.initControls();
+		Input.addControl(new Control(FULLSCREEN_BUTTON, new Key(Key.KEY_F5)));
 	}
 
 	public static void toggleFullscreen()
@@ -387,7 +399,7 @@ public final class Graphics
 	public static void update()
 	{
 		if (Graphics.isFreeze() || !isInitialized()) return;
-		if (Input.isPressed(Keyboard.KEY_F5))
+		if (Input.isPressed(FULLSCREEN_BUTTON))
 		{
 			Graphics.toggleFullscreen();
 		}

@@ -2,9 +2,9 @@ package cuina.message;
 
 import cuina.Context;
 import cuina.Game;
-import cuina.Input;
 import cuina.eventx.EventMethod;
 import cuina.eventx.Interpreter.Result;
+import cuina.input.Input;
 import cuina.plugin.ForScene;
 import cuina.plugin.LifeCycle;
 import cuina.plugin.Plugin;
@@ -22,6 +22,11 @@ import de.matthiasmann.twl.Widget;
 public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEventHandler
 {
 	public static final String MESSAGE_KEY = "Message";
+	
+	public static final String CONTROL_UP = "up";
+	public static final String CONTROL_DOWN = "down";
+	public static final String CONTROL_OK = "c1";
+	public static final String CONTROL_CANCEL = "c3";
 	
 	private static final long serialVersionUID = 8472522785944518968L;
 	
@@ -59,13 +64,13 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 		
 		if (index != -1)
 		{
-			if (Input.isPressed(Input.UP))
+			if (Input.isPressed(CONTROL_UP))
 			{
 				index -= 1;
 				if (index < 0) index = choises.length -1;
 			}
 			
-			if (Input.isPressed(Input.DOWN))
+			if (Input.isPressed(CONTROL_DOWN))
 			{
 				index += 1;
 				if (index >= choises.length) index = 0;
@@ -73,12 +78,12 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 		}
 //		if (backgroundModel != null) backgroundModel.update();
 		
-//		if (Input.isPressed(Input.OK) || Input.isPressed(Input.CANCEL))
+//		if (Input.isPressed(CONTROL_OK) || Input.isPressed(CONTROL_CANCEL))
 //		{
 //			nextMessage();
 //		}
 	}
-
+	
 	@Override
 	public void postUpdate()
 	{

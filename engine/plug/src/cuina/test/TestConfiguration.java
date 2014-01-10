@@ -74,7 +74,7 @@ public class TestConfiguration implements Plugin, LifeCycle
 			view.port.width = view2.port.width;
 			Graphics.VIEWS.add(view2);
 			
-			((Motor) view2.target.getExtension(Motor.EXTENSION_KEY)).setDriver(Player.newInstance());
+			((Motor) view2.target.getExtension(Motor.EXTENSION_KEY)).setDriver(new Player());
 //			Graphics.view.target = map.getObject(2);
 			
 //			map.getGraphicContainer().setFlag(GL11.GL_LIGHTING, true);
