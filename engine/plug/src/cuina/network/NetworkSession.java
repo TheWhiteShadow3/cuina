@@ -1,8 +1,5 @@
 package cuina.network;
 
-
-
-
 public abstract class NetworkSession implements INetworkSession, ChannelListener
 {
 	private NetID netID;
@@ -26,24 +23,19 @@ public abstract class NetworkSession implements INetworkSession, ChannelListener
 		return name;
 	}
 
-	protected void close()
+	public void close()
 	{
 		
 	}
 	
 	@Override
-	public void channelClosed()
+	public void channelClosed(Channel source)
 	{
 		close();
 	}
-	
-	protected Message createSessionMessage(int type, String command, String... arguments)
-	{
-		return new CommandMessage(netID.get(), type, command, arguments);
-	}
 
 	@Override
-	public void messageRecieved(Message msg)
+	public void messageRecieved(Channel source, Message msg)
 	{
 		if (msg.getType() == Message.FLAG_CMD)
 		{

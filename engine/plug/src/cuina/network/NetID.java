@@ -2,14 +2,38 @@ package cuina.network;
 
 import java.io.IOException;
 
+/**
+ * Eine im Netzwerk eindeutige Identifikationsnummer.
+ * <p>
+ * Die Nummern symbolisieren eine Zugehörigkeit von Klient zu Server.
+ * Wird eine Nachicht zu einer bestimmten Netzwerk-ID gesendet ist sicher gestellt,
+ * dass nur der <code>ChannelListener</code> mit dieser ID auf der anderen Seite die Nachicht empfängt.
+ * Ausnahme bildet die globale Netzwerk-ID {@link #GLOBAL_ID}.
+ * </p>
+ * @author TheWhiteShadow
+ */
 public final class NetID
 {
+	/**
+	 * Eine Leere Netzwerk-ID. Kann benutzt werden um Null-Referenzen zu vermeiden.
+	 * Ein Aufruf von {@link #isSet()} gibt <code>false</code> zurück.
+	 */
+	public static final NetID EMPTY_ID		= new NetID(-1);
+	/**
+	 * Die globale Netzwerk-ID definiert keine bestimmte Zuweisung.
+	 * Diese ID wird niemals vom Server vergeben.
+	 */
+	public static final NetID GLOBAL_ID		= new NetID(0);
+	
 	int id = -1;
 	
 	/**
 	 * Erzeugt eine neue Netzwerk-ID.
 	 * <p>
-	 * Da die ID erst beim Server registriert werden muss, gibt {@link #get()} anfangs noch keine nWert zurück.
+	 * Da die ID erst beim Server registriert werden muss,
+	 * gibt {@link #isSet()} anfangs noch <code>false</code> zurück und die Bedingung
+	 * <pre>netID.equals(EMPTY_ID)</pre>
+	 * ist erfüllt.
 	 * </p>
 	 * <i>Die ID ist eindeutig im Netzwerk.</i>
 	 * 
@@ -22,21 +46,6 @@ public final class NetID
 	{
 		context.requestNetworkID(this);
 	}
-	
-//	/**
-//	 * Erzeugt eine Netzwerk-ID mit der angegebenen ID-Nummer.
-//	 * <p>
-//	 * <b>Warnung!</b>
-//	 * <i>Die erzeugte Netzwerk-ID ist möglicherweise nicht im Netzwerk registriert.</i>
-//	 * </p>
-//	 * @param id Die ID
-//	 * @return Die neue Netzwerk-ID.
-//	 * @see #NetID(NetworkContext)
-//	 */
-//	public static NetID unsaveNewID(int id)
-//	{
-//		return new NetID(id);
-//	}
 	
 	NetID(int id)
 	{

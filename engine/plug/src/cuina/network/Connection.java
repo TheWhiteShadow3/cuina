@@ -23,13 +23,24 @@ public class Connection implements ChannelListener, NetworkContext
 	
 	public Connection(String serverHost, int port, String username, String password) throws IOException
 	{
-		this.netID = new NetID(-1); // temporäre ID.
+		this.netID = NetID.EMPTY_ID; // temporäre ID.
 		this.serverHost = serverHost;
 		this.username = username;
-		this.channel = new Channel(this);
+		this.channel = new Channel(netID, this);
 		
 		channel.open(new Socket(serverHost, port));
 		channel.login(username, password);
+		try
+		{
+			synchronized (this)
+			{
+				wait();
+			}
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -57,7 +68,7 @@ public class Connection implements ChannelListener, NetworkContext
 	@Override
 	public void requestNetworkID(NetID netID) throws IOException
 	{
-		channel.send(this.netID.get(), this.netID.get(), Message.FLAG_NETID, new byte[0]);
+		channel.send(this.netID, Message.FLAG_NETID, new byte[0]);
 		idQueue.add(netID);
 	}
 	
@@ -138,23 +149,23 @@ public class Connection implements ChannelListener, NetworkContext
 	}
 	
 	public void joinChatroom(String roomName, String password) throws IOException
-	{	
-		sendCommand(0, "room.join", authArguments(roomName, password));
+	{
+		sendCommand(NetID.GLOBAL_ID, "room.join", authArguments(roomName, password));
 	}
 	
 	public void openSession(String sessionName, String password) throws IOException
 	{
-		sendCommand(0, "session.open", authArguments(sessionName, password));
+		sendCommand(NetID.GLOBAL_ID, "session.open", authArguments(sessionName, password));
 	}
 	
 	public void joinSession(String sessionName, String password) throws IOException
 	{
-		sendCommand(0, "session.join", authArguments(sessionName, password));
+		sendCommand(NetID.GLOBAL_ID, "session.join", authArguments(sessionName, password));
 	}
 	
-	private void sendCommand(int reciever, String command, String... arguments) throws IOException
+	private void sendCommand(NetID reciever, String command, String... arguments) throws IOException
 	{
-		channel.send(new CommandMessage(netID.get(), reciever, Message.FLAG_CMD, command, arguments));
+		channel.send(new CommandMessage(reciever, Message.FLAG_CMD, command, arguments));
 	}
 	
 //	private CommandMessage readResponse() throws IOException
@@ -171,7 +182,7 @@ public class Connection implements ChannelListener, NetworkContext
 	{
 		if (channel.isOpen()) try
 		{
-			channel.send(getID().get(), Message.FLAG_CLOSE, 0, new byte[0]);
+			channel.send(NetID.GLOBAL_ID, Message.FLAG_CLOSE, new byte[0]);
 			Thread.sleep(100);
 		}
 		catch (IOException | InterruptedException e)
@@ -183,31 +194,45 @@ public class Connection implements ChannelListener, NetworkContext
 	
 
 	@Override
-	public void channelClosed()
+	public void channelClosed(Channel channel)
 	{
 		fireDisconnected();
 	}
 
 	@Override
-	public void messageRecieved(Message msg)
+	public void messageRecieved(Channel channel, Message msg)
 	{
-		System.out.println("[Connection] recieved " + msg);
-		switch(msg.getType())
+		try
 		{
-			case Message.FLAG_CLOSE:
-			case Message.FLAG_EOF: close(); break;
-			case Message.FLAG_NETID: handleIDMessage(msg); break;
-//			case Channel.FLAG_CMD:
-			case Message.FLAG_ACK:
-			case Message.FLAG_INFO: try
+			System.out.println("[Connection] recieved " + msg);
+			msg.checkException();
+			
+			switch(msg.getType())
 			{
-				handleCommandMessage(new CommandMessage(msg)); break;
-			}
-			catch(IOException e)
-			{
-				e.printStackTrace();
+				case Message.FLAG_LOGIN: handleLogin(msg); break;
+				case Message.FLAG_CLOSE:
+				case Message.FLAG_EOF: close(); break;
+				case Message.FLAG_NETID: handleIDMessage(msg); break;
+				
+				case Message.FLAG_ACK:
+				case Message.FLAG_INFO: InfoRecieved(new CommandMessage(msg)); break;
 			}
 		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void handleLogin(Message msg)
+	{
+		this.netID = msg.getSender();
+		channel.setNetID(netID);
+		synchronized (this)
+		{
+			notify();
+		}
+		fireConnected();
 	}
 
 	private void handleIDMessage(Message msg)
@@ -215,17 +240,10 @@ public class Connection implements ChannelListener, NetworkContext
 		idQueue.poll().id = StreamUtils.byteArrayToInt(msg.getData(), 0);
 	}
 
-	private void handleCommandMessage(CommandMessage msg) throws IOException
+	private void InfoRecieved(CommandMessage msg) throws IOException
 	{
-		msg.checkException();
-		
 		switch(msg.command)
 		{
-			case "login":
-				this.netID.id = Integer.parseInt(msg.arguments[0]);
-				fireConnected();
-				break;
-				
 			case "room.opened":
 			case "room.joined":
 			{
@@ -255,8 +273,9 @@ public class Connection implements ChannelListener, NetworkContext
 			case "session.opened":
 			if (session == null)
 			{
-				int port = Integer.parseInt(msg.arguments[1]);
-				this.session = new ClientNetworkSession(msg.getSenderID(), msg.arguments[0], this, port);
+				NetID netID = new NetID(Integer.parseInt(msg.arguments[1]));
+				int port = Integer.parseInt(msg.arguments[2]);
+				this.session = new ClientNetworkSession(netID, msg.arguments[0], this, port);
 				fireSessionCreated(session);
 			}
 			break;

@@ -70,9 +70,9 @@ public class Server extends LifeCycleAdapter
 		return !(listener.stop || identifier.stop);
 	}
 	
-	public ServerClient getClient(int id)
+	public ServerClient getClient(NetID netID)
 	{
-		return clients.get(id);
+		return clients.get(netID);
 	}
 
 	public ConnectionSecurityPolicy getSecurityPolicy()
@@ -98,24 +98,29 @@ public class Server extends LifeCycleAdapter
 	boolean disconnect(ServerClient client)
 	{
 		System.out.println("[Server] " + client.getUsername() + " ist disconnectet.");
-		for(ServerChatroom room : rooms.values()) room.leave(client);
-		for(ServerSession session : sessions.values()) session.leave(client);
-		return clients.remove(client.getID()) != null;
+		if (clients.remove(client.getID()) != null)
+		{
+			for(ServerChatroom room : rooms.values()) room.leave(client);
+			for(ServerSession session : sessions.values()) session.leave(client);
+			return true;
+		}
+		else
+		{
+			identifier.removePendingClient(client);
+			return false;
+		}
 	}
 
-	@Override
-	public void dispose()
-	{
-		identifier.stop = true;
-		listener.stop = true;
-		identifier.interrupt();
-		listener.interrupt();
-		System.out.println("[Server] closed");
-	}
-	
 	public ServerChatroom getChatroom(String name)
 	{
 		return rooms.get(name);
+	}
+	
+
+	public ServerSession getSession(String argument)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	public boolean createChatroom(ServerClient client, String roomName) throws IOException
@@ -128,9 +133,10 @@ public class Server extends LifeCycleAdapter
 		return true;
 	}
 	
-	public boolean destroyChatroom(String name)
+	public boolean destroyChatroom(String roomName)
 	{
-		return rooms.remove(name) != null;
+		System.out.println("[Server] Raum " + roomName + " zerstört.");
+		return rooms.remove(roomName) != null;
 	}
 
 	public boolean createNetworkSession(String sessionName, ServerClient owner) throws IOException
@@ -145,10 +151,35 @@ public class Server extends LifeCycleAdapter
 		return true;
 	}
 
-	public void destroySession(ServerSession session)
+	public boolean destroySession(String sessionName)
 	{
-		sessions.remove(session.getName());
-		System.out.println("[Server] Session " + session.getName() + " zerstört.");
+		System.out.println("[Server] Session " + sessionName + " zerstört.");
+		return sessions.remove(sessionName) != null;
+	}
+
+	public void sendException(NetID clientID, String message)
+	{
+		ServerClient client = getClient(clientID);
+		if (client == null) return;
+		
+		try
+		{
+			client.getChannel().send(new NetworkException(message));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void dispose()
+	{
+		identifier.stop = true;
+		listener.stop = true;
+		identifier.interrupt();
+		listener.interrupt();
+		System.out.println("[Server] closed");
 	}
 	
 	static class ConnectionListener extends Thread
@@ -235,6 +266,11 @@ public class Server extends LifeCycleAdapter
 		private void addPendingClient(ServerClient client)
 		{
 			pendingClients.add(client);
+		}
+		
+		private void removePendingClient(ServerClient client)
+		{
+			pendingClients.remove(client);
 		}
 
 		@Override

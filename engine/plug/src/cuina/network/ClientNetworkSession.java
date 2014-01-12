@@ -23,7 +23,7 @@ public class ClientNetworkSession extends NetworkSession
 		connection.getChannel().addChannelListener(netID, this);
 		
 		System.out.println("[ClientNetworkSession] Port: " + address.getPort());
-		sendMessage(createSessionMessage(Message.FLAG_ACK, "opened", Integer.toString(address.getPort())));
+		sendMessage(new CommandMessage(netID, Message.FLAG_ACK, "opened", Integer.toString(address.getPort())));
 	}
 	
 	@Override
@@ -33,12 +33,12 @@ public class ClientNetworkSession extends NetworkSession
 	}
 
 	@Override
-	protected void close()
+	public void close()
 	{
 		socket.close();
 		super.close();
 	}
-
+	
 	@Override
 	public void requestNetworkID(NetID netID) throws IOException
 	{
@@ -52,7 +52,7 @@ public class ClientNetworkSession extends NetworkSession
 		{
 			switch(msg.command)
 			{
-				case "close": sendMessage(createSessionMessage(Message.FLAG_CMD, "close")); break;
+				case "close": sendMessage(new CommandMessage(connection.getID(), Message.FLAG_CMD, "close")); break;
 			}
 		}
 		catch (IOException e)
@@ -78,7 +78,7 @@ public class ClientNetworkSession extends NetworkSession
 		buffer.flip();
 		byte[] bytes = new byte[buffer.limit()];
 		buffer.get(bytes);
-		connection.getChannel().send(getID().get(), getID().get(), Message.FLAG_BYTES, bytes);
+		connection.getChannel().send(getID(), Message.FLAG_BYTES, bytes);
 	}
 
 	@Override

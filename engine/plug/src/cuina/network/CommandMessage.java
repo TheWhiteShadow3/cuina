@@ -13,21 +13,14 @@ public class CommandMessage extends Message
 	
 	public CommandMessage(Message msg)
 	{
-		super(msg.getSender(), msg.getReciever(), msg.getType(), msg.getData());
+		super(msg);
 		
 		readCommands(msg.getData());
 	}
 	
-	public CommandMessage(int target, int type, String command, String... arguments)
+	public CommandMessage(NetID reciever, int type, String command, String... arguments)
 	{
-		super(target, target, type, toBytes(command, arguments));
-		this.command = command;
-		this.arguments = arguments;
-	}
-	
-	public CommandMessage(int sender, int reciever, int type, String command, String... arguments)
-	{
-		super(sender, reciever, type, toBytes(command, arguments));
+		super(reciever, type, toBytes(command, arguments));
 		this.command = command;
 		this.arguments = arguments;
 	}
@@ -40,20 +33,6 @@ public class CommandMessage extends Message
 	public String getArgument(int idenx)
 	{
 		return arguments[idenx];
-	}
-
-	public NetworkException getException()
-	{
-		if (getType() == Message.FLAG_EXCEPTION)
-			return new NetworkException(command + ": " + arguments[0]);
-		else
-			return null;
-	}
-	
-	public void checkException() throws NetworkException
-	{
-		NetworkException e = getException();
-		if (e != null) throw e;
 	}
 
 	@Override

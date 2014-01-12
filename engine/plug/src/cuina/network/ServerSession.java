@@ -26,10 +26,11 @@ public class ServerSession extends NetworkSession
 		host.getChannel().addChannelListener(netID, this);
 		
 		System.out.println("[ServerSession] Port: " + address.getPort());
-		SessionMember member = new SessionMember(host, -1);
+		SessionMember member = addMember(host, -1);
+		
 		// sende die Nachicht ohne Empfänger, da dieser noch nicht erstellt wurde.
-		member.sendMessage(new CommandMessage(netID.get(), 0, Message.FLAG_INFO,
-				"session.opened", name, Integer.toString(address.getPort())));
+		member.sendMessage(new CommandMessage(NetID.GLOBAL_ID, Message.FLAG_INFO,
+				"session.opened", name, Integer.toString(netID.get()), Integer.toString(address.getPort())));
 	}
 
 	@Override
@@ -39,9 +40,9 @@ public class ServerSession extends NetworkSession
 	}
 	
 	@Override
-	protected void close()
+	public void close()
 	{
-		server.destroySession(this);
+		server.destroySession(getName());
 		super.close();
 	}
 	
@@ -49,7 +50,7 @@ public class ServerSession extends NetworkSession
 	{
 		SessionMember member = addMember(client, port);
 		
-		member.sendMessage(createSessionMessage(Message.FLAG_INFO,
+		member.sendMessage(new CommandMessage(NetID.GLOBAL_ID, Message.FLAG_INFO,
 				"session.joined", getName(), Integer.toString(socket.getPort())));
 	}
 
@@ -95,22 +96,25 @@ public class ServerSession extends NetworkSession
 	@Override
 	protected void handleInfo(CommandMessage msg)
 	{
+		validateClient(msg.getSender());
 		switch(msg.getCommand())
 		{
 			case "close": close(); break;
-			case "opened": members.get(msg.getSender()).port = Integer.parseInt(msg.getArgument(0)); break;
+			case "opened": handlePortMesssage(msg); break;
+				
 		}
 	}
-	
+
 	@Override
 	protected void handleCommand(CommandMessage msg)
 	{
+		validateClient(msg.getSender());
 		try
 		{
 			switch(msg.command)
 			{
-				case "close": sendMessage(createSessionMessage(Message.FLAG_INFO, "close")); break;
-				case "join": join(msg); break;
+				case "close": sendMessage(new CommandMessage(getID(), Message.FLAG_INFO, "close")); break;
+//				case "join": join(msg); break;
 			}
 		}
 		catch(IOException e)
@@ -118,20 +122,34 @@ public class ServerSession extends NetworkSession
 			e.printStackTrace();
 		}
 	}
-
-	private void join(CommandMessage msg)
+	
+	private void validateClient(NetID netID)
 	{
-		int id = Integer.parseInt(msg.getArgument(0));
-		int port = Integer.parseInt(msg.getArgument(1));
-		try
+		if (!members.containsKey(netID))
 		{
-			join(server.getClient(id), port);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
+			server.sendException(netID, "Client ist no Member of Session: " + getID());
 		}
 	}
+	
+	private void handlePortMesssage(CommandMessage msg)
+	{
+		NetID netID = msg.getSender();
+		int port = Integer.parseInt(msg.getArgument(0));
+		members.get(netID).port = port;
+	}
+
+//	private void join(CommandMessage msg)
+//	{
+//		int port = Integer.parseInt(msg.getArgument(0));
+//		try
+//		{
+//			join(server.getClient(msg.getSender()), port);
+//		}
+//		catch (IOException e)
+//		{
+//			e.printStackTrace();
+//		}
+//	}
 	
 	private SessionMember addMember(ServerClient client, int port)
 	{
@@ -174,7 +192,7 @@ public class ServerSession extends NetworkSession
 			buffer.flip();
 			byte[] bytes = new byte[buffer.limit()];
 			buffer.get(bytes);
-			client.getChannel().send(getID().get(), getID().get(), Message.FLAG_BYTES, bytes);
+			client.getChannel().send(getID(), Message.FLAG_BYTES, bytes);
 		}
 		
 		public void sendMessage(Message msg) throws IOException

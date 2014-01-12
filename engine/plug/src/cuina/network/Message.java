@@ -20,55 +20,60 @@ public class Message
 	public static final int FLAG_TEXT		= 7;
 	/** Gibt an, dass eine Netzwerk-ID angefordert wird. */
 	public static final int FLAG_NETID		= 8;
+	public static final int FLAG_LOGIN		= 9;
 
-	private int sender;
+	NetID sender;
+	private NetID reciever;
 	private int type;
-	private int reciever;
 	private byte[] data;
 
-	public Message(int sender, int reciever, int type, byte[] buffer)
+	public Message(Message msg)
+	{
+		this.sender = msg.sender;
+		this.reciever = msg.reciever;
+		this.type = msg.type;
+		this.data = msg.data;
+	}
+	
+	Message(NetID sender, NetID reciever, int type, byte[] buffer)
 	{
 		this.sender = sender;
-		this.type = type;
 		this.reciever = reciever;
+		this.type = type;
 		this.data = buffer;
 	}
 	
-//	public Message(int type, int reciever, byte[] buffer)
-//	{
-//		this.type = type;
-//		this.reciever = reciever;
-//		this.data = buffer;
-//	}
+	public Message(NetID reciever, int type, byte[] data)
+	{
+		this.reciever = reciever;
+		this.type = type;
+		this.data = data;
+	}
 
 	public int getType()
 	{
 		return type;
 	}
 
-	public int getSender()
+	public NetID getSender()
 	{
 		return sender;
 	}
 
-	public int getReciever()
+	public NetID getReciever()
 	{
 		return reciever;
-	}
-	
-	public NetID getSenderID()
-	{
-		return new NetID(sender);
-	}
-
-	public NetID getRecieverID()
-	{
-		return new NetID(reciever);
 	}
 
 	public byte[] getData()
 	{
 		return data;
+	}
+	
+	public void checkException() throws NetworkException
+	{
+		if (type == FLAG_EXCEPTION)
+			throw new NetworkException(new String(data, StreamUtils.CHARSET));
 	}
 	
 	@Override

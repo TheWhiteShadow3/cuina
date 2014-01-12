@@ -20,6 +20,8 @@ public class TestClient
 		int port = Server.PORT;
 		con = new Connection("localhost", port, "TWS", null);
 		con.addConnectionListener(new MyConnectionListener());
+		
+		System.out.println("[TestClient] " + con.getID());
 		System.out.println("[TestClient] starte Session.");
 		con.openSession("blub", null);
 //		con.joinChatroom("blub", null);

@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Channel
 {
-	private int id;
+	private NetID netID;
 	private Socket socket;
 	private DataInputStream in;
 	private DataOutputStream out;
@@ -22,11 +22,22 @@ public class Channel
 	private ChannelListener defaultChannelListener;
 	private Map<NetID, ChannelListener> listeners = new HashMap<NetID, ChannelListener>();
 
-	public Channel(ChannelListener defaultChannelListener)
+	public Channel(NetID netID, ChannelListener defaultChannelListener)
 	{
+		this.netID = netID;
 		this.defaultChannelListener = defaultChannelListener;
 	}
 	
+	void setNetID(NetID netID)
+	{
+		this.netID = netID;
+	}
+
+	public NetID getID()
+	{
+		return netID;
+	}
+
 	public void open(Socket socket) throws IOException
 	{
 		this.socket = socket;
@@ -42,16 +53,6 @@ public class Channel
 	public InetAddress getInetAddress()
 	{
 		return socket.getInetAddress();
-	}
-
-	public int getID()
-	{
-		return id;
-	}
-
-	public void setID(int id)
-	{
-		this.id = id;
 	}
 
 	public OutputStream getOutputStream()
@@ -82,16 +83,16 @@ public class Channel
 	
 	void fireMessageRecieved(Message msg)
 	{
-		if (msg.getReciever() == 0)
+		if (msg.getReciever().equals(NetID.GLOBAL_ID))
 		{
-			defaultChannelListener.messageRecieved(msg);
+			defaultChannelListener.messageRecieved(this, msg);
 		}
 		else
 		{
-			ChannelListener listener = listeners.get(msg.getRecieverID());
+			ChannelListener listener = listeners.get(msg.getReciever());
 			if (listener != null)
 			{
-				listener.messageRecieved(msg);
+				listener.messageRecieved(this, msg);
 			}
 			else
 			{
@@ -104,9 +105,9 @@ public class Channel
 	{
 		for(ChannelListener l : listeners.values())
 		{
-			l.channelClosed();
+			l.channelClosed(this);
 		}
-		defaultChannelListener.channelClosed();
+		defaultChannelListener.channelClosed(this);
 	}
 
 	public boolean isOpen()
@@ -119,9 +120,9 @@ public class Channel
 		if (username == null) throw new NullPointerException();
 		
 		if (password != null)
-			send(new CommandMessage(0, Message.FLAG_CMD, "login", username, password));
+			send(new CommandMessage(NetID.GLOBAL_ID, Message.FLAG_LOGIN, "login", username, password));
 		else
-			send(new CommandMessage(0, Message.FLAG_CMD, "login", username));
+			send(new CommandMessage(NetID.GLOBAL_ID, Message.FLAG_LOGIN, "login", username));
 	}
 	
 //	public void sendData(Map<String, String> data) throws IOException
@@ -134,23 +135,23 @@ public class Channel
 	
 	public void send(Message msg) throws IOException
 	{
-		send(msg.getSender(), msg.getReciever(), msg.getType(), msg.getData());
+		send(msg.getReciever(), msg.getType(), msg.getData());
 	}
 	
 	public void send(Exception e) throws IOException
 	{
-		send(new CommandMessage(0, Message.FLAG_EXCEPTION, e.getClass().getName(), e.getMessage()));
+		send(NetID.GLOBAL_ID, Message.FLAG_EXCEPTION, e.getClass().getName() + ": " + e.getMessage());
 	}
 	
-	public void send(int sender, int reciever, int flag, String data) throws IOException
+	public void send(NetID reciever, int flag, String data) throws IOException
 	{
-		send(sender, flag, reciever, data.getBytes(StreamUtils.CHARSET));
+		send(reciever, flag, data.getBytes(StreamUtils.CHARSET));
 	}
 	
-	public void send(int sender, int reciever, int flag, byte[] data) throws IOException
+	public void send(NetID reciever, int flag, byte[] data) throws IOException
 	{
-		out.writeInt(sender);
-		out.writeInt(reciever);
+		out.writeInt(netID.get());
+		out.writeInt(reciever.get());
 		out.write(flag);
 		if (flag != Message.FLAG_EMPTY)
 		{	// Stelle sicher, dass leere Nachichten auch leer sind.
@@ -174,9 +175,9 @@ public class Channel
 	
 	public Message recieve() throws IOException
 	{
-		int sender = in.readInt();
-		int reciever = in.readInt();
-		
+		NetID sender = new NetID(in.readInt());
+		NetID reciever = new NetID(in.readInt());
+	
 		int type = in.read();
 		if (type == Message.FLAG_EMPTY) return null;
 		
@@ -193,7 +194,17 @@ public class Channel
 			in.read(buffer);
 			if (buffer.length == 0) return null;
 		}
-		return new Message(sender, reciever, type, buffer);
+		
+		Message msg = new Message(sender, reciever, type, buffer);
+		System.out.println("Channel (" + getID() + ") recieved: " + msg);
+		if (!sender.isSet() && type != Message.FLAG_LOGIN)
+		{
+			String eMesssage = "Illegal message recieved. Client not logged in.\n\t" + msg;
+			System.err.println(eMesssage);
+			send(new NetworkException(eMesssage));
+			return null;
+		}
+		return msg;
 	}
 	
 	public void poll()
