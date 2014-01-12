@@ -1,6 +1,8 @@
 package cuina.network;
 
+import java.nio.ByteBuffer;
+
 public interface Control
 {
-	public void recieveData(byte[] data);
+	public void recieveData(ByteBuffer data);
 }

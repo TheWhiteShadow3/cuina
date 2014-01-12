@@ -3,9 +3,10 @@ package cuina.network;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Channel
 {
@@ -23,6 +24,8 @@ public class Channel
 	public static final int FLAG_EXCEPTION	= 5;
 	public static final int FLAG_BYTES		= 6;
 	public static final int FLAG_TEXT		= 7;
+	/** Gibt an, dass eine Netzwerk-ID angefordert wird. */
+	public static final int FLAG_NETID		= 8;
 	
 
 	private int id;
@@ -32,11 +35,12 @@ public class Channel
 	
 	private Thread messageThread;
 //	private Queue<byte[]> messageQueue = new LinkedList<byte[]>();
-	private List<ChannelListener> listeners = new ArrayList<ChannelListener>();
+	private ChannelListener defaultChannelListener;
+	private Map<NetID, ChannelListener> listeners = new HashMap<NetID, ChannelListener>();
 
-	public Channel()
+	public Channel(ChannelListener defaultChannelListener)
 	{
-		
+		this.defaultChannelListener = defaultChannelListener;
 	}
 	
 	public void open(Socket socket) throws IOException
@@ -45,9 +49,11 @@ public class Channel
 		
 		this.in = socket.getInputStream();
 		this.out = socket.getOutputStream();
-		
-//		messageListener = new MessageThread();
-//		messageListener.start();
+	}
+	
+	public InetAddress getInetAddress()
+	{
+		return socket.getInetAddress();
 	}
 
 	public int getID()
@@ -70,34 +76,56 @@ public class Channel
 		return in;
 	}
 	
-	public void addChannelListener(ChannelListener listener)
+	public boolean addChannelListener(NetID netID, ChannelListener listener)
 	{
-		listeners.add(listener);
+		if (!netID.isSet()) return false;
+		
+		listeners.put(netID, listener);
 		if (messageThread == null)
 		{
 			messageThread = new MessageThread();
 			messageThread.setDaemon(true);
 			messageThread.start();
 		}
+		return true;
 	}
 
-//	@SuppressWarnings("deprecation")
-	public void removeChannelListener(ChannelListener listener)
+	public boolean removeChannelListener(NetID netID)
 	{
-		listeners.remove(listener);
+		if (!netID.isSet()) return false;
+		
+		listeners.remove(netID);
 		if (listeners.size() == 0)
 		{
-//			messageThread.stop(); // FIXME: API zu InterruptableChannel angucken.
+//			messageThread.stop(); // TODO: API zu InterruptableChannel angucken.
 			messageThread = null;
 		}
+		return true;
 	}
 	
 	void fireMessageRecieved(Message msg)
 	{
-		for(ChannelListener l : listeners)
+		if (msg.getReciever() == 0)
 		{
-			l.messageRecieved(msg);
+			defaultChannelListener.messageRecieved(msg);
 		}
+		else
+		{
+			ChannelListener listener = listeners.get(msg.getReciever());
+			if (listener != null)
+			{
+				listener.messageRecieved(msg);
+			}
+		}
+	}
+	
+	void fireChannelClosed()
+	{
+		for(ChannelListener l : listeners.values())
+		{
+			l.channelClosed();
+		}
+		defaultChannelListener.channelClosed();
 	}
 
 	public boolean isOpen()
@@ -110,9 +138,9 @@ public class Channel
 		if (username == null) throw new NullPointerException();
 		
 		if (password != null)
-			send(FLAG_CMD, "login", username, password);
+			send(FLAG_CMD, 0, "login", username, password);
 		else
-			send(FLAG_CMD, "login", username);
+			send(FLAG_CMD, 0, "login", username);
 	}
 	
 //	public void sendData(Map<String, String> data) throws IOException
@@ -123,29 +151,35 @@ public class Channel
 //		send(FLAG_DATA, builder.toString().getBytes());
 //	}
 	
-	public void send(Exception e) throws IOException
+	public void send(Message msg) throws IOException
 	{
-		send(FLAG_EXCEPTION, e.getClass().getName(), e.getMessage());
+		send(msg.getType(), msg.getReciever(), msg.getData());
 	}
 	
-	public void send(int flag, String command, String... arguments) throws IOException
+	public void send(Exception e) throws IOException
+	{
+		send(FLAG_EXCEPTION, 0, e.getClass().getName(), e.getMessage());
+	}
+	
+	public void send(int flag, int reciever, String command, String... arguments) throws IOException
 	{
 		StringBuilder builder = new StringBuilder(8 + arguments.length * 8);
 		builder.append(command);
 		for(int i = 0; i < arguments.length; i++)
 			builder.append('|').append(arguments[i]);
-		send(flag, builder.toString().getBytes());
+		send(flag, reciever, builder.toString().getBytes());
 	}
 	
-	public void send(int flag, String data) throws IOException
+	public void send(int flag, int reciever, String data) throws IOException
 	{
-		send(flag, data.getBytes());
+		send(flag, reciever, data.getBytes(StreamUtils.CHARSET));
 	}
 	
-	public void send(int flag, byte[] data) throws IOException
+	public void send(int flag, int reciever, byte[] data) throws IOException
 	{
 		out.write(flag);
-		out.write(StreamUtil.intToByteArray(data.length));
+		out.write(reciever);
+		out.write(StreamUtils.intToByteArray(data.length));
 		out.write(data);
 		out.flush();
 	}
@@ -155,23 +189,44 @@ public class Channel
 		try
 		{
 			socket.close();
+			fireChannelClosed();
 		}
 		catch (IOException e) { /* Keine Fehlermeldungen beim Schließen. */ }
 	}
 	
-	public Message read() throws IOException
+	private static final byte[] LENGTH_BUFFER = new byte[4];
+	
+	public Message recieve() throws IOException
 	{
-		return StreamUtil.read(in);
+		int type = in.read();
+		if (type == Channel.FLAG_EMPTY) return null;
+		
+		int reciever = in.read();
+		
+		byte[] buffer = null;
+		if (type == Channel.FLAG_EOF)
+		{
+			buffer = new byte[0];
+		}
+		else
+		{
+			in.read(LENGTH_BUFFER);
+			int lenght = StreamUtils.byteArrayToInt(LENGTH_BUFFER, 0);
+			buffer = new byte[lenght];
+			in.read(buffer);
+			if (buffer.length == 0) return null;
+		}
+		return new Message(type, reciever, buffer);
 	}
 	
 	public void poll()
 	{
 		try
 		{
-			if (in.available() > 0)
+			while (in.available() > 0)
 			{
-				Message msg = read();
-				fireMessageRecieved(msg);
+				Message msg = recieve();
+				if (msg != null) fireMessageRecieved(msg);
 			}
 		}
 		catch (IOException e)
@@ -189,7 +244,7 @@ public class Channel
 			{
 				try
 				{
-					Message msg = read();
+					Message msg = recieve();
 					if (msg != null) fireMessageRecieved(msg);
 				}
 				catch (IOException e)

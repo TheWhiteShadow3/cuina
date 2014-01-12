@@ -122,6 +122,11 @@ public class ModelImpl implements Model, LifeCycle
 		this.animator = animator;
 		if (animator != null) animator.init(this);
 	}
+	
+	public String getFileName()
+	{
+		return fileName;
+	}
  
 	@Override
 	public void refresh()

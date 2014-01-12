@@ -6,7 +6,7 @@ import cuina.network.Client;
 import cuina.network.Connection;
 import cuina.network.ConnectionListener;
 import cuina.network.NetworkSession;
-import cuina.network.server.Server;
+import cuina.network.Server;
 
 import java.io.IOException;
 
@@ -18,15 +18,17 @@ public class TestClient
 		int port = Server.PORT;
 		Connection con = new Connection("localhost", port, "TWS", null);
 		con.addConnectionListener(new MyConnectionListener());
-		System.out.println("[TestClient] Trete Chatroom bei.");
-		con.joinChatroom("blub", null);
+		System.out.println("[TestClient] starte Session.");
+		con.openSession("blub", null);
+//		con.joinChatroom("blub", null);
 		// 10 Sekunden um zu reagieren bis Timeout erfolgt (Serverstatus prüfen, Zweiten Klienten starten, etc.)
-		Thread.sleep(10000);
+		while(true)
+			Thread.sleep(10000);
 		
-		con.close();
+//		con.close();
 		
 		// Warte auf erfolgreiches Verbindungsende vom Klienten.
-		Thread.sleep(100);
+//		Thread.sleep(100);
 	}
 	
 	private static class MyConnectionListener implements ConnectionListener
@@ -45,6 +47,7 @@ public class TestClient
 		public void sessionCreated(NetworkSession session)
 		{
 			this.session = session;
+			System.out.println("Session erstellt. ");
 		}
 
 		@Override
@@ -95,5 +98,11 @@ public class TestClient
 
 		@Override
 		public void sessionLeaved(NetworkSession session, Client client) {}
+
+		@Override
+		public void connected()
+		{
+			System.out.println("[TestClient] Client connected.");
+		}
 	}
 }

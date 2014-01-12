@@ -1,18 +1,20 @@
 package cuina.network;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
-public class StreamUtil
+public class StreamUtils
 {
+	public static final Charset CHARSET = Charset.forName("UTF-8");
+	
 	public static float byteArrayToFloat(byte[] buffer, int pos)
 	{
 		return Float.intBitsToFloat(byteArrayToInt(buffer, pos));
 	}
 	
-	public static byte[] floatToByteArray(float val)
+	public static void floatToByteArray(byte[] buffer, int pos, float val)
 	{
-		return intToByteArray(Float.floatToIntBits(val));
+		intToByteArray(buffer, pos, Float.floatToIntBits(val));
 	}
 	
 	public static int byteArrayToInt(byte[] buffer, int pos)
@@ -40,23 +42,12 @@ public class StreamUtil
 		return buffer;
 	}
 	
-	private static final byte[] LENGTH_BUFFER = new byte[4];
-	
-	public static Message read(InputStream in) throws IOException
+	public static void intToByteArray(byte[] buffer, int pos, int val)
 	{
-		int flag = in.read();
-		if (flag == Channel.FLAG_EMPTY) return null;
-		
-		byte[] buffer = null;
-		if (flag != Channel.FLAG_EOF)
-		{
-			in.read(LENGTH_BUFFER);
-			int lenght = StreamUtil.byteArrayToInt(LENGTH_BUFFER, 0);
-			buffer = new byte[lenght];
-			in.read(buffer);
-			if (buffer.length == 0) return null;
-		}
-		return new Message(flag, buffer);
+		buffer[pos] = (byte) (val >>> 24);
+		buffer[pos+1] = (byte) (val >>> 16);
+		buffer[pos+2] = (byte) (val >>> 8);
+		buffer[pos+3] = (byte) val;
 	}
 	
 	public static String readString(byte[] buffer, int start)
@@ -68,9 +59,24 @@ public class StreamUtil
 		return new String(buffer, start, pos - start);
 	}
 	
-//	public static Map<String, String> readData(byte[] buffer)
-//	{
-//		String data = new String(buffer);
-//		data.split(regex)
-//	}
+	public static String readString(ByteBuffer buffer)
+	{
+		int lenght = buffer.get();
+		if (lenght < 0) return null;
+		
+		byte[] bytes = new byte[lenght];
+		buffer.get(bytes);
+		return new String(bytes, CHARSET);
+	}
+	
+	public static void writeString(ByteBuffer buffer, String str)
+	{
+		if (str == null)
+		{
+			buffer.put((byte) -1);
+			return;
+		}
+		buffer.put((byte) str.length());
+		buffer.put(str.getBytes(CHARSET));
+	}
 }

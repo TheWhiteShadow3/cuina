@@ -1,4 +1,4 @@
-package cuina.network.server;
+package cuina.network;
 
 
 public class ServerEvent

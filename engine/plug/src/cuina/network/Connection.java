@@ -4,36 +4,60 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
-public class Connection implements ChannelListener
+public class Connection implements ChannelListener, NetworkContext
 {
+	private NetID netID;
+	private String serverHost;
 	private Channel channel;
 	private String username;
+	
+	private NetworkSession session;
 	private final Map<String, Chatroom> rooms = new HashMap<String, Chatroom>();
 	private final List<ConnectionListener> listeners = new ArrayList<ConnectionListener>();
+	private Queue<NetID> idQueue = new LinkedList<NetID>();
 	
-	public Connection(String host, int port, String username, String password) throws IOException
+	public Connection(String serverHost, int port, String username, String password) throws IOException
 	{
-		this.channel = new Channel();
+		this.serverHost = serverHost;
 		this.username = username;
+		this.channel = new Channel(this);
 		
-		channel.open(new Socket(host, port));
+		channel.open(new Socket(serverHost, port));
 		channel.login(username, password);
-		Message msg = readResponse();
-		channel.setID(Integer.parseInt(msg.arguments[0]));
-		channel.addChannelListener(this);
 	}
 	
-	public int getID()
+	@Override
+	public NetID getID()
 	{
-		return channel.getID();
+		return netID;
 	}
 	
+	@Override
 	public String getUsername()
 	{
 		return username;
+	}
+	
+	public String getServerHost()
+	{
+		return serverHost;
+	}
+	
+	public Channel getChannel()
+	{
+		return channel;
+	}
+	
+	@Override
+	public void requestNetworkID(NetID netID) throws IOException
+	{
+		channel.send(Channel.FLAG_NETID, 0, new byte[0]);
+		idQueue.add(netID);
 	}
 	
 	public void addConnectionListener(ConnectionListener l)
@@ -44,6 +68,12 @@ public class Connection implements ChannelListener
 	public void removeConnectionListener(ConnectionListener l)
 	{
 		listeners.remove(l);
+	}
+	
+	void fireConnected()
+	{
+		for(ConnectionListener l : listeners)
+			l.connected();
 	}
 	
 	void fireDisconnected()
@@ -98,35 +128,57 @@ public class Connection implements ChannelListener
 		return channel.isOpen();
 	}
 	
-	public void joinChatroom(String name, String password) throws IOException
+	private String[] authArguments(String name, String password)
 	{
 		if (password != null)
-			channel.send(Channel.FLAG_CMD, "room.join", name, password);
+			return new String[] {name, password};
 		else
-			channel.send(Channel.FLAG_CMD, "room.join", name);
+			return new String[] {name};
 	}
 	
-	private Message readResponse() throws IOException
-	{
-		Message msg = channel.read();
-		msg.checkException();
-		if (msg.flag != Channel.FLAG_INFO)
-			throw new NetworkException(NetworkException.UNEXPECTET_RESPONSE);
-		
-		return msg;
+	public void joinChatroom(String roomName, String password) throws IOException
+	{	
+		channel.send(new CommandMessage(Channel.FLAG_CMD, 0, "room.join", authArguments(roomName, password)));
 	}
+	
+	public void openSession(String sessionName, String password) throws IOException
+	{
+		channel.send(new CommandMessage(Channel.FLAG_CMD, 0, "session.open", authArguments(sessionName, password)));
+	}
+	
+	public void joinSession(String sessionName, String password) throws IOException
+	{
+		channel.send(new CommandMessage(Channel.FLAG_CMD, 0, "session.join", authArguments(sessionName, password)));
+	}
+	
+//	private CommandMessage readResponse() throws IOException
+//	{
+//		CommandMessage msg = new CommandMessage(channel.recieve());
+//		msg.checkException();
+//		if (msg.getType() != Channel.FLAG_INFO)
+//			throw new NetworkException(NetworkException.UNEXPECTET_RESPONSE);
+//		
+//		return msg;
+//	}
 
 	public void close()
 	{
 		if (channel.isOpen()) try
 		{
-			channel.send(Channel.FLAG_CLOSE, new byte[0]);
+			channel.send(Channel.FLAG_CLOSE, 0, new byte[0]);
+			Thread.sleep(100);
 		}
-		catch (IOException e)
+		catch (IOException | InterruptedException e)
 		{
 			e.printStackTrace();
 		}
 		channel.close();
+	}
+	
+
+	@Override
+	public void channelClosed()
+	{
 		fireDisconnected();
 	}
 
@@ -134,21 +186,31 @@ public class Connection implements ChannelListener
 	public void messageRecieved(Message msg)
 	{
 		System.out.println("[Connection.messageRecieved] " + msg);
-		switch(msg.flag)
+		switch(msg.getType())
 		{
 			case Channel.FLAG_CLOSE:
 			case Channel.FLAG_EOF: close(); break;
-			
+			case Channel.FLAG_NETID: handleIDMessage(new CommandMessage(msg)); break;
 //			case Channel.FLAG_CMD:
 			case Channel.FLAG_ACK:
-			case Channel.FLAG_INFO: handleAck(msg); break;
+			case Channel.FLAG_INFO: handleCommandMessage(new CommandMessage(msg)); break;
 		}
 	}
 
-	private void handleAck(Message msg)
+	private void handleIDMessage(CommandMessage msg)
+	{
+		idQueue.poll().id = Integer.parseInt(msg.getArgument(0));
+	}
+
+	private void handleCommandMessage(CommandMessage msg)
 	{
 		switch(msg.command)
 		{
+			case "login":
+				this.netID = new NetID(Integer.parseInt(msg.arguments[0]));
+				fireConnected();
+				break;
+				
 			case "room.opened":
 			case "room.joined":
 			{
@@ -160,31 +222,64 @@ public class Connection implements ChannelListener
 					fireRoomJoined(room);
 				}
 				else
-					room.fireMemberJoined(Integer.parseInt(msg.arguments[1]), msg.arguments[2]);
+					room.addMember(Integer.parseInt(msg.arguments[1]), msg.arguments[2]);
 			}
 			break;
 			
-			case "room.leaved": leavingEvent(msg, false); break;
-			case "room.kicked": leavingEvent(msg, true); break;
+//			case "room.leaved": roomLeavingEvent(msg, false); break;
+//			case "room.kicked": roomLeavingEvent(msg, true); break;
+//			
+//			case "room.msg":
+//			{
+//				Chatroom room = rooms.get(msg.arguments[0]);
+//				if (room != null)
+//					room.messageRecieved(Integer.valueOf(msg.arguments[1]), msg.arguments[2]);
+//			}
+//			break;
 			
-			case "room.msg":
+			case "session.opened":
+			if (session == null) try
 			{
-				Chatroom room = rooms.get(msg.arguments[0]);
-				if (room != null)
-					room.fireMessageRecieved(Integer.valueOf(msg.arguments[1]), msg.arguments[2]);
+				NetID netID = new NetID(Integer.parseInt(msg.arguments[0]));
+				int port = Integer.parseInt(msg.arguments[2]);
+				this.session = new ClientNetworkSession(netID, msg.arguments[1], this, port);
+				fireSessionCreated(session);
 			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			break;
 		}
 	}
-	
-	private void leavingEvent(Message msg, boolean forced)
+
+	@Override
+	public void send(Message msg) throws IOException
 	{
-		Chatroom room = rooms.get(msg.arguments[0]);
-		if (room == null) return;
-		
-		int id = Integer.parseInt(msg.arguments[1]);
-		if (id == channel.getID())
-			fireRoomLeaved(room, true);
-		else
-			room.fireMemberLeaved(id, true);
+		channel.send(msg);
 	}
+	
+//	private void roomLeavingEvent(Message msg, boolean forced)
+//	{
+//		Chatroom room = rooms.get(msg.arguments[0]);
+//		if (room == null) return;
+//		
+//		int id = Integer.parseInt(msg.arguments[1]);
+//		if (id == channel.getID())
+//			fireRoomLeaved(room, true);
+//		else
+//			room.removeMember(id, true);
+//	}
+	
+//	private void sessionLeavingEvent(Message msg, boolean forced)
+//	{
+//		Chatroom room = rooms.get(msg.arguments[0]);
+//		if (room == null) return;
+//		
+//		int id = Integer.parseInt(msg.arguments[1]);
+//		if (id == channel.getID())
+//			fireRoomLeaved(room, true);
+//		else
+//			room.removeMember(id, true);
+//	}
 }

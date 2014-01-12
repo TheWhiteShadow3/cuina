@@ -1,25 +1,26 @@
-package cuina.network.server;
+package cuina.network;
 
-import cuina.network.Channel;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ServerChatroom
+public abstract class AbstactServerRoom
 {
 	private Server server;
 	private String name;
 	private String password;
+	private String prefix;
 	private final List<ServerClient> members = new ArrayList<ServerClient>();
 
-	ServerChatroom(Server server, ServerClient owner, String name) throws IOException
+	AbstactServerRoom(Server server, ServerClient owner, String name, String prefix) throws IOException
 	{
 		this.server = server;
 		this.name = name;
+		this.prefix = prefix;
 		members.add(owner);
-		owner.getChannel().send(Channel.FLAG_ACK, "room.opened", name);
+		send(Channel.FLAG_ACK, "opened", name);
 	}
 
 	public Server getServer()
@@ -46,7 +47,7 @@ public class ServerChatroom
 	{
 		if (this.password != null && this.password != password) return false;
 		
-		sendBroadcast("room.joined", name, Integer.toString(client.getID()), client.getName());
+		sendBroadcast("joined", name, Integer.toString(client.getID()), client.getName());
 		members.add(client);
 		String[] args = new String[members.size()*2+1];
 		args[0] = name;
@@ -56,7 +57,7 @@ public class ServerChatroom
 			args[i*2+1] = Integer.toString(c.getID());
 			args[i*2+2] = c.getName();
 		}
-		client.getChannel().send(Channel.FLAG_ACK, "room.joined", args);
+		send(Channel.FLAG_ACK, "joined", args);
 		
 		return true;
 	}
@@ -65,7 +66,7 @@ public class ServerChatroom
 	{
 		if (from != getOwner()) return false;
 		
-		sendBroadcast("room.kicked", name, targetID);
+		sendBroadcast("kicked", name, targetID);
 		members.remove(from);
 		
 		if (members.size() == 0)
@@ -76,16 +77,11 @@ public class ServerChatroom
 	
 	public void leave(ServerClient client)
 	{
-		sendBroadcast("room.leaved", name, Integer.toString(client.getID()));
+		sendBroadcast("leaved", name, Integer.toString(client.getID()));
 		members.remove(client);
 		
 		if (members.size() == 0)
 			server.destroyChatroom(name);
-	}
-	
-	public void send(int fromID, String text) throws IOException
-	{
-		sendBroadcast("room.msg", name, Integer.toString(fromID), text);
 	}
 
 	public boolean lock(ServerClient client, String password) throws IOException
@@ -93,22 +89,48 @@ public class ServerChatroom
 		if (client != getOwner()) return false;
 		
 		this.password = password;
-		sendBroadcast("room.locked", name, password);
+		sendBroadcast("locked", name, password);
 		return true;
+	}
+	
+	protected void send(int flag, String command, String... arguments) throws IOException
+	{
+		getOwner().getChannel().send(flag, prefix + '.' + command, arguments);
 	}
 	
 	private void sendBroadcast(String cmd, String... args)
 	{
 		for(ServerClient c : members) try
 		{
-			c.getChannel().send(Channel.FLAG_INFO, cmd, args);
+			c.getChannel().send(Channel.FLAG_INFO, prefix + '.' + cmd, args);
 		}
 		catch(IOException e) {}
 	}
-
-	@Override
-	public String toString()
+	
+	public void send(int fromID, String text) throws IOException
 	{
-		return "Room '" + name + '\'';
+		sendBroadcast("msg", name, Integer.toString(fromID), text);
+	}
+
+	public void messageRecieved(ServerClient client, Message msg) throws IOException
+	{
+		if (!msg.command.startsWith(prefix)) throw new IOException("Illegal Command-Prefix.");
+		
+		try
+		{
+			switch(msg.command.substring(prefix.length()+1))
+			{
+				case "join": join(client, msg.arguments[0]); break;
+				case "lock": lock(client, msg.arguments[1]); break;
+				case "kick": kick(client, msg.arguments[1]); break;
+				case "leave": leave(client); break;
+				case "event": send(client.getID(), msg.arguments[1]); break;
+				default: System.out.println("[ServerClient] Unknown Command room: " + msg.command);
+			}
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

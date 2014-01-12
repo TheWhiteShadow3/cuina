@@ -1,6 +1,9 @@
-package cuina.network.server;
+package cuina.network;
 
-import cuina.network.ConnectionSecurityPolicy;
+import cuina.Context;
+import cuina.Game;
+import cuina.InjectionManager;
+import cuina.Scene;
 import cuina.plugin.ForGlobal;
 import cuina.plugin.LifeCycleAdapter;
 
@@ -13,32 +16,36 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @ForGlobal(name="Server")
 public class Server extends LifeCycleAdapter
 {
-	public static final int PORT = 1234;
-//	static
-//	{
-//		int port = 1234;
+	public static final int PORT;
+	static
+	{
+		int port = 1234;
 //		try
 //		{
 //			port = Integer.parseInt(Game.getIni().get("Server", "Port"));
+//			if (Boolean.getBoolean("server"))
+//			{
+//				InjectionManager.addObject(new Server(), "Server", Context.GLOBAL, Scene.ALL_SCENES);
+//			}
 //		}
 //		catch(NumberFormatException e) {}
-//		PORT = port;
-//	}
+		PORT = port;
+	}
 	
 //	private static final byte[] IDENTIFIER_SEQUENCE = Server.class.getName().getBytes();
 	
-	private static final Random RANDOM = new Random();
+//	private static final Random RANDOM = new Random();
 	
+	private int netIDPosition = 1;
 	private ConnectionListener listener;
 	private ConnectionIdentifier identifier;
 	
-	private final Map<Integer, ServerClient> clients = new HashMap<Integer, ServerClient>();
+	private final Map<NetID, ServerClient> clients = new HashMap<NetID, ServerClient>();
 	private final Map<String, ServerChatroom> rooms = new HashMap<String, ServerChatroom>();
 	private final Map<String, ServerSession> sessions = new HashMap<String, ServerSession>();
 
@@ -56,6 +63,12 @@ public class Server extends LifeCycleAdapter
 		System.out.println("[Server] started on port " + PORT);
 	}
 
+	public synchronized int getNetID()
+	{
+		if (netIDPosition == 0) throw new OutOfMemoryError("No more network-ids available.");
+		return netIDPosition++;
+	}
+	
 	public boolean isRunning()
 	{
 		return !(listener.stop || identifier.stop);
@@ -88,7 +101,7 @@ public class Server extends LifeCycleAdapter
 
 	boolean disconnect(ServerClient client)
 	{
-		System.out.println("[Server] Disconnect von " + client.getName());
+		System.out.println("[Server] " + client.getUsername() + " ist disconnectet.");
 		for(ServerChatroom room : rooms.values()) room.leave(client);
 		for(ServerSession session : sessions.values()) session.leave(client);
 		return clients.remove(client.getID()) != null;
@@ -109,13 +122,13 @@ public class Server extends LifeCycleAdapter
 		return rooms.get(name);
 	}
 	
-	public boolean createChatroom(ServerClient client, String name) throws IOException
+	public boolean createChatroom(ServerClient client, String roomName) throws IOException
 	{
-		ServerChatroom room = rooms.get(name);
+		ServerChatroom room = rooms.get(roomName);
 		if (room != null) return false;
 		
-		room = new ServerChatroom(this, client, name);
-		rooms.put(name, room);
+		room = new ServerChatroom(this, client, roomName);
+		rooms.put(roomName, room);
 		return true;
 	}
 	
@@ -124,11 +137,22 @@ public class Server extends LifeCycleAdapter
 		return rooms.remove(name) != null;
 	}
 
-	public ServerSession createNetworkSession(ServerClient owner, String name, int port, int memberCount)
+	public boolean createNetworkSession(String sessionName, ServerClient owner) throws IOException
 	{
-		ServerSession session = new ServerSession(this, name, memberCount);
-		sessions.put(name, session);
-		return session;
+		ServerSession session = sessions.get(sessionName);
+		if (session != null) return false;
+		
+		NetID netID = new NetID(getNetID());
+		session = new ServerSession(netID, sessionName, this, owner);
+		sessions.put(sessionName, session);
+		System.out.println("[Server] Session " + sessionName + ", " + netID + " erstellt.");
+		return true;
+	}
+
+	public void destroySession(ServerSession session)
+	{
+		sessions.remove(session.getName());
+		System.out.println("[Server] Session " + session.getName() + " zerstört.");
 	}
 	
 	static class ConnectionListener extends Thread
@@ -179,13 +203,14 @@ public class Server extends LifeCycleAdapter
 		
 		private void addPendingClient(Socket socket) throws IOException
 		{
-			int id;
-			do
-			{
-				id = RANDOM.nextInt();
-			}
-			while(server.clients.get(id) != null);
-			ServerClient client = new ServerClient(server, socket, id);
+//			int id;
+//			do
+//			{
+//				id = RANDOM.nextInt();
+//			}
+//			while(server.clients.get(id) != null);
+			NetID netID = new NetID(server.getNetID());
+			ServerClient client = new ServerClient(netID, server, socket);
 //			OutputStream out = client.getOutputStream();
 //			out.write(IDENTIFIER_SEQUENCE);
 //			out.write(0);
@@ -251,7 +276,7 @@ public class Server extends LifeCycleAdapter
 		
 		private void addClient(ServerClient client)
 		{
-			System.out.println("[Server] registriere Client (" + client.getID() + ") " + client.getName());
+			System.out.println("[Server] registriere Client (" + client.getID() + ") " + client.getUsername());
 			server.clients.put(client.getID(), client);
 		}
 		

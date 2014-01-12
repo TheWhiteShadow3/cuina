@@ -1,41 +1,63 @@
 package cuina.network;
 
-import cuina.network.server.Server;
-import cuina.network.server.ServerClient;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 
-public class NetworkSession
+public abstract class NetworkSession implements INetworkSession, ChannelListener
 {
-	private Server server;
+	private NetID netID;
 	private String name;
-	private final ServerClient[] clients;
-	private final Map<Integer, Control> controls = new HashMap<Integer, Control>();
+//	private final List<SessionListener> listeners = new ArrayList<SessionListener>();
 	
-	public NetworkSession(Server server, String name, int memberCount)
+	public NetworkSession(NetID netID, String name)
 	{
-		this.server = server;
+		this.netID = netID;
 		this.name = name;
-		this.clients = new ServerClient[memberCount];
+	}
+
+	@Override
+	public NetID getID()
+	{
+		return netID;
 	}
 	
-	public ServerClient getHost()
+	public String getName()
 	{
-		return clients[0];
+		return name;
 	}
-	//TODO: Session-Managment implementieren
 
-	public void update()
+	protected void close()
 	{
 		
 	}
-
-	public void addControl(Control control)
+	
+	@Override
+	public void channelClosed()
 	{
-		// TODO Auto-generated method stub
-		
+		close();
 	}
+
+	@Override
+	public void messageRecieved(Message msg)
+	{
+		if (msg.getType() == Channel.FLAG_CMD)
+		{
+			handleCommand(new CommandMessage(msg));
+		}
+		else if (msg.getType() == Channel.FLAG_INFO)
+		{
+			handleInfo(new CommandMessage(msg));
+		}
+	}
+
+	protected void handleInfo(CommandMessage msg)
+	{
+		switch(msg.getCommand())
+		{
+			case "close": close(); break;
+			case "port": 
+		}
+	}
+
+	abstract protected void handleCommand(CommandMessage msg);
 }
