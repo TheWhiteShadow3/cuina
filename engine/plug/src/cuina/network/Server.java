@@ -1,9 +1,5 @@
 package cuina.network;
 
-import cuina.Context;
-import cuina.Game;
-import cuina.InjectionManager;
-import cuina.Scene;
 import cuina.plugin.ForGlobal;
 import cuina.plugin.LifeCycleAdapter;
 
@@ -220,7 +216,7 @@ public class Server extends LifeCycleAdapter
 //			out.write(255);
 //			out.flush();
 			
-			server.identifier.pendingClients.add(client);
+			server.identifier.addPendingClient(client);
 		}
 	}
 	
@@ -234,6 +230,11 @@ public class Server extends LifeCycleAdapter
 		{
 			this.server = server;
 			setDaemon(true);
+		}
+		
+		private void addPendingClient(ServerClient client)
+		{
+			pendingClients.add(client);
 		}
 
 		@Override
@@ -250,9 +251,9 @@ public class Server extends LifeCycleAdapter
 					while(itr.hasNext())
 					{
 						ServerClient client = itr.next();
-						if (client.identify())
+						if (client.accepted())
 						{
-							addClient(client);
+							registClient(client);
 							itr.remove();
 						}
 					}
@@ -274,7 +275,7 @@ public class Server extends LifeCycleAdapter
 			try { Thread.sleep(millis); } catch(InterruptedException e) {}
 		}
 		
-		private void addClient(ServerClient client)
+		private void registClient(ServerClient client)
 		{
 			System.out.println("[Server] registriere Client (" + client.getID() + ") " + client.getUsername());
 			server.clients.put(client.getID(), client);

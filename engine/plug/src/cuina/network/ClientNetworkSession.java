@@ -3,11 +3,13 @@ package cuina.network;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
 public class ClientNetworkSession extends NetworkSession
 {
 	private Connection connection;
+	private InetSocketAddress address;
 	private DatagramSocket socket;
 	private int datagramPort;
 	
@@ -16,7 +18,12 @@ public class ClientNetworkSession extends NetworkSession
 		super(netID, name);
 		this.connection = connection;
 		this.datagramPort = datagramPort;
-		this.socket = new DatagramSocket();
+		this.address = new InetSocketAddress(SessionUtils.getAvalibleLocalPort());
+		this.socket = new DatagramSocket(address);
+		connection.getChannel().addChannelListener(netID, this);
+		
+		System.out.println("[ClientNetworkSession] Port: " + address.getPort());
+		sendMessage(createSessionMessage(Message.FLAG_ACK, "opened", Integer.toString(address.getPort())));
 	}
 	
 	@Override
@@ -45,7 +52,7 @@ public class ClientNetworkSession extends NetworkSession
 		{
 			switch(msg.command)
 			{
-				case "close": sendMessage(new CommandMessage(Channel.FLAG_CMD, getID().get(), "close")); break;
+				case "close": sendMessage(createSessionMessage(Message.FLAG_CMD, "close")); break;
 			}
 		}
 		catch (IOException e)
@@ -71,13 +78,12 @@ public class ClientNetworkSession extends NetworkSession
 		buffer.flip();
 		byte[] bytes = new byte[buffer.limit()];
 		buffer.get(bytes);
-		connection.getChannel().send(Channel.FLAG_BYTES, getID().get(), bytes);
+		connection.getChannel().send(getID().get(), getID().get(), Message.FLAG_BYTES, bytes);
 	}
 
 	@Override
 	public void sendMessage(Message msg) throws IOException
 	{
-		// TODO Auto-generated method stub
-		
+		connection.send(msg);
 	}
 }

@@ -98,7 +98,7 @@ public abstract class AbstactChatroom implements NamedItem, ChannelListener
 	 */
 	public void send(String text) throws IOException
 	{
-		send(Channel.FLAG_CMD, "msg", name, text);
+		send(Message.FLAG_CMD, "msg", name, text);
 	}
 	
 	public void send(int flag, String command, String... arguments) throws IOException
@@ -123,7 +123,7 @@ public abstract class AbstactChatroom implements NamedItem, ChannelListener
 	@Override
 	public void messageRecieved(Message msg)
 	{
-		if (msg.getType() == Channel.FLAG_CMD)
+		if (msg.getType() == Message.FLAG_CMD)
 		{
 			handleCommand(new CommandMessage(msg));
 		}

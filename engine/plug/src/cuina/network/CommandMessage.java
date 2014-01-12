@@ -13,14 +13,21 @@ public class CommandMessage extends Message
 	
 	public CommandMessage(Message msg)
 	{
-		super(msg.getType(), msg.getReciever(), msg.getData());
+		super(msg.getSender(), msg.getReciever(), msg.getType(), msg.getData());
 		
 		readCommands(msg.getData());
 	}
 	
-	public CommandMessage(int type, int reciever, String command, String... arguments)
+	public CommandMessage(int target, int type, String command, String... arguments)
 	{
-		super(type, reciever, toBytes(command, arguments));
+		super(target, target, type, toBytes(command, arguments));
+		this.command = command;
+		this.arguments = arguments;
+	}
+	
+	public CommandMessage(int sender, int reciever, int type, String command, String... arguments)
+	{
+		super(sender, reciever, type, toBytes(command, arguments));
 		this.command = command;
 		this.arguments = arguments;
 	}
@@ -37,7 +44,7 @@ public class CommandMessage extends Message
 
 	public NetworkException getException()
 	{
-		if (getType() == Channel.FLAG_EXCEPTION)
+		if (getType() == Message.FLAG_EXCEPTION)
 			return new NetworkException(command + ": " + arguments[0]);
 		else
 			return null;
@@ -52,7 +59,11 @@ public class CommandMessage extends Message
 	@Override
 	public String toString()
 	{
-		return "Message [type=" + getType() + ", cmd=" + command + ", args=" + Arrays.toString(arguments) + "]";
+		return "Message [type=" + getType() +
+				", sender=" + getSender() +
+				", reciever=" + getReciever() +
+				", cmd=" + command +
+				", args=" + Arrays.toString(arguments) + "]";
 	}
 	
 	private void readCommands(byte[] buffer)

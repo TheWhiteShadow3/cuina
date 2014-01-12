@@ -6,30 +6,30 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServerSession extends NetworkSession
 {
 	private Server server;
+	private InetSocketAddress address;
 	private DatagramSocket socket;
-	private List<SessionMember> members = new ArrayList<SessionMember>();
+	private Map<NetID, SessionMember> members = new HashMap<NetID, SessionMember>();
 //	private int maxMembers;
 	
 	public ServerSession(NetID netID, String name, Server server, ServerClient host) throws IOException
 	{
 		super(netID, name);
 		this.server = server;
-		this.socket = new DatagramSocket();
-		socket.bind(null);
-		System.out.println("Port: " + socket.getPort());
-		SessionMember hostMember = new SessionMember(host, -1);
-		this.members.add(hostMember);
+		this.address = new InetSocketAddress(SessionUtils.getAvalibleLocalPort());
+		this.socket = new DatagramSocket(address);
+		host.getChannel().addChannelListener(netID, this);
 		
-		hostMember.sendMessage(new CommandMessage(Channel.FLAG_INFO, 0, "session.opened",
-				Integer.toString(netID.get()), name, Integer.toString(socket.getPort())));
-		
-		//TODO: socket.getPort() ist -1, solange keine Verbindung erfolgt. Ohne Port gibts aber auch Keine. 
+		System.out.println("[ServerSession] Port: " + address.getPort());
+		SessionMember member = new SessionMember(host, -1);
+		// sende die Nachicht ohne Empfänger, da dieser noch nicht erstellt wurde.
+		member.sendMessage(new CommandMessage(netID.get(), 0, Message.FLAG_INFO,
+				"session.opened", name, Integer.toString(address.getPort())));
 	}
 
 	@Override
@@ -47,37 +47,22 @@ public class ServerSession extends NetworkSession
 	
 	public void join(ServerClient client, int port) throws IOException
 	{
-		SessionMember hostMember = new SessionMember(client, port);
-		this.members.add(hostMember);
+		SessionMember member = addMember(client, port);
 		
-		String sessionPort = Integer.toString(socket.getPort());
-		hostMember.sendMessage(new CommandMessage(Channel.FLAG_INFO, 0, "session.joined",
-				Integer.toString(getID().get()), getName(), sessionPort));
+		member.sendMessage(createSessionMessage(Message.FLAG_INFO,
+				"session.joined", getName(), Integer.toString(socket.getPort())));
 	}
 
 	public void leave(ServerClient client)
 	{
-		for(int i = 0; i < members.size(); i++)
-		{
-			if (members.get(i).client == client)
-			{
-				members.remove(i);
-				return;
-			}
-		}
+		members.remove(client.getID());
 		if (members.isEmpty()) close();
-	}
-
-	@Override
-	public String toString()
-	{
-		return "Session";
 	}
 
 	@Override
 	public void sendData(ByteBuffer buffer) throws IOException
 	{
-		for(SessionMember member : members)
+		for(SessionMember member : members.values())
 		{
 			member.sendData(buffer);
 		}
@@ -86,7 +71,7 @@ public class ServerSession extends NetworkSession
 	@Override
 	public void sendEvent(ByteBuffer buffer) throws IOException
 	{
-		for(SessionMember member : members)
+		for(SessionMember member : members.values())
 		{
 			member.sendEvent(buffer);
 		}
@@ -95,7 +80,7 @@ public class ServerSession extends NetworkSession
 	@Override
 	public void sendMessage(Message msg) throws IOException
 	{
-		for(SessionMember member : members)
+		for(SessionMember member : members.values())
 		{
 			member.sendMessage(msg);
 		}
@@ -113,6 +98,7 @@ public class ServerSession extends NetworkSession
 		switch(msg.getCommand())
 		{
 			case "close": close(); break;
+			case "opened": members.get(msg.getSender()).port = Integer.parseInt(msg.getArgument(0)); break;
 		}
 	}
 	
@@ -123,8 +109,8 @@ public class ServerSession extends NetworkSession
 		{
 			switch(msg.command)
 			{
-				case "close": sendMessage(new CommandMessage(Channel.FLAG_INFO, 0, "close")); break;
-				case "join": addMember(msg); break;
+				case "close": sendMessage(createSessionMessage(Message.FLAG_INFO, "close")); break;
+				case "join": join(msg); break;
 			}
 		}
 		catch(IOException e)
@@ -133,7 +119,7 @@ public class ServerSession extends NetworkSession
 		}
 	}
 
-	private void addMember(CommandMessage msg)
+	private void join(CommandMessage msg)
 	{
 		int id = Integer.parseInt(msg.getArgument(0));
 		int port = Integer.parseInt(msg.getArgument(1));
@@ -145,6 +131,19 @@ public class ServerSession extends NetworkSession
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	private SessionMember addMember(ServerClient client, int port)
+	{
+		SessionMember member = new SessionMember(client, port);
+		this.members.put(client.getID(), member);
+		return member;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Session (" + getID() + ") " + getName();
 	}
 	
 	private class SessionMember
@@ -175,7 +174,7 @@ public class ServerSession extends NetworkSession
 			buffer.flip();
 			byte[] bytes = new byte[buffer.limit()];
 			buffer.get(bytes);
-			client.getChannel().send(Channel.FLAG_BYTES, getID().get(), bytes);
+			client.getChannel().send(getID().get(), getID().get(), Message.FLAG_BYTES, bytes);
 		}
 		
 		public void sendMessage(Message msg) throws IOException

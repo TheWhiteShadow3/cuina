@@ -13,10 +13,12 @@ import java.io.IOException;
 
 public class TestClient
 {
+	private static Connection con;
+	
 	public static void main(String[] args) throws Exception
 	{
 		int port = Server.PORT;
-		Connection con = new Connection("localhost", port, "TWS", null);
+		con = new Connection("localhost", port, "TWS", null);
 		con.addConnectionListener(new MyConnectionListener());
 		System.out.println("[TestClient] starte Session.");
 		con.openSession("blub", null);
@@ -36,6 +38,12 @@ public class TestClient
 		public NetworkSession session;
 		public Chatroom room;
 
+		@Override
+		public void connected()
+		{
+			System.out.println("[TestClient] Client connected. " + con.getID());
+		}
+		
 		@Override
 		public void disconnected()
 		{
@@ -98,11 +106,5 @@ public class TestClient
 
 		@Override
 		public void sessionLeaved(NetworkSession session, Client client) {}
-
-		@Override
-		public void connected()
-		{
-			System.out.println("[TestClient] Client connected.");
-		}
 	}
 }

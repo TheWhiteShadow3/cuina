@@ -36,15 +36,20 @@ public abstract class NetworkSession implements INetworkSession, ChannelListener
 	{
 		close();
 	}
+	
+	protected Message createSessionMessage(int type, String command, String... arguments)
+	{
+		return new CommandMessage(netID.get(), type, command, arguments);
+	}
 
 	@Override
 	public void messageRecieved(Message msg)
 	{
-		if (msg.getType() == Channel.FLAG_CMD)
+		if (msg.getType() == Message.FLAG_CMD)
 		{
 			handleCommand(new CommandMessage(msg));
 		}
-		else if (msg.getType() == Channel.FLAG_INFO)
+		else if (msg.getType() == Message.FLAG_INFO || msg.getType() == Message.FLAG_ACK)
 		{
 			handleInfo(new CommandMessage(msg));
 		}
@@ -55,7 +60,6 @@ public abstract class NetworkSession implements INetworkSession, ChannelListener
 		switch(msg.getCommand())
 		{
 			case "close": close(); break;
-			case "port": 
 		}
 	}
 

@@ -20,7 +20,7 @@ public abstract class AbstactServerRoom
 		this.name = name;
 		this.prefix = prefix;
 		members.add(owner);
-		send(Channel.FLAG_ACK, "opened", name);
+		send(Message.FLAG_ACK, "opened", name);
 	}
 
 	public Server getServer()
@@ -57,7 +57,7 @@ public abstract class AbstactServerRoom
 			args[i*2+1] = Integer.toString(c.getID());
 			args[i*2+2] = c.getName();
 		}
-		send(Channel.FLAG_ACK, "joined", args);
+		send(Message.FLAG_ACK, "joined", args);
 		
 		return true;
 	}
@@ -102,7 +102,7 @@ public abstract class AbstactServerRoom
 	{
 		for(ServerClient c : members) try
 		{
-			c.getChannel().send(Channel.FLAG_INFO, prefix + '.' + cmd, args);
+			c.getChannel().send(Message.FLAG_INFO, prefix + '.' + cmd, args);
 		}
 		catch(IOException e) {}
 	}

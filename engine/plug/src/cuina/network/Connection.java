@@ -23,6 +23,7 @@ public class Connection implements ChannelListener, NetworkContext
 	
 	public Connection(String serverHost, int port, String username, String password) throws IOException
 	{
+		this.netID = new NetID(-1); // temporäre ID.
 		this.serverHost = serverHost;
 		this.username = username;
 		this.channel = new Channel(this);
@@ -56,7 +57,7 @@ public class Connection implements ChannelListener, NetworkContext
 	@Override
 	public void requestNetworkID(NetID netID) throws IOException
 	{
-		channel.send(Channel.FLAG_NETID, 0, new byte[0]);
+		channel.send(this.netID.get(), this.netID.get(), Message.FLAG_NETID, new byte[0]);
 		idQueue.add(netID);
 	}
 	
@@ -138,17 +139,22 @@ public class Connection implements ChannelListener, NetworkContext
 	
 	public void joinChatroom(String roomName, String password) throws IOException
 	{	
-		channel.send(new CommandMessage(Channel.FLAG_CMD, 0, "room.join", authArguments(roomName, password)));
+		sendCommand(0, "room.join", authArguments(roomName, password));
 	}
 	
 	public void openSession(String sessionName, String password) throws IOException
 	{
-		channel.send(new CommandMessage(Channel.FLAG_CMD, 0, "session.open", authArguments(sessionName, password)));
+		sendCommand(0, "session.open", authArguments(sessionName, password));
 	}
 	
 	public void joinSession(String sessionName, String password) throws IOException
 	{
-		channel.send(new CommandMessage(Channel.FLAG_CMD, 0, "session.join", authArguments(sessionName, password)));
+		sendCommand(0, "session.join", authArguments(sessionName, password));
+	}
+	
+	private void sendCommand(int reciever, String command, String... arguments) throws IOException
+	{
+		channel.send(new CommandMessage(netID.get(), reciever, Message.FLAG_CMD, command, arguments));
 	}
 	
 //	private CommandMessage readResponse() throws IOException
@@ -165,7 +171,7 @@ public class Connection implements ChannelListener, NetworkContext
 	{
 		if (channel.isOpen()) try
 		{
-			channel.send(Channel.FLAG_CLOSE, 0, new byte[0]);
+			channel.send(getID().get(), Message.FLAG_CLOSE, 0, new byte[0]);
 			Thread.sleep(100);
 		}
 		catch (IOException | InterruptedException e)
@@ -185,29 +191,38 @@ public class Connection implements ChannelListener, NetworkContext
 	@Override
 	public void messageRecieved(Message msg)
 	{
-		System.out.println("[Connection.messageRecieved] " + msg);
+		System.out.println("[Connection] recieved " + msg);
 		switch(msg.getType())
 		{
-			case Channel.FLAG_CLOSE:
-			case Channel.FLAG_EOF: close(); break;
-			case Channel.FLAG_NETID: handleIDMessage(new CommandMessage(msg)); break;
+			case Message.FLAG_CLOSE:
+			case Message.FLAG_EOF: close(); break;
+			case Message.FLAG_NETID: handleIDMessage(msg); break;
 //			case Channel.FLAG_CMD:
-			case Channel.FLAG_ACK:
-			case Channel.FLAG_INFO: handleCommandMessage(new CommandMessage(msg)); break;
+			case Message.FLAG_ACK:
+			case Message.FLAG_INFO: try
+			{
+				handleCommandMessage(new CommandMessage(msg)); break;
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private void handleIDMessage(CommandMessage msg)
+	private void handleIDMessage(Message msg)
 	{
-		idQueue.poll().id = Integer.parseInt(msg.getArgument(0));
+		idQueue.poll().id = StreamUtils.byteArrayToInt(msg.getData(), 0);
 	}
 
-	private void handleCommandMessage(CommandMessage msg)
+	private void handleCommandMessage(CommandMessage msg) throws IOException
 	{
+		msg.checkException();
+		
 		switch(msg.command)
 		{
 			case "login":
-				this.netID = new NetID(Integer.parseInt(msg.arguments[0]));
+				this.netID.id = Integer.parseInt(msg.arguments[0]);
 				fireConnected();
 				break;
 				
@@ -238,16 +253,11 @@ public class Connection implements ChannelListener, NetworkContext
 //			break;
 			
 			case "session.opened":
-			if (session == null) try
+			if (session == null)
 			{
-				NetID netID = new NetID(Integer.parseInt(msg.arguments[0]));
-				int port = Integer.parseInt(msg.arguments[2]);
-				this.session = new ClientNetworkSession(netID, msg.arguments[1], this, port);
+				int port = Integer.parseInt(msg.arguments[1]);
+				this.session = new ClientNetworkSession(msg.getSenderID(), msg.arguments[0], this, port);
 				fireSessionCreated(session);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
 			}
 			break;
 		}

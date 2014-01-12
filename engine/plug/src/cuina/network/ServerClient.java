@@ -11,6 +11,7 @@ public class ServerClient implements ChannelListener
 	private Server server;
 	private Channel channel;
 	private String username;
+	private boolean accepted;
 	
 	ServerClient(NetID netID, Server server, Socket socket) throws IOException
 	{
@@ -34,10 +35,9 @@ public class ServerClient implements ChannelListener
 	{
 		return username;
 	}
-
-	public boolean identify() throws IOException
+	
+	public void identify(CommandMessage msg) throws IOException
 	{
-		CommandMessage msg = new CommandMessage(channel.recieve());
 		if (!msg.command.equals("login") || msg.arguments.length == 0)
 			throw new IOException("Invalid login dataformat recieved.");
 		
@@ -45,34 +45,46 @@ public class ServerClient implements ChannelListener
 		String password = (msg.arguments.length == 2) ? msg.arguments[1] : null;
 		
 		ConnectionSecurityPolicy csp = server.getSecurityPolicy();
-		boolean acepted = (csp != null) ? csp.newClient(this, username, password) : true;
-		if (acepted)
+		this.accepted = (csp != null) ? csp.newClient(this, username, password) : true;
+		if (accepted)
 		{
-			channel.send(Channel.FLAG_INFO, 0, "login", Integer.toString(getID().get()));
+			channel.send(new CommandMessage(0, Message.FLAG_INFO, "login", Integer.toString(getID().get())));
 			channel.addChannelListener(netID, this);
 		}
 		else
 			channel.send(new SecurityException("Login failed."));
-		return acepted;
+	}
+
+	public boolean accepted() throws IOException
+	{
+		return accepted;
 	}
 	
 	@Override
 	public void messageRecieved(Message msg)
 	{
-		System.out.println("[ServerClient.messageRecieved] " + msg);
+		System.out.println("[ServerClient] recieved: " + msg);
 		switch(msg.getType())
 		{
-			case Channel.FLAG_EOF:
-			case Channel.FLAG_CLOSE: close(); break;
-			case Channel.FLAG_NETID: sendNetID(msg); break;
-			case Channel.FLAG_CMD: commandRecieved(new CommandMessage(msg));
+			case Message.FLAG_EOF:
+			case Message.FLAG_CLOSE: close(); break;
+			case Message.FLAG_NETID: sendNetID(msg); break;
+			
+			case Message.FLAG_CMD: try
+			{
+				commandRecieved(new CommandMessage(msg));
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private void sendNetID(Message msg)
 	{
 		byte[] bytes = StreamUtils.intToByteArray(server.getNetID());
-		Message newMsg = new Message(Channel.FLAG_NETID, msg.getReciever(), bytes);
+		Message newMsg = new Message(netID.get(), msg.getReciever(), Message.FLAG_NETID, bytes);
 		try
 		{
 			channel.send(newMsg);
@@ -83,25 +95,25 @@ public class ServerClient implements ChannelListener
 		}
 	}
 
-	private void commandRecieved(CommandMessage msg)
+	private void commandRecieved(CommandMessage msg) throws IOException
 	{
+		msg.checkException();
+		
 		ConnectionSecurityPolicy csp = server.getSecurityPolicy();
 		if (csp != null)
 		{
 			if (!csp.recieveCommand(this, msg.command)) return;
 		}
 		
-		try
+		switch(msg.getCommand())
 		{
-			switch(msg.getCommand())
-			{
-				case "login": channel.send(new IllegalStateException("Already logged in.")); break;
-				case "session.open": createNewSession(msg); break;
-			}
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
+			case "login":
+				if (accepted)
+					channel.send(new IllegalStateException("Already logged in."));
+				else
+					identify(msg);
+				break;
+			case "session.open": createNewSession(msg); break;
 		}
 	}
 	
