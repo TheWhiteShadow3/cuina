@@ -115,28 +115,28 @@ public class Server extends LifeCycleAdapter
 	{
 		return rooms.get(name);
 	}
-	
 
-	public ServerSession getSession(String argument)
+	public ServerSession getSession(String sessionName)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return sessions.get(sessionName);
 	}
 	
-	public boolean createChatroom(ServerClient client, String roomName) throws IOException
+	public ServerChatroom getOrCreateChatroom(String roomName) throws IOException
 	{
 		ServerChatroom room = rooms.get(roomName);
-		if (room != null) return false;
+		if (room != null) return room;
 		
-		room = new ServerChatroom(this, client, roomName);
+		NetID netID = new NetID(getNetID());
+		room = new ServerChatroom(netID, roomName, this);
 		rooms.put(roomName, room);
-		return true;
+		System.out.println("[Server] Raum " + roomName + ", " + netID + " erstellt.");
+		return room;
 	}
 	
-	public boolean destroyChatroom(String roomName)
+	void destroyChatroom(ServerChatroom room)
 	{
-		System.out.println("[Server] Raum " + roomName + " zerstört.");
-		return rooms.remove(roomName) != null;
+		System.out.println("[Server] Raum " + room.getName() + " zerstört.");
+		rooms.remove(room.getName());
 	}
 
 	public boolean createNetworkSession(String sessionName, ServerClient owner) throws IOException
@@ -151,10 +151,10 @@ public class Server extends LifeCycleAdapter
 		return true;
 	}
 
-	public boolean destroySession(String sessionName)
+	void destroySession(ServerSession session)
 	{
-		System.out.println("[Server] Session " + sessionName + " zerstört.");
-		return sessions.remove(sessionName) != null;
+		System.out.println("[Server] Session " + session.getName() + " zerstört.");
+		sessions.remove(session.getName());
 	}
 
 	public void sendException(NetID clientID, String message)

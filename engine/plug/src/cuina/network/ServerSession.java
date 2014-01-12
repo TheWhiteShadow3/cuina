@@ -16,6 +16,7 @@ public class ServerSession extends NetworkSession
 	private DatagramSocket socket;
 	private Map<NetID, SessionMember> members = new HashMap<NetID, SessionMember>();
 //	private int maxMembers;
+	private boolean open;
 	
 	public ServerSession(NetID netID, String name, Server server, ServerClient host) throws IOException
 	{
@@ -23,7 +24,7 @@ public class ServerSession extends NetworkSession
 		this.server = server;
 		this.address = new InetSocketAddress(SessionUtils.getAvalibleLocalPort());
 		this.socket = new DatagramSocket(address);
-		host.getChannel().addChannelListener(netID, this);
+		this.open = true;
 		
 		System.out.println("[ServerSession] Port: " + address.getPort());
 		SessionMember member = addMember(host, -1);
@@ -36,27 +37,37 @@ public class ServerSession extends NetworkSession
 	@Override
 	public boolean isOpen()
 	{
-		return server.isRunning();
+		return server.isRunning() && this.open;
 	}
 	
 	@Override
 	public void close()
 	{
-		server.destroySession(getName());
-		super.close();
+		for(SessionMember member : members.values()) try
+		{
+			member.sendMessage(new CommandMessage(getID(), Message.FLAG_CLOSE, "close"));
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		members.clear();
+		server.destroySession(this);
+		this.open = false;
 	}
 	
 	public void join(ServerClient client, int port) throws IOException
 	{
 		SessionMember member = addMember(client, port);
-		
+
 		member.sendMessage(new CommandMessage(NetID.GLOBAL_ID, Message.FLAG_INFO,
-				"session.joined", getName(), Integer.toString(socket.getPort())));
+				"session.joined", getName(), Integer.toString(getID().get()), Integer.toString(socket.getPort())));
 	}
 
 	public void leave(ServerClient client)
 	{
-		members.remove(client.getID());
+		removeMember(client);
 		if (members.isEmpty()) close();
 	}
 
@@ -111,7 +122,7 @@ public class ServerSession extends NetworkSession
 		validateClient(msg.getSender());
 		try
 		{
-			switch(msg.command)
+			switch(msg.getCommand())
 			{
 				case "close": sendMessage(new CommandMessage(getID(), Message.FLAG_INFO, "close")); break;
 //				case "join": join(msg); break;
@@ -133,9 +144,7 @@ public class ServerSession extends NetworkSession
 	
 	private void handlePortMesssage(CommandMessage msg)
 	{
-		NetID netID = msg.getSender();
-		int port = Integer.parseInt(msg.getArgument(0));
-		members.get(netID).port = port;
+		members.get(msg.getSender()).port = msg.getArgumentAsInt(0);
 	}
 
 //	private void join(CommandMessage msg)
@@ -151,10 +160,20 @@ public class ServerSession extends NetworkSession
 //		}
 //	}
 	
+	private void removeMember(ServerClient client)
+	{
+		SessionMember member = members.remove(client.getID());
+		if (member == null) return;
+		
+		member.client.getChannel().addChannelListener(getID(), this);
+	}
+	
 	private SessionMember addMember(ServerClient client, int port)
 	{
 		SessionMember member = new SessionMember(client, port);
 		this.members.put(client.getID(), member);
+		client.getChannel().addChannelListener(getID(), this);
+		
 		return member;
 	}
 	

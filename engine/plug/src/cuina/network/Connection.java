@@ -242,20 +242,21 @@ public class Connection implements ChannelListener, NetworkContext
 
 	private void InfoRecieved(CommandMessage msg) throws IOException
 	{
-		switch(msg.command)
+		switch(msg.getCommand())
 		{
 			case "room.opened":
 			case "room.joined":
 			{
-				Chatroom room = rooms.get(msg.arguments[0]);
+				String roomName = msg.getArgument(0);
+				Chatroom room = rooms.get(roomName);
 				if (room == null)
 				{
-					room = new Chatroom(channel, username, msg);
+					NetID netID = msg.getArgumentAsID(1);
+					room = new Chatroom(netID, roomName, this);
+					fillRoom(room, msg);
 					rooms.put(room.getName(), room);
 					fireRoomJoined(room);
 				}
-				else
-					room.addMember(Integer.parseInt(msg.arguments[1]), msg.arguments[2]);
 			}
 			break;
 			
@@ -273,12 +274,19 @@ public class Connection implements ChannelListener, NetworkContext
 			case "session.opened":
 			if (session == null)
 			{
-				NetID netID = new NetID(Integer.parseInt(msg.arguments[1]));
-				int port = Integer.parseInt(msg.arguments[2]);
-				this.session = new ClientNetworkSession(netID, msg.arguments[0], this, port);
+				this.session = new ClientNetworkSession(
+						msg.getArgumentAsID(1), msg.getArgument(0), this, msg.getArgumentAsInt(2));
 				fireSessionCreated(session);
 			}
 			break;
+		}
+	}
+
+	private void fillRoom(Chatroom room, CommandMessage msg)
+	{
+		for(int i = 2; i < msg.getArgumentCount(); i += 2)
+		{
+			room.addMember(msg.getArgumentAsID(i), msg.getArgument(i+1));
 		}
 	}
 

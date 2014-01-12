@@ -18,6 +18,8 @@ public interface INetworkSession
 	
 	public boolean isOpen();
 	
+	public void close();
+	
 	public NetID getID();
 
 	public void requestNetworkID(NetID netID) throws IOException;

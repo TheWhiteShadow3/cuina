@@ -4,18 +4,24 @@ import cuina.database.NamedItem;
 
 public class Client implements NamedItem
 {
-	public final int id;
+	private final NetID netID;
 	private String name;
 
-	public Client(int id)
+	public Client(NetID netID)
 	{
-		this.id = id;
+		this(netID, null);
+		
 	}
 
-	public Client(int id, String name)
+	public Client(NetID netID, String name)
 	{
-		this(id);
+		this.netID = netID;
 		this.name = name;
+	}
+	
+	public NetID getID()
+	{
+		return netID;
 	}
 
 	/**
@@ -38,7 +44,7 @@ public class Client implements NamedItem
 	@Override
 	public int hashCode()
 	{
-		return 271 * id;
+		return 271 * netID.get();
 	}
 
 	@Override
@@ -48,7 +54,8 @@ public class Client implements NamedItem
 		if (obj == null) return false;
 		if (obj instanceof Client)
 		{
-			return (id == ((Client) obj).id);
+			Client other = (Client) obj;
+			return (netID.equals(other.netID));
 		}
 		return false;
 	}

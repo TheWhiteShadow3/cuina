@@ -8,8 +8,8 @@ public class CommandMessage extends Message
 {
 	private static final char SEPERATOR = '|';
 	
-	public String command;
-	public String[] arguments;
+	private String command;
+	private String[] arguments;
 	
 	public CommandMessage(Message msg)
 	{
@@ -29,10 +29,25 @@ public class CommandMessage extends Message
 	{
 		return command;
 	}
-
-	public String getArgument(int idenx)
+	
+	public int getArgumentCount()
 	{
-		return arguments[idenx];
+		return arguments.length;
+	}
+
+	public String getArgument(int index)
+	{
+		return arguments[index];
+	}
+	
+	public int getArgumentAsInt(int index)
+	{
+		return Integer.parseInt(arguments[index]);
+	}
+	
+	public NetID getArgumentAsID(int index)
+	{
+		return new NetID(getArgumentAsInt(index));
 	}
 
 	@Override

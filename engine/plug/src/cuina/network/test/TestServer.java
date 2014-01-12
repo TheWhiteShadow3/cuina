@@ -54,8 +54,8 @@ public class TestServer
 		switch(parts[1])
 		{
 			case "client": server.getClients(); break;
-			case "room": server.destroyChatroom(parts[2]); break;
-			case "session": server.destroySession(parts[2]); break;
+			case "room": server.getChatroom(parts[2]).close(); break;
+			case "session": server.getSession(parts[2]).close(); break;
 			default:
 			{
 				int id = Integer.parseInt(parts[2]);

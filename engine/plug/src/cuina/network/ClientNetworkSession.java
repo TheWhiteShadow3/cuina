@@ -35,8 +35,8 @@ public class ClientNetworkSession extends NetworkSession
 	@Override
 	public void close()
 	{
+		connection.getChannel().removeChannelListener(getID());
 		socket.close();
-		super.close();
 	}
 	
 	@Override
@@ -50,7 +50,7 @@ public class ClientNetworkSession extends NetworkSession
 	{
 		try
 		{
-			switch(msg.command)
+			switch(msg.getCommand())
 			{
 				case "close": sendMessage(new CommandMessage(connection.getID(), Message.FLAG_CMD, "close")); break;
 			}

@@ -2,110 +2,69 @@ package cuina.network;
 
 import cuina.database.NamedItem;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public abstract class AbstactChatroom implements NamedItem, ChannelListener
 {
-	private NetworkContext context;
-	private int id;
+	private NetID netID;
 	private String name;
 	private boolean password;
-	private String prefix;
-	private final Map<Integer, Client> members = new HashMap<Integer, Client>();
-	private List<ChatMessage> lines = new ArrayList<ChatMessage>();
 
-	public AbstactChatroom(String username, NetworkContext context)
+	public AbstactChatroom(NetID netID, String name)
 	{
-		this.context = context;
-		switch(msg.command.substring(prefix.length()+1))
-		{
-			case "opened":
-			case "joined":
-			{
-				this.name = msg.arguments[0];
-				members.put(channel.getID(), new Client(channel.getID(), username));
-				for(int i = 1; i < msg.arguments.length; i += 2)
-				{
-					int id = Integer.parseInt(msg.arguments[i]);
-					String name = msg.arguments[i+1];
-					members.put(id, new Client(id, name));
-				}
-			}
-		}
+		this.netID = netID;
+		this.name = name;
 	}
 	
+	public abstract boolean isOpen();
+	
+	public abstract void close();
+	
+	public NetID getID()
+	{
+		return netID;
+	}
+
 	@Override
 	public String getName()
 	{
 		return name;
 	}
 	
-	protected Channel getChannel()
-	{
-		return channel;
-	}
-	
-	public Map<Integer, Client> getMembers()
-	{
-		return Collections.unmodifiableMap(members);
-	}
+//	public Map<NetID, Client> getMembers()
+//	{
+//		return Collections.unmodifiableMap(members);
+//	}
+//	
+//	public boolean isEmpty()
+//	{
+//		return members.isEmpty();
+//	}
 	
 	public boolean isPasswordProtected()
 	{
 		return password;
 	}
 	
-	void addMember(int id, String name)
+	@Override
+	public void messageRecieved(Channel source, Message msg)
 	{
-		Client client = new Client(id, name);
-		members.put(client.id, client);
-		fireMemberJoined(client);
+		if (msg.getType() == Message.FLAG_CMD)
+		{
+			handleCommand(new CommandMessage(msg));
+		}
 	}
 	
-	void removeMember(int id, boolean forced)
+	protected abstract void addMember(NetID netID, String name);
+
+	protected abstract void removeMember(NetID netID, boolean forced);
+
+	protected abstract void messageRecieved(NetID netID, String text);
+
+	@Override
+	public void channelClosed(Channel source)
 	{
-		Client client = members.remove(id);
-		fireMemberLeaved(client, forced);
+		close();
 	}
-	
-	void messageRecieved(int id, String text)
-	{
-		Client client = members.get(id);
-		ChatMessage cm = new ChatMessage(client, System.currentTimeMillis(), text);
-		lines.add(cm);
-		
-		fireMessageRecieved(client, cm);
-	}
-	
-	protected void fireMemberJoined(Client client) {}
-	
-	protected void fireMemberLeaved(Client client, boolean forced) {}
-	
-	protected void fireMessageRecieved(Client client, ChatMessage cm) {}
-	
-	/**
-	 * Sendet einen Text zu dem angegebenen Klienten.
-	 * Wenn der Klient <code>null</code> ist, wird die Nachicht an den Server gesendet.
-	 * Handelt es sich um einen Befehl, interpretiert der Server diesen.
-	 * Bei einer einfachen Nachicht wird diese für alle angezeigt.
-	 * @param text Die Nachicht.
-	 * @throws IOException Wenn die Nachicht nicht gesendet werden konnte.
-	 */
-	public void send(String text) throws IOException
-	{
-		send(Message.FLAG_CMD, "msg", name, text);
-	}
-	
-	public void send(int flag, String command, String... arguments) throws IOException
-	{
-		channel.send(flag, prefix + '.' + command, arguments);
-	}
-	
+
 	public static class ChatMessage
 	{
 		public Client client;
@@ -120,20 +79,15 @@ public abstract class AbstactChatroom implements NamedItem, ChannelListener
 		}
 	}
 
-	@Override
-	public void messageRecieved(Message msg)
-	{
-		if (msg.getType() == Message.FLAG_CMD)
-		{
-			handleCommand(new CommandMessage(msg));
-		}
-	}
-
 	private void handleCommand(CommandMessage msg)
 	{
 		switch(msg.getCommand())
 		{
-			case "opened": msg.getArgument(0)
+			case "opened": msg.getArgument(0); break;
+			case "joined": addMember(msg.getSender(), msg.getArgument(2)); break;
+			case "leaved": removeMember(msg.getArgumentAsID(0), false); break;
+			case "kicked": removeMember(msg.getArgumentAsID(0), true); break;
+			case "msg": messageRecieved(msg.getArgumentAsID(0), msg.getArgument(1)); break;
 		}
 	}
 }

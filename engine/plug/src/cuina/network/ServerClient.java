@@ -40,11 +40,11 @@ public class ServerClient implements NetworkContext, ChannelListener
 	
 	public void identify(CommandMessage msg) throws IOException
 	{
-		if (!msg.command.equals("login") || msg.arguments.length == 0)
+		if (!msg.getCommand().equals("login") || msg.getArgumentCount() == 0)
 			throw new IOException("Invalid login dataformat recieved.");
 		
-		this.username = msg.arguments[0];
-		String password = (msg.arguments.length == 2) ? msg.arguments[1] : null;
+		this.username = msg.getArgument(0);
+		String password = (msg.getArgumentCount() == 2) ? msg.getArgument(1) : null;
 		
 		ConnectionSecurityPolicy csp = server.getSecurityPolicy();
 		this.accepted = (csp != null) ? csp.newClient(this, username, password) : true;
@@ -111,14 +111,24 @@ public class ServerClient implements NetworkContext, ChannelListener
 		ConnectionSecurityPolicy csp = server.getSecurityPolicy();
 		if (csp != null)
 		{
-			if (!csp.recieveCommand(this, msg.command)) return;
+			if (!csp.recieveCommand(this, msg.getCommand())) return;
 		}
 		
 		switch(msg.getCommand())
 		{
+			case "room.join": joinChatroom(msg); break;
+			
 			case "session.open": createNewSession(msg); break;
 			case "session.join": joinSession(msg); break;
 		}
+	}
+
+	private void joinChatroom(CommandMessage msg) throws IOException
+	{
+		// XXX: Argument 1 (wenn vorhanden) enthält ein optionales Password.
+		String name = msg.getArgument(0);
+		ServerChatroom room = server.getOrCreateChatroom(name);
+		room.join(this);
 	}
 
 	private void createNewSession(CommandMessage msg) throws IOException
@@ -135,7 +145,7 @@ public class ServerClient implements NetworkContext, ChannelListener
 			 channel.send(new NetworkException("Session " + msg.getArgument(0) + " does not exist."));
 			 return;
 		 }
-		 session.join(this, Integer.parseInt(msg.getArgument(1)));
+		 session.join(this, msg.getArgumentAsInt(1));
 	}
 	
 //	private void handleSessionCommand(String cmd, String[] arguments) throws IOException

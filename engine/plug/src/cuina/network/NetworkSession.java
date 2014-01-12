@@ -22,11 +22,6 @@ public abstract class NetworkSession implements INetworkSession, ChannelListener
 	{
 		return name;
 	}
-
-	public void close()
-	{
-		
-	}
 	
 	@Override
 	public void channelClosed(Channel source)

@@ -22,9 +22,10 @@ public class TestClient
 		con.addConnectionListener(new MyConnectionListener());
 		
 		System.out.println("[TestClient] " + con.getID());
-		System.out.println("[TestClient] starte Session.");
-		con.openSession("blub", null);
-//		con.joinChatroom("blub", null);
+//		System.out.println("[TestClient] starte Session.");
+//		con.openSession("blub", null);
+		System.out.println("[TestClient] starte Chatroom.");
+		con.joinChatroom("blub", null);
 		// 10 Sekunden um zu reagieren bis Timeout erfolgt (Serverstatus prüfen, Zweiten Klienten starten, etc.)
 		while(true)
 			Thread.sleep(10000);
