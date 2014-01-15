@@ -1,5 +1,7 @@
 package cuina.network;
 
+import cuina.network.core.ServerClient;
+
 
 public interface ConnectionSecurityPolicy
 {

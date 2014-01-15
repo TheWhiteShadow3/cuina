@@ -1,5 +1,9 @@
-package cuina.network;
+package cuina.network.core;
 
+import cuina.network.ConnectionSecurityPolicy;
+import cuina.network.NetworkException;
+import cuina.network.ServerChatroom;
+import cuina.network.ServerSession;
 import cuina.plugin.ForGlobal;
 import cuina.plugin.LifeCycleAdapter;
 
@@ -59,10 +63,16 @@ public class Server extends LifeCycleAdapter
 		System.out.println("[Server] started on port " + PORT);
 	}
 
-	public synchronized int getNetID()
+	public synchronized NetID generateNetworkID()
 	{
 		if (netIDPosition == 0) throw new OutOfMemoryError("No more network-ids available.");
-		return netIDPosition++;
+		return new NetID(netIDPosition++);
+	}
+	
+	public synchronized void requestNetworkID(NetID netID)
+	{
+		if (netIDPosition == 0) throw new OutOfMemoryError("No more network-ids available.");
+		netID.id = netIDPosition++;
 	}
 	
 	public boolean isRunning()
@@ -126,17 +136,11 @@ public class Server extends LifeCycleAdapter
 		ServerChatroom room = rooms.get(roomName);
 		if (room != null) return room;
 		
-		NetID netID = new NetID(getNetID());
+		NetID netID = generateNetworkID();
 		room = new ServerChatroom(netID, roomName, this);
 		rooms.put(roomName, room);
 		System.out.println("[Server] Raum " + roomName + ", " + netID + " erstellt.");
 		return room;
-	}
-	
-	void destroyChatroom(ServerChatroom room)
-	{
-		System.out.println("[Server] Raum " + room.getName() + " zerstört.");
-		rooms.remove(room.getName());
 	}
 
 	public boolean createNetworkSession(String sessionName, ServerClient owner) throws IOException
@@ -144,14 +148,20 @@ public class Server extends LifeCycleAdapter
 		ServerSession session = sessions.get(sessionName);
 		if (session != null) return false;
 		
-		NetID netID = new NetID(getNetID());
+		NetID netID = generateNetworkID();
 		session = new ServerSession(netID, sessionName, this, owner);
 		sessions.put(sessionName, session);
 		System.out.println("[Server] Session " + sessionName + ", " + netID + " erstellt.");
 		return true;
 	}
+	
+	public void destroyChatroom(ServerChatroom room)
+	{
+		System.out.println("[Server] Raum " + room.getName() + " zerstört.");
+		rooms.remove(room.getName());
+	}
 
-	void destroySession(ServerSession session)
+	public void destroySession(ServerSession session)
 	{
 		System.out.println("[Server] Session " + session.getName() + " zerstört.");
 		sessions.remove(session.getName());
@@ -236,7 +246,7 @@ public class Server extends LifeCycleAdapter
 //				id = RANDOM.nextInt();
 //			}
 //			while(server.clients.get(id) != null);
-			NetID netID = new NetID(server.getNetID());
+			NetID netID = server.generateNetworkID();
 			ServerClient client = new ServerClient(netID, server, socket);
 //			OutputStream out = client.getOutputStream();
 //			out.write(IDENTIFIER_SEQUENCE);

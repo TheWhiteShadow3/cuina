@@ -1,5 +1,11 @@
 package cuina.network;
 
+import cuina.network.core.CommandMessage;
+import cuina.network.core.Message;
+import cuina.network.core.NetID;
+import cuina.network.core.Server;
+import cuina.network.core.ServerClient;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +16,7 @@ public class ServerChatroom extends AbstactChatroom
 	private boolean open;
 	private final Map<NetID, ServerClient> members = new HashMap<NetID, ServerClient>();
 	
-	ServerChatroom(NetID netID, String name, Server server) throws IOException
+	public ServerChatroom(NetID netID, String name, Server server) throws IOException
 	{
 		super(netID, name);
 		this.server = server;

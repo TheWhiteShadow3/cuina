@@ -1,6 +1,7 @@
 package cuina.network;
 
 import cuina.database.NamedItem;
+import cuina.network.core.NetID;
 
 public class Client implements NamedItem
 {

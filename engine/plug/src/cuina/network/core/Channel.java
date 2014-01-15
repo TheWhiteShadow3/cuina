@@ -1,4 +1,8 @@
-package cuina.network;
+package cuina.network.core;
+
+import cuina.network.ChannelListener;
+import cuina.network.NetworkException;
+import cuina.network.StreamUtils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

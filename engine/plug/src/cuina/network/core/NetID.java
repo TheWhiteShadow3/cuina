@@ -1,4 +1,6 @@
-package cuina.network;
+package cuina.network.core;
+
+import cuina.network.NetworkContext;
 
 import java.io.IOException;
 

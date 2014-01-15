@@ -7,13 +7,13 @@ public interface ConnectionListener
 	
 	public void disconnected();
 	
-	public void sessionCreated(NetworkSession session);
+	public void sessionCreated(INetworkSession session);
 	
-	public void sessionDestroyed(NetworkSession session);
+	public void sessionDestroyed(INetworkSession session);
 	
-	public void sessionJoined(NetworkSession session, Client client);
+	public void sessionJoined(INetworkSession session, Client client);
 	
-	public void sessionLeaved(NetworkSession session, Client client);
+	public void sessionLeaved(INetworkSession session, Client client);
 	
 	public void roomJoined(Chatroom room);
 	

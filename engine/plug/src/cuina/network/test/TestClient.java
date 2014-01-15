@@ -3,10 +3,10 @@ package cuina.network.test;
 import cuina.network.Chatroom;
 import cuina.network.ChatroomListener;
 import cuina.network.Client;
-import cuina.network.Connection;
 import cuina.network.ConnectionListener;
-import cuina.network.NetworkSession;
-import cuina.network.Server;
+import cuina.network.INetworkSession;
+import cuina.network.core.Connection;
+import cuina.network.core.Server;
 
 import java.io.IOException;
 
@@ -38,7 +38,7 @@ public class TestClient
 	
 	private static class MyConnectionListener implements ConnectionListener
 	{
-		public NetworkSession session;
+		public INetworkSession session;
 		public Chatroom room;
 
 		@Override
@@ -55,14 +55,23 @@ public class TestClient
 		}
 
 		@Override
-		public void sessionCreated(NetworkSession session)
+		public void sessionCreated(INetworkSession session)
 		{
 			this.session = session;
 			System.out.println("Session erstellt. ");
+
+			try
+			{
+				session.sendData("Test".getBytes());
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		@Override
-		public void sessionDestroyed(NetworkSession session)
+		public void sessionDestroyed(INetworkSession session)
 		{
 			if (this.session == session) this.session = null;
 		}
@@ -105,9 +114,9 @@ public class TestClient
 		}
 		
 		@Override
-		public void sessionJoined(NetworkSession session, Client client) {}
+		public void sessionJoined(INetworkSession session, Client client) {}
 
 		@Override
-		public void sessionLeaved(NetworkSession session, Client client) {}
+		public void sessionLeaved(INetworkSession session, Client client) {}
 	}
 }

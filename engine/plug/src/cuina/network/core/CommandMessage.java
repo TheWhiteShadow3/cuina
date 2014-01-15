@@ -1,4 +1,6 @@
-package cuina.network;
+package cuina.network.core;
+
+import cuina.network.StreamUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

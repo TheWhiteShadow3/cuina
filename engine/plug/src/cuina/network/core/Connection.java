@@ -1,4 +1,13 @@
-package cuina.network;
+package cuina.network.core;
+
+import cuina.network.ChannelListener;
+import cuina.network.Chatroom;
+import cuina.network.Client;
+import cuina.network.ClientNetworkSession;
+import cuina.network.ConnectionListener;
+import cuina.network.INetworkSession;
+import cuina.network.NetworkContext;
+import cuina.network.StreamUtils;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -16,7 +25,7 @@ public class Connection implements ChannelListener, NetworkContext
 	private Channel channel;
 	private String username;
 	
-	private NetworkSession session;
+	private INetworkSession session;
 	private final Map<String, Chatroom> rooms = new HashMap<String, Chatroom>();
 	private final List<ConnectionListener> listeners = new ArrayList<ConnectionListener>();
 	private Queue<NetID> idQueue = new LinkedList<NetID>();
@@ -94,25 +103,25 @@ public class Connection implements ChannelListener, NetworkContext
 			l.disconnected();
 	}
 	
-	void fireSessionCreated(NetworkSession session)
+	void fireSessionCreated(INetworkSession session)
 	{
 		for(ConnectionListener l : listeners)
 			l.sessionCreated(session);
 	}
 	
-	void fireSessionDestroyed(NetworkSession session)
+	void fireSessionDestroyed(INetworkSession session)
 	{
 		for(ConnectionListener l : listeners)
 			l.sessionDestroyed(session);
 	}
 	
-	void fireSessionJoined(NetworkSession session, Client client)
+	void fireSessionJoined(INetworkSession session, Client client)
 	{
 		for(ConnectionListener l : listeners)
 			l.sessionJoined(session, client);
 	}
 	
-	void fireSessionLeaved(NetworkSession session, Client client)
+	void fireSessionLeaved(INetworkSession session, Client client)
 	{
 		for(ConnectionListener l : listeners)
 			l.sessionLeaved(session, client);
@@ -194,13 +203,13 @@ public class Connection implements ChannelListener, NetworkContext
 	
 
 	@Override
-	public void channelClosed(Channel channel)
+	public void channelClosed(Object source)
 	{
 		fireDisconnected();
 	}
 
 	@Override
-	public void messageRecieved(Channel channel, Message msg)
+	public void messageRecieved(Object source, Message msg)
 	{
 		try
 		{

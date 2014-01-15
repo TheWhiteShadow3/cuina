@@ -1,8 +1,8 @@
 package cuina.network.test;
 
-import cuina.network.Server;
-import cuina.network.ServerClient;
 import cuina.network.ServerSession;
+import cuina.network.core.Server;
+import cuina.network.core.ServerClient;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;

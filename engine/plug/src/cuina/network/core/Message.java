@@ -1,4 +1,7 @@
-package cuina.network;
+package cuina.network.core;
+
+import cuina.network.NetworkException;
+import cuina.network.StreamUtils;
 
 
 
@@ -16,11 +19,12 @@ public class Message
 	public static final int FLAG_CLOSE		= 3;
 	public static final int FLAG_CMD		= 4;
 	public static final int FLAG_EXCEPTION	= 5;
-	public static final int FLAG_BYTES		= 6;
-	public static final int FLAG_TEXT		= 7;
+	public static final int FLAG_TEXT		= 6;
+	public static final int FLAG_DATA		= 7;
+	public static final int FLAG_EVENT		= 8;
 	/** Gibt an, dass eine Netzwerk-ID angefordert wird. */
-	public static final int FLAG_NETID		= 8;
-	public static final int FLAG_LOGIN		= 9;
+	public static final int FLAG_NETID		= 9;
+	public static final int FLAG_LOGIN		= 10;
 
 	NetID sender;
 	private NetID reciever;

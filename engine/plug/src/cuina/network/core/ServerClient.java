@@ -1,6 +1,14 @@
-package cuina.network;
+package cuina.network.core;
 
 
+
+import cuina.network.ChannelListener;
+import cuina.network.ConnectionSecurityPolicy;
+import cuina.network.NetworkContext;
+import cuina.network.NetworkException;
+import cuina.network.ServerChatroom;
+import cuina.network.ServerSession;
+import cuina.network.StreamUtils;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -63,7 +71,7 @@ public class ServerClient implements NetworkContext, ChannelListener
 	}
 	
 	@Override
-	public void messageRecieved(Channel channel, Message msg)
+	public void messageRecieved(Object source, Message msg)
 	{
 		try
 		{
@@ -94,7 +102,7 @@ public class ServerClient implements NetworkContext, ChannelListener
 
 	private void sendNetID(Message msg)
 	{
-		byte[] bytes = StreamUtils.intToByteArray(server.getNetID());
+		byte[] bytes = StreamUtils.intToByteArray(server.generateNetworkID().get());
 		Message newMsg = new Message(netID, msg.getReciever(), Message.FLAG_NETID, bytes);
 		try
 		{
@@ -178,7 +186,7 @@ public class ServerClient implements NetworkContext, ChannelListener
 	
 
 	@Override
-	public void channelClosed(Channel channel)
+	public void channelClosed(Object source)
 	{
 		server.disconnect(this);
 	}
@@ -197,7 +205,7 @@ public class ServerClient implements NetworkContext, ChannelListener
 	@Override
 	public void requestNetworkID(NetID netID) throws IOException
 	{
-		netID.id = server.getNetID();
+		server.requestNetworkID(netID);
 	}
 
 	@Override

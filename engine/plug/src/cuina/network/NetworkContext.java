@@ -1,5 +1,8 @@
 package cuina.network;
 
+import cuina.network.core.Message;
+import cuina.network.core.NetID;
+
 import java.io.IOException;
 
 public interface NetworkContext

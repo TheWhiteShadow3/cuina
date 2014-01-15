@@ -19,7 +19,7 @@ public class MOGame
 			if (obj instanceof BaseObject)
 			{
 				BaseObject bObj = (BaseObject) obj;
-				bObj.addExtension("network", new NetworkExtension(id, session, object));
+//				bObj.addExtension("network", new NetworkExtension(id, session, object));
 			}
 		}
 	}

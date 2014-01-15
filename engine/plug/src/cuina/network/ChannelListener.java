@@ -1,8 +1,10 @@
 package cuina.network;
 
+import cuina.network.core.Message;
+
 
 public interface ChannelListener
 {
-	public void messageRecieved(Channel source, Message msg);
-	public void channelClosed(Channel source);
+	public void messageRecieved(Object source, Message msg);
+	public void channelClosed(Object source);
 }

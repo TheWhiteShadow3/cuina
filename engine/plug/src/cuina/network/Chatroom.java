@@ -1,5 +1,10 @@
 package cuina.network;
 
+import cuina.network.core.CommandMessage;
+import cuina.network.core.Connection;
+import cuina.network.core.Message;
+import cuina.network.core.NetID;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +42,7 @@ public class Chatroom extends AbstactChatroom
 	}
 	
 	@Override
-	protected void addMember(NetID netID, String name)
+	public void addMember(NetID netID, String name)
 	{
 		Client client = new Client(netID, name);
 		members.put(client.getID(), client);
@@ -45,7 +50,7 @@ public class Chatroom extends AbstactChatroom
 	}
 	
 	@Override
-	protected void removeMember(NetID netID, boolean forced)
+	public void removeMember(NetID netID, boolean forced)
 	{
 		Client client = members.remove(netID);
 		fireMemberLeaved(client, forced);

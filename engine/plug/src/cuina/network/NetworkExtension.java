@@ -3,6 +3,7 @@ package cuina.network;
 import cuina.animation.Model;
 import cuina.animation.ModelImpl;
 import cuina.movement.Motor;
+import cuina.network.core.NetID;
 import cuina.object.BaseObject;
 import cuina.plugin.LifeCycleAdapter;
 
@@ -46,7 +47,7 @@ public class NetworkExtension extends LifeCycleAdapter
 		fillCreateData(buffer);
 		try
 		{
-			session.sendEvent(buffer);
+			session.sendEvent(buffer.array());
 		}
 		catch (IOException e)
 		{
@@ -63,7 +64,7 @@ public class NetworkExtension extends LifeCycleAdapter
 		fillUpdateData(buffer);
 		try
 		{
-			session.sendData(buffer);
+			session.sendData(buffer.array());
 		}
 		catch (IOException e)
 		{
@@ -80,7 +81,7 @@ public class NetworkExtension extends LifeCycleAdapter
 		fillDisposeData(buffer);
 		try
 		{
-			session.sendEvent(buffer);
+			session.sendEvent(buffer.array());
 		}
 		catch (IOException e)
 		{

@@ -5,6 +5,7 @@ import cuina.animation.Model;
 import cuina.animation.ModelImpl;
 import cuina.movement.Driver;
 import cuina.movement.Motor;
+import cuina.network.core.NetID;
 import cuina.world.CuinaObject;
 
 import java.nio.ByteBuffer;
@@ -13,7 +14,7 @@ public class RemoteDriver implements Driver, Control
 {
 	private static final long serialVersionUID = 1900868326754776335L;
 	private INetworkSession session;
-	private int id;
+	private NetID netID;
 	private CuinaObject object;
 	private Motor motor;
 	private float x;
@@ -23,15 +24,16 @@ public class RemoteDriver implements Driver, Control
 	private float dir;
 	private boolean update;
 	
-	public RemoteDriver(INetworkSession session, int id)
+	public RemoteDriver(INetworkSession session, NetID netID)
 	{
 		this.session = session;
-		this.id = id;
+		this.netID = netID;
 	}
 	
-	public int getID()
+	@Override
+	public NetID getID()
 	{
-		return id;
+		return netID;
 	}
 
 	public INetworkSession getSession()

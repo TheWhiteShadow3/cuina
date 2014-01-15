@@ -1,43 +1,57 @@
 package cuina.network;
 
 
+import cuina.network.core.CommandMessage;
+import cuina.network.core.Message;
+import cuina.network.core.NetID;
+import cuina.network.core.Server;
+import cuina.network.core.ServerClient;
+import cuina.network.core.UDP;
+
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServerSession extends NetworkSession
+public class ServerSession implements INetworkSession, ChannelListener
 {
 	private Server server;
-	private InetSocketAddress address;
-	private DatagramSocket socket;
+	private NetID netID;
+	private String name;
+	private UDP udp;
 	private Map<NetID, SessionMember> members = new HashMap<NetID, SessionMember>();
-//	private int maxMembers;
+	private final Map<NetID, Control> controls = new HashMap<NetID, Control>();
 	private boolean open;
 	
 	public ServerSession(NetID netID, String name, Server server, ServerClient host) throws IOException
 	{
-		super(netID, name);
 		this.server = server;
-		this.address = new InetSocketAddress(SessionUtils.getAvalibleLocalPort());
-		this.socket = new DatagramSocket(address);
-		this.open = true;
-		
-		System.out.println("[ServerSession] Port: " + address.getPort());
+		this.udp = new UDP(new InetSocketAddress(SessionUtils.getAvalibleLocalPort()), null);
+		int port = udp.getLokalAddress().getPort();
+		System.out.println("[ServerSession] Port: " + port);
 		SessionMember member = addMember(host, -1);
 		
 		// sende die Nachicht ohne Empfänger, da dieser noch nicht erstellt wurde.
 		member.sendMessage(new CommandMessage(NetID.GLOBAL_ID, Message.FLAG_INFO,
-				"session.opened", name, Integer.toString(netID.get()), Integer.toString(address.getPort())));
+				"session.opened", name, Integer.toString(netID.get()), Integer.toString(port)));
+		open = true;
 	}
 
 	@Override
+	public NetID getID()
+	{
+		return netID;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+	
+	@Override
 	public boolean isOpen()
 	{
-		return server.isRunning() && this.open;
+		return server.isRunning() && open;
 	}
 	
 	@Override
@@ -49,20 +63,21 @@ public class ServerSession extends NetworkSession
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		members.clear();
 		server.destroySession(this);
-		this.open = false;
+		udp.close();
+		open = false;
 	}
 	
 	public void join(ServerClient client, int port) throws IOException
 	{
 		SessionMember member = addMember(client, port);
 
+		String portStr = Integer.toString(udp.getLokalAddress().getPort());
 		member.sendMessage(new CommandMessage(NetID.GLOBAL_ID, Message.FLAG_INFO,
-				"session.joined", getName(), Integer.toString(getID().get()), Integer.toString(socket.getPort())));
+				"session.joined", getName(), Integer.toString(getID().get()), portStr));
 	}
 
 	public void leave(ServerClient client)
@@ -72,20 +87,20 @@ public class ServerSession extends NetworkSession
 	}
 
 	@Override
-	public void sendData(ByteBuffer buffer) throws IOException
+	public void sendData(byte[] data) throws IOException
 	{
 		for(SessionMember member : members.values())
 		{
-			member.sendData(buffer);
+			member.sendData(data);
 		}
 	}
 
 	@Override
-	public void sendEvent(ByteBuffer buffer) throws IOException
+	public void sendEvent(byte[] data) throws IOException
 	{
 		for(SessionMember member : members.values())
 		{
-			member.sendEvent(buffer);
+			member.sendEvent(data);
 		}
 	}
 
@@ -101,31 +116,57 @@ public class ServerSession extends NetworkSession
 	@Override
 	public void requestNetworkID(NetID netID) throws IOException
 	{
-		netID.id = server.getNetID();
+		server.requestNetworkID(netID);
 	}
 	
 	@Override
-	protected void handleInfo(CommandMessage msg)
+	public void messageRecieved(Object source, Message msg)
 	{
 		validateClient(msg.getSender());
+		if (msg.getType() == Message.FLAG_CMD)
+		{
+			handleCommand(new CommandMessage(msg));
+		}
+		else if (msg.getType() == Message.FLAG_INFO || msg.getType() == Message.FLAG_ACK)
+		{
+			handleInfo(new CommandMessage(msg));
+		}
+		else if (msg.getType() == Message.FLAG_EVENT) try
+		{
+			sendEvent(msg.getData());
+		}
+		catch(IOException e) {}
+		else if (msg.getType() == Message.FLAG_DATA) try
+		{
+			sendData(msg.getData());
+		}
+		catch(IOException e) {}
+	}
+	
+	@Override
+	public void channelClosed(Object source)
+	{
+		close();
+	}
+	
+	private void handleInfo(CommandMessage msg)
+	{
 		switch(msg.getCommand())
 		{
-			case "close": close(); break;
 			case "opened": handlePortMesssage(msg); break;
-				
 		}
 	}
 
-	@Override
-	protected void handleCommand(CommandMessage msg)
+	private void handleCommand(CommandMessage msg)
 	{
-		validateClient(msg.getSender());
 		try
 		{
 			switch(msg.getCommand())
 			{
-				case "close": sendMessage(new CommandMessage(getID(), Message.FLAG_INFO, "close")); break;
-//				case "join": join(msg); break;
+				case "close":
+					sendMessage(new CommandMessage(getID(), Message.FLAG_INFO, "close"));
+					close();
+					break;
 			}
 		}
 		catch(IOException e)
@@ -133,7 +174,7 @@ public class ServerSession extends NetworkSession
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void validateClient(NetID netID)
 	{
 		if (!members.containsKey(netID))
@@ -144,9 +185,9 @@ public class ServerSession extends NetworkSession
 	
 	private void handlePortMesssage(CommandMessage msg)
 	{
-		members.get(msg.getSender()).port = msg.getArgumentAsInt(0);
+		members.get(msg.getSender()).setPort(msg.getArgumentAsInt(0));
 	}
-
+	
 //	private void join(CommandMessage msg)
 //	{
 //		int port = Integer.parseInt(msg.getArgument(0));
@@ -180,38 +221,33 @@ public class ServerSession extends NetworkSession
 	@Override
 	public String toString()
 	{
-		return "Session (" + getID() + ") " + getName();
+		return "Session (" + getID() + ") " + name;
 	}
 	
 	private class SessionMember
 	{
-		public ServerClient client;
-		public int port;
+		private ServerClient client;
+		private InetSocketAddress address;
 		
 		public SessionMember(ServerClient client, int port)
 		{
 			this.client = client;
-			this.port = port;
+			if (port != -1) setPort(port);
 		}
 
-		public void sendData(ByteBuffer buffer) throws IOException
+		public void setPort(int port)
 		{
-			if (port == -1) throw new IOException("Data-Port not set.");
-			
-			buffer.flip();
-			byte[] bytes = new byte[buffer.limit()];
-			buffer.get(bytes);
-			InetSocketAddress address = new InetSocketAddress(client.getChannel().getInetAddress(), port);
-			DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address);
-			socket.send(packet);
+			this.address = new InetSocketAddress(client.getChannel().getInetAddress(), port);
 		}
 
-		public void sendEvent(ByteBuffer buffer) throws IOException
+		public void sendData(byte[] buffer) throws IOException
 		{
-			buffer.flip();
-			byte[] bytes = new byte[buffer.limit()];
-			buffer.get(bytes);
-			client.getChannel().send(getID(), Message.FLAG_BYTES, bytes);
+			udp.send(buffer, address);
+		}
+
+		public void sendEvent(byte[] buffer) throws IOException
+		{
+			client.getChannel().send(getID(), Message.FLAG_DATA, buffer);
 		}
 		
 		public void sendMessage(Message msg) throws IOException

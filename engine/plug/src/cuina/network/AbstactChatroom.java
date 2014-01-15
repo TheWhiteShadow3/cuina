@@ -1,6 +1,9 @@
 package cuina.network;
 
 import cuina.database.NamedItem;
+import cuina.network.core.CommandMessage;
+import cuina.network.core.Message;
+import cuina.network.core.NetID;
 
 public abstract class AbstactChatroom implements NamedItem, ChannelListener
 {
@@ -45,7 +48,7 @@ public abstract class AbstactChatroom implements NamedItem, ChannelListener
 	}
 	
 	@Override
-	public void messageRecieved(Channel source, Message msg)
+	public void messageRecieved(Object source, Message msg)
 	{
 		if (msg.getType() == Message.FLAG_CMD)
 		{
@@ -60,7 +63,7 @@ public abstract class AbstactChatroom implements NamedItem, ChannelListener
 	protected abstract void messageRecieved(NetID netID, String text);
 
 	@Override
-	public void channelClosed(Channel source)
+	public void channelClosed(Object source)
 	{
 		close();
 	}
