@@ -10,6 +10,7 @@ import cuina.editor.map.internal.TileFactory.AutotileSet;
 import cuina.editor.map.internal.TileSelectionMode;
 import cuina.editor.map.util.MapOperation;
 import cuina.editor.map.util.MapSavePoint;
+import cuina.editor.ui.selection.Selection;
 import cuina.editor.ui.selection.SelectionEvent;
 import cuina.editor.ui.selection.SelectionListener;
 import cuina.editor.ui.selection.SelectionManager;
@@ -67,9 +68,6 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	public static final String ACTION_FILLER = "cuina.editor.map.tilemap.fillerAction";
 	public static final String ACTION_ELLIPSE = "cuina.editor.map.tilemap.ellipseAction";
 	public static final String ACTION_RECTANGLE = "cuina.editor.map.tilemap.rectangleAction";
-	
-	/** Instanz des Auswahlmodus für die Tile-Auswahl */
-	private static final SpanSelectionMode TILE_SELECTION_MODE_INSTANCE = new SpanSelectionMode();
 
 	private Map map;
 	private Tileset tileset;
@@ -109,8 +107,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	@Override
 	public void paint(GC gc)
 	{
-		if(map == null || tilesetImage == null)
-			return;
+		if(map == null || tilesetImage == null) return;
 
 		paintTiles(gc, true);
 		if(showRaster)
@@ -165,27 +162,27 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		Rectangle bounds = editor.getViewBounds();
 		for(int z = 0; z < Map.LAYERS; z++)
 		{
-			if(currentLayer == z && dimLayers)
+			if (currentLayer == z && dimLayers)
 			{
 				gc.setColor(Color.BLACK);
 				gc.setAlpha(127);
 				gc.fillRectangle(0, 0, bounds.width, bounds.height);
 				gc.setColor(Color.WHITE);
-			} else if(z > currentLayer && fadeLayers)
+			}
+			else if(z > currentLayer && fadeLayers)
 			{
 				gc.setAlpha(127);
 			}
 			for(int x = minX; x < maxX; x++)
+			for(int y = minY; y < maxY; y++)
 			{
-				for(int y = minY; y < maxY; y++)
+				if(z == this.currentLayer && tempLayer != null && tempLayer.contains(x, y))
 				{
-					if(z == this.currentLayer && tempLayer != null && tempLayer.contains(x, y))
-					{
-						paintTempLayer(gc, x, y);
-					} else
-					{
-						paintTile(gc, map.data[x][y][z], x, y);
-					}
+					paintTempLayer(gc, x, y);
+				}
+				else
+				{
+					paintTile(gc, map.data[x][y][z], x, y);
 				}
 			}
 		}
@@ -194,13 +191,13 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 
 	private void paintTempLayer(GC gc, int x, int y)
 	{
-		short id = tempLayer.get(x, y);
+		short id = tempLayer.get(x - tempLayer.getX(), y - tempLayer.getY());
 		if(id > 0)
 		{
 			// System.out.println( "Temp-Layer-Tile: " + (x
 			// - rect.x / ts) +
 			// ", " + (y - rect.y / ts) );
-			if(id >= Tileset.AUTOTILES_OFFSET)
+			if (id >= Tileset.AUTOTILES_OFFSET)
 				paintTile(gc, id, x, y);
 			else
 				paintTile(gc, id, x, y);
@@ -209,24 +206,23 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 
 	private void paintTile(GC gc, int tileId, int x, int y)
 	{
-		if(tileId == 0 || tilesetImage.getWidth() == 0)
-			return;
+		if (tileId == 0 || tilesetImage.getWidth() == 0) return;
 
 		int ts = tileset.getTileSize();
-		if(tileId >= Tileset.AUTOTILES_OFFSET)
+		if (tileId >= Tileset.AUTOTILES_OFFSET)
 		{
 			tileId -= Tileset.AUTOTILES_OFFSET;
-			if(tileId / 48 < autotiles.length)
+			if (tileId / 48 < autotiles.length)
 			{
 				Image img = autotileImages[tileId / 48];
-				if(img == null)
-					return;
+				if(img == null) return;
 
 				int srcX = (tileId % 8);
 				int srcY = (tileId / 8);
 				gc.drawImage(img, srcX * ts, srcY * ts, ts, ts, x * ts, y * ts, ts, ts);
 			}
-		} else
+		}
+		else
 		{
 			tileId--;
 			int srcX = (tileId % (tilesetImage.getWidth() / ts)) * ts;
@@ -259,8 +255,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		tilesetImage.dispose();
 		for(Image img : autotileImages)
 		{
-			if(img != null)
-				img.dispose();
+			if(img != null) img.dispose();
 		}
 	}
 
@@ -277,7 +272,8 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		try
 		{
 			tilesetImage = editor.loadImage(editor.getGLCanvas(), tileset.getTilesetName());
-		} catch(ResourceException e)
+		}
+		catch(ResourceException e)
 		{
 			e.printStackTrace();
 		}
@@ -294,7 +290,8 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		if(page != null)
 		{
 			page.addSelectionListener(this);
-		} else
+		}
+		else
 		{
 			System.out
 					.println("[TileMapLayer] Info: Run \"getActivePage() returns null\" workaround to register SelectionListener");
@@ -317,8 +314,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 				for(int i = Map.LAYERS - 1; i >= 0; i--)
 				{
 					id = map.data[x][y][i];
-					if(id > 0)
-						break;
+					if(id > 0) break;
 				}
 				setTileSourceData(new TileSelection(id + 1));
 			}
@@ -346,13 +342,11 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	private void loadAutotiles()
 	{
 		String[] autoTileNames = tileset.getAutotiles();
-		if(autoTileNames == null)
-			return;
+		if(autoTileNames == null) return;
 
 		for(int i = 0; i < autoTileNames.length; i++)
 		{
-			if(autoTileNames[i] == null)
-				continue;
+			if(autoTileNames[i] == null) continue;
 
 			try
 			{
@@ -367,19 +361,29 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		}
 	}
 
-	void setSelectionMode(int tool)
+	int getTool()
 	{
-		if(currentTool == tool)
-			return;
+		return currentTool;
+	}
 
+	void setTool(int tool)
+	{
+		if(currentTool == tool) return;
+		currentTool = tool;
+		
 		System.out.println("[TileMapLayer] Zeichenmodus: " + tool);
+		initTool();
+	}
+	
+	private void initTool()
+	{
 		SelectionManager sh = editor.getSelectionManager();
 		sh.clearSelections();
-		switch(tool)
+		switch(currentTool)
 		{
-			case DRAWMODE_NONE:
-				sh.clearSeletionMode();
-				break;
+//			case DRAWMODE_NONE:
+//			sh.clearSeletionMode();
+//				break;
 			case DRAWMODE_PENCIL:
 			{
 				if(sourceLayer != null)
@@ -399,7 +403,6 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 				break;
 			}
 		}
-		currentTool = tool;
 	}
 
 	private void updateSelection()
@@ -414,8 +417,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 
 	private void addSavePoint()
 	{
-		if(!changed)
-			return;
+		if(!changed) return;
 
 		MapSavePoint newSavePoint = createTerrainBackup();
 		editor.addOperation(new MapOperation("Change Tiles", savePoint, newSavePoint));
@@ -485,8 +487,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	 */
 	public void setTiles(int x0, int y0, TileSelection tileLayer, Point origin)
 	{
-		if(tileLayer == null)
-			return;
+		if(tileLayer == null) return;
 
 		if(savePoint == null)
 			savePoint = createTerrainBackup();
@@ -497,14 +498,13 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		}
 
 		for(int x = 0; x < tileLayer.getWidth(); x++)
-			for(int y = 0; y < tileLayer.getHeight(); y++)
-			{
-				short id = (short) (tileLayer.getTiled(x, y, x0 - drawOrigin.x, y0 - drawOrigin.y) - 1);
-				if(id == -1)
-					continue;
+		for(int y = 0; y < tileLayer.getHeight(); y++)
+		{
+			short id = (short) (tileLayer.getTiled(x, y, x0 - drawOrigin.x, y0 - drawOrigin.y) - 1);
+			if(id == -1) continue;
 
-				map.data[x0 + x][y0 + y][currentLayer] = id;
-			}
+			map.data[x0 + x][y0 + y][currentLayer] = id;
+		}
 
 		TilemapUtil.updateAutotiles(map, tileLayer, x0, y0, currentLayer);
 
@@ -550,19 +550,22 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 
 	private void setTempLayer(int x0, int y0, int width, int height)
 	{
-		if(sourceLayer == null)
-			return;
+		if(sourceLayer == null) return;
 
 		short[][] data = new short[width][height];
 		for(int x = 0; x < width; x++)
 		{
 			for(int y = 0; y < height; y++)
 			{
-				data[x][y] = sourceLayer.getTiled(x, y, x0, y0);
+				data[x][y] = sourceLayer.getTiled(x, y, 0, 0);
 			}
 		}
 		tempLayer = new TileSelection(x0, y0, data);
-		System.out.println("Temp-Größe: " + tempLayer.getWidth() + ", " + tempLayer.getHeight());
+//		System.out.println("Temp-Rechteck: " +
+//					tempLayer.getX() +", " +
+//					tempLayer.getY() + ", " +
+//					tempLayer.getWidth() + ", " +
+//					tempLayer.getHeight());
 	}
 
 	@Override
@@ -590,8 +593,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	@Override
 	public void startSelection(SelectionEvent event)
 	{
-		if (editor.getActiveLayer() != TileMapLayer.this || currentTool == DRAWMODE_NONE)
-			return;
+		if (editor.getActiveLayer() != TileMapLayer.this || currentTool == DRAWMODE_NONE) return;
 		
 		if (event.mouseEvent.button == 1)
 		{
@@ -604,9 +606,12 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 					break;
 
 				case DRAWMODE_RECTANGLE:
-					TILE_SELECTION_MODE_INSTANCE.setGridSize(tileset.getTileSize());
-					event.manager.setSelectionMode(TILE_SELECTION_MODE_INSTANCE, true);
-					setTempLayer(0, 0, tileSelection.width, tileSelection.height);
+					event.manager.setSelectionMode(new SpanSelectionMode(tileset.getTileSize(), false), true);
+					// Hole Selection direkt vom Manager, da evtl. nicht im Event vorhanden.
+					Selection selection = event.manager.getSelection();
+					int x = selection.getX() / tileset.getTileSize();
+					int y = selection.getY() / tileset.getTileSize();
+					setTempLayer(x, y, tileSelection.width, tileSelection.height);
 					editor.getGLCanvas().redraw();
 			}
 		}
@@ -621,9 +626,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	@Override
 	public void updateSelection(SelectionEvent event)
 	{
-		if (editor.getActiveLayer() != TileMapLayer.this || currentTool == DRAWMODE_NONE)
-			return;
-//		System.out.println("[TileMapLayer] updateSelection");
+		if (editor.getActiveLayer() != TileMapLayer.this || currentTool == DRAWMODE_NONE) return;
 		
 		if (event.mouseEvent.button == 1)
 		{
@@ -635,8 +638,10 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 					break;
 
 				case DRAWMODE_RECTANGLE:
-					setTempLayer(0, 0, tileSelection.width, tileSelection.height);
-					// editor.getGLCanvas().redraw();
+					int x = event.selection.getX() / tileset.getTileSize();
+					int y = event.selection.getY() / tileset.getTileSize();
+					setTempLayer(x, y, tileSelection.width, tileSelection.height);
+					break;
 			}
 		}
 	}
@@ -644,26 +649,38 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	@Override
 	public void endSelection(SelectionEvent event)
 	{
-		if(editor.getActiveLayer() != TileMapLayer.this)
+		if (editor.getActiveLayer() != TileMapLayer.this)
 			return;
 
-		if(tempLayer != null)
+		if (tempLayer != null)
 		{
 			// Point p = new Point(tileSelection.x, tileSelection.y);
 			setTiles(tileSelection.x, tileSelection.y, tempLayer, null);
 			tempLayer = null;
 		}
 		addSavePoint();
-		setSelectionMode(currentTool);
+		initTool();
 	}
 
 	@Override
 	public void keyActionPerformed(KeyEvent ev)
 	{
-		// FIXME: Wird nicht getriggert.
+		/* TODO: Wird doch getriggert, aber erst wenn die Ebene aktiviert ist.
+		 * Da ich den Cursor benutzen will (mit STRG soll er dem Raster folgen),
+		 * muss der Editor Events immer durchreichen.
+		 */
 		if(ev.keyCode == 'c' && (ev.stateMask & SWT.CONTROL) != 0)
 		{
 			System.out.println("copy");
 		}
 	}
+
+	@Override
+	public void activated()
+	{
+		initTool();
+	}
+
+	@Override
+	public void deactivated() {}
 }

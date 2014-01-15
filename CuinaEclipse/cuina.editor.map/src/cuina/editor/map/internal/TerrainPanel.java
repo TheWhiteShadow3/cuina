@@ -42,7 +42,7 @@ public class TerrainPanel extends AbstractSelectionPanel
 		for (LayerDefinition def : Activator.getLayerDefinitions().values()) try
 		{
 
-			TerrainLayer layer = (TerrainLayer) def.getLayerClass().newInstance();
+			TerrainLayer layer = def.getLayerClass().newInstance();
 			layer.install(editor);
 			layers.add(layer);
 		}
@@ -88,6 +88,7 @@ public class TerrainPanel extends AbstractSelectionPanel
 //		if (index == -1) return;
 
 		activeIndex = index;
+		getSelectionManager().clearSeletionMode();
 		refresh();
 	}
 

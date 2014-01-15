@@ -11,7 +11,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.lwjgl.util.Color;
 
 /**
  * Zeigt den Hintergrund des Tilesets auf einer Karte an.
@@ -28,10 +27,7 @@ public class BackgroundLayer implements TerrainLayer
 	private Rectangle rect;
 	private int tileSize;
 	private Image backgroundImage;
-	
-	private static Color BACK_COLOR1 = new Color(160, 160, 160);
-	private static Color BACK_COLOR2 = new Color(210, 210, 210);
-	
+
 	@Override
 	public String getName()
 	{
@@ -102,26 +98,14 @@ public class BackgroundLayer implements TerrainLayer
 	private void paintRaster(GC gc)
 	{
 		Rectangle clip = gc.getClip();
-		// Fülle Hintergrund
-		gc.setColor(BACK_COLOR1);
-		gc.fillRectangle(0, 0, rect.width, rect.height);
 		// Zeichne Raster
 		int bgTileSize = tileSize / 2;
-		int minX = Math.max(clip.x / bgTileSize, 0);
-		int minY = Math.max(clip.y / bgTileSize, 0);
-		int maxX = Math.min((clip.x + clip.width) / bgTileSize + 1, rect.width / bgTileSize);
-		int maxY = Math.min((clip.y + clip.height) / bgTileSize + 1, rect.height / bgTileSize);
-		gc.setColor(BACK_COLOR2);
-		for (int x = minX; x < maxX; x++)
-		{
-			for (int y = minY; y < maxY; y++)
-			{
-				if ((x + y) % 2 == 0)
-				{
-					gc.fillRectangle(x * bgTileSize, y * bgTileSize, bgTileSize, bgTileSize);
-				}
-			}
-		}
+		int x1 = Math.max(clip.x, 0);
+		int y1 = Math.max(clip.y, 0);
+		int x2 = Math.min(clip.x + clip.width + bgTileSize, rect.width);
+		int y2 = Math.min(clip.y + clip.height + bgTileSize, rect.height);
+		
+		TilemapUtil.paintGrid(gc, x1, y1, x2, y2, bgTileSize);
 	}
 
 	@Override
@@ -150,4 +134,10 @@ public class BackgroundLayer implements TerrainLayer
 
 	@Override
 	public void keyActionPerformed(KeyEvent ev) {}
+
+	@Override
+	public void activated() {}
+
+	@Override
+	public void deactivated() {}
 }

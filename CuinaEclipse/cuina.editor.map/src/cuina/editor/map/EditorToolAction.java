@@ -1,7 +1,6 @@
 package cuina.editor.map;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.internal.Workbench;
 
 public abstract class EditorToolAction extends Action
@@ -32,7 +31,7 @@ public abstract class EditorToolAction extends Action
 		this.layer = editor.getLayerByName(layerName);
 		if (activate)
 		{
-			System.out.println("activate " + getId());
+			System.out.println("[EditorToolAction] activate " + getId());
 			if (layer != null) editor.setActiveLayer(layer);
 			activate();
 		}
@@ -41,7 +40,7 @@ public abstract class EditorToolAction extends Action
 			System.out.println("deactivate " + getId());
 			deactivate();
 		}
-		if (getListeners().length == 0) System.out.println("Kein Schwein interessiert der Button.");
+//		if (getListeners().length == 0) System.out.println("Kein Schwein interessiert der Button.");
 		setChecked(activate);
 	}
 	

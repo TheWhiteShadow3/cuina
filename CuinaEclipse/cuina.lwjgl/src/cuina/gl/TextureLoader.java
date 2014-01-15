@@ -74,10 +74,8 @@ public class TextureLoader
 		return TEMP_ID_BUFFER.get(0);
 	}
 
-	static String fileName;
 	public static Texture getTexture(GLCanvas context, String fileName) throws ResourceException, LWJGLException
 	{
-		TextureLoader.fileName = fileName;
 		if (fileName == null) throw new NullPointerException();
 		
 		Texture tex = textureCache.get(fileName);
@@ -99,7 +97,7 @@ public class TextureLoader
 			if (context == tex.context) return tex;
 			
 			tex = new Texture(context, tex);
-			createTexture(tex, "as Texture-Copy");
+			createTexture(tex);
 			return tex;
 		}
 	}
@@ -132,12 +130,12 @@ public class TextureLoader
 		else
 			texture.pixelFormat = GL_RGB;
 
-		createTexture(texture, new File(fileName).getName());
+		createTexture(texture);
 		
 		return texture;
 	}
 	
-	public static void createTexture(Texture texture, String debug) throws LWJGLException
+	public static void createTexture(Texture texture) throws LWJGLException
 	{
 		texture.context.setCurrent();
 		GLContext.useContext(texture.context);

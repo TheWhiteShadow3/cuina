@@ -734,4 +734,18 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 			deleteAction.run();
 		}
 	}
+
+	@Override
+	public void activated()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deactivated()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

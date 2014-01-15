@@ -4,7 +4,6 @@ import cuina.database.Database;
 import cuina.database.DatabaseInput;
 import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
-import cuina.editor.map.EditorToolAction;
 import cuina.editor.map.ITerrainEditor;
 import cuina.editor.map.MapChangeListener;
 import cuina.editor.map.MapEvent;
@@ -25,7 +24,6 @@ import cuina.resource.ResourceProvider;
 import cuina.resource.SerializationManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -63,8 +61,8 @@ import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.EditorPart;
 import org.lwjgl.LWJGLException;
 
-public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperationHistoryListener, MenuDetectListener,
-		KeyListener
+public class TerrainEditor extends EditorPart implements
+		ITerrainEditor, IOperationHistoryListener, MenuDetectListener, KeyListener
 {
 	public static final String TOOL_COMMAND_ID = "cuina.editor.map.tool";
 
@@ -75,10 +73,9 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	private Map map;
 	private CuinaProject project;
 	private Tileset tileset;
-	private static final HashMap<String, EditorToolAction> tools = new HashMap<String, EditorToolAction>();
 	private final ArrayList<MapChangeListener> listeners = new ArrayList<MapChangeListener>();
 	private IOperationHistory operationHistory;
-	private boolean exclusiveLayer;
+//	private boolean exclusiveLayer;
 	protected boolean showRaster;
 	private Point menuPoint;
 
@@ -95,7 +92,8 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 		{
 			SerializationManager.save(map, file);
 			setDirty(false);
-		} catch(ResourceException e)
+		}
+		catch(ResourceException e)
 		{
 			e.printStackTrace();
 		}
@@ -126,23 +124,24 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	{
 		try
 		{
-			if(input instanceof DatabaseInput)
+			if (input instanceof DatabaseInput)
 				file = getMapFile((DatabaseInput) input);
 			else
 				file = (IFile) input.getAdapter(IFile.class);
 
-			if(file == null)
+			if (file == null)
 				throw new PartInitException("Input must adapt an IFile.");
 
 			project = (CuinaProject) input.getAdapter(CuinaProject.class);
-			if(project == null)
+			if (project == null)
 				project = CuinaCore.getCuinaProject(file.getProject());
 
 			this.map = (Map) SerializationManager.load(file, Map.class.getClassLoader());
 
 			Database db = project.getService(Database.class);
 			tileset = db.<Tileset> loadTable("Tileset").get(map.tilesetKey);
-		} catch(ResourceException e)
+		}
+		catch(ResourceException e)
 		{
 			throw new PartInitException("read Editor Input faild!", e);
 		}
@@ -159,9 +158,9 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 		try
 		{
 			IResource[] elements = folder.members();
-			for(IResource r : elements)
+			for (IResource r : elements)
 			{
-				if(r instanceof IFile && r.getName().startsWith(dbInput.getKey()))
+				if (r instanceof IFile && r.getName().startsWith(dbInput.getKey()))
 				{
 					String ext = r.getFileExtension();
 					if(ext != null && (ext.equals("cxm") || ext.equals("cxmz")))
@@ -173,7 +172,8 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 				}
 			}
 			return found;
-		} catch(CoreException e)
+		}
+		catch (CoreException e)
 		{
 			throw new ResourceException("Map '" + dbInput.getKey() + "' not found!", e);
 		}
@@ -286,41 +286,10 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	{
 		panel.getSelectionManager().addSelectionListener(new SelectionListener()
 		{
-			// @Override
-			// public void selectionModeChanged(Object source, SelectionMode
-			// oldMode, SelectionMode newMode)
-			// {
-			// if (oldMode == CURSOR_SELECTION_MODE)
-			// {
-			// Selection s = panel.getSelectionHandler().getSelection();
-			// List<ViewLayer> layers = panel.getLayers();
-			//
-			// if (s.getWidth() == 1 && s.getHeight() == 1)
-			// {
-			// Point p = new Point(s.getX(), s.getY());
-			// for (int i = layers.size() - 1; i >= 0; i--)
-			// {
-			// if ( ((TerrainLayer) layers.get(i)).selectionPerformed(p) )
-			// break;
-			// }
-			// }
-			// else
-			// {
-			// Rectangle r = s.getBounds();
-			// for (int i = layers.size() - 1; i >= 0; i--)
-			// {
-			// if ( ((TerrainLayer) layers.get(i)).selectionPerformed(r) )
-			// break;
-			// }
-			// }
-			// }
-			// }
-
 			@Override
 			public void startSelection(SelectionEvent event)
 			{
-				if(getActiveLayer() != null)
-					return;
+				if(getActiveLayer() != null) return;
 
 				if(event.mouseEvent.button == 1)
 				{
@@ -336,8 +305,7 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 			@Override
 			public void updateSelection(SelectionEvent event)
 			{
-				if(exclusiveLayer)
-					return;
+//				if(exclusiveLayer) return;
 				// List<ViewLayer> layers = panel.getLayers();
 				//
 				// for (int i = layers.size() - 1; i >= 0; i--)
@@ -350,8 +318,7 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 			@Override
 			public void endSelection(SelectionEvent event)
 			{
-				if(event.manager.getSelectionMode() != ITerrainEditor.CURSOR_SELECTION_MODE)
-					return;
+				if(event.manager.getSelectionMode() != ITerrainEditor.CURSOR_SELECTION_MODE) return;
 
 				System.out.println("[TerrainEditor] change Selection-Mode");
 				event.manager.setSelectionMode(null, false);
@@ -364,16 +331,15 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 					Point p = new Point(s.getX(), s.getY());
 					for(int i = layers.size() - 1; i >= 0; i--)
 					{
-						if(layers.get(i).selectionPerformed(p))
-							return;
+						if(layers.get(i).selectionPerformed(p)) return;
 					}
-				} else
+				}
+				else
 				{
 					Rectangle r = s.getBounds();
 					for(int i = layers.size() - 1; i >= 0; i--)
 					{
-						if(layers.get(i).selectionPerformed(r))
-							return;
+						if(layers.get(i).selectionPerformed(r)) return;
 					}
 				}
 
@@ -399,7 +365,7 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 		SelectionManager handler = getSelectionManager();
 		handler.setDisableOutside(false);
 		handler.setSelectionMode(CURSOR_SELECTION_MODE, false);
-		handler.clearSelections();
+		setActiveLayer(null);
 	}
 
 	private void hookContextMenu()
@@ -445,8 +411,11 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	@Override
 	public Rectangle getViewBounds()
 	{
-		return new Rectangle(panel.getMargin(), panel.getMargin(), map.width * tileset.getTileSize(), map.height
-				* tileset.getTileSize());
+		return new Rectangle(
+				panel.getMargin(),
+				panel.getMargin(),
+				map.width * tileset.getTileSize(),
+				map.height * tileset.getTileSize());
 	}
 
 	@Override
@@ -469,7 +438,8 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 		try
 		{
 			return new Image(context, res.getPath().toString());
-		} catch(LWJGLException e)
+		}
+		catch(LWJGLException e)
 		{
 			e.printStackTrace();
 		}
@@ -492,7 +462,7 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	public TerrainLayer getLayerByName(String layerName)
 	{
 		if (layerName == null) return null;
-		for(TerrainLayer layer : panel.getLayers())
+		for (TerrainLayer layer : panel.getLayers())
 		{
 			if (layerName.equals(layer.getName())) return layer;
 		}
@@ -509,7 +479,7 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	@Override
 	public void historyNotification(OperationHistoryEvent event)
 	{
-		if(event.getOperation() instanceof MapOperation)
+		if (event.getOperation() instanceof MapOperation)
 		{
 			System.out.println("Undo-History Event: " + event);
 			panel.refresh();
@@ -533,8 +503,7 @@ public class TerrainEditor extends EditorPart implements ITerrainEditor, IOperat
 	public void keyPressed(KeyEvent e)
 	{
 		TerrainLayer layer = getActiveLayer();
-		if(layer == null)
-			return;
+		if (layer == null) return;
 
 		layer.keyActionPerformed(e);
 	}

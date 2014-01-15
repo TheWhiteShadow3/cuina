@@ -14,6 +14,7 @@ public class SpanSelectionMode implements SelectionMode
 	private int gridSize;
 	private boolean active;
 	private Point anchor = new Point(0, 0);
+	private boolean separate;
 
 	/**
 	 * Erstellt ein neuen SpanSelectionMode.
@@ -21,16 +22,27 @@ public class SpanSelectionMode implements SelectionMode
 	 * @param rasterSize
 	 *            Größe der Rastewrung beim Auswählen. Muss größer als 0 sein.
 	 */
-	public SpanSelectionMode(int rasterSize)
+	public SpanSelectionMode(int rasterSize, boolean separate)
 	{
 		if (rasterSize <= 0) throw new IllegalArgumentException("rasterSize must be >= 1");
 
 		this.gridSize = rasterSize;
+		this.separate = separate;
 	}
 
 	public SpanSelectionMode()
 	{
-		this(1);
+		this(1, true);
+	}
+	
+	public boolean isSeparate()
+	{
+		return separate;
+	}
+
+	public void setSeparate(boolean separate)
+	{
+		this.separate = separate;
 	}
 
 	public int getGridSize()
@@ -46,7 +58,7 @@ public class SpanSelectionMode implements SelectionMode
 	@Override
 	public void activate(SelectionManager handler, int x, int y)
 	{
-		Selection s = handler.addSelection();
+		Selection s = (separate) ? handler.addSelection() : handler.getSelection();
 		s.setBounds(x, y, gridSize, gridSize, gridSize, 0, 0);
 		anchor.x = s.getX();
 		anchor.y = s.getY();

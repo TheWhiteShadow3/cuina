@@ -58,13 +58,7 @@ public class TileMapLayerContributor extends EditorActionBarContributor implemen
 			@Override
 			public void activate()
 			{
-				getLayer().setSelectionMode(TileMapLayer.DRAWMODE_PENCIL);
-			}
-
-			@Override
-			public void deactivate()
-			{
-				getLayer().setSelectionMode(TileMapLayer.DRAWMODE_NONE);
+				getLayer().setTool(TileMapLayer.DRAWMODE_PENCIL);
 			}
 		};
 		pencilAction.setText("Stift");
@@ -76,13 +70,7 @@ public class TileMapLayerContributor extends EditorActionBarContributor implemen
 			@Override
 			public void activate()
 			{
-				getLayer().setSelectionMode(TileMapLayer.DRAWMODE_RECTANGLE);
-			}
-
-			@Override
-			public void deactivate()
-			{
-				getLayer().setSelectionMode(TileMapLayer.DRAWMODE_NONE);
+				getLayer().setTool(TileMapLayer.DRAWMODE_RECTANGLE);
 			}
 		};
 		rectAction.setText("Rechteck");
@@ -94,13 +82,7 @@ public class TileMapLayerContributor extends EditorActionBarContributor implemen
 			@Override
 			public void activate()
 			{
-				getLayer().setSelectionMode(TileMapLayer.DRAWMODE_ELLISPE);
-			}
-
-			@Override
-			public void deactivate()
-			{
-				getLayer().setSelectionMode(TileMapLayer.DRAWMODE_NONE);
+				getLayer().setTool(TileMapLayer.DRAWMODE_ELLISPE);
 			}
 		};
 		elliAction.setText("Ellipse");
@@ -112,13 +94,7 @@ public class TileMapLayerContributor extends EditorActionBarContributor implemen
 			@Override
 			public void activate()
 			{
-				getLayer().setSelectionMode(TileMapLayer.DRAWMODE_FILLER);
-			}
-
-			@Override
-			public void deactivate()
-			{
-				getLayer().setSelectionMode(TileMapLayer.DRAWMODE_NONE);
+				getLayer().setTool(TileMapLayer.DRAWMODE_FILLER);
 			}
 		};
 		fillAction.setText("Filler");

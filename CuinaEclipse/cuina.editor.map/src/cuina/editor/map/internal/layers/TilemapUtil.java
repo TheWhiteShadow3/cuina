@@ -237,21 +237,23 @@ public class TilemapUtil
 		// Die 47 entspricht der 0 und wird daher nicht erreicht.
 	}
 	
-	public static void paintGrid(GC gc, int x, int y, int width, int height, int size)
+	public static void paintGrid(GC gc, int x1, int y1, int x2, int y2, int size)
 	{		
 		gc.setColor(BACK_COLOR1);
-		gc.fillRectangle(x, y, width, height);
+		gc.fillRectangle(x1, y1, x2, y2);
 		// Zeichne Raster
-		int maxX = width / size;
-		int maxY = height / size;
+		int minX = x1 / size;
+		int minY = y1 / size;
+		int maxX = x2 / size;
+		int maxY = y2 / size;
 		gc.setColor(BACK_COLOR2);
-		for (int cx = 0; cx < maxX; cx++)
+		for (int cx = minX; cx < maxX; cx++)
 		{
-			for (int cy = 0; cy < maxY; cy++)
+			for (int cy = minY; cy < maxY; cy++)
 			{
 				if ((cx + cy) % 2 == 0)
 				{
-					gc.fillRectangle(cx * size + x, cy * size + y, size, size);
+					gc.fillRectangle(cx * size, cy * size, size, size);
 				}
 			}
 		}
