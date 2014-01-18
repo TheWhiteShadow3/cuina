@@ -13,7 +13,7 @@ import de.matthiasmann.twl.renderer.AnimationState.StateKey;
 
 public class Menu extends Widget implements CuinaWidget
 {
-	public static final StateKey STATE_SELECTED = StateKey.get("selected");
+//	public static final StateKey STATE_SELECTED = StateKey.get("selected");
 
 	private int columns;
 	private String[] commands;

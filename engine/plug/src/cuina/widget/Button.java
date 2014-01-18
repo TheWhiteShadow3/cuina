@@ -1,113 +1,174 @@
 package cuina.widget;
 
-import de.matthiasmann.twl.Widget;
-import de.matthiasmann.twl.model.SimpleButtonModel;
-import de.matthiasmann.twl.model.ToggleButtonModel;
+import cuina.event.Event;
+import cuina.input.Input;
 
+import de.matthiasmann.twl.AnimationState;
+import de.matthiasmann.twl.renderer.AnimationState.StateKey;
+import de.matthiasmann.twl.utils.TextUtil;
 
-public class Button extends de.matthiasmann.twl.Button implements CuinaWidget
+/**
+ * @author TheWhiteShadow
+ */
+public class Button extends TextWidget
 {
-	private final String name;
-	private WidgetEventHandler handler;
-	private Runnable eventCB;
+	public static final Event BUTTON_PRESSED = Event.getEvent("cuina.widget.ButtonPressed");
+	public static final Event STATE_CHANGED = Event.getEvent("cuina.widget.ButtonPressed");
 
-	public Button(String name, boolean toggleButton)
+	public static final StateKey STATE_ARMED = StateKey.get("armed");
+	public static final StateKey STATE_PRESSED = StateKey.get("pressed");
+	public static final StateKey STATE_SELECTED = StateKey.get("selected");
+	
+	private String control = "c2";
+	protected ButtonModel model;
+	
+	public Button()
 	{
-		super(null, (toggleButton) ? new ToggleButtonModel() : new SimpleButtonModel());
-		this.name = name;
+		this(null, false, null);
+	}
+
+	public Button(AnimationState animState, boolean inherit, ButtonModel model)
+	{
+		super(animState, inherit);
+		setCanAcceptKeyboardFocus(true);
+		if (model != null)
+		{
+			this.model = model;
+		}
+		else
+		{
+			this.model = new DefaultButtonModel();
+		}
+		model.addListener(new Handler());
+	}
+	
+	public Button(String text)
+	{
+		this(null, false, null);
+		setText(text);
+	}
+	
+	public String getControl()
+	{
+		return control;
+	}
+
+	public void setControl(String control)
+	{
+		this.control = control;
+	}
+
+	public ButtonModel getModel()
+	{
+		return model;
+	}
+
+	@Override
+	protected void widgetDisabled()
+	{
+		disarm();
+	}
+
+	public String getText()
+	{
+		return (String) getCharSequence();
+	}
+
+	public void setText(String text)
+	{
+		super.setCharSequence(TextUtil.notNull(text));
+		invalidateLayout();
+	}
+
+    public boolean isSelected()
+    {
+        return model.isSelected();
+    }
+
+    public void setSelected(boolean b)
+    {
+        model.setSelected(b);
+    }
+	
+	@Override
+	public int getMinWidth()
+	{
+		return Math.max(super.getMinWidth(), getPreferredWidth());
+	}
+
+	@Override
+	public int getMinHeight()
+	{
+		return Math.max(super.getMinHeight(), getPreferredHeight());
+	}
+
+	@Override
+	public void setVisible(boolean visible)
+	{
+		super.setVisible(visible);
+		if (!visible)
+		{
+			disarm();
+		}
+	}
+	
+	private void updateState(int state)
+	{
+		setEnabled(model.isEnabled());
+		AnimationState as = getAnimationState();
+		as.setAnimationState(STATE_HOVER, model.isHover());
+		as.setAnimationState(STATE_SELECTED, model.isSelected());
+		as.setAnimationState(STATE_ARMED, model.isArmed());
+		as.setAnimationState(STATE_PRESSED, model.isPressed());
+		testTriggers(STATE_CHANGED, null, state);
+	}
+	
+	public void click()
+	{
+		model.setPressed(true);
+		model.setArmed(true);
+	}
+
+	protected void disarm()
+	{
+		// disarm first to not fire a callback
+		model.setHover(false);
+		model.setArmed(false);
+		model.setPressed(false);
 	}
 	
 	@Override
-	public String getName()
+	protected void updateWidget()
 	{
-		return name;
-	}
-
-	private void fireCallback()
-	{
-		if (handler == null) return;
-
-		handler.handleEvent(name, this, null);
-	}
-//	
-//	@Override
-//	public int getPreferredInnerWidth()
-//	{
-//		int width = super.getPreferredInnerWidth();
-//		
-//		if (getNumChildren() > 0)
-//		{
-//			
-//		}
-//		
-//		return width;
-//	}
-//
-//	@Override
-//	public int getPreferredInnerHeight()
-//	{
-//		return super.getPreferredInnerHeight();
-//	}
-
-	@Override
-	protected void layout()
-	{
-		if (getWidth() == 0 || getHeight() == 0)
+		if (!isVisible() || !isEnabled()) return;
+		
+		boolean hover = isMouseInside();
+		model.setHover(hover);
+		if (hover && Input.isPressed("mouse.left") || Input.isPressed(control))
 		{
-			int width = getPreferredInnerWidth();
-			int height = getPreferredInnerHeight();
-			
-			Widget child;
-			for (int i = 0, n = getNumChildren(); i < n; i++)
+			model.setPressed(true);
+			model.setArmed(true);
+		}
+		else
+		{
+			model.setPressed(model.isPressed() && Input.isPressed("mouse.left"));
+			model.setArmed(hover && model.isPressed());
+		}
+	}
+	
+	class Handler implements Listener
+	{
+		@Override
+		public void handleEvent(WidgetEvent event)
+		{
+			if (event.type == WidgetEvent.STATE_CHANGED)
 			{
-				child = getChild(i);
-				child.setPosition(getInnerX(), getInnerY());
-				child.validateLayout();
-				width = Math.max(width, child.getWidth());
-				height = Math.max(height, child.getHeight());
+				updateState(event.value);
 			}
-			
-			setInnerSize(width, height);
-		}
-	}
-
-	@Override
-	public boolean canHandleEvents()
-	{
-		return true;
-	}
-	
-	@Override
-	public WidgetEventHandler getEventHandler()
-	{
-		return handler;
-	}
-
-	@Override
-	public void setEventHandler(WidgetEventHandler handler)
-	{
-		this.handler = handler;
-		if (this.handler != null && eventCB == null)
-		{
-			this.eventCB = new Runnable()
+			else if (event.type == WidgetEvent.ACTION_PERFORMED)
 			{
-				@Override
-				public void run()
-				{
-					fireCallback();
-				}
-			};
-			addCallback(eventCB);
+				testTriggers(BUTTON_PRESSED, null);
+			}
 		}
-	}
-
-	public boolean isActive()
-	{
-		return getModel().isSelected();
-	}
-	
-	public void setActive(boolean value)
-	{
-		getModel().setSelected(value);
 	}
 }
