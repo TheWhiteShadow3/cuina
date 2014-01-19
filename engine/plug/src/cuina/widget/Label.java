@@ -1,38 +1,29 @@
 package cuina.widget;
 
+import de.matthiasmann.twl.AnimationState;
+import de.matthiasmann.twl.utils.TextUtil;
 
-public class Label extends de.matthiasmann.twl.Label implements CuinaWidget
+public class Label extends TextWidget
 {
-	private String name;
-	
-	public Label(String name)
+	public Label(String text)
 	{
-		super();
-		this.name = name;
-		setCanAcceptKeyboardFocus(false);
+		this(null, false);
+		setText(text);
 	}
 	
-	@Override
-	public String getName()
+	public Label(AnimationState animState, boolean inherit)
 	{
-		return name;
+		super(animState, inherit);
+	}
+	
+	public String getText()
+	{
+		return (String) getCharSequence();
 	}
 
-	@Override
-	public boolean canHandleEvents()
+	public void setText(String text)
 	{
-		return false;
-	}
-	
-	@Override
-	public WidgetEventHandler getEventHandler()
-	{
-		return null;
-	}
-	
-	@Override
-	public void setEventHandler(WidgetEventHandler handler)
-	{
-		throw new UnsupportedOperationException();
+		super.setCharSequence(TextUtil.notNull(text));
+		invalidateLayout();
 	}
 }

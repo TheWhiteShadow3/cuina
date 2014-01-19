@@ -6,7 +6,7 @@ import de.matthiasmann.twl.Widget;
 
 public interface WidgetDescriptor extends Serializable
 {
-	public Widget getWidget(String key);
+//	public Widget getWidget(String key);
 	public Widget createRoot();
 	
 	/**
@@ -14,5 +14,4 @@ public interface WidgetDescriptor extends Serializable
 	 */
 	public void postBuild();
 	public String getTheme();
-	public void setGlobalEventHandler(WidgetEventHandler handler);
 }

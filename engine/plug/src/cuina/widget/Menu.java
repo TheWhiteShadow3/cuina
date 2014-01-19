@@ -1,20 +1,24 @@
 package cuina.widget;
 
-import cuina.Input;
+import cuina.event.Event;
+import cuina.input.DirectionalControl;
+import cuina.input.Input;
+import cuina.widget.model.ToggleButtonModel;
 
-import de.matthiasmann.twl.Button;
 import de.matthiasmann.twl.Color;
-import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.ParameterMap;
 import de.matthiasmann.twl.ThemeInfo;
 import de.matthiasmann.twl.Widget;
-import de.matthiasmann.twl.model.ToggleButtonModel;
-import de.matthiasmann.twl.renderer.AnimationState.StateKey;
 
-public class Menu extends Widget implements CuinaWidget
+public class Menu extends CuinaWidget
 {
-	public static final StateKey STATE_SELECTED = StateKey.get("selected");
+//	public static final StateKey STATE_SELECTED = StateKey.get("selected");
+	public static final Event INDEX_CHANGED = Event.getEvent("cuina.widget.IndexChanged");
 
+	private String controlDirection	= "a1";
+	private String controlOK		= "c2";
+	private String controlCancel	= "c3";
+	
 	private int columns;
 	private String[] commands;
 	private MenuItem[] buttons = new MenuItem[0];
@@ -22,14 +26,12 @@ public class Menu extends Widget implements CuinaWidget
 	private int vGap;
 	private int index = -1;
 	private String name;
-	private WidgetEventHandler handler;
 	private CycleTintAnimator animator;
 
 	public Menu(String name, int columns)
 	{
 		this.name = name;
 		this.columns = columns;
-		setTheme("/menu");
 	}
 
 	@Override
@@ -38,33 +40,18 @@ public class Menu extends Widget implements CuinaWidget
 		return name;
 	}
 
-	@Override
-	public boolean canHandleEvents()
-	{
-		return true;
-	}
-	
-	@Override
-	public WidgetEventHandler getEventHandler()
-	{
-		return handler;
-	}
-	
-	@Override
-	public void setEventHandler(WidgetEventHandler handler)
-	{
-		this.handler = handler;
-	}
-
 	public void setCommands(String[] commands)
 	{
 		this.commands = commands;
 
 		disposeLabels();
+		Listener handler = getHandler();
+		
 		this.buttons = new MenuItem[commands.length];
 		for (int i = 0; i < buttons.length; i++)
 		{
 			buttons[i] = new MenuItem(commands[i], this, i);
+			buttons[i].getModel().addListener(handler);
 			add(buttons[i]);
 		}
 		if (buttons.length > 0) setIndex(0);
@@ -125,6 +112,8 @@ public class Menu extends Widget implements CuinaWidget
 			buttons[index].getModel().setSelected(true);
 			requestKeyboardFocus();
 		}
+		Integer i = Integer.valueOf(this.index);
+		testTriggers(INDEX_CHANGED, i, i);
 	}
 	
 	private void updateAnimator(int lastIndex, int newIndex)
@@ -190,162 +179,183 @@ public class Menu extends Widget implements CuinaWidget
 			setInnerSize(getInnerWidth(), y);
 //		requestKeyboardFocus();
 	}
-    
-    protected void fireActionPerformed()
-    {
-//        System.out.println("Klick: " + getIndex());
-    	if (handler == null) return;
-    	
-    	handler.handleEvent(name, this, getIndex());
-    }
- 
-    @Override
-    public Widget getWidgetAt(int x, int y)
-    {
-        for (int i = 0; i < buttons.length; i++)
-        {
-            if (buttons[i].isInside(x, y)) return buttons[i];
-        }
-        return this;
-    }
- 
-    @Override
-    protected boolean handleEvent(Event ev)
-    {
-		if (ev.isKeyPressedEvent())
+
+	protected void fireActionPerformed()
+	{
+// 		System.out.println("Klick: " + getIndex());
+		testTriggers(Button.BUTTON_PRESSED, getIndex());
+	}
+
+	@Override
+	public Widget getWidgetAt(int x, int y)
+	{
+		for (int i = 0; i < buttons.length; i++)
 		{
-			if (!ev.isKeyRepeated())
-			{
-	            if (ev.getKeyCode() == Event.KEY_RETURN || Input.isPressed(Input.OK))
-	            {
-	                fireActionPerformed();
-	                return true;
-	            }
-				
-	            if (ev.getKeyCode() == Event.KEY_ESCAPE || Input.isPressed(Input.CANCEL))
-	            {
-	            	setIndex(-1);
-	                fireActionPerformed();
-	                return true;
-	            }
-			}
-            
-			if (ev.getKeyCode() == Event.KEY_UP && (this.index > 0 || !ev.isKeyRepeated()))
-			{
-				int newIndex = this.index - columns;
-				setIndex((newIndex + buttons.length) % buttons.length);
-				return true;
-			}
-			
-			if (ev.getKeyCode() == Event.KEY_DOWN && (this.index < buttons.length-columns || !ev.isKeyRepeated()))
-			{
-				int newIndex = this.index + columns;
-				setIndex(newIndex % buttons.length);
-				return true;
-			}
-			
-			if (ev.getKeyCode() == Event.KEY_LEFT && (this.index > 0 || !ev.isKeyRepeated()))
-			{
-				int newIndex = this.index - 1;
-				setIndex((newIndex + buttons.length) % buttons.length);
-				return true;
-			}
-			
-			if (ev.getKeyCode() == Event.KEY_RIGHT && (this.index < buttons.length-1 || !ev.isKeyRepeated()))
-			{
-				int newIndex = this.index + 1;
-				setIndex(newIndex % buttons.length);
-				return true;
-			}
+			if (buttons[i].isInside(x, y)) return buttons[i];
+		}
+		return this;
+	}
+
+	@Override
+	protected void updateWidget()
+	{
+		if (!hasKeyboardFocus())
+		{
+			setIndex(-1);
+			return;
 		}
 		
-		return super.handleEvent(ev);
+		if (Input.isPressed(controlCancel))
+		{
+			setIndex(-1);
+			fireActionPerformed();
+			return;
+		}
+
+		if (Input.isPressed(controlOK))
+		{
+			fireActionPerformed();
+			return;
+		}
+
+		DirectionalControl c = (DirectionalControl) Input.getControl(controlDirection);
+		int dir = c.getDirectionSektor(DirectionalControl.DIRECTION_4);
+		if (dir == -1) return;
+		
+		if (c.isPressed())
+		{
+			int newIndex = index;
+			switch(dir)
+			{
+				// rechts
+				case 0: newIndex += 1; break;
+				// oben
+				case 1: newIndex -= columns; break;
+				 // links
+				case 2: newIndex -= 1; break;
+				 // unten
+				case 3: newIndex += columns; break;
+			}
+			setIndex((newIndex + buttons.length) % buttons.length);
+			return;
+		}
+
+		if (c.isRepeated())
+		{
+			int newIndex = index;
+			switch(dir)
+			{
+				// rechts
+				case 0: if (this.index < buttons.length-1) newIndex += 1; break;
+				// oben
+				case 1: if (this.index > columns) newIndex -= columns; break;
+				// links
+				case 2: if (this.index > 0) newIndex -= 1; break;
+				// unten
+				case 3: if (this.index < buttons.length-columns) newIndex += columns; break;
+			}
+			setIndex((newIndex + buttons.length) % buttons.length);
+			return;
+		}
 	}
- 
-    @Override
-    public int getPreferredInnerHeight()
-    {
-        int temp, maxHeight = 0;
-        
-        validateLayout();
-        for (int i = 0, n = buttons.length / columns; i < n; i++)
-        {
-            temp = buttons[i].getPreferredHeight();
-            if (temp > maxHeight) maxHeight = temp;
-        }
-        return maxHeight;
-    }
- 
-    @Override
-    public int getPreferredWidth()
-    {
-        return computeSize(getMinWidth(), super.getPreferredWidth(), getMaxWidth());
-    }
-    
-    private void disposeLabels()
-    {
-        if (buttons == null) return;
-        
-        MenuItem l;
-        for(int i = 0; i < buttons.length; i++)
-        {
-            l = buttons[i];
-            if (l != null) l.destroy();
-        }
-        removeAllChildren();
-    }
- 
-    private static class MenuItem extends Button
-    {
-        private Menu parent;
-        private int index;
-        
-        public MenuItem(String text, Menu parent, int index)
-        {
-            super(new SelectableButtonModel());
-            setTheme("menuitem");
-            setText(text);
-            setFocusKeyEnabled(false);
-            this.parent = parent;
-            this.index = index;
-        }
- 
-        @Override
-        protected boolean handleEvent(Event ev)
-        {
-            if (ev.isMouseEvent() && isMouseInside(ev))
-            {
-                parent.setIndex(index);
-//                setMouseCursor(parent.mouseCursorLink);
-                
-                if (ev.getType() == Event.Type.MOUSE_BTNDOWN)
-                {
-                    parent.fireActionPerformed();
-                }
-            }
- 
-            if (super.handleEvent(ev)) return true;
- 
-            return false;
-        }
- 
-        @Override
-        protected void disarm()
-        {
-            super.disarm();
-            getModel().setSelected(false);
-        }
-    }
-    
-    private static class SelectableButtonModel extends ToggleButtonModel
-    {
-        @Override
-        public void setPressed(boolean pressed)
-        {
-            if (isSelected())
-                super.setPressed(pressed);
-        }
- 
-        @Override protected void buttonAction() {}
-    }
+
+	@Override
+	public int getPreferredInnerHeight()
+	{
+		int temp, maxHeight = 0;
+
+		validateLayout();
+		for (int i = 0, n = buttons.length / columns; i < n; i++)
+		{
+			temp = buttons[i].getPreferredHeight();
+			if (temp > maxHeight) maxHeight = temp;
+		}
+		return maxHeight;
+	}
+
+	@Override
+	public int getPreferredWidth()
+	{
+		return computeSize(getMinWidth(), super.getPreferredWidth(), getMaxWidth());
+	}
+
+	private void disposeLabels()
+	{
+		if (buttons == null) return;
+
+		MenuItem l;
+		for (int i = 0; i < buttons.length; i++)
+		{
+			l = buttons[i];
+			if (l != null) l.destroy();
+		}
+		removeAllChildren();
+	}
+	
+	private Listener getHandler()
+	{
+		return new Listener()
+		{
+			@Override
+			public void handleEvent(WidgetEvent event)
+			{
+				if (event.type == WidgetEvent.STATE_CHANGED)
+				{
+					testTriggers(Button.STATE_CHANGED, null, event.value);
+				}
+				else if (event.type == WidgetEvent.ACTION_PERFORMED)
+				{
+					fireActionPerformed();
+				}
+			}
+		};
+	}
+
+	private static class MenuItem extends Button
+	{
+		private Menu parent;
+		private int index;
+
+		public MenuItem(String text, Menu parent, int index)
+		{
+			super(null, false, new SelectableButtonModel());
+			setTheme("menuitem");
+			setText(text);
+			setFocusKeyEnabled(false);
+			this.parent = parent;
+			this.index = index;
+		}
+
+		@Override
+		protected void updateWidget()
+		{
+			if (isMouseInside())
+			{
+				parent.setIndex(index);
+			}
+			super.updateWidget();
+		}
+
+		@Override
+		protected void disarm()
+		{
+			super.disarm();
+			getModel().setSelected(false);
+		}
+	}
+
+	private static class SelectableButtonModel extends ToggleButtonModel
+	{
+		private static final long serialVersionUID = 3065169164447745150L;
+
+		@Override
+		public void setPressed(boolean pressed)
+		{
+			if (isSelected())
+				super.setPressed(pressed);
+		}
+
+		@Override
+		protected void buttonPressed() {}
+	}
 }
