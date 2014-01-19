@@ -1,11 +1,11 @@
 package cuina.widget.test;
 
+import cuina.event.Event;
+import cuina.event.Trigger;
 import cuina.graphics.Graphics;
 import cuina.plugin.LifeCycleAdapter;
-import cuina.widget.CuinaWidget;
 import cuina.widget.WidgetContainer;
 import cuina.widget.WidgetDescriptor;
-import cuina.widget.WidgetEventHandler;
 import cuina.widget.WidgetFactory;
 import cuina.widget.data.ButtonNode;
 import cuina.widget.data.FrameNode;
@@ -13,33 +13,51 @@ import cuina.widget.data.LabelNode;
 import cuina.widget.data.MenuNode;
 import cuina.widget.data.PictureNode;
 
-public class TestMenu extends LifeCycleAdapter implements WidgetEventHandler
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class TestMenu extends LifeCycleAdapter
 {
 	private FrameNode frame;
 	private WidgetContainer container;
+	private List<Trigger> triggerList;
 	
 	public TestMenu()
 	{
+		triggerList = new ArrayList<Trigger>();
+		triggerList.add(new TestTrigger());
+		
 		this.frame = new FrameNode();
 		frame.x = 20;
 		frame.y = 20;
 		frame.width = Graphics.getWidth() - 60;
 		frame.height = Graphics.getHeight() - 76;
+		frame.triggers = triggerList; 
 		
 		MenuNode menu = new MenuNode();
-		menu.name = "test";
+		menu.name = "test-menü";
 		menu.x = 20;
 		menu.y = 20;
 		menu.width = 128;
 		menu.height = 256;
 		menu.commands = new String[] {"Items", "Fertigkeiten", "Status", "Ausrüstung", "Position", "Steuerung", "Erfolge", "Speichern", "Ende"};
-		menu.hGap = 9;
-		menu.vGap = 9;
+		menu.triggers = triggerList;
+		
+		MenuNode menu2 = new MenuNode();
+		menu2.name = "test-menü2";
+		menu2.x = 20;
+		menu2.y = 420;
+		menu2.width = 128;
+		menu2.height = 64;
+		menu2.commands = new String[] {"Shiro", "Akai", "Aoi"};
+		menu2.triggers = triggerList;
 		
 		ButtonNode button = new ButtonNode();
 		button.name = "picButton";
 		button.x = 168;
 		button.y = 20;
+		button.triggers = triggerList; 
 		
 		PictureNode actor1 = new PictureNode();
 		actor1.imageName = "faces/rosa.png";
@@ -72,6 +90,7 @@ public class TestMenu extends LifeCycleAdapter implements WidgetEventHandler
 		mp.y = 104;
 		
 		frame.add(menu);
+		frame.add(menu2);
 		frame.add(button);
 		frame.add(name);
 		frame.add(type);
@@ -84,7 +103,6 @@ public class TestMenu extends LifeCycleAdapter implements WidgetEventHandler
 	public void init()
 	{
 		WidgetDescriptor descriptor = WidgetFactory.createWidgetDescriptor(frame, "test");
-		descriptor.setGlobalEventHandler(this);
 		container = new WidgetContainer(descriptor);
 		
 //		cuina.widget.Button picButton = new cuina.widget.Button("picButton", false);
@@ -140,14 +158,32 @@ public class TestMenu extends LifeCycleAdapter implements WidgetEventHandler
 	{
 		container.dispose();
 	}
-
-	@Override
-	public void handleEvent(String key, CuinaWidget widget, Object arg)
+	
+	private static class TestTrigger implements Trigger
 	{
-		System.out.println("handleEvent: " + key + "; Argument: " + arg);
+		private static final long serialVersionUID = 1L;
+		
+		private Event event;
+
+		@Override
+		public boolean isActive()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean test(Event event, Object arg)
+		{
+			this.event = event;
+			return true;
+		}
+
+		@Override
+		public void run(Object... args)
+		{
+			System.out.println("handleEvent: " + event + "; Arguments: " + Arrays.toString(args));
+		}
 	}
-	
-	
 
 //	@Override
 //	protected void layout()

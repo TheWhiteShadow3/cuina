@@ -17,7 +17,7 @@ import de.matthiasmann.twl.Widget;
 public class CuinaWidget extends Widget
 {
 	private String name;
-	private List<Trigger> triggers;
+	List<Trigger> triggers;
 	
 	public CuinaWidget()
 	{
@@ -27,6 +27,7 @@ public class CuinaWidget extends Widget
 	public CuinaWidget(AnimationState animState, boolean inherit)
 	{
 		super(animState, inherit);
+		setTheme("widget");
 	}
 
 	public String getName()
@@ -69,7 +70,7 @@ public class CuinaWidget extends Widget
 		
 		for(Trigger trigger : triggers)
 		{
-			if (trigger.test(event, eventArg))
+			if (trigger.isActive() && trigger.test(event, eventArg))
 			{
 				Object[] newArgs = new Object[callArgs.length + 1];
 				newArgs[0] = this;
@@ -77,6 +78,24 @@ public class CuinaWidget extends Widget
 				trigger.run(newArgs);
 			}
 		}
+	}
+	
+	public CuinaWidget find(String name)
+	{
+		if (name == null) return null;
+		
+		for (int i = 0; i < getNumChildren(); i++)
+		{
+			Widget w = getChild(i);
+			if (!(w instanceof CuinaWidget)) continue;
+			
+			CuinaWidget widget = (CuinaWidget) w;
+			if (name.equals(widget.getName())) return widget;
+			
+			widget = widget.find(name);
+			if (widget != null) return widget;
+		}
+		return null;
 	}
 	
 	protected boolean isMouseInside()
@@ -96,5 +115,11 @@ public class CuinaWidget extends Widget
 		}
 	}
 	
+	@Override
+	protected boolean handleEvent(de.matthiasmann.twl.Event evt)
+	{
+		return evt.isMouseEvent();
+	}
+
 	protected void updateWidget() {}
 }

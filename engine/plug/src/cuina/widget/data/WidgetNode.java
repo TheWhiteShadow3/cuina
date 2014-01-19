@@ -1,9 +1,11 @@
 package cuina.widget.data;
 
 import cuina.database.NamedItem;
+import cuina.event.Trigger;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author TheWhiteShadow, fireandfuel
@@ -22,7 +24,8 @@ public class WidgetNode implements NamedItem, Serializable
 	public boolean enabled = true;
 	
 //	public Layout layout;
-	public final ArrayList<WidgetNode> children = new ArrayList<WidgetNode>(8);
+	public List<Trigger> triggers;
+	public final ArrayList<WidgetNode> children = new ArrayList<WidgetNode>(4);
 
 	@Override
 	public String getName()

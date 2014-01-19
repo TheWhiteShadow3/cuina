@@ -1,4 +1,6 @@
-package cuina.widget;
+package cuina.widget.model;
+
+import cuina.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;

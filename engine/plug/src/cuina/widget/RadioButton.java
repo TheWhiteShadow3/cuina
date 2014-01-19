@@ -1,5 +1,7 @@
 package cuina.widget;
 
+import cuina.widget.model.ButtonGroup;
+
 import de.matthiasmann.twl.AnimationState;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.Widget;

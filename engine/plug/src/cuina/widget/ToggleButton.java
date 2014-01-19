@@ -1,5 +1,7 @@
 package cuina.widget;
 
+import cuina.widget.model.ToggleButtonModel;
+
 import de.matthiasmann.twl.AnimationState;
 
 /**
@@ -21,17 +23,5 @@ public class ToggleButton extends Button
 	{
 		this(null, false);
 		setText(text);
-	}
-	
-	@Override
-	public boolean isSelected()
-	{
-		return model.isSelected();
-	}
-	
-	@Override
-	public void setSelected(boolean selected)
-	{
-		model.setSelected(selected);
 	}
 }

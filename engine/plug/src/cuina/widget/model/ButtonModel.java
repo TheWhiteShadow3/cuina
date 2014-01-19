@@ -1,4 +1,6 @@
-package cuina.widget;
+package cuina.widget.model;
+
+import cuina.widget.Listener;
 
 import java.io.Serializable;
 

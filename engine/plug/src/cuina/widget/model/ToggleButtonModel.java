@@ -1,4 +1,4 @@
-package cuina.widget;
+package cuina.widget.model;
 
 public class ToggleButtonModel extends DefaultButtonModel
 {
@@ -15,8 +15,8 @@ public class ToggleButtonModel extends DefaultButtonModel
 	{
 		if (selected == isSelected()) return;
 		
-		setStateBit(ENABLED, selected);
-		fireStateChanged(ENABLED);
+		setStateBit(SELECTED, selected);
+		fireStateChanged(SELECTED);
 		super.setSelected(selected);
 	}
 

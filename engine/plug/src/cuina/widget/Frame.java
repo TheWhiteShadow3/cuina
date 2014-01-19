@@ -11,7 +11,7 @@ import de.matthiasmann.twl.renderer.AnimationState.StateKey;
 import de.matthiasmann.twl.renderer.MouseCursor;
 import de.matthiasmann.twl.utils.TintAnimator;
 
-public class ResizableFrame extends CuinaWidget
+public class Frame extends CuinaWidget
 {
 	public static final Event FRAME_CLOSED = Event.getEvent("cuina.widget.FrameClosed");
 	
@@ -88,7 +88,7 @@ public class ResizableFrame extends CuinaWidget
 	private int resizeHandleY;
 	private DragMode resizeHandleDragMode;
 
-	public ResizableFrame()
+	public Frame()
 	{
 		title = "";
 		cursors = new MouseCursor[DragMode.values().length];
@@ -345,18 +345,9 @@ public class ResizableFrame extends CuinaWidget
 			setSize(width, height);
 		}
 
-		for (int i = 0, n = getNumChildren(); i < n; i++)
-		{
-			Widget child = getChild(i);
-			if (!isFrameElement(child))
-			{
-				layoutChildFullInnerArea(child);
-			}
-		}
-
-		layoutTitle();
-		layoutCloseButton();
-		layoutResizeHandle();
+       layoutTitle();
+       layoutCloseButton();
+       layoutResizeHandle();
 	}
 
 	protected void layoutTitle()
@@ -672,7 +663,7 @@ public class ResizableFrame extends CuinaWidget
 		if (cursorMode == DragMode.NONE)
 		{
 			cursorMode = getDragMode(Input.mouseX(), Input.mouseY());
-			if (cursorMode == DragMode.NONE) { return getMouseCursor(); }
+			if (cursorMode == DragMode.NONE) { return super.getMouseCursor(); }
 		}
 
 		return cursors[cursorMode.ordinal()];

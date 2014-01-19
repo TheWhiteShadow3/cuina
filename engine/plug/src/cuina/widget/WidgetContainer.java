@@ -8,6 +8,7 @@ import cuina.graphics.GraphicContainer;
 import cuina.graphics.GraphicSet;
 import cuina.graphics.Graphics;
 import cuina.graphics.View;
+import cuina.input.Input;
 import cuina.util.LoadingException;
 import cuina.util.ResourceManager;
 
@@ -139,7 +140,7 @@ public class WidgetContainer implements Graphic
 		renderer.setFontMapper(new CuinaFontMapper(renderer));
 		themeManager = ThemeManager.createThemeManager(getThemeURL(), renderer);
 		
-		gui = new GUI(renderer);
+		gui = new GUI(new CuinaWidget(), renderer, null);
 		gui.applyTheme(themeManager);
 	}
 	
@@ -155,12 +156,26 @@ public class WidgetContainer implements Graphic
 	{
 		if (gui != null)
 		{
-			// MUss aufgerufen werden um Multi-Texturen zu deaktivieren.
-			GLCache.bindTexture(null);
 			View view = Graphics.getCurrentView();
 			renderer.setViewport(0, 0, view.width, view.height);
 			
-			gui.update();
+			((CuinaWidget) gui.getRootPane()).update();
+			// Muss aufgerufen werden um Multi-Texturen zu deaktivieren.
+			GLCache.bindTexture(null);
+			gui.setSize();
+			gui.updateTime();
+			
+			gui.handleMouse(Input.mouseX(), Input.mouseY(), -1, false);
+//			gui.handleMouse(250, 100, -1, false);
+			
+//			gui.handleInput();
+//			gui.handleKeyRepeat();
+			gui.handleTooltips();
+			gui.updateTimers();
+			gui.invokeRunables();
+			gui.validateLayout();
+			gui.draw();
+			gui.setCursor();
 
 			GLCache.restore();
 		}

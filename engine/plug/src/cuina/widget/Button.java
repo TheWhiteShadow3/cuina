@@ -2,8 +2,11 @@ package cuina.widget;
 
 import cuina.event.Event;
 import cuina.input.Input;
+import cuina.widget.model.ButtonModel;
+import cuina.widget.model.DefaultButtonModel;
 
 import de.matthiasmann.twl.AnimationState;
+import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.AnimationState.StateKey;
 import de.matthiasmann.twl.utils.TextUtil;
 
@@ -13,18 +16,23 @@ import de.matthiasmann.twl.utils.TextUtil;
 public class Button extends TextWidget
 {
 	public static final Event BUTTON_PRESSED = Event.getEvent("cuina.widget.ButtonPressed");
-	public static final Event STATE_CHANGED = Event.getEvent("cuina.widget.ButtonPressed");
+	public static final Event STATE_CHANGED = Event.getEvent("cuina.widget.StateChanged");
 
 	public static final StateKey STATE_ARMED = StateKey.get("armed");
 	public static final StateKey STATE_PRESSED = StateKey.get("pressed");
 	public static final StateKey STATE_SELECTED = StateKey.get("selected");
 	
-	private String control = "c2";
+	private String control = null;
 	protected ButtonModel model;
 	
 	public Button()
 	{
 		this(null, false, null);
+	}
+	
+	public Button(ButtonModel model)
+	{
+		this(null, false, model);
 	}
 
 	public Button(AnimationState animState, boolean inherit, ButtonModel model)
@@ -39,7 +47,7 @@ public class Button extends TextWidget
 		{
 			this.model = new DefaultButtonModel();
 		}
-		model.addListener(new Handler());
+		this.model.addListener(new Handler());
 	}
 	
 	public Button(String text)
@@ -138,6 +146,28 @@ public class Button extends TextWidget
 	}
 	
 	@Override
+	protected void layout()
+	{
+		if (getWidth() == 0 || getHeight() == 0)
+		{
+			int width = getPreferredInnerWidth();
+			int height = getPreferredInnerHeight();
+			
+			Widget child;
+			for (int i = 0, n = getNumChildren(); i < n; i++)
+			{
+				child = getChild(i);
+				child.setPosition(getInnerX(), getInnerY());
+				child.validateLayout();
+				width = Math.max(width, child.getWidth());
+				height = Math.max(height, child.getHeight());
+			}
+			
+			setInnerSize(width, height);
+		}
+	}
+	
+	@Override
 	protected void updateWidget()
 	{
 		if (!isVisible() || !isEnabled()) return;
@@ -151,7 +181,7 @@ public class Button extends TextWidget
 		}
 		else
 		{
-			model.setPressed(model.isPressed() && Input.isPressed("mouse.left"));
+			model.setPressed(model.isPressed() && Input.isDown("mouse.left"));
 			model.setArmed(hover && model.isPressed());
 		}
 	}

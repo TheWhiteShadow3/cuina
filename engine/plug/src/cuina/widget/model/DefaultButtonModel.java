@@ -1,4 +1,7 @@
-package cuina.widget;
+package cuina.widget.model;
+
+import cuina.widget.Listener;
+import cuina.widget.WidgetEvent;
 
 import java.util.ArrayList;
 import java.util.List;

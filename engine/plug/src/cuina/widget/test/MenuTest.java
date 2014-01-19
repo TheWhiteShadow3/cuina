@@ -7,11 +7,8 @@ import cuina.Logger;
 import cuina.graphics.Graphic;
 import cuina.graphics.GraphicContainer;
 import cuina.graphics.Graphics;
-import cuina.graphics.Images;
 import cuina.graphics.Panorama;
-import cuina.graphics.PictureSprite;
 import cuina.graphics.Sprite;
-import cuina.graphics.TextureLoader;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -22,7 +19,6 @@ public class MenuTest
 	private static Panorama background;
 	private static Sprite sprite;
 	
-	@SuppressWarnings("serial")
 	public static void main(String[] args)
 	{
 		try
@@ -39,7 +35,6 @@ public class MenuTest
 			
 			TestMenu testMenu = new TestMenu();
 			InjectionManager.addObject(testMenu, "testMenu");
-			
 
 			
 			background = new Panorama("backgrounds/BlueSky.jpg");
