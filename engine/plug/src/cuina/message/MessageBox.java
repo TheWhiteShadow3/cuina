@@ -12,14 +12,11 @@ import cuina.plugin.Priority;
 import cuina.widget.CuinaWidget;
 import cuina.widget.WidgetContainer;
 import cuina.widget.WidgetDescriptor;
-import cuina.widget.WidgetEventHandler;
 import cuina.world.CuinaWorld;
-
-import de.matthiasmann.twl.Widget;
 
 @ForScene(name=MessageBox.MESSAGE_KEY)
 @Priority(updatePriority=200)
-public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEventHandler
+public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 {
 	public static final String MESSAGE_KEY = "Message";
 	
@@ -78,10 +75,10 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 		}
 //		if (backgroundModel != null) backgroundModel.update();
 		
-//		if (Input.isPressed(CONTROL_OK) || Input.isPressed(CONTROL_CANCEL))
-//		{
-//			nextMessage();
-//		}
+		if (Input.isPressed(CONTROL_OK) || Input.isPressed(CONTROL_CANCEL))
+		{
+			nextMessage();
+		}
 	}
 	
 	@Override
@@ -138,7 +135,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	@EventMethod
 	public Result showMessage(String text)
 	{
-		if(history != null) history.add(text);
+		if (history != null) history.add(text);
 		this.text = text;
 		
 		widget.setText(text);
@@ -150,7 +147,8 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	public Result showChoise(String... choises)
 	{
 		this.choises = choises;
-		// Skip-Anweisung folgt bei Auswahl. TODO: this!
+		widget.setChoises(choises);
+		setActive(true);
 		return Result.WAIT_ONE_FRAME;
 	}
 	
@@ -165,6 +163,11 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 		closing = false;
 	}
 	
+	public boolean isActive()
+	{
+		return active;
+	}
+
 	private void nextMessage()
 	{
 		closing = true;
@@ -176,10 +179,9 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	}
 
 	@Override
-	public Widget createRoot()
+	public CuinaWidget createRoot()
 	{
 		this.widget = new MessageWidget();
-		widget.setEventHandler(this);
 		widget.setVisible(false);
 		return widget;
 	}
@@ -196,36 +198,5 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor, WidgetEv
 	}
 
 	@Override
-	public Widget getWidget(String key)
-	{
-		if (widget.getName().equals(key))
-			return widget;
-		
-		return null;
-	}
-
-	@Override
-	public void handleEvent(String key, CuinaWidget widget, Object type)
-	{
-		switch((MessageWidget.EventType) type)
-		{
-			case RETURN:
-			case CLICK_OK: nextMessage(); break;
-			case CLOSE:
-			case ESCAPE:
-			case CLICK_CANCEL: close(); break;
-		}
-	}
-
-	@Override
-	public void postBuild()
-	{
-		
-	}
-
-	@Override
-	public void setGlobalEventHandler(WidgetEventHandler handler)
-	{
-		throw new UnsupportedOperationException();
-	}
+	public void postBuild() {}
 }

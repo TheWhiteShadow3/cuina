@@ -17,6 +17,13 @@ public class ScriptTrigger implements Trigger
 	public String main;
 	public boolean active = true;
 
+	public ScriptTrigger(Event event, String script, String main)
+	{
+		this.event = event;
+		this.script = script;
+		this.main = main;
+	}
+	
 	public ScriptTrigger(String script, String main)
 	{
 		this.script = script;

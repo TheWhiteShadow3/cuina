@@ -7,14 +7,12 @@ import cuina.util.ResourceManager.Resource;
 import cuina.widget.Frame;
 import cuina.widget.Menu;
 import cuina.widget.Picture;
-import cuina.widget.WidgetEventHandler;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
 
 import jline.internal.InputStreamReader;
-import de.matthiasmann.twl.Event;
 import de.matthiasmann.twl.TextArea;
 import de.matthiasmann.twl.ThemeInfo;
 import de.matthiasmann.twl.textarea.HTMLTextAreaModel;
@@ -51,13 +49,11 @@ public class MessageWidget extends Frame
 	private int messageY;
 	private int messageWidth;
 	private int messageHeight;
-	private WidgetEventHandler handler;
-
-	private Runnable closeCB;
 	
 	public MessageWidget()
 	{
-		super(WIDGET_KEY);
+		super();
+		setName(WIDGET_KEY);
 		setResizableAxis(ResizableAxis.NONE);
 		setDraggable(true);
 		setEnabled(true);
@@ -81,6 +77,7 @@ public class MessageWidget extends Frame
 		return text;
 	}
 
+	@Override
 	public void setName(String name)
 	{
 		this.name = name;
@@ -103,6 +100,7 @@ public class MessageWidget extends Frame
 		this.index = index;
 		menu.setIndex(index);
 		menu.setVisible(index != -1);
+		textWidget.setVisible(index == -1);
 	}
 	
 	public void setText(String text)
@@ -111,28 +109,34 @@ public class MessageWidget extends Frame
 		textModel.setHtml(text);
 	}
 
-	@Override
-	public void setEventHandler(WidgetEventHandler handler)
+	public void setChoises(String[] choises)
 	{
-		this.handler = handler;
-		if (this.handler != null && closeCB == null)
-		{
-			this.closeCB = new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					fireCallback(EventType.CLOSE);
-				}
-			};
-			addCloseCallback(closeCB);
-		}
+		menu.setCommands(choises);
+		setSelection(0);
 	}
+
+//	@Override
+//	public void setEventHandler(WidgetEventHandler handler)
+//	{
+//		this.handler = handler;
+//		if (this.handler != null && closeCB == null)
+//		{
+//			this.closeCB = new Runnable()
+//			{
+//				@Override
+//				public void run()
+//				{
+//					fireCallback(EventType.CLOSE);
+//				}
+//			};
+//			addCloseCallback(closeCB);
+//		}
+//	}
 	
 	private void createTextWidget()
 	{
-		textModel = new HTMLTextAreaModel();
-		textWidget = new TextArea(textModel);
+		this.textModel = new HTMLTextAreaModel();
+		this.textWidget = new TextArea(textModel);
 		textWidget.setTheme("text");
 		
 		try
@@ -152,7 +156,7 @@ public class MessageWidget extends Frame
 		
 		add(textWidget);
 		
-		menu = new Menu("menu", 1);
+		this.menu = new Menu("menu", 1);
 		menu.setTheme("menu");
 		add(menu);
 	}
@@ -210,7 +214,7 @@ public class MessageWidget extends Frame
 		{
 			if (faceWidget == null)
 			{
-				faceWidget = new Picture(null);
+				faceWidget = new Picture();
 				faceWidget.setTheme("face");
 				insertChild(faceWidget, (faceAlign == FACE_BACK) ? 0 : 1);
 			}
@@ -239,59 +243,48 @@ public class MessageWidget extends Frame
 		int top = getInnerY() + 6;
 		textWidget.setPosition(left, top);
 		textWidget.setSize(Math.max(right-left, 0), Math.max(getInnerBottom() - top, 0));
+		menu.setPosition(left, top);
+		menu.setSize(Math.max(right-left, 0), Math.max(getInnerBottom() - top, 0));
 	}
 	
 	@Override
-	public boolean handleEvent(Event ev)
+	protected void updateWidget()
 	{
 //		if (super.handleEvent(evt)) { return true; }
-		switch (ev.getType())
-		{
-			case KEY_PRESSED:
-				switch (ev.getKeyCode())
-				{
-					case Event.KEY_RETURN:
-						fireCallback(EventType.RETURN);
-						return true;
-						
-					case Event.KEY_ESCAPE:
-						fireCallback(EventType.ESCAPE);
-						return true;
-				}
-				break;
-			case MOUSE_CLICKED:
-				switch (ev.getMouseButton())
-				{
-					case Event.MOUSE_LBUTTON:
-						fireCallback(EventType.CLICK_OK);
-						return true;
-					case Event.MOUSE_RBUTTON:
-						fireCallback(EventType.CLICK_CANCEL);
-						return true;
-				}
-				break;
-		}
-		return false;
+//		switch (ev.getType())
+//		{
+//			case KEY_PRESSED:
+//				switch (ev.getKeyCode())
+//				{
+//					case Event.KEY_RETURN:
+//						fireCallback(EventType.RETURN);
+//						return true;
+//						
+//					case Event.KEY_ESCAPE:
+//						fireCallback(EventType.ESCAPE);
+//						return true;
+//				}
+//				break;
+//			case MOUSE_CLICKED:
+//				switch (ev.getMouseButton())
+//				{
+//					case Event.MOUSE_LBUTTON:
+//						fireCallback(EventType.CLICK_OK);
+//						return true;
+//					case Event.MOUSE_RBUTTON:
+//						fireCallback(EventType.CLICK_CANCEL);
+//						return true;
+//				}
+//				break;
+//		}
 	}
 	
-	private void fireCallback(EventType type)
-	{
-		if (handler == null) return;
-		
-		handler.handleEvent(getName(), this, type);
-	}
-
-	@Override
-	public boolean canHandleEvents()
-	{
-		return true;
-	}
-
-	@Override
-	public WidgetEventHandler getEventHandler()
-	{
-		return handler;
-	}
+//	private void fireCallback(EventType type)
+//	{
+//		if (handler == null) return;
+//		
+//		handler.handleEvent(getName(), this, type);
+//	}
 
 //	@Override
 //	protected void paintChildren(GUI gui)

@@ -51,7 +51,7 @@ module Cuina
 end
 
 module Graphics
-	#include_package 'cuina.graphics'
+	include_package 'cuina.graphics'
 	@@view = Java::CuinaGraphics::Graphics::VIEWS
 	
 	def self.view
@@ -65,7 +65,7 @@ module Script
 	def self.init_lifecycle(owner, name=nil)
 		slc = ScriptLifeCycle.new(owner)
 		name = "JRuby_" + owner.class.to_s unless name
-		Cuina::InjectionManager.injectObject(slc, name)
+		Cuina::InjectionManager.addObject(slc, name)
 	end
 end
 
@@ -151,7 +151,7 @@ module Audio
 	end
 end
 
-module TWL
+module Widget
 	include_package 'cuina.widget'
 	
 	def self.create_widget(descriptor)
@@ -164,8 +164,12 @@ module TWL
       	return create_widget(descriptor)
 	end
 	
-	class WidgetAdapter
-		include TWL::WidgetEventHandler
+	def self.addTrigger(container, widget_name, script, method)
+		container.getRoot.find(widget_name).addTrigger(ScriptTrigger)
+	end
+	
+	class Trigger
+		include Java::CuinaEvent::Trigger
 		attr_reader :container
 		
 		def initialize(container)

@@ -27,7 +27,7 @@ public class CuinaWidget extends Widget
 	public CuinaWidget(AnimationState animState, boolean inherit)
 	{
 		super(animState, inherit);
-		setTheme("widget");
+		setTheme("");
 	}
 
 	public String getName()

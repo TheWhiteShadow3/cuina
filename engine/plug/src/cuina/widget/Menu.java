@@ -183,7 +183,8 @@ public class Menu extends CuinaWidget
 	protected void fireActionPerformed()
 	{
 // 		System.out.println("Klick: " + getIndex());
-		testTriggers(Button.BUTTON_PRESSED, getIndex());
+		Integer i = Integer.valueOf(index);
+		testTriggers(Button.BUTTON_PRESSED, i, i);
 	}
 
 	@Override

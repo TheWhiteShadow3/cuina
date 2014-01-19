@@ -3,12 +3,10 @@ package cuina.hud;
 import cuina.Context;
 import cuina.Game;
 import cuina.plugin.LifeCycleAdapter;
+import cuina.widget.CuinaWidget;
+import cuina.widget.Label;
 import cuina.widget.WidgetContainer;
 import cuina.widget.WidgetDescriptor;
-import cuina.widget.WidgetEventHandler;
-
-import de.matthiasmann.twl.Label;
-import de.matthiasmann.twl.Widget;
 
 public class ValueDisplay extends LifeCycleAdapter
 {
@@ -33,26 +31,15 @@ public class ValueDisplay extends LifeCycleAdapter
 			public String getTheme() {return null;}
 			
 			@Override
-			public Widget createRoot()
+			public CuinaWidget createRoot()
 			{
-				ValueDisplay.this.label = new Label();
+				ValueDisplay.this.label = new Label(null);
 				update();
 				return label;
 			}
 
 			@Override
-			public Widget getWidget(String key)
-			{
-				return label;
-			}
-
-			@Override
-			public void postBuild()
-			{}
-
-			@Override
-			public void setGlobalEventHandler(WidgetEventHandler handler)
-			{}
+			public void postBuild() {}
 		});
 		if (Game.contextExists(Context.SESSION))
 		{

@@ -18,7 +18,6 @@ import java.net.URL;
 import org.lwjgl.LWJGLException;
 
 import de.matthiasmann.twl.GUI;
-import de.matthiasmann.twl.Widget;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
 
@@ -39,7 +38,7 @@ public class WidgetContainer implements Graphic
 	
 //	private static WidgetContainer instance;
 	
-	private transient Widget root;
+	private transient CuinaWidget root;
 	private GraphicContainer container;
 	private WidgetDescriptor descriptor;
 	
@@ -99,7 +98,7 @@ public class WidgetContainer implements Graphic
 	 * Der Rückgabewert kann null sein!
 	 * @return das Wurzel-Element oder null.
 	 */
-	public Widget getRoot()
+	public CuinaWidget getRoot()
 	{
 		return root;
 	}
@@ -150,6 +149,11 @@ public class WidgetContainer implements Graphic
 		if (theme == null) theme = DEFAULT_THEME;
 		return ResourceManager.getResource(TWL_RESOURE_PATH, DEFAULT_THEME).getURL();
 	}
+	
+	public CuinaWidget find(String name)
+	{
+		return root.find(name);
+	}
 
 	@Override
 	public void draw()
@@ -159,7 +163,7 @@ public class WidgetContainer implements Graphic
 			View view = Graphics.getCurrentView();
 			renderer.setViewport(0, 0, view.width, view.height);
 			
-			((CuinaWidget) gui.getRootPane()).update();
+			root.update();
 			// Muss aufgerufen werden um Multi-Texturen zu deaktivieren.
 			GLCache.bindTexture(null);
 			gui.setSize();

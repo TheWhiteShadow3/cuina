@@ -20,8 +20,8 @@
 		m2 = Maid.new(&quot;Anna&quot;)
 		Yuri.kiss(m1, m2)
 		puts(&quot;Hello Cuina!&quot;)
-		Cuina.new_game()
-		#OBJ_title.start
+		#Cuina.new_game()
+		OBJ_title.start
 	end
 	def loadGame(game)
 	end
@@ -93,13 +93,15 @@ Script_create_menu.new
 	end
       
 	def init
-      	# Erstelle einen Adapter für verbesserten Event-Handling Support.
-      	@adapter = TWL::WidgetAdapter.new(TWL.create_from_database("title_menu"))
-      	# Definiere eine Event-Handling Methode.
-      	@adapter.add_method_handler("menu", self, :item_selected)
-      	@adapter.container.setVisible(false)
+      	# Erstelle den WidgetContainer
+      	@container = Widget.create_from_database("title_menu")
+      	# Definiere einen Trigger.
+      	trigger = Script::ScriptTrigger.new(Widget::Button::BUTTON_PRESSED, "title", "item_selected")
+      	@container.find("menu").addTrigger(trigger)
+
+      	@container.setVisible(false)
       	# Erstelle ein Bild als Hintergrund.
-      	@background = Graphic::PictureSprite.new("system/title.png");
+      	@background = Graphics::PictureSprite.new("system/title.png");
 		@background.setAlpha(0);
 		# Setze die Einblendzeit.
 		@duration = TIME.to_i
@@ -112,8 +114,8 @@ Script_create_menu.new
 			@duration -= 1
 			if @duration == 0
 				# Zeige Menü an, sobald der Hintergrund eingeblendet ist.
-				@adapter.container.setVisible(true)
-				@adapter.get_widget("menu").requestKeyboardFocus
+				@container.setVisible(true)
+				@container.find("menu").requestKeyboardFocus
 			end
 		end
 	end
@@ -124,7 +126,7 @@ Script_create_menu.new
 	def dispose
 		# Lösche benutzte Ressourcen.
 		@background.dispose
-		@adapter.dispose
+		@container.dispose
 	end
       
 	def item_selected(widget, index)

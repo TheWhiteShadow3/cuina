@@ -3,8 +3,6 @@ package cuina.widget;
 import cuina.Logger;
 import cuina.widget.data.WidgetNode;
 
-import de.matthiasmann.twl.Widget;
-
 public class DataWidgetDescriptor implements WidgetDescriptor
 {
 	private static final long serialVersionUID = 8582619939177485416L;
@@ -28,7 +26,7 @@ public class DataWidgetDescriptor implements WidgetDescriptor
 //	}
 	
 	@Override
-	public Widget createRoot()
+	public CuinaWidget createRoot()
 	{
 		this.root = WidgetFactory.createWidget(rootNode);
 //		this.widgets = WidgetFactory.buildMap;
@@ -47,7 +45,7 @@ public class DataWidgetDescriptor implements WidgetDescriptor
 	{
 		if (active != null)
 		{
-			Widget widget = root.find(active);
+			CuinaWidget widget = root.find(active);
 			if (widget == null)
 				Logger.log(DataWidgetDescriptor.class, Logger.WARNING, "Widget '" + active + "' not found.");
 			else
