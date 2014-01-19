@@ -100,6 +100,8 @@ public class Control implements NamedItem
 		
 		for(Trigger trigger : triggers)
 		{
+			if (!trigger.isActive()) continue;
+			
 			if (isRepeated() && trigger.test(CONTROL_REPEATED, null) ||
 				isPressed() && trigger.test(CONTROL_PRESSED, null) ||
 				isDown() && trigger.test(CONTROL_DOWN, null))

@@ -46,7 +46,7 @@ public class ScriptTrigger implements Trigger
 	@Override
 	public void run(Object... args)
 	{
-		ScriptExecuter.execute(script, main, args);
+		// dummy
 	}
 
 	@Override

@@ -93,6 +93,8 @@ public class Input
 	
 	public static boolean isPressed(String cntlName)
 	{
+		if (cntlName == null) return false;
+		
 		Control b = controls.get(cntlName);
 		if (b == null) return false;
 		
@@ -101,6 +103,8 @@ public class Input
 	
 	public static boolean isDown(String cntlName)
 	{
+		if (cntlName == null) return false;
+		
 		Control b = controls.get(cntlName);
 		if (b == null) return false;
 		
@@ -109,6 +113,8 @@ public class Input
 	
 	public static boolean isRepeated(String cntlName)
 	{
+		if (cntlName == null) return false;
+		
 		Control b = controls.get(cntlName);
 		if (b == null) return false;
 		

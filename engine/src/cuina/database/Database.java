@@ -6,7 +6,6 @@ import cuina.plugin.PluginManager;
 import cuina.util.CuinaClassLoader;
 import cuina.util.LoadingException;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,18 +23,19 @@ public class Database
 {
 	public static final String CUINA_DATABASEPATH_KEY 	= "cuina.database.path";
 	
-	private final static HashMap<String, DataTable<?>> data = new HashMap<String, DataTable<?>>();
-	private final static XStream X_STREAM;
+	public static final XStream X_STREAM;
+	
+	private static final HashMap<String, DataTable<?>> data = new HashMap<String, DataTable<?>>();
 	private static File dataDirectory;
 	
-	static{
+	static
+	{
 		X_STREAM = new XStream(null, new XppDriver(), CuinaClassLoader.getInstance());
 		X_STREAM.registerConverter(new DataTableConverter());
 		X_STREAM.setMode(XStream.ID_REFERENCES);
 	}
 	
 	private Database() {}
-	
 	
 	/**
 	 * Gibt den absoluten Pfad zum Datenbankordner zurück.
@@ -60,7 +60,7 @@ public class Database
 		
 		for (File file : files)
 		{
-			if (file.isFile() && !file.getName().startsWith("meta"))
+			if (file.isFile() && !file.getName().startsWith("meta."))
 			{
 				DataTable<?> table = (DataTable<?>)loadData(file);
 				if (table == null) continue;
@@ -90,23 +90,28 @@ public class Database
 		try (FileInputStream stream = new FileInputStream(file))
 		{
 			String ext = getExtension(file);
-			if ("xmlz".equals(ext) || "cxdz".equals(ext) || "cxmz".equals(ext))
+			/*
+			 * XXX: Hier erstmal die Idee zu einer Lösung vom Format-Chaos.
+			 * Es reicht, wenn XML möglich, aber nicht der Defaultwert ist,
+			 * da es unwarscheinlich ist, dass jemand in den Dateien rumschreibst. (Außer mir TWS ^^)
+			 */
+			// Binäre-Formate (Immer gezippt)
+			if ("cjd".equals(ext) || "cjm".equals(ext) || "sav".equals(ext))
 			{
-				BufferedInputStream ois = new BufferedInputStream(stream, 65536);
-				Object obj = X_STREAM.fromXML(new GZIPInputStream(ois, 65536));
-				ois.close();
-				
-				return obj;
+				ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(stream, 1 << 6));
+				return in.readObject();
 			}
+			// Entwicklungsformate
 			if ("xml".equals(ext) || "cxd".equals(ext) || "cxm".equals(ext))
 			{
 				return X_STREAM.fromXML(stream);
 			}
-			if ("ser".equals(ext))
+			// Gezippte Entwicklungsformate (Standard)
+			if ("cxd".equals(ext) || "cxm".equals(ext))
 			{
-				ObjectInputStream in = new ObjectInputStream(stream);
-				Object obj = in.readObject();
-				return obj;
+				return X_STREAM.fromXML(stream);
+				//FIXME: Aktuell sind die Dateien noch nicht gezippt, daher würde hier ein Fehler auftreten.
+//				return X_STREAM.fromXML(new GZIPInputStream(stream, 1 << 6));
 			}
 		}
 		catch (Exception | InstantiationError e)
@@ -115,11 +120,6 @@ public class Database
 		}
 		return null;
 	}
-	
-	public final static XStream getXStream()
-	{
-		return X_STREAM;
-	} 
 	
 	public static void saveData(File file, Object obj)
 	{

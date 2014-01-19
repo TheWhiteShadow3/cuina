@@ -50,13 +50,11 @@ public class InterpreterTrigger implements Trigger
 		this.key = key;
 	}
 
-	@Override
 	public Event getEvent()
 	{
 		return event;
 	}
 
-	@Override
 	public Object getEventArg()
 	{
 		return eventArg;

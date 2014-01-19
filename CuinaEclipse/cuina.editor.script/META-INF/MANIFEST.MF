@@ -16,7 +16,9 @@ Require-Bundle: org.eclipse.ui,
  cuina.editor.core,
  cuina.editor.ui,
  org.eclipse.ui.ide,
- org.eclipse.dltk.ruby.ui;resolution:=optional
+ org.eclipse.dltk.ruby.ui;resolution:=optional,
+ cuina.editor.event,
+ cuina.buildins
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: cuina.editor.script,

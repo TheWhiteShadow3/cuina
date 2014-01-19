@@ -28,7 +28,7 @@ public class InterpreterTest
 		DataTable<CommandList> table = new DataTable<CommandList>("Event", cuina.eventx.CommandList.class);
 		table.put(list);
 		
-		String xml = Database.getXStream().toXML(table);
+		String xml = Database.X_STREAM.toXML(table);
 		System.out.println(xml);
 	}
 }

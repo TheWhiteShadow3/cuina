@@ -8,9 +8,7 @@ import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -26,6 +24,8 @@ import org.eclipse.core.runtime.Path;
  */
 public class Database
 {
+	private static final String DATA_FILE_EXTENSION = "cxd";
+	
 	private CuinaProject project;
 	private String dataPath;
 	
@@ -85,29 +85,7 @@ public class Database
 	private IFile getPreferredDataFile(String name) throws ResourceException
 	{
 		IFolder folder = project.getProject().getFolder(dataPath);
-		IFile found = null;
-		
-		try
-		{
-			IResource[] elements = folder.members();
-			for (IResource r : elements)
-			{
-				if (r instanceof IFile && r.getName().startsWith(name))
-				{
-					String ext = r.getFileExtension();
-					if (ext != null && ext.equals(SerializationManager.getDefaultExtension()) )
-					{
-						return (IFile) r;
-					}
-					if (found == null) found = (IFile) r;
-				}
-			}
-			return found;
-		}
-		catch (CoreException e)
-		{
-			throw new ResourceException("Database '" + name + "' not found!", e);
-		}
+		return SerializationManager.resolve(folder, name, DATA_FILE_EXTENSION);
 	}
 	
 	public <E extends DatabaseObject> DataTable<E> loadTable(IFile file) throws ResourceException
@@ -150,7 +128,7 @@ public class Database
 	{
 		if (table.getFileName() == null)
 		{
-			String name = table.getName() + "." + SerializationManager.getDefaultExtension();
+			String name = table.getName() + "." + DATA_FILE_EXTENSION;
 			table.setRuntimeMetaData(this, dataPath + '/' + name);
 		}
 		IPath path = new Path(table.getFileName());

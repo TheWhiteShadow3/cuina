@@ -57,12 +57,6 @@ public class InterpreterTrigger implements Trigger
 	}
 
 	@Override
-	public Object getEventArg()
-	{
-		return eventArg;
-	}
-
-	@Override
 	public boolean isActive()
 	{
 		return active;
@@ -71,7 +65,6 @@ public class InterpreterTrigger implements Trigger
 	@Override
 	public boolean test(Event event, Object arg)
 	{
-		return (isActive() && this.event.equals(event) &&
-				(eventArg == null || eventArg.equals(arg)));
+		return (this.event.equals(event) && (eventArg == null || eventArg.equals(arg)));
 	}
 }

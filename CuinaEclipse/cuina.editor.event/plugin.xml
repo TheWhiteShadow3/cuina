@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="cuina.event.TriggerTypes" name="Cuina Trigger Types" schema="schema/cuina.event.TriggerTypes.exsd"/>
+   <extension-point id="cuina.event.EventTypes" name="Cuina Event Types" schema="schema/cuina.event.EventTypes.exsd"/>
+
+</plugin>

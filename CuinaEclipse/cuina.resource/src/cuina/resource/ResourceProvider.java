@@ -43,7 +43,6 @@ public class ResourceProvider
 	{
 		return project;
 	}
-
 	/**
 	 * Erzeugt die komplette Verzeichnisstruktur des Projeks.
 	 * @param monitor

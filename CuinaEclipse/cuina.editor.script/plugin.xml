@@ -131,5 +131,12 @@
             inputTypes="cuina.database.DatabaseInput">
       </provider>
    </extension>
+   <extension
+         point="cuina.event.TriggerTypes">
+      <trigger
+            class="cuina.editor.script.Trigger1"
+            name="Skript Tigger">
+      </trigger>
+   </extension>
 
 </plugin>

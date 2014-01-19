@@ -25,24 +25,7 @@ public class ResourceManager
 	public static final String KEY_AUDIO 		= "cuina.audio.path";
 	
 	private static final String DIRECTORY_CONFIG_ID = "cuina.resource.directories";
-	
-//	static final String[] GRAPHIC_PATHS = new String[]
-//	{
-//		"tilesets",
-//		"charsets",
-//		"backgrounds",
-//		"pictures",
-//		"system",
-//		"icons",
-//		"autotiles",
-//	};
-//	
-//	static final String[] AUDIO_PATHS = new String[]
-//	{
-//		"bgm",
-//		"snd",
-//	};
-	
+
 //	private static Image DEFAULT_ICON;
 	private static final HashMap<String, Directory> directories = new HashMap<String, Directory>();
 	private final static HashMap<CuinaProject, ResourceProvider> providers =

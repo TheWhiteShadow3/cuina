@@ -35,7 +35,6 @@ public class AdapterTester extends PropertyTester
 		}
 		catch (ClassNotFoundException e)
 		{
-			e.printStackTrace();
 			return false;
 		}
 	}

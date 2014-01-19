@@ -52,9 +52,10 @@
 		     </and>
 		</enablement >
 		<actionProvider
-          class="cuina.database.ui.DatabaseActionProvider"
-          id="cuina.database.ui.DatabaseActionProvider"
-          priority="normal">
+        class="cuina.database.ui.DatabaseActionProvider"
+        id="cuina.database.ui.DatabaseActionProvider"
+        overrides="org.eclipse.ui.navigator.resources.NewActions"
+        priority="normal">
 	     <enablement>
 	        <instanceof
 	              value="cuina.database.ui.tree.TreeNode">

@@ -32,8 +32,6 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -143,7 +141,7 @@ public class TerrainEditor extends EditorPart implements
 		}
 		catch(ResourceException e)
 		{
-			throw new PartInitException("read Editor Input faild!", e);
+			throw new PartInitException("Read editor input faild!", e);
 		}
 		setPartName(input.getName());
 	}
@@ -154,29 +152,7 @@ public class TerrainEditor extends EditorPart implements
 		IFolder folder = project.getProject().getFolder(
 				project.getIni().get(Activator.PLUGIN_ID, Activator.MAPS_DIRECTORY_ID, "maps"));
 
-		IFile found = null;
-		try
-		{
-			IResource[] elements = folder.members();
-			for (IResource r : elements)
-			{
-				if (r instanceof IFile && r.getName().startsWith(dbInput.getKey()))
-				{
-					String ext = r.getFileExtension();
-					if(ext != null && (ext.equals("cxm") || ext.equals("cxmz")))
-					{
-						return (IFile) r;
-					}
-					if(found == null)
-						found = (IFile) r;
-				}
-			}
-			return found;
-		}
-		catch (CoreException e)
-		{
-			throw new ResourceException("Map '" + dbInput.getKey() + "' not found!", e);
-		}
+		return SerializationManager.resolve(folder, dbInput.getKey(), "cxm");
 	}
 
 	@Override

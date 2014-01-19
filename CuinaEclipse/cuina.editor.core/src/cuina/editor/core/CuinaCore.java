@@ -198,9 +198,11 @@ public class CuinaCore extends AbstractUIPlugin
 		{
 			IEditorInput editorInput = ((IEditorPart) part).getEditorInput();
 			IFile file = (IFile) editorInput.getAdapter(IFile.class);
+			IProject project = (file != null) ? file.getProject() : null;
+			
 			for (EditorContextChangeListener l : listeners)
 			{
-				l.editorContextChange((IEditorPart) part, file.getProject());
+				l.editorContextChange((IEditorPart) part, project);
 			}
 		}
 	}

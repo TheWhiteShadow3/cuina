@@ -9,11 +9,7 @@
       <provider
             class="cuina.resource.XmlSerializationProvider"
             default="true"
-            extensions="xml, cxd, cxm">
-      </provider>
-      <provider
-            class="cuina.resource.ZippedXmlSerializationProvider"
-            extensions="xmlz, cxdz, cxmz">
+            extensions="xml">
       </provider>
       <provider
             class="cuina.resource.JavaSerializationProvider"

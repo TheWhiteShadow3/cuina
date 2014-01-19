@@ -5,6 +5,15 @@ import org.lwjgl.input.Keyboard;
 
 public class DirectionalControl extends Control
 {
+	/** Aufteilung der Richtung nach Rechts und Links. */
+	public static final int DIRECTION_HORIZONTAL	= 1;
+	/** Aufteilung der Richtung nach Oben und Unten. */
+	public static final int DIRECTION_VERTICAL 		= 2;
+	/** Aufteilung der Richtung in 4 Sektoren. */
+	public static final int DIRECTION_4				= 3;
+	/** Aufteilung der Richtung in 8 Sektoren. */
+	public static final int DIRECTION_8				= 4;
+	
 	public static final DirectionalSource WASD 	 = new KeyQuad(Key.KEY_A, Key.KEY_D, Key.KEY_W, Key.KEY_A);
 	public static final DirectionalSource ARROWS = new KeyQuad(Key.KEY_LEFT, Key.KEY_RIGHT, Key.KEY_UP, Key.KEY_DOWN);
 	
@@ -21,11 +30,19 @@ public class DirectionalControl extends Control
 		super.remap(keys);
 	}
 	
+	/**
+	 * Gibt den X-Anteil der Richtung von links nach rechts im Intervall von <code>[-1,+1]</code> zurück.
+	 * @return X-Anteil der Richtung.
+	 */
 	public float getX()
 	{
 		return x;
 	}
 	
+	/**
+	 * Gibt den Y-Anteil der Richtung von oben nach unten im Intervall von <code>[-1,+1]</code> zurück.
+	 * @return Y-Anteil der Richtung.
+	 */
 	public float getY()
 	{
 		return y;
@@ -49,11 +66,39 @@ public class DirectionalControl extends Control
 			else
 				return dx > 0 ? 0 : 180;
 		}
-		
+
+		float value = (float) (Math.acos(dx / Math.hypot(dx, dy)) * 180 / Math.PI);
 		if (dy > 0)
-			return (float) (360 - Math.acos(dx / Math.hypot(dx, dy)) * 180 / Math.PI);
+			return 360 - value;
 		else
-			return (float) (Math.acos(dx / Math.hypot(dx, dy)) * 180 / Math.PI);
+			return value;
+	}
+	
+	/**
+	 * Gibt eine Zahl zurück, die den Sektor der Richtung eines {@link DirectionalControl}'s angibt.
+	 * <p>
+	 * Die Anzahl und Position der Sektoren kann über den Parameter format angegeben werden.
+	 * Der Index der Sektoren beginnt immer bei 0.
+	 * Wenn kein Ausschlag vorhanden ist wird -1 zurückgegeben.
+	 * </p>
+	 * @param pattern Sektor-Aufteilung.
+	 * @return Sektor in dem die Richtung liegt.
+	 * @throws IllegalArgumentException Wenn die Sektor-Aufteilung ungülti ist.
+	 */
+	public int getDirectionSektor(int pattern)
+	{
+		if (!isDown()) return -1;
+		
+		float dir = getDirection();
+		
+		switch(pattern)
+		{
+			case DIRECTION_HORIZONTAL: return (int) ((dir + 90) / 180f) % 2;
+			case DIRECTION_VERTICAL: return (int) (dir / 180f);
+			case DIRECTION_4: return (int) ((dir + 45) / 90f) % 4;
+			case DIRECTION_8: return (int) ((dir + 22.5) / 45f) % 8;
+			default: throw new IllegalArgumentException("Illegal direction format.");
+		}
 	}
 
 	@Override

@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Event
+Bundle-SymbolicName: cuina.editor.event;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Cuina
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: cuina.editor.ui,
+ org.eclipse.ui,
+ cuina.buildins

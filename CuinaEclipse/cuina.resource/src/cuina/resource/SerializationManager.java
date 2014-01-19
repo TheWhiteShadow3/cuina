@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
@@ -22,6 +25,7 @@ import org.osgi.framework.Bundle;
 public class SerializationManager
 {
 	private static String defaultExtension = "xml";
+	private static final Map<String, String> ALIAS_MAP = new HashMap<String, String>();
 	private static HashMap<String, SerializationProvider> providers;
 	
 	private SerializationManager() {}
@@ -62,16 +66,26 @@ public class SerializationManager
 				ex.printStackTrace();
 			}
 		}
+		//XXX: lade Aliasse hier, da noch kein Extensionpoint definiert ist, der das tut.
+		SerializationManager.addAlias("xml", "cxd");
+		SerializationManager.addAlias("xml", "cxm");
+		SerializationManager.addAlias("ser", "cjd");
+		SerializationManager.addAlias("ser", "cjm");
+		SerializationManager.addAlias("xml.gz", "cxz");
+		SerializationManager.addAlias("ser,gz", "cjz");
+	}
+	
+	public static void addAlias(String name, String alias)
+	{
+		ALIAS_MAP.put(alias, name);
 	}
 	
 	/**
 	 * Gibt die default Dateierweiterung zurück, die zum Laden benutzt werden soll.
-	 * Das Ergebnis ist <code>null</code>, wenn kein Serialization-Provider gefunden wurde.
 	 * @return Die Default-Dateierweiterung.
 	 */
 	public static String getDefaultExtension()
 	{
-		if (defaultExtension == null) registerSerializationProviders();
 		return defaultExtension;
 	}
 
@@ -81,69 +95,142 @@ public class SerializationManager
 		SerializationManager.defaultExtension = extension;
 	}
 
+	public static SerializationProvider getSerializationProvider(String extension)
+	{
+		String alias = ALIAS_MAP.get(extension);
+		if (alias != null) extension = alias;
+		if (extension.endsWith(".gz"))
+		{
+			int p = extension.lastIndexOf('.');
+			extension = extension.substring(0, p);
+			
+			SerializationProvider provider = providers.get(extension);
+			if (provider == null) return null;
+			
+			return new GZipSerialisationProxy(provider);
+		}
+		return providers.get(extension);
+	}
+	
+	public static IFile resolve(IFolder folder, String name, String... preferredExtensions)
+			throws ResourceException
+	{
+		try
+		{
+			IResource[] elements = folder.members();
+			IFile file = null;
+			int matchLevel = preferredExtensions.length;
+			for (IResource r : elements)
+			{
+				if (!(r instanceof IFile && r.getName().startsWith(name))) continue;
+				
+				String ext = r.getFileExtension();
+				for(int i = 0; i < matchLevel; i++)
+				{
+					if (preferredExtensions[i].equals(ext))
+					{
+						file = (IFile) r;
+						if (i == 0) return file;
+						matchLevel = i;
+						break;
+					}
+				}
+				if(file == null) file = (IFile) r;
+			}
+			return file;
+		}
+		catch(CoreException e)
+		{
+			throw new ResourceException(name, ResourceException.LOAD, e);
+		}
+	}
+
 	public static Object load(IFile file, ClassLoader cl) throws ResourceException
 	{
 		if (providers == null) registerSerializationProviders();
-		String ext = file.getFileExtension();
-		SerializationProvider provider = providers.get(ext);
-		if (provider == null) throw new ResourceException("No Provider available!");
+		SerializationProvider provider = getSerializationProvider(file.getFileExtension());
+		if (provider == null) providerNotFound(file);
 		
-		InputStream in = null;
-		try{
-			in = file.getContents(true);
+		try (InputStream in = file.getContents(true))
+		{
 			return provider.load(in, cl);
 		}
 		catch (IOException | CoreException | ClassNotFoundException e)
 		{
 			throw new ResourceException(file, ResourceException.LOAD, e);
 		}
-		finally{
-			if(in != null)
-				try
-				{
-					in.close();
-				} catch(IOException e)
-				{
-				}
-		}
 	}
+	
+//	private static boolean isGZIPFormat(InputStream in) throws IOException
+//	{
+//		in.mark(4);
+//		byte[] b = new byte[2];
+//		in.read(b);
+//		in.reset();
+//		int num = b[0] + 8 << b[1];
+//		return (num == 0x8b1f); // So wie in GZIPOutputStream definiert.
+//	}
 	
 	public static void save(final Object obj, final IFile file) throws ResourceException
 	{
 		if (providers == null) registerSerializationProviders();
-		String ext = file.getFileExtension();
-		final SerializationProvider provider = providers.get(ext);
-		if (provider == null) throw new ResourceException("No Provider available!");
+		final SerializationProvider provider = getSerializationProvider(file.getFileExtension());
+		if (provider == null) providerNotFound(file);
 		
 		try
 		{
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable()
-			{
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException
-				{
-					File f = file.getLocation().toFile();
-					try (OutputStream out = new FileOutputStream(f))
-					{
-						provider.save(obj, out);
-						out.flush();
-						out.close();
-					}
-					catch (IOException e)
-					{
-						IStatus s = new Status(IStatus.ERROR, "cuina.resource", e.getMessage());
-						CoreException ce = new CoreException(s);
-						ce.initCause(e);
-						throw ce;
-					}
-					file.refreshLocal(0, monitor);
-				}
-
-			}, null);
+			ResourcesPlugin.getWorkspace().run(new SerialisationWriter(provider, file, obj), null);
 		}
 		catch (CoreException e)
 		{
 			throw new ResourceException(file, ResourceException.SAVE, e);
+		}
+	}
+	
+//	private static String getSecoundExtension(IFile file)
+//	{
+//		String name = file.getName();
+//		int p2 = name.lastIndexOf('.');
+//		int p1 = name.lastIndexOf('.', p2-1);
+//		if (p1 == -1) return null;
+//		return name.substring(p1+1, p2);
+//	}
+	
+	private static void providerNotFound(IFile file) throws ResourceException
+	{
+		throw new ResourceException("No provider for '" + file.getName() + "' found!");
+	}
+	
+	private static class SerialisationWriter implements IWorkspaceRunnable
+	{
+		private SerializationProvider provider;
+		private IFile file;
+		private Object object;
+		
+		public SerialisationWriter(SerializationProvider provider, IFile file, Object object)
+		{
+			this.provider = provider;
+			this.file = file;
+			this.object = object;
+		}
+		
+		@Override
+		public void run(IProgressMonitor monitor) throws CoreException
+		{
+			File f = file.getLocation().toFile();
+			try (OutputStream out = new FileOutputStream(f))
+			{
+				provider.save(object, out);
+				out.flush();
+				out.close();
+			}
+			catch (IOException e)
+			{
+				CoreException ce = new CoreException(new Status(IStatus.ERROR, "cuina.resource", e.getMessage()));
+				ce.initCause(e);
+				throw ce;
+			}
+			file.refreshLocal(0, monitor);
 		}
 	}
 }

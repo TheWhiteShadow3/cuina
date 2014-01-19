@@ -172,7 +172,7 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 	{
 		for(Trigger trigger : triggers)
 		{
-			if (trigger.test(event, eventArg))
+			if (trigger.isActive() && trigger.test(event, eventArg))
 			{
 				Object[] newArgs = new Object[callArgs.length + 1];
 				newArgs[0] = this;

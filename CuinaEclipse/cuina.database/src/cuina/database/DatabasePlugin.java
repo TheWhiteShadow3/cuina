@@ -244,17 +244,11 @@ public final class DatabasePlugin extends Plugin
 		
 		CuinaProject project = CuinaCore.getCuinaProject(file.getProject());
 		IFolder f = project.getProject().getFolder( loadDataPath(project));
-		if (file.getParent().equals(f) && !file.getName().equals(DatabasePlugin.META_DATA_FILE))
+		if (file.getParent().equals(f) && !file.getName().equals(DatabasePlugin.META_DATA_FILE)) try
 		{
-			try
-			{
-				if (getDatabase(project).loadTable(file) != null) return true;
-			}
-			catch (ResourceException e)
-			{
-				return false;
-			}
+			if (getDatabase(project).loadTable(file) != null) return true;
 		}
+		catch (ResourceException e) { /* fail */ }
 		return false;
 	}
 	
