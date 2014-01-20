@@ -53,6 +53,7 @@ public class MessageWidget extends Frame
 	public MessageWidget()
 	{
 		super();
+		setTheme("/messagewidget");
 		setName(WIDGET_KEY);
 		setResizableAxis(ResizableAxis.NONE);
 		setDraggable(true);

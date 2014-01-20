@@ -29,9 +29,9 @@ public class WidgetContainer implements Graphic
 	public static final String DEFAULT_THEME = Game.getIni().get("TWL", "theme.path");
 	private static final int DEPTH = 100;
 	
-	private static LWJGLRenderer renderer;
-	private static ThemeManager themeManager;
-	private static GUI gui;
+	private transient LWJGLRenderer renderer;
+	private transient ThemeManager themeManager;
+	private transient GUI gui;
 	
 	private static final GraphicContainer WIDGET_CONTAINER =
 			new GraphicSet("cuina.widgets", DEPTH, Graphics.GraphicManager);
@@ -188,10 +188,14 @@ public class WidgetContainer implements Graphic
 	@Override
 	public void dispose()
 	{
-		if(root != null)
-		{
-			root.destroy();
-			gui.getRootPane().removeChild(root);
-		}
+//		if(root != null)
+//		{
+//			root.destroy();
+//			gui.getRootPane().removeChild(root);
+//		}
+		if (container != null) container.removeGraphic(this);
+		root = null;
+		gui.destroy();
+		renderer = null;
 	}
 }

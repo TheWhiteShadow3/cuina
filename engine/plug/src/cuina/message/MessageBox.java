@@ -22,7 +22,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 	
 	public static final String CONTROL_UP = "up";
 	public static final String CONTROL_DOWN = "down";
-	public static final String CONTROL_OK = "c1";
+	public static final String CONTROL_OK = "c2";
 	public static final String CONTROL_CANCEL = "c3";
 	
 	private static final long serialVersionUID = 8472522785944518968L;
@@ -147,6 +147,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 	public Result showChoise(String... choises)
 	{
 		this.choises = choises;
+		
 		widget.setChoises(choises);
 		setActive(true);
 		return Result.WAIT_ONE_FRAME;

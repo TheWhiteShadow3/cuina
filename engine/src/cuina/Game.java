@@ -166,7 +166,7 @@ public final class Game
 			case SCENE: context =  getInstance().sceneContext; break;
 			default: context = null;
 		}
-		if (context == null) throw new IllegalStateException("Context is not set.");
+		if (context == null) throw new IllegalStateException("Context " + contextType + " is not set.");
 		return context;
 	}
 	
