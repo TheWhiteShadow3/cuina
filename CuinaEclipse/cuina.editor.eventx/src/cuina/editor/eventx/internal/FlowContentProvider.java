@@ -1,16 +1,15 @@
 package cuina.editor.eventx.internal;
 
+import cuina.editor.eventx.internal.prefs.EventPreferences;
+import cuina.editor.eventx.internal.tree.CommandNode;
+import cuina.editor.eventx.internal.tree.CommandTree;
+import cuina.eventx.Command;
+
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import cuina.editor.eventx.internal.prefs.EventPreferences;
-import cuina.eventx.Command;
-import cuina.eventx.CommandList;
 
 public class FlowContentProvider implements IStructuredContentProvider
 {
@@ -34,44 +33,74 @@ public class FlowContentProvider implements IStructuredContentProvider
 	@Override
 	public Object[] getElements(Object element)
 	{
-		if (element instanceof CommandList)
+		if (element instanceof CommandTree)
 		{
-			return createEditorCommandList((CommandList) element);
+			return getFlatRepresentationList((CommandTree) element).toArray();
 		}
 		return EMPTY;
 	}
 	
-	private Object[] createEditorCommandList(CommandList cmdList)
+//	private Object[] createEditorCommandList(CommandTree tree)
+//	{
+//		List<Item> list = new ArrayList<Item>(16);
+//		
+//		Deque<Item> stack = new LinkedList<>();
+//		int indent = 0;
+//		for (int i = 0; i < cmdList.commands.length; i++)
+//		{
+//			Command cmd = cmdList.commands[i];
+//			String colorKey = getColor(cmd);
+//			CommandNode node = CommandNode.createCommand(cmdList, i, indent, colorKey);
+//			
+//			list.add(node);
+//			
+//			if (cmd.indent > indent)
+//			{
+//				stack.push(node);
+//				indent = cmd.indent;
+//			}
+//			else if (cmd.indent < indent)
+//			{
+//				CommandNode parent = stack.pop();
+//				list.add(CommandNode.createMark(
+//						cmdList, i, indent, EventPreferences.CMDLINE_COLOR_DEFAULT));
+//				list.add(CommandNode.createBlockEnd(cmdList, parent.getIndex(), indent, colorKey));
+//				indent = cmd.indent;
+//			}
+//		}
+//		list.add(CommandNode.createMark(
+//				cmdList, cmdList.commands.length - 1, indent, EventPreferences.CMDLINE_COLOR_DEFAULT));
+//		
+//		return list.toArray();
+//	}
+	
+	public List<Item> getFlatRepresentationList(CommandTree tree)
 	{
-		List<CommandNode> list = new ArrayList<CommandNode>(cmdList.commands.length + 4);
+		List<Item> items = new ArrayList<Item>();
 		
-		Deque<CommandNode> stack = new LinkedList<>();
-		int indent = 0;
-		for (int i = 0; i < cmdList.commands.length; i++)
+		for(CommandNode child : tree.getChildren())
 		{
-			Command cmd = cmdList.commands[i];
-			String colorKey = getColor(cmd);
-			CommandNode node = new CommandNode(cmdList, i, colorKey, CommandNode.COMMAND);
-			
-			list.add(node);
-			
-			if (cmd.indent > indent)
-			{
-				stack.push(node);
-				indent = cmd.indent;
-			}
-			else if (cmd.indent < indent)
-			{
-				CommandNode parent = stack.pop();
-				list.add(new CommandNode(cmdList, i, colorKey, CommandNode.MARK));
-				list.add(new CommandNode(cmdList, parent.getIndex(), colorKey, CommandNode.BLOCK_END));
-				indent = cmd.indent;
-			}
+			fillFlatRepresentationList(child, 0, items);
 		}
-		list.add(new CommandNode(cmdList, cmdList.commands.length-1,
-				EventPreferences.CMDLINE_COLOR_DEFAULT, CommandNode.MARK));
+		items.add(new Item(null, 0, EventPreferences.CMDLINE_COLOR_DEFAULT, Item.MARK));
 		
-		return list.toArray();
+		return items;
+	}
+	
+	private void fillFlatRepresentationList(CommandNode node, int indent, List<Item> items)
+	{
+		String colorKey = getColor(node.getCommand());
+		items.add(new Item(node, indent, colorKey, Item.COMMAND));
+		
+		if (node.getChildren().size() > 0)
+		{
+			for(CommandNode child : node.getChildren())
+			{
+				fillFlatRepresentationList(child, indent+1, items);
+			}
+			items.add(new Item(null, indent+1, EventPreferences.CMDLINE_COLOR_DEFAULT, Item.MARK));
+			items.add(new Item(node, indent, colorKey, Item.BLOCK_END));
+		}
 	}
 	
 	private String getColor(Command cmd)
@@ -87,5 +116,32 @@ public class FlowContentProvider implements IStructuredContentProvider
 			}
 		}
 		return EventPreferences.CMDLINE_COLOR_DEFAULT;
+	}
+	
+	public static class Item
+	{
+		public static final int COMMAND = 1;
+		public static final int MARK = 2;
+		public static final int BLOCK_END = 3;
+		
+		public CommandNode node;
+		public int indent;
+		public String colorKey;
+		public int type;
+		
+		public Item(CommandNode node, int indent, String colorKey, int type)
+		{
+			this.node = node;
+			this.indent = indent;
+			this.colorKey = colorKey;
+			this.type = type;
+		}
+		
+		public Command getCommand()
+		{
+			if (type != COMMAND) return null;
+			
+			return node.getCommand();
+		}
 	}
 }

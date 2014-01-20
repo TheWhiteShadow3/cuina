@@ -3,13 +3,12 @@ package cuina.editor.eventx.internal;
 import cuina.database.DatabaseObject;
 import cuina.database.ui.AbstractDatabaseEditorPart;
 import cuina.editor.core.CuinaProject;
+import cuina.editor.eventx.internal.FlowContentProvider.Item;
 import cuina.editor.eventx.internal.prefs.EventPreferences;
+import cuina.editor.eventx.internal.tree.CommandNode;
+import cuina.editor.eventx.internal.tree.CommandTree;
 import cuina.eventx.Command;
 import cuina.eventx.CommandList;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -34,10 +33,10 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 {
 	private Shell shell;
 	private CommandList list;
-	private List<Command> commands;
 	private TableViewer viewer;
 	private FlowContentOutlinePage outlinePage;
 	private CommandLibrary library;
+	private CommandTree tree;
 
 	@Override
 	public void createPartControl(Composite parent)
@@ -66,7 +65,7 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 		
 		viewer.setContentProvider(new FlowContentProvider(library));
 		viewer.setLabelProvider(new FlowLabelProvider(library));
-		viewer.setInput(list);
+		viewer.setInput(tree);
 		
 		EventHandler handler = new EventHandler();
 		viewer.addDoubleClickListener(handler);
@@ -107,14 +106,14 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 	protected void init(DatabaseObject obj)
 	{
 		this.list = (CommandList) obj;
-		this.commands = new ArrayList<Command>(Arrays.asList(list.commands));
 		this.library = getCuinaProject().getService(CommandLibrary.class);
+		this.tree = new CommandTree(list, library);
 	}
 
 	@Override
 	protected boolean applySave()
 	{
-		list.commands = commands.toArray(new Command[commands.size()]);
+		list.commands = tree.toArray();
 		return true;
 	}
 
@@ -139,8 +138,8 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 	private CommandNode getSelectedNode()
 	{
 		Object item = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
-		if (item instanceof CommandNode)
-			return (CommandNode) item;
+		if (item instanceof Item)
+			return ((Item) item).node;
 		else
 			return null;
 	}
@@ -151,21 +150,16 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 		public void doubleClick(DoubleClickEvent event)
 		{
 			CommandNode node = getSelectedNode();
+			if (node == null) return;
 			
-			FunctionEntry func = library.getFunction(node.getCommand());
-			if (func != null)
+			CommandDialog dialog = new CommandDialog(FlowEditor.this, node.getCommand());
+			int result = dialog.open();
+			if (result == TitleAreaDialog.OK)
 			{
-				CommandDialog dialog = new CommandDialog(FlowEditor.this, func);
-				int result = dialog.open();
-				if (result == TitleAreaDialog.OK)
-				{
-					
 //					System.out.println("Command erstellt: " + dialog.getCommand());
-					commands.add(node.getIndex(), dialog.getCommand());
-					viewer.refresh();
-				}
+				viewer.refresh();
+				setDirty(true);
 			}
-			
 		}
 
 		@Override
@@ -176,17 +170,14 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 				CommandNode node = getSelectedNode();
 				if (node == null) return;
 				
-				commands.remove(node.getIndex());
+				node.getParent().removeChild(node);
 				viewer.refresh();
+				setDirty(true);
 			}
 		}
 
 		@Override
-		public void keyReleased(KeyEvent e)
-		{
-			// TODO Auto-generated method stub
-			
-		}
+		public void keyReleased(KeyEvent e) {}
 	}
 
 	@Override
@@ -194,9 +185,10 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 	{
 		CommandNode node = getSelectedNode();
 		if (node != null)
-			commands.add(node.getIndex(), cmd);
+			node.getParent().insertBefore(node, cmd);
 		else
-			commands.add(commands.size()-1, cmd);
+			tree.addChild(new CommandNode(tree, tree, cmd));
 		viewer.refresh();
+		setDirty(true);
 	}
 }

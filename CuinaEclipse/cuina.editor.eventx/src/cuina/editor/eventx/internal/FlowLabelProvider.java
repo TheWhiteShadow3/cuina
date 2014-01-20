@@ -1,5 +1,6 @@
 package cuina.editor.eventx.internal;
 
+import cuina.editor.eventx.internal.FlowContentProvider.Item;
 import cuina.editor.eventx.internal.prefs.EventPreferences;
 import cuina.eventx.Command;
 
@@ -33,18 +34,16 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 	@Override
 	public String getText(Object element)
 	{
-		if (element instanceof CommandNode)
+		if (element instanceof Item)
 		{
-			CommandNode node = (CommandNode) element;
-			Command cmd = node.getCommand();
-			if (cmd == null)
-			{
-				throw new NullPointerException("Node hast no command.");
-			}
+			Item item = (Item) element;
 			
-			String indentStr = getIndentString(cmd.indent);
-			if (node.getType() == CommandNode.BLOCK_END) return indentStr + "end";
-			if (node.getType() == CommandNode.MARK) return indentStr + "+";
+			String indentStr = getIndentString(item.indent);
+			if (item.type == Item.BLOCK_END) return indentStr + "end";
+			if (item.type == Item.MARK) return indentStr + "+";
+			
+			Command cmd = ((Item) element).getCommand();
+			assert cmd != null;
 
 			String name;
 			FunctionEntry func = library.getFunction(cmd);
@@ -95,9 +94,9 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 	@Override
 	public Color getForeground(Object element)
 	{
-		if (element instanceof CommandNode)
+		if (element instanceof Item)
 		{
-			String key = ((CommandNode) element).getColorKey();
+			String key = ((Item) element).colorKey;
 			Color color = colors.get(key);
 			if (color == null || !EventPreferences.getColor(key).equals(color))
 			{

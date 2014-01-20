@@ -14,23 +14,30 @@ public class FunctionLabelProvider extends LabelProvider implements ITableLabelP
 	
 	public FunctionLabelProvider()
 	{
-//		IMAGE_GLOABL_CONTEXT = EventPlugin.getImage("global_context.png");
+		IMAGE_GLOABL_CONTEXT = EventPlugin.loadImage("global.png");
+		IMAGE_SESSION_CONTEXT = EventPlugin.loadImage("session.png");
+		IMAGE_SCENE_CONTEXT = EventPlugin.loadImage("scene.png");
+		IMAGE_STATIC_CONTEXT = EventPlugin.loadImage("static.png");
 	}
 
 	@Override
 	public Image getImage(Object element)
 	{
-		if (element instanceof Category)
+		if (element instanceof FunctionEntry)
 		{
-//			ContextEntry entry = (ContextEntry) element;
-//			
-//			switch(entry.context)
-//			{
-//				case "GLOBAL": return IMAGE_GLOABL_CONTEXT;
-//				case "SESSION": return IMAGE_SESSION_CONTEXT;
-//				case "SCENE": return IMAGE_SCENE_CONTEXT;
-//				case "STATIC": return IMAGE_STATIC_CONTEXT;
-//			}
+			FunctionEntry func = (FunctionEntry) element;
+			
+			int p = func.target.indexOf(':');
+			if (p == -1) return null;
+			
+			String context = func.target.substring(0, p);
+			switch(context)
+			{
+				case "GLOBAL": return IMAGE_GLOABL_CONTEXT;
+				case "SESSION": return IMAGE_SESSION_CONTEXT;
+				case "SCENE": return IMAGE_SCENE_CONTEXT;
+				case "STATIC": return IMAGE_STATIC_CONTEXT;
+			}
 		}
 		return null;
 	}
@@ -38,6 +45,8 @@ public class FunctionLabelProvider extends LabelProvider implements ITableLabelP
 	@Override
 	public Image getColumnImage(Object element, int columnIndex)
 	{
+		if (columnIndex > 0) return null;
+			
 		return getImage(element);
 	}
 
@@ -82,10 +91,10 @@ public class FunctionLabelProvider extends LabelProvider implements ITableLabelP
 	@Override
 	public void dispose()
 	{
-//		IMAGE_GLOABL_CONTEXT.dispose();
-//		IMAGE_SESSION_CONTEXT.dispose();
-//		IMAGE_SCENE_CONTEXT.dispose();
-//		IMAGE_STATIC_CONTEXT.dispose();
+		IMAGE_GLOABL_CONTEXT.dispose();
+		IMAGE_SESSION_CONTEXT.dispose();
+		IMAGE_SCENE_CONTEXT.dispose();
+		IMAGE_STATIC_CONTEXT.dispose();
 //		IMAGE_OTHER_CONTEXT.dispose();
 		
 		super.dispose();

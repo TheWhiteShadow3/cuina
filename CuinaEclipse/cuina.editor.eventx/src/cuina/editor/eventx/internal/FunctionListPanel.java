@@ -35,7 +35,7 @@ public class FunctionListPanel
 		TreeColumn argsColumn = new TreeColumn(viewer.getTree(), SWT.RIGHT);
 		argsColumn.setAlignment(SWT.LEFT);
 		argsColumn.setText("Argumente");
-		argsColumn.setWidth(200);
+		argsColumn.setWidth(100);
 		
 		viewer.setContentProvider(new FunctionContentProvider());
 		viewer.setLabelProvider(new FunctionLabelProvider());

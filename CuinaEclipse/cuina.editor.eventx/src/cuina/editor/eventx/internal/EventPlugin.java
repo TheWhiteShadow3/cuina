@@ -2,9 +2,16 @@ package cuina.editor.eventx.internal;
 
 import cuina.editor.core.CuinaProject;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -62,5 +69,28 @@ public class EventPlugin extends AbstractUIPlugin
 			plugin.libraries.put(project, library);
 		}
 		return library;
+	}
+
+	public static File getBundleFile(String name)
+	{
+		if (name == null) throw new NullPointerException();
+		
+		URL url = plugin.getBundle().getEntry(name);
+		try
+		{
+			URL realUrl = FileLocator.resolve(url);
+			return new File(realUrl.toURI());
+		}
+		catch (IOException | URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Image loadImage(String name)
+	{
+		String pathName = getBundleFile("icons/" + name).toString();
+		return new Image(Display.getDefault(), pathName);
 	}
 }
