@@ -12,7 +12,7 @@ import java.util.Set;
  * 
  * @author TheWhiteShadow
  */
-public class DataTable<E extends DatabaseObject> implements Serializable
+public class DataTable<E extends DatabaseObject> implements NamedItem, Serializable
 {
 	private static final long serialVersionUID = 4194326407322198560L;
 
@@ -22,7 +22,6 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 	/** Ein Workspace-Relativer Pfad zur Datei. */ 
 	private transient String fileName;
 	private final HashMap<String, E> data = new HashMap<String, E>();
-//	private HashMap<String, String> treeOrder = new HashMap<String, String>();
 
 	public DataTable(String name, Class<E> clazz)
 	{
@@ -46,6 +45,7 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 		this.fileName = fileName;
 	}
 
+	@Override
 	public String getName()
 	{
 		return name;
@@ -58,21 +58,11 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 
 	public void put(E obj)
 	{
-		nullCheck(obj);
 		put(obj.getKey(), obj);
 	}
-
-//	public void put(String path, E obj)
-//	{
-//		nullCheck(obj);
-//		put(path, obj.getKey(), obj);
-//	}
-
 	public void put(String key, E obj)
 	{
 		nullCheck(key);
-		nullCheck(obj);
-//		if (data.containsKey(key)) throw new IllegalArgumentException("duplicate Key");
 
 		obj.setKey(key);
 		data.put(key, obj);
@@ -92,15 +82,6 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 	{
 		return data.size();
 	}
-
-//	/**
-//	 * Gibt die Anordnung der Elemente im Baum für den Editor zurück.<br>
-//	 * <i>Dieses Attribut ist für die Engine irrelevant.</i>
-//	 * */
-//	public HashMap<String, String> getTreeOrder()
-//	{
-//		return treeOrder;
-//	}
 
 	/**
 	 * Aktuallisiert einen Eintrag, der zuvor in der Tabelle angelegt wurde und
@@ -179,7 +160,6 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 	public void remove(String key)
 	{
 		data.remove(key);
-//		treeOrder.remove(key);
 	}
 
 	/**
@@ -188,7 +168,6 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 	public void clear()
 	{
 		data.clear();
-//		treeOrder.clear();
 	}
 
 	public boolean isEmpty()
@@ -206,18 +185,6 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 		return data.containsValue(value);
 	}
 
-	/**
-	 * Ändert den Pfad des Objekts innerhalb der Tabelle.
-	 * 
-	 * @param key
-	 * @param path
-	 */
-	public void move(String key, String path)
-	{
-		if (!data.containsKey(key)) throw new NullPointerException("No entry with key: " + key);
-//		treeOrder.put(key, path);
-	}
-
 	public Database getDatabase()
 	{
 		return db;
@@ -227,83 +194,6 @@ public class DataTable<E extends DatabaseObject> implements Serializable
 	{
 		return new DatabaseInput(this, key);
 	}
-	
-//	/**
-//	 * Erstellt einen Baum um die Objekte hirachisch anzuzeigen und zu
-//	 * bearbeiten.
-//	 * 
-//	 * @return Wurzel-Element des Baums.
-//	 */
-//	public TreeGroup createTreeRoot()
-//	{
-//		return new TreeGroup(this, "");
-//	}
-	
-//	ArrayList<TreeNode> createChildren(TreeGroup parent)
-//	{
-//		ArrayList<TreeNode> childList = new ArrayList<TreeNode>();
-//		OrderLoop:
-//		for (String key : treeOrder.keySet())
-//		{
-//			String path = treeOrder.get(key);
-//			String parentPath = parent.getPath();
-//			if (path != null)
-//			{
-//				TreeNode node = null;
-//				if (path.equals(parentPath) && data.containsKey(key))
-//				{
-//					node = new TreeLeaf(this, key);
-//				}
-//				else if (path.length() > parentPath.length() &&
-//						 path.lastIndexOf('/') <= parentPath.length() &&
-//						 path.startsWith(parentPath))
-//				{
-//					for (int i = 0; i < childList.size(); i++)
-//					{
-//						if ( path.equals(childList.get(i).getPath()) ) continue OrderLoop;
-//					}
-//					
-//					node = new TreeGroup(this, path);
-//				}
-//				
-//				if (node != null)
-//				{
-//					node.setParent(parent);
-//					childList.add(node);
-//				}
-//			}
-//		}
-//		return childList;
-//	}
-
-//	/**
-//	 * Erstellt eine Gruppe für die Baumstruktur-Ansicht. Die Gruppe bleibt auch
-//	 * erhalten, wenn keine Objekte mehr dort drin sind.
-//	 * 
-//	 * @param path
-//	 *            Der Pfad.
-//	 */
-//	public void createTreeGroup(String path)
-//	{
-//		treeOrder.put('!' + path, path);
-//	}
-//
-//	/**
-//	 * Löscht eine Gruppe von aus der Baumstruktur-Ansicht, falls diese leer
-//	 * ist. Nach dieser Operation muss der Baum erneuert werden.
-//	 * 
-//	 * @param path
-//	 *            Der Pfad.
-//	 */
-//	public void removeTreeGroup(String path)
-//	{
-//		treeOrder.remove('!' + path);
-//	}
-//
-//	public boolean canGroupBeEmpty(String path)
-//	{
-//		return treeOrder.containsKey('!' + path);
-//	}
 
     private void nullCheck(Object value)
     {

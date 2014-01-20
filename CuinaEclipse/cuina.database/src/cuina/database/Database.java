@@ -29,6 +29,7 @@ public class Database
 	private CuinaProject project;
 	private String dataPath;
 	
+	private IFile metaFile;
 	private HashMap<String, Object> metaData;
 	private HashMap<String, DataTable> cache = new HashMap<String, DataTable>();
 	
@@ -138,28 +139,32 @@ public class Database
 	
 	public void saveMetaData() throws ResourceException
 	{
-		IFile metaFile = project.getProject().getFile(dataPath + '/' + DatabasePlugin.META_DATA_FILE);
 		if (metaData != null)
 		{
+			if (metaFile == null)
+			{
+				String name = DatabasePlugin.META_DATA_FILE + '.' + DATA_FILE_EXTENSION;
+				this.metaFile = project.getProject().getFile(dataPath + '/' + name);
+			}
 			SerializationManager.save(metaData, metaFile);
 		}
 	}
 	
 	private void loadMetaData()
 	{
-		IFile metaFile = project.getProject().getFile(dataPath + '/' + DatabasePlugin.META_DATA_FILE);
-		if (metaFile.exists())
+		try
 		{
-			try
+			this.metaFile = getPreferredDataFile(DatabasePlugin.META_DATA_FILE);
+			if (metaFile.exists())
 			{
 				metaData = (HashMap<String, Object>) SerializationManager.load(metaFile, getClass().getClassLoader());
 			}
-			catch (ResourceException e)
-			{
-				e.printStackTrace();
-			}
+			if (metaData == null) metaData = new HashMap<String, Object>();
 		}
-		if (metaData == null) metaData = new HashMap<String, Object>();
+		catch (ResourceException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public <E extends DatabaseObject> DataTable<E> createNewTable(String name)

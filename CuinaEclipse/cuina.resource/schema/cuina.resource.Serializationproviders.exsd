@@ -48,10 +48,6 @@
    </element>
 
    <element name="provider">
-      <annotation>
-         <documentation>
-         </documentation>
-      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -77,9 +73,6 @@ Für unterschiedliche Ressourcen-Provider darf mehrfach dieselbe Klasse angegebe
                   Gibt an, ob der Provider als Default für die angegebenen Dateierweiterungen genommen werden soll.
                   Wenn ja, überschreibt er zuvor assoziierte Provider mit der selben Erweiterung.
                </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
             </annotation>
          </attribute>
       </complexType>

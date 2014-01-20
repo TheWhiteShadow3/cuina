@@ -6,14 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,8 +22,8 @@ import org.osgi.framework.Bundle;
 
 public class SerializationManager
 {
-	private static String defaultExtension = "xml";
-	private static final Map<String, String> ALIAS_MAP = new HashMap<String, String>();
+//	private static String defaultExtension = "xml";
+//	private static final Map<String, String> ALIAS_MAP = new HashMap<String, String>();
 	private static HashMap<String, SerializationProvider> providers;
 	
 	private SerializationManager() {}
@@ -66,49 +64,54 @@ public class SerializationManager
 				ex.printStackTrace();
 			}
 		}
-		//XXX: lade Aliasse hier, da noch kein Extensionpoint definiert ist, der das tut.
-		SerializationManager.addAlias("xml", "cxd");
-		SerializationManager.addAlias("xml", "cxm");
-		SerializationManager.addAlias("ser", "cjd");
-		SerializationManager.addAlias("ser", "cjm");
-		SerializationManager.addAlias("xml.gz", "cxz");
-		SerializationManager.addAlias("ser,gz", "cjz");
+//		//XXX: lade Aliasse hier, da noch kein Extensionpoint definiert ist, der das tut.
+//		SerializationManager.addAlias("xml", "cxd");
+//		SerializationManager.addAlias("xml", "cxm");
+//		SerializationManager.addAlias("ser", "cjd");
+//		SerializationManager.addAlias("ser", "cjm");
+//		SerializationManager.addAlias("xml.gz", "cxz");
+//		SerializationManager.addAlias("ser,gz", "cjz");
 	}
+//	
+//	public static void addAlias(String name, String alias)
+//	{
+//		ALIAS_MAP.put(alias, name);
+//	}
+//	
+//	/**
+//	 * Gibt die default Dateierweiterung zurück, die zum Laden benutzt werden soll.
+//	 * @return Die Default-Dateierweiterung.
+//	 */
+//	public static String getDefaultExtension()
+//	{
+//		return defaultExtension;
+//	}
+//
+//	public static void setDefaultExtension(String extension)
+//	{
+//		Assert.isTrue(defaultExtension != null);
+//		SerializationManager.defaultExtension = extension;
+//	}
 	
-	public static void addAlias(String name, String alias)
+	public static String[] getSupportedExtensions()
 	{
-		ALIAS_MAP.put(alias, name);
-	}
-	
-	/**
-	 * Gibt die default Dateierweiterung zurück, die zum Laden benutzt werden soll.
-	 * @return Die Default-Dateierweiterung.
-	 */
-	public static String getDefaultExtension()
-	{
-		return defaultExtension;
-	}
-
-	public static void setDefaultExtension(String extension)
-	{
-		Assert.isTrue(defaultExtension != null);
-		SerializationManager.defaultExtension = extension;
+		return providers.keySet().toArray(new String[providers.size()]);
 	}
 
 	public static SerializationProvider getSerializationProvider(String extension)
 	{
-		String alias = ALIAS_MAP.get(extension);
-		if (alias != null) extension = alias;
-		if (extension.endsWith(".gz"))
-		{
-			int p = extension.lastIndexOf('.');
-			extension = extension.substring(0, p);
-			
-			SerializationProvider provider = providers.get(extension);
-			if (provider == null) return null;
-			
-			return new GZipSerialisationProxy(provider);
-		}
+//		String alias = ALIAS_MAP.get(extension);
+//		if (alias != null) extension = alias;
+//		if (extension.endsWith(".gz"))
+//		{
+//			int p = extension.lastIndexOf('.');
+//			extension = extension.substring(0, p);
+//			
+//			SerializationProvider provider = providers.get(extension);
+//			if (provider == null) return null;
+//			
+//			return new GZipXMLSerialisationProvider(provider);
+//		}
 		return providers.get(extension);
 	}
 	

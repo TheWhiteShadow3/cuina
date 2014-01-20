@@ -8,12 +8,11 @@
          point="cuina.resource.SerializationProviders">
       <provider
             class="cuina.resource.XmlSerializationProvider"
-            default="true"
-            extensions="xml">
+            extensions="xml, cxd, cxm">
       </provider>
       <provider
             class="cuina.resource.JavaSerializationProvider"
-            extensions="ser">
+            extensions="cjd, cjm, sav">
       </provider>
    </extension>
    

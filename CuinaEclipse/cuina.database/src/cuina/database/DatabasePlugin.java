@@ -40,7 +40,7 @@ public final class DatabasePlugin extends Plugin
 	
 	public static final String DATABASE_DIRECTORY_ID = "cuina.database.path"; //$NON-NLS-1$
 	
-	public static final String META_DATA_FILE = "meta.xml"; //$NON-NLS-1$
+	public static final String META_DATA_FILE = "meta"; //$NON-NLS-1$
 	
 	public static final String TYPE_EXTENSION = "cuina.database.types"; //$NON-NLS-1$
 	
@@ -244,7 +244,7 @@ public final class DatabasePlugin extends Plugin
 		
 		CuinaProject project = CuinaCore.getCuinaProject(file.getProject());
 		IFolder f = project.getProject().getFolder( loadDataPath(project));
-		if (file.getParent().equals(f) && !file.getName().equals(DatabasePlugin.META_DATA_FILE)) try
+		if (file.getParent().equals(f) && !file.getName().startsWith(DatabasePlugin.META_DATA_FILE)) try
 		{
 			if (getDatabase(project).loadTable(file) != null) return true;
 		}

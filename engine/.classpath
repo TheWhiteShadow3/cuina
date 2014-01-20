@@ -11,7 +11,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/xml/kxml2-2.3.0.jar"/>
-	<classpathentry kind="lib" path="lib/xml/xstream-1.4.1.jar" sourcepath="G:/Projekte/Java/CuinaEngine_old/lib/xml/xstream-distribution-1.4.2-src.zip"/>
+	<classpathentry kind="lib" path="lib/xml/xstream-1.4.1.jar" sourcepath="G:/Projekte/Java/Cuina_Projekt/CuinaEclipse/cuina.resource/lib/xstream-distribution-1.4.2-src.zip"/>
 	<classpathentry kind="lib" path="lib/sound/paulscode/CodecIBXM.jar" sourcepath="lib/sound/paulscode/src.zip"/>
 	<classpathentry kind="lib" path="lib/sound/paulscode/CodecJOgg.jar" sourcepath="lib/sound/paulscode/src.zip"/>
 	<classpathentry kind="lib" path="lib/sound/paulscode/CodecJOrbis.jar" sourcepath="lib/sound/paulscode/src.zip"/>

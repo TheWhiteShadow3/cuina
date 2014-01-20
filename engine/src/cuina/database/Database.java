@@ -6,23 +6,31 @@ import cuina.plugin.PluginManager;
 import cuina.util.CuinaClassLoader;
 import cuina.util.LoadingException;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 
+/**
+ * Die Datenbank zum laden und speichern von Dateien.
+ * @author TheWhiteShadow
+ */
 public class Database
 {
 	public static final String CUINA_DATABASEPATH_KEY 	= "cuina.database.path";
 	
+	/**
+	 * Die X-Stream Instanz, die für XML-Serialisierung benutzt wird.
+	 */
 	public static final XStream X_STREAM;
 	
 	private static final HashMap<String, DataTable<?>> data = new HashMap<String, DataTable<?>>();
@@ -85,6 +93,14 @@ public class Database
 		return file.getPath().substring(lastDot + 1).toLowerCase();
 	}
 	
+	/**
+	 * Ladet ein zuvor serialisiertes Objekt.
+	 * <p>
+	 * Die unterstützten Formate sind xml, cxd, cxm, cjd, cjm und sav.
+	 * </p>
+	 * @param file Datei, aus der das Objekt geladen werden soll.
+	 * @return Das Objekt.
+	 */
 	public static Object loadData(File file)
 	{
 		try (FileInputStream stream = new FileInputStream(file))
@@ -94,24 +110,21 @@ public class Database
 			 * XXX: Hier erstmal die Idee zu einer Lösung vom Format-Chaos.
 			 * Es reicht, wenn XML möglich, aber nicht der Defaultwert ist,
 			 * da es unwarscheinlich ist, dass jemand in den Dateien rumschreibst. (Außer mir TWS ^^)
+			 * Nachtrag:
+			 * xml, ist generell blöd, da es eclipse dazu bringt einen Texteditor zu öffnen.
+			 * Gezipptes XML ist weder lesbar noch praktisch, also wozu?
+			 * Also hier die neue Reglung. Sogar Kompatibel zum aktueleln Stand.
 			 */
 			// Binäre-Formate (Immer gezippt)
 			if ("cjd".equals(ext) || "cjm".equals(ext) || "sav".equals(ext))
 			{
-				ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(stream, 1 << 6));
+				ObjectInputStream in = new ObjectInputStream(new GZIPInputStream(stream, 1 << 16));
 				return in.readObject();
 			}
-			// Entwicklungsformate
+			// Entwicklungsformate (raw)
 			if ("xml".equals(ext) || "cxd".equals(ext) || "cxm".equals(ext))
 			{
 				return X_STREAM.fromXML(stream);
-			}
-			// Gezippte Entwicklungsformate (Standard)
-			if ("cxd".equals(ext) || "cxm".equals(ext))
-			{
-				return X_STREAM.fromXML(stream);
-				//FIXME: Aktuell sind die Dateien noch nicht gezippt, daher würde hier ein Fehler auftreten.
-//				return X_STREAM.fromXML(new GZIPInputStream(stream, 1 << 6));
 			}
 		}
 		catch (Exception | InstantiationError e)
@@ -121,28 +134,27 @@ public class Database
 		return null;
 	}
 	
+	/**
+	 * Speichert ein Objekt serialisiert in eine Datei.
+	 * <p>
+	 * Die unterstützten Formate sind xml, cxd, cxm, cjd, cjm und sav.
+	 * </p>
+	 * @param file Datei, in der das Objekt geschrieben werden soll.
+	 * @param obj Das Objekt.
+	 */
 	public static void saveData(File file, Object obj)
 	{
 		try (FileOutputStream stream = new FileOutputStream(file))
 		{
 			String ext = getExtension(file);
-			if ("xmlz".equals(ext) || "cxdz".equals(ext) || "cxmz".equals(ext))
+			if ("cjd".equals(ext) || "cjm".equals(ext) || "sav".equals(ext))
 			{
-				BufferedOutputStream oos = new BufferedOutputStream(new GZIPOutputStream(stream, 65536), 65536);
-				X_STREAM.toXML(obj, oos);
-				
-				oos.flush();
-				oos.close();
-			} 
-			else
-			if ("xml".equals(ext) || "cxd".equals(ext) || "cxm".equals(ext))
+				ObjectOutputStream out = new ObjectOutputStream(new GZIPOutputStream(stream, 1 << 16));
+				out.writeObject(obj);
+			}
+			else if ("xml".equals(ext) || "cxd".equals(ext) || "cxm".equals(ext))
 			{
 				X_STREAM.toXML(obj, stream);
-			}
-			else
-			{
-				ObjectOutputStream out = new ObjectOutputStream(stream);
-				out.writeObject(obj);
 			}
 		}
 		catch (Exception e)
@@ -163,9 +175,13 @@ public class Database
 		return null;
 	}
 	
-	public static HashMap<String, DataTable<?>> getTables()
+	/**
+	 * Gibt eine Liste der Datenbank-Tabellen zurück.
+	 * @return Liste der Datenbank-Tabellen.
+	 */
+	public static Map<String, DataTable<?>> getTables()
 	{
-		return data;
+		return Collections.unmodifiableMap(data);
 	}
 	
 	public static <T extends DatabaseObject> DataTable<T> getDataTable(String dbName)

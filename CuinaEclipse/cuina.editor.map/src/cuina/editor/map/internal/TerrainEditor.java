@@ -32,11 +32,16 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -54,6 +59,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.EditorPart;
@@ -93,14 +99,26 @@ public class TerrainEditor extends EditorPart implements
 		}
 		catch(ResourceException e)
 		{
-			e.printStackTrace();
+			showError("Datei konnte nicht gespeichert werden.", e);
 		}
 	}
 
 	@Override
 	public void doSaveAs()
 	{
-		doSave(null);
+		SaveAsDialog dialog = new SaveAsDialog(getEditorSite().getShell());
+		dialog.setOriginalFile(file);
+		dialog.setTitle("Speichern unter");
+		int result = dialog.open();
+		if (result == Dialog.OK) try
+		{
+			SerializationManager.save(map, ResourcesPlugin.getWorkspace().getRoot().getFile(dialog.getResult()));
+			setDirty(false);
+		}
+		catch(ResourceException e)
+		{
+			showError("Datei konnte nicht gespeichert werden.", e);
+		}
 	}
 
 	@Override
@@ -116,6 +134,12 @@ public class TerrainEditor extends EditorPart implements
 			throw new PartInitException("Map not found!");
 		if(tileset == null)
 			throw new PartInitException("Tileset '" + map.tilesetKey + "' not found!");
+	}
+	
+	private void showError(String message, Exception e)
+	{
+		ErrorDialog.openError(getEditorSite().getShell(), "Fehler!", message,
+				new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage()));
 	}
 
 	private void readInput(IEditorInput input) throws PartInitException
@@ -170,7 +194,7 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public boolean isSaveAsAllowed()
 	{
-		return false;
+		return true;
 	}
 
 	@Override
@@ -417,7 +441,7 @@ public class TerrainEditor extends EditorPart implements
 		}
 		catch(LWJGLException e)
 		{
-			e.printStackTrace();
+			showError("Datei '" + imageName + "' konnte nicht geladen werden.", e);
 		}
 		return null;
 	}
