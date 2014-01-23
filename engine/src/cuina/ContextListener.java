@@ -15,10 +15,11 @@ public interface ContextListener
 	/**
 	 * Wird aufgerufen, wenn sich ein Eintrag in einem Kontext, in dem der Listener registriert ist, ändert.
 	 * @param context Der Kontext.
+	 * @param key der Schlüssel.
 	 * @param oldValue alter Wert.
 	 * @param newValue neuer Wert.
 	 */
-	public void entryChanged(Context context, Object oldValue, Object newValue);
+	public void entryChanged(Context context, String key, Object oldValue, Object newValue);
 	
 	/**
 	 * Wird aufgerufen, wenn der Kontext seine gültigkeit verliert.

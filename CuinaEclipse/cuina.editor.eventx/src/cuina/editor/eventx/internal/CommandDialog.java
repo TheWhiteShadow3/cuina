@@ -1,10 +1,14 @@
 package cuina.editor.eventx.internal;
 
+import cuina.editor.eventx.internal.editors.TypeEditor;
+import cuina.eventx.Command;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -17,11 +21,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
-import cuina.editor.eventx.internal.editors.IntegerEditor;
-import cuina.editor.eventx.internal.editors.StringEditor;
-import cuina.editor.eventx.internal.editors.TypeEditor;
-import cuina.eventx.Command;
 
 public class CommandDialog extends TitleAreaDialog
 {
@@ -79,12 +78,9 @@ public class CommandDialog extends TitleAreaDialog
 		for (int i = 0; i < function.argTypes.length; i++)
 		{
 			Class clazz = function.argTypes[i];
-			TypeEditor<?> editor = library.newTypeEditor(clazz);
-			if (editor == null)
-			{
-				editor = createDefaultEditor(clazz);
-				if (editor == null) throw new RuntimeException("Unsupported class '" + clazz + "'.");
-			}
+			TypeEditor<?> editor = CommandLibrary.newTypeEditor(clazz);
+			if (editor == null) throw new RuntimeException("Unsupported class '" + clazz + "'.");
+			
 			editor.init(command.args[i]);
 			editors.add(editor);
 		}
@@ -95,11 +91,22 @@ public class CommandDialog extends TitleAreaDialog
 	protected Control createDialogArea(Composite parent)
 	{
 		parent = (Composite) super.createDialogArea(parent);
-		Composite mainBlock = new Composite(parent, SWT.NONE);
-		mainBlock.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		Handler handler = new Handler();
+		
+		ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL);
+		sc.setLayoutData(new GridData(GridData.FILL_BOTH));
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		sc.setAlwaysShowScrollBars(true);
+		
+		/* 
+		 * FIXME: Das ScrolledComposite lässt sich nicht skrollen.
+		 * Stattdessen wird der Inhalt abgeschnitten.
+		 */
+		Composite mainBlock = new Composite(sc, SWT.NONE);
+		sc.setContent(mainBlock);
 		mainBlock.setLayout(new GridLayout(3, false));
 		
-		Handler handler = new Handler();
 		for (int i = 0; i < editors.size(); i++)
 		{
 			if (i > 0)
@@ -142,13 +149,6 @@ public class CommandDialog extends TitleAreaDialog
 	{
 		return command;
 	}
-	
-	private TypeEditor<?> createDefaultEditor(Class<?> clazz)
-	{
-		if (clazz.equals(String.class)) return new StringEditor();
-		if (clazz.equals(int.class) || clazz.equals(Integer.class)) return new IntegerEditor();
-		return null;
-	}
 
 	@Override
 	protected void okPressed()
@@ -182,9 +182,34 @@ public class CommandDialog extends TitleAreaDialog
 		@Override
 		public void handleEvent(Event event)
 		{
-			Combo combo = (Combo) event.widget;
-			Composite composite = (Composite) event.widget.getData();
-			composite.setEnabled(combo.getSelectionIndex() == 0);
+//			if (event.type == SWT.Resize)
+//			{
+//				handleResize(event.width);
+//			}
+			if (event.type == SWT.Selection)
+			{
+				Combo combo = (Combo) event.widget;
+				Composite composite = (Composite) event.widget.getData();
+				composite.setEnabled(combo.getSelectionIndex() == 0);
+			}
 		}
+		
+//		protected void handleResize(Composite composite)
+//		{
+//			ScrollBar scrollbar = composite.getVerticalBar();
+//			
+//			scrollbar.setMaximum(viewSize.y);
+//			vBar.setThumb(Math.min(viewSize.y, bounds.height));
+//			int vPage = viewSize.y - bounds.height;
+//			int vSelection = vBar.getSelection();
+//			if (vSelection >= vPage)
+//			{
+//				if (vPage <= 0) vSelection = 0;
+//				origin.y = -vSelection;
+//			}
+//			
+//			canvas.scroll(-origin.x, -origin.y, 0, 0, viewSize.x, viewSize.y, false);
+//			updateSelectionArea();
+//		}
 	}
 }

@@ -4,6 +4,7 @@ import cuina.editor.eventx.internal.FlowContentProvider.Item;
 import cuina.editor.eventx.internal.prefs.EventPreferences;
 import cuina.eventx.Command;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 
 import org.eclipse.jface.viewers.IColorProvider;
@@ -57,19 +58,14 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 			if (cmd.args != null)
 			{
 				builder.append('(');
-				
-				if (cmd.args instanceof Object[])
+				for (int i = 0; i < cmd.args.length; i++)
 				{
-					Object[] args = cmd.args;
-					for (int i = 0; i < args.length; i++)
-					{
-						if (i > 0) builder.append(", ");
-						builder.append(args[i]);
-					}
-				}
-				else
-				{
-					builder.append(cmd.args);
+					if (i > 0) builder.append(", ");
+					Object arg = cmd.args[i];
+					if (arg.getClass().isArray())
+						appendArray(builder, arg);
+					else
+						builder.append(arg);
 				}
 				builder.append(')');
 			}
@@ -77,6 +73,21 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 			return builder.toString();
 		}
 		return super.getText(element);
+	}
+	
+	private void appendArray(StringBuilder builder, Object array)
+	{
+		builder.append('[');
+		for (int i = 0, n = Array.getLength(array); i < n; i++)
+		{
+			if (i > 0) builder.append(", ");
+			Object arg = Array.get(array, i);
+			if (arg.getClass().isArray())
+				appendArray(builder, arg);
+			else
+				builder.append(arg);
+		}
+		builder.append(']');
 	}
 
 	private String getIndentString(int indent)

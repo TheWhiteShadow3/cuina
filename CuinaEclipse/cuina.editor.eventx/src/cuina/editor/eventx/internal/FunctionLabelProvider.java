@@ -65,7 +65,7 @@ public class FunctionLabelProvider extends LabelProvider implements ITableLabelP
 //			if (CommandLibrary.INTERNAL_CONTEXT.equals(func.parent.context))
 			switch(columnIndex)
 			{
-				case 0: return func.name;
+				case 0: return (func.label != null) ? func.label : func.name;
 				case 1: return getArguments(func);
 
 			}

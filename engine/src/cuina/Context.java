@@ -44,7 +44,7 @@ public final class Context implements Serializable
 		if (Objects.equals(old, value)) return false;
 		
 		data.put(key, value);
-		fireEntryChanged(old, value);
+		fireEntryChanged(key, old, value);
 		return true;
 	}
 	
@@ -125,7 +125,7 @@ public final class Context implements Serializable
 		throw new IllegalArgumentException("Listener is not in the list.");
 	}
 	
-	private void fireEntryChanged(Object oldValue, Object newValue)
+	private void fireEntryChanged(String key, Object oldValue, Object newValue)
 	{
 		for(int i = 0; i < listeners.size();)
 		{
@@ -136,7 +136,7 @@ public final class Context implements Serializable
 			}
 			else
 			{
-				l.entryChanged(this, oldValue, newValue);
+				l.entryChanged(this, key, oldValue, newValue);
 				i++;
 			}
 		}

@@ -111,7 +111,7 @@
             categoryID="cuina.eventx.category.Messages"
             contextID="cuina.message.context.Message"
             description="Setzt den Namen vom Nahichtenfenster."
-            label="setze Name"
+            label="Setze Name"
             name="setName"
             return="void"
             static="false">
@@ -123,8 +123,8 @@
       <function
             categoryID="cuina.eventx.category.Messages"
             contextID="cuina.message.context.Message"
-            description="Zeigt eine Nachicht im Nahichtenfenster an."
-            label="zeige Nachicht"
+            description="Zeigt eine Nachicht im Nachichtenfenster an."
+            label="Zeige Nachicht"
             name="showMessage"
             return="void"
             static="false">
@@ -146,6 +146,19 @@
                type="string">
          </argument>
       </function>
+      <function
+            categoryID="cuina.eventx.category.Messages"
+            contextID="cuina.message.context.Message"
+            description="Zeigt eine Auswahl im Nachichtenfenster an."
+            label="Zeige Auswahl"
+            name="showChoises"
+            return="void"
+            static="true">
+         <argument
+               label="Auswahl"
+               type="string[]">
+         </argument>
+      </function>
    </extension>
    <extension
          point="cuina.eventx.categories">
@@ -155,7 +168,7 @@
       </category>
       <category
             id="cuina.eventx.category.Messages"
-            label="Message">
+            label="Nachichten">
       </category>
    </extension>
    <extension

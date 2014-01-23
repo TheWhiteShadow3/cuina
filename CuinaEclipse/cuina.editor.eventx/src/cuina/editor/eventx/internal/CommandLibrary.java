@@ -1,5 +1,6 @@
 package cuina.editor.eventx.internal;
 
+import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,9 @@ import org.osgi.framework.Bundle;
 
 import cuina.editor.core.CuinaProject;
 import cuina.editor.core.engine.EngineReference;
+import cuina.editor.eventx.internal.editors.ArrayEditor;
+import cuina.editor.eventx.internal.editors.IntegerEditor;
+import cuina.editor.eventx.internal.editors.StringEditor;
 import cuina.editor.eventx.internal.editors.TypeEditor;
 import cuina.eventx.Command;
 
@@ -181,6 +185,11 @@ public class CommandLibrary
 			case "void": return void.class;
 			case "string": return String.class;
 		}
+		if (className.endsWith("[]"))
+		{
+			Class elementClass = getClass(className.substring(0, className.length()-2));
+			return Array.newInstance(elementClass, 0).getClass();
+		}
 		return engineClassloader.loadClass(className);
 	}
 	
@@ -189,19 +198,31 @@ public class CommandLibrary
 		return Collections.unmodifiableMap(categories);
 	}
 	
-	public <T> TypeEditor<T> newTypeEditor(Class<T> clazz)
+	public static <T> TypeEditor<T> newTypeEditor(Class<T> clazz)
 	{
 		try
 		{
 			Class<TypeEditor> editorClass = typeEditors.get(clazz.getName());
 			if (editorClass != null)
 				return editorClass.newInstance();
+			else
+				return (TypeEditor<T>) createDefaultEditor(clazz);
 		}
 		catch (InstantiationException | IllegalAccessException e)
 		{
 			e.printStackTrace();
 			
 		}
+		return null;
+	}
+	
+	
+	private static TypeEditor<?> createDefaultEditor(Class<?> clazz)
+	{
+		if (clazz.equals(String.class)) return new StringEditor();
+		if (clazz.equals(int.class) || clazz.equals(Integer.class)) return new IntegerEditor();
+		if (clazz.isArray()) return new ArrayEditor();
+		
 		return null;
 	}
 	
@@ -218,7 +239,13 @@ public class CommandLibrary
 	
 	public Command createCommand(FunctionEntry function)
 	{
-		return new Command(function.target, function.name, 0, new Object[function.argTypes.length]);
+		Object[] args = new Object[function.argTypes.length];
+		for (int i = 0; i < function.argTypes.length; i++)
+		{
+			if (function.argTypes[i].isArray())
+				args[i] = Array.newInstance(function.argTypes[i].getComponentType(), 0);
+		}
+		return new Command(function.target, function.name, 0, args);
 	}
 	
 	public FunctionEntry getFunction(Command cmd)

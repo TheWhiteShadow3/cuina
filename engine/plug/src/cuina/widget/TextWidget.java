@@ -93,7 +93,7 @@ public class TextWidget extends CuinaWidget
 		return numTextLines > 1;
 	}
 
-	public int getNumTextLines()
+	public int getLineCount()
 	{
 		return numTextLines;
 	}
@@ -113,7 +113,7 @@ public class TextWidget extends CuinaWidget
 		}
 	}
 
-	public boolean isCache()
+	public boolean isCached()
 	{
 		return useCache;
 	}
