@@ -60,7 +60,7 @@ public class GraphicTest
 					image.setRectangle(128, 0, 128, 128);
 				}
 			};
-			sprite.useGenList = false;
+			sprite.setCached(false);
 //			Matrix m0 = new Matrix.Translation(Matrix.MODEL, 300, 200);
 //			Matrix m1 = new Matrix.Rotation(Matrix.MODEL, 0);
 //			Matrix m2 = new Matrix.Translation(Matrix.MODEL, -120, -120);

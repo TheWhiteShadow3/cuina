@@ -328,7 +328,7 @@ public class Interpreter implements Serializable
 		}
 	}
 	
-	private void skipBlock()
+	public void skipBlock()
 	{
 		Command[] commands = list.commands;
 		int level = commands[index].indent;

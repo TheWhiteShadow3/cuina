@@ -4,9 +4,9 @@ import cuina.graphics.Graphics;
 import cuina.graphics.Image;
 import cuina.graphics.Images;
 import cuina.graphics.Sprite;
+import cuina.util.Rectangle;
 import cuina.world.CuinaObject;
 
-import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -212,7 +212,7 @@ public class DebugPanel
 					return;
 				}
 				
-				Rectangle bounds = box.getBox();
+				Rectangle bounds = box.getRectangle();
 				sprite.setX(bounds.x);
 				sprite.setY(bounds.y);
 				sprite.setDepth((int) sprite.getY() + map.getTileSize());

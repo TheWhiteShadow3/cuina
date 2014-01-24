@@ -102,7 +102,7 @@ Script_create_menu.new
       	@container.setVisible(false)
       	# Erstelle ein Bild als Hintergrund.
       	@background = Graphics::PictureSprite.new("system/title.png");
-		@background.setAlpha(0);
+		@background.getImage.setAlpha(0);
 		# Setze die Einblendzeit.
 		@duration = TIME.to_i
 	end
@@ -110,7 +110,7 @@ Script_create_menu.new
 	def update
 		# Blende Hintergrund ein.
       	if @duration &gt; 0
-			@background.setAlpha(255 * (1 - @duration / TIME))
+			@background.getImage.setAlpha(255 * (1 - @duration / TIME))
 			@duration -= 1
 			if @duration == 0
 				# Zeige Menü an, sobald der Hintergrund eingeblendet ist.

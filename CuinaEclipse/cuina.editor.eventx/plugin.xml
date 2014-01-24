@@ -151,9 +151,9 @@
             contextID="cuina.message.context.Message"
             description="Zeigt eine Auswahl im Nachichtenfenster an."
             label="Zeige Auswahl"
-            name="showChoises"
+            name="showChoise"
             return="void"
-            static="true">
+            static="false">
          <argument
                label="Auswahl"
                type="string[]">

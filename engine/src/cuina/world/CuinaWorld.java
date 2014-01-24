@@ -12,7 +12,7 @@ import java.util.Set;
 public interface CuinaWorld extends Serializable
 {
 	/**
-	 * Der Schlüssel für den Kontext um auf die Welt zuzugreifen.
+	 * Der Schlüssel für den Session-Kontext um auf die Welt zuzugreifen.
 	 * Implementierungen sind nicht gezwungen diese Konstante als Schlüssel zu benutzen.
 	 * Allerdings macht es Sinn sich einheitlich daran zu halten.
 	 */

@@ -1,11 +1,11 @@
 package cuina.map;
 
 import cuina.animation.Model;
+import cuina.util.Rectangle;
 import cuina.world.CuinaMask;
 import cuina.world.CuinaModel;
 import cuina.world.CuinaObject;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
@@ -29,13 +29,12 @@ public class CollisionBox implements CuinaMask
 	private boolean[][] pixelData;
 	/** Kollisionsfläche auf der Map. */
 	private final Rectangle box = new Rectangle();
+	
+	private final ThreadLocal<Rectangle> TEMP_BOX = new ThreadLocal<Rectangle>();
+	
 	private CuinaObject object;
 	private CuinaObject impactObject = null;
 	private boolean through = false;
-	
-	private boolean useTempPosition;
-	private int ox;
-	private int oy;
 
 	public CollisionBox(CuinaObject object, Rectangle rect, int alphaLevel, boolean through)
 	{
@@ -49,16 +48,17 @@ public class CollisionBox implements CuinaMask
 	public CollisionBox(CuinaObject object, CollisionBox clone)
 	{
 		this.object = object;
-		setBounds(clone.bounds);
 		this.through = clone.through;
-		pixelData = clone.pixelData;
+		setBounds(clone.bounds);
+		// Für Pixeldaten reicht die Referenz.
+		this.pixelData = clone.pixelData;
 	}
 	
 	public CollisionBox(CuinaObject object, BoxData cMask)
 	{
 		this.object = object;
 		this.through = cMask.through;
-		setBounds(cMask);
+		this.bounds = new Rectangle(cMask.x, cMask.y, cMask.width, cMask.height);
 //		//XXX: Zum Testen, bis der Editor es einstellen kann.
 //		cMask.alphaMask = 1;
 		if (cMask.alphaMask > 0) 
@@ -125,21 +125,16 @@ public class CollisionBox implements CuinaMask
 	@Override
 	public Rectangle getBounds()
 	{
-		return this.bounds.getBounds();
+		return this.bounds;
 	}
 
 	@Override
-	public Rectangle getBox()
+	public Rectangle getRectangle()
 	{
-		if (useTempPosition)
-			box.setBounds(bounds.x + ox, bounds.y + oy, bounds.width, bounds.height);
-		else
+		box.set(bounds);
+		if (object != null)
 		{
-			box.setBounds(bounds);
-			if (object != null)
-			{
-				box.setLocation(box.x + (int)object.getX(), box.y + (int)object.getY());
-			}
+			box.setLocation(box.x + (int) object.getX(), box.y + (int) object.getY());
 		}
 		return this.box;
 	}
@@ -150,16 +145,16 @@ public class CollisionBox implements CuinaMask
 		return pixelData;
 	}
 	
-	private void setTempPosition(int ox, int oy)
+	private Rectangle getTempBox(int ox, int oy)
 	{
-		this.useTempPosition = true;
-		this.ox = ox;
-		this.oy = oy;
-	}
-	
-	private void clearTempPosition()
-	{
-		this.useTempPosition = false;
+		Rectangle rect = TEMP_BOX.get();
+		if (rect == null)
+		{
+			rect = new Rectangle();
+			TEMP_BOX.set(rect);
+		}
+		rect.set(bounds.x + ox, bounds.y + oy, bounds.width, bounds.height);
+		return rect;
 	}
 	
 	public void setBounds(Rectangle rect)
@@ -188,19 +183,16 @@ public class CollisionBox implements CuinaMask
 	 */
 	public boolean isFree(int x, int y)
 	{
-		setTempPosition(x, y);
-		Rectangle rect = getBox();
+		Rectangle rect = getTempBox(x, y);
 		GameMap map = GameMap.getInstance();
 		if (map.isPassable(rect))
 		{
 			System.out.println("isFree");
-			if (map.getCollisionSystem().testCollision(object) == null)
+			if (map.getCollisionSystem().testCollision(rect, object) == null)
 			{
-				clearTempPosition();
 				return true;
 			}
 		}
-		clearTempPosition();
 		return false;
 	}
 
@@ -257,18 +249,16 @@ public class CollisionBox implements CuinaMask
 	public boolean move(float x, float y, boolean useTrigger)
 	{
 		impactObject = null;
-		setTempPosition((int) x, (int) y);
-		Rectangle rect = getBox();
+		Rectangle rect = getTempBox((int) x, (int) y);
 		
 		GameMap map = GameMap.getInstance();
 		if (!through && !map.isPassable(rect))
 		{
-			clearTempPosition();
 			return false;
 		}
 		else
 		{
-			impactObject = map.getCollisionSystem().testCollision(object);
+			impactObject = map.getCollisionSystem().testCollision(rect, object);
 			if (impactObject != null)
 			{
 				CollisionBox targetBox = (CollisionBox) impactObject.getExtension(EXTENSION_KEY);
@@ -280,7 +270,6 @@ public class CollisionBox implements CuinaMask
 				}
 				if (!through && !targetBox.isThrough())
 				{
-					clearTempPosition();
 					return false;
 				}
 			}
@@ -294,7 +283,6 @@ public class CollisionBox implements CuinaMask
 //				}
 		}
 		map.getCollisionSystem().updatePosition(object);
-		clearTempPosition();
 		return true;
 	}
 	
@@ -333,12 +321,11 @@ public class CollisionBox implements CuinaMask
 	
 	public CuinaObject testPosition(int x, int y)
 	{
-		setTempPosition(x, y);
+		Rectangle rect = getTempBox(x, y);
 		
 		System.out.println("[CollisionBox] testPosition");
-		CuinaObject cObject = GameMap.getInstance().getCollisionSystem().testCollision(object);
-		
-		clearTempPosition();
+		CuinaObject cObject = GameMap.getInstance().getCollisionSystem().testCollision(rect, object);
+
 		return cObject;
 	}
 	
@@ -346,7 +333,7 @@ public class CollisionBox implements CuinaMask
 	public boolean intersects(CuinaMask other)
 	{
 		if (other == null) return false;
-		Rectangle intersects = getBox().intersection(other.getBox());
+		Rectangle intersects = getRectangle().intersection(other.getRectangle());
 		if (!intersects.isEmpty())
 		{
 			return isPixelCollision(intersects, other);
@@ -360,8 +347,8 @@ public class CollisionBox implements CuinaMask
 		
 		intersection.x -=  this.box.x;
 		intersection.y -=  this.box.y;
-		int ox = other.getBox().x - this.box.x;
-		int oy = other.getBox().y - this.box.y;
+		int ox = other.getRectangle().x - this.box.x;
+		int oy = other.getRectangle().y - this.box.y;
 		int maxX = intersection.x + intersection.width;
 		int maxY = intersection.y + intersection.height;
 		
@@ -394,7 +381,7 @@ public class CollisionBox implements CuinaMask
 	
 	public boolean intersects(Rectangle rect)
 	{
-		return rect.intersects(getBox());
+		return rect.intersects(getRectangle());
 	}
 	
 	/**
@@ -403,12 +390,11 @@ public class CollisionBox implements CuinaMask
 	 */
 	public boolean testTileMap()
 	{	// negiert, da auf Kollision geprüft wird
-		return !GameMap.getInstance().isPassable(getBox());
+		return !GameMap.getInstance().isPassable(getRectangle());
 	}
 	
 	public void refresh()
 	{
-		clearTempPosition();
 		GameMap.getInstance().getCollisionSystem().updatePosition(object);
 	}
 	

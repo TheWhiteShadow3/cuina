@@ -16,7 +16,7 @@ public class ContextTarget
 	public String getTarget(boolean isStatic)
 	{
 		if (isStatic)
-			return type + ':' + className;
+			return "STATIC:" + className;
 		else
 			return type + ':' + name;
 	}

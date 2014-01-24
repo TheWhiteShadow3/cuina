@@ -21,7 +21,7 @@ public class ModelImpl implements Model, LifeCycle
 	private static final long serialVersionUID = 1688441863984748766L;
 
 	private CuinaObject object;
-	private PictureSprite sprite;
+	private Sprite sprite;
 	private String fileName;
 	private Animator animator;
 	private int frames;
@@ -39,7 +39,9 @@ public class ModelImpl implements Model, LifeCycle
 	private boolean animate;
 
 	public ModelImpl()
-	{}
+	{
+		this((String) null);
+	}
 
 	public ModelImpl(String fileName)
 	{
@@ -101,6 +103,7 @@ public class ModelImpl implements Model, LifeCycle
 	{
 		try
 		{
+			// Da das Bild gecached wird, ist diese Methode schnell.
 			return ResourceManager.loadImage(fileName);
 		}
 		catch (LoadingException e)
@@ -136,7 +139,11 @@ public class ModelImpl implements Model, LifeCycle
 
 	private void loadImage()
 	{
-		if (fileName == null) return;
+		if (fileName == null)
+		{
+			this.sprite = Sprite.DUMMY_SPRITE;
+			return;
+		}
 		
 		if (frames == 0 || animations == 0)
 		{ // Sucht nach möglichen Angaben im Dateinamen (Muster: abc+12.png oder abc+3456_def.png)
@@ -418,8 +425,7 @@ public class ModelImpl implements Model, LifeCycle
 		// Bild-Position (Seperat um Abweichung zu ermöglichen)
 		sprite.setX(this.x);
 		sprite.setY(this.y);
-		float dz = sprite.getY();
-		sprite.setDepth((int) (this.z + dz));
+		sprite.setDepth((int) z);
 	}
 
 	public void setAngle(float angle)

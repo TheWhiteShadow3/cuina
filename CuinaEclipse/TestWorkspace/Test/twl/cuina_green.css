@@ -22,3 +22,6 @@ a.hover {text-decoration: underline;}
 .font_default_b {font-family: default.bold;}
 .font_default_i {font-family: default.italic;}
 .font_default_z {font-family: default.z;}
+
+/* Messagebox */
+.msg_elected {color: #ff0;}

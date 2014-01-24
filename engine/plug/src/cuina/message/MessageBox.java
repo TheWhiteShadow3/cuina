@@ -2,13 +2,17 @@ package cuina.message;
 
 import cuina.Context;
 import cuina.Game;
+import cuina.event.Event;
+import cuina.event.Trigger;
 import cuina.eventx.EventMethod;
+import cuina.eventx.Interpreter;
 import cuina.eventx.Interpreter.Result;
 import cuina.input.Input;
 import cuina.plugin.ForScene;
 import cuina.plugin.LifeCycle;
 import cuina.plugin.Plugin;
 import cuina.plugin.Priority;
+import cuina.widget.Button;
 import cuina.widget.CuinaWidget;
 import cuina.widget.WidgetContainer;
 import cuina.widget.WidgetDescriptor;
@@ -33,6 +37,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 	private transient MessageWidget widget;
 	private String text;
 	private String[] choises;
+	private Interpreter interpreter;
 	private int index = -1;
 	private boolean active;
 	private boolean closing;
@@ -57,6 +62,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 	@Override
 	public void update()
 	{
+		if (closing) close();
 		if (!active) return;
 		
 		if (index != -1)
@@ -73,19 +79,14 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 				if (index >= choises.length) index = 0;
 			}
 		}
-//		if (backgroundModel != null) backgroundModel.update();
-		
-		if (Input.isPressed(CONTROL_OK) || Input.isPressed(CONTROL_CANCEL))
+		else if (Input.isPressed(CONTROL_OK) || Input.isPressed(CONTROL_CANCEL))
 		{
 			nextMessage();
 		}
 	}
 	
 	@Override
-	public void postUpdate()
-	{
-		if (closing) close();
-	}
+	public void postUpdate() {}
 
 	@Override
 	public void dispose()
@@ -147,10 +148,39 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 	public Result showChoise(String... choises)
 	{
 		this.choises = choises;
-		
+		this.interpreter = Interpreter.getContextInterpreter();
+			
 		widget.setChoises(choises);
 		setActive(true);
 		return Result.WAIT_ONE_FRAME;
+	}
+	
+	private void selectionCallback(int index)
+	{
+		if (choises == null) return;
+		
+		if (history != null)
+		{
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < choises.length; i++)
+			{
+				if (i == index)
+					builder.append("<p class='msg_elected'>").append(choises[i]).append("</p>");
+				else
+					builder.append("<p>").append(choises[i]).append("</p>");
+			}
+			history.add(builder.toString());
+		}
+		System.out.println("[MessageBox] Auswahl: " + index);
+		/*
+		 * TODO: Interpreter muss mehrere Blöcke überspringen können.
+		 * Ein switch oder so währe auch nicht verkehrt.
+		 */
+//		interpreter.skipBlock();
+		
+		index = -1;
+		choises = null;
+		nextMessage();
 	}
 	
 	private void setActive(boolean value)
@@ -183,6 +213,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 	public CuinaWidget createRoot()
 	{
 		this.widget = new MessageWidget();
+		widget.menu.addTrigger(getMenuTrigger());
 		widget.setVisible(false);
 		return widget;
 	}
@@ -200,4 +231,26 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 
 	@Override
 	public void postBuild() {}
+	
+	@SuppressWarnings("serial")
+	private Trigger getMenuTrigger()
+	{
+		return new Trigger()
+		{
+			@Override
+			public boolean test(Event event, Object arg)
+			{
+				return (event == Button.BUTTON_PRESSED);
+			}
+			
+			@Override
+			public void run(Object... args)
+			{
+				selectionCallback((Integer) args[1]);
+			}
+			
+			@Override
+			public boolean isActive() { return true; }
+		};
+	}
 }

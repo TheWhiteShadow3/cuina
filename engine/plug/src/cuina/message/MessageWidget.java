@@ -40,9 +40,10 @@ public class MessageWidget extends Frame
 	private int faceAlign;
 	private int faceX;
 	private int faceY;
-	private Picture faceWidget;
-	private TextArea textWidget;
-	private Menu menu;
+	
+	TextArea textWidget;
+	Menu menu;
+	Picture faceWidget;
 	private HTMLTextAreaModel textModel;
 
 	private int messageX;
@@ -108,6 +109,7 @@ public class MessageWidget extends Frame
 	{
 		this.text = text;
 		textModel.setHtml(text);
+		setSelection(-1);
 	}
 
 	public void setChoises(String[] choises)
@@ -116,6 +118,8 @@ public class MessageWidget extends Frame
 		setSelection(0);
 	}
 
+	
+	
 //	@Override
 //	public void setEventHandler(WidgetEventHandler handler)
 //	{
@@ -133,7 +137,7 @@ public class MessageWidget extends Frame
 //			addCloseCallback(closeCB);
 //		}
 //	}
-	
+
 	private void createTextWidget()
 	{
 		this.textModel = new HTMLTextAreaModel();
@@ -159,6 +163,7 @@ public class MessageWidget extends Frame
 		
 		this.menu = new Menu("menu", 1);
 		menu.setTheme("menu");
+		menu.setVisible(false);
 		add(menu);
 	}
 	

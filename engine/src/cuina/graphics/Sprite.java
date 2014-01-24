@@ -23,6 +23,10 @@ import cuina.graphics.transform.Transformation;
  */
 public abstract class Sprite extends AbstractGraphic
 {
+	@SuppressWarnings("serial")
+	public static final Sprite DUMMY_SPRITE = new Sprite(null)
+	{ @Override public void refresh() {} };
+	
 	private static final long	serialVersionUID	= -8939421838969852563L;
 	
 	protected float		zoomX = 1.0f;
@@ -117,24 +121,6 @@ public abstract class Sprite extends AbstractGraphic
 	}
 
 	/**
-	 * Gibt die Transparenz des Sprites zurück.
-	 * @return Transparenz von 0-255.
-	 */
-	public int getAlpha()
-	{
-		return image.getColor().getAlpha();
-	}
-
-	/**
-	 * Setzt die Transparenz des Sprites.
-	 * @param alpha Transparenz von 0-255.
-	 */
-	public void setAlpha(int alpha)
-	{
-		image.getColor().setAlpha(alpha);
-	}
-
-	/**
 	 * Gibt die X-Position vom Sprite zurück.
 	 * @return X-Position.
 	 */
@@ -204,6 +190,32 @@ public abstract class Sprite extends AbstractGraphic
 	public void setOY(float oy)
 	{
 		this.oy = oy;
+	}
+	
+	/**
+	 * Gibt die Breite vom Sprite zurück.
+	 * Die Breite entspricht der Breite vom Bild.
+	 * Wenn das Bild <code>null</code> ist wird -1 zurückgegeben.
+	 * @return die Breite vom Sprite.
+	 */
+	public int getWidth()
+	{
+		if (image == null) return -1;
+		
+		return image.getWidth();
+	}
+	
+	/**
+	 * Gibt die Höhe vom Sprite zurück.
+	 * Die Höhe entspricht der Breite vom Bild.
+	 * Wenn das Bild <code>null</code> ist wird -1 zurückgegeben.
+	 * @return die Höhe vom Sprite.
+	 */
+	public int getHeight()
+	{
+		if (image == null) return -1;
+		
+		return image.getHeight();
 	}
 
 	@Override

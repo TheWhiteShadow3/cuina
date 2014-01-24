@@ -290,6 +290,8 @@ public class Image
 	
 	public void setColor(ReadableColor color)
 	{
+		if (color == null) throw new NullPointerException();
+		
 		this.color = new Color(color);
 	}
 
@@ -298,15 +300,23 @@ public class Image
 		return color;
 	}
 	
-//	public void setFont(Font font)
-//	{
-//		this.font = font;
-//	}
-//	
-//	public Font getFont()
-//	{
-//		return font;
-//	}
+	/**
+	 * Gibt die Transparenz des Images zurück.
+	 * @return Transparenz von 0-255.
+	 */
+	public int getAlpha()
+	{
+		return color.getAlpha();
+	}
+
+	/**
+	 * Setzt die Transparenz des Images.
+	 * @param alpha Transparenz von 0-255.
+	 */
+	public void setAlpha(int alpha)
+	{
+		color.setAlpha(alpha);
+	}
 	
 	public int getBlendMode()
 	{

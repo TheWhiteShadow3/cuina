@@ -33,7 +33,13 @@ import java.util.Collections;
  * @version 1.1
  */
 public class Scene
-{	/** Schlüsselkonstante für eine Gültigkeit über alle Szenen. */
+{
+	/**
+	 * Der Schlüssel für den globalen Kontext um auf die Szene zuzugreifen.
+	 */
+	public static final String INSTANCE_KEY = "Scene";
+	
+	/** Schlüsselkonstante für eine Gültigkeit über alle Szenen. */
 	public static final String[] ALL_SCENES = new String[] {"_all_"};
 	
 	private boolean started;

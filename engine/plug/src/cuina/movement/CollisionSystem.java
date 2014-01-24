@@ -1,11 +1,11 @@
 package cuina.movement;
 
 import cuina.Logger;
+import cuina.util.Rectangle;
 import cuina.world.CuinaMask;
 import cuina.world.CuinaObject;
 import cuina.world.CuinaWorld;
 
-import java.awt.Rectangle;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -134,38 +134,33 @@ public class CollisionSystem implements Serializable
 		Logger.log(CollisionSystem.class, Logger.DEBUG, "Kollisions-System initialisiert.");
 	}
 	
-	public CuinaObject testCollision(CuinaObject object)
+	public CuinaObject testCollision(Rectangle rect, CuinaObject self)
 	{
-//		System.out.println("[CS] Aufruf (testCollision) durch: " + CollisionSystem.class.getClassLoader());
-		CuinaMask box = getBoxFrom(object);
-		if (box == null) return null;
+		if (rect == null) return null;
 		// finde relevante Bereiche
-		for(CollisionArea area : getAreas( box.getBox()) )
+		for(CollisionArea area : getAreas(rect))
 		{	// teste alle Objekte innerhalb dieses Bereichs
-			CuinaObject otherObj;
-			for(Integer id : area.objects.keySet())
+			for(CuinaObject other : area.objects.values())
 			{
-				otherObj = area.objects.get(id);
-				
-				if ( intersectsMask(object, otherObj) )
+				if (other != self && getBoxFrom(other).getRectangle().intersects(rect))
 				{
 //					System.out.println("Kollision: " + object.getID() + " und " + otherObj.getID());
-					return otherObj;
+					return other;
 				}
 			}
 		}
 		return null;
 	}
 	
-	private static boolean intersectsMask(CuinaObject o1, CuinaObject o2)
-	{
-		if (o1 == o2) return false;
-		CuinaMask box1 = getBoxFrom(o1);
-		CuinaMask box2 = getBoxFrom(o2);
-		
-		if (box1 == null || box2 == null) return false;
-		return (box1.intersects(box2));
-	}
+//	private static boolean intersectsMask(CuinaObject o1, CuinaObject o2)
+//	{
+//		if (o1 == o2) return false;
+//		CuinaMask box1 = getBoxFrom(o1);
+//		CuinaMask box2 = getBoxFrom(o2);
+//		
+//		if (box1 == null || box2 == null) return false;
+//		return (box1.intersects(box2));
+//	}
 	
 	public void removeObject(CuinaObject object)
 	{
@@ -180,7 +175,7 @@ public class CollisionSystem implements Serializable
 		CuinaMask box = getBoxFrom(object);
 		if (box == null) return;
 		
-		Rectangle rect = box.getBox();
+		Rectangle rect = box.getRectangle();
 		if (rect.isEmpty()) return;
 		boolean saved = false; // zum nachgucken ob es Lücken in der Bereichs-Abdeckung gibt
 		
@@ -230,7 +225,7 @@ public class CollisionSystem implements Serializable
 					CuinaMask box = getBoxFrom(otherObj);
 					if (box == null) continue;
 					
-					if (box.getBox().contains(a))
+					if (box.getRectangle().contains(a))
 					{
 						founds.add(otherObj);
 					}
@@ -313,7 +308,7 @@ public class CollisionSystem implements Serializable
 			{
 				CuinaMask box = getBoxFrom(obj);
 				if (box == null) continue;
-				rect = box.getBox();
+				rect = box.getRectangle();
 				
 				if (rect.intersectsLine(x1, y1, x2, y2))
 				{

@@ -20,11 +20,11 @@ import cuina.object.BaseWorld;
 import cuina.object.ObjectData;
 import cuina.plugin.ForSession;
 import cuina.plugin.Plugin;
+import cuina.util.Rectangle;
 import cuina.util.SaveHashMap;
 import cuina.world.CuinaObject;
 import cuina.world.CuinaWorld;
 
-import java.awt.Rectangle;
 import java.io.File;
 import java.util.HashMap;
 
@@ -57,7 +57,6 @@ public class GameMap extends BaseWorld implements Plugin
 	private CollisionSystem cs;
 	private boolean visible = true;
 
-	// private CuinaObject scrollTarget;
 	private Interpreter mapInterpreter;
 
 	@Override
@@ -193,16 +192,6 @@ public class GameMap extends BaseWorld implements Plugin
 		}
 	}
 
-	// private void refreshGraphics()
-	// {
-	// tilemap.refresh();
-	//
-	// for(Panorama p : panoramas)
-	// {
-	// if (p != null) p.refresh();
-	// }
-	// }
-
 	public static GameMap getInstance()
 	{
 		return Game.getContext(Context.SESSION).get(CuinaWorld.INSTANCE_KEY);
@@ -232,19 +221,6 @@ public class GameMap extends BaseWorld implements Plugin
 	{
 		this.panoramas[id] = panorama;
 	}
-
-	// public void refresh()
-	// {
-	// CuinaObject object;
-	// for(Integer key : getObjects().keySet())
-	// {
-	// object = getObjects().get(key);
-	// if (object.getModel() != null)
-	// {
-	// object.getModel().refresh();
-	// }
-	// }
-	// }
 
 	public String getKey()
 	{
@@ -315,24 +291,21 @@ public class GameMap extends BaseWorld implements Plugin
 	 */
 	public boolean isPassable(Rectangle rect)
 	{
-		if(!isValid(rect))
-			return false;
+		if (!isValid(rect)) return false;
 
 		int x1 = (rect.x) / getTileSize();
 		int y1 = (rect.y) / getTileSize();
 		int x2 = (rect.x + rect.width - 1) / getTileSize();
 		int y2 = (rect.y + rect.height - 1) / getTileSize();
 
-		for(int xx = x1; xx <= x2; xx++)
+		for (int xx = x1; xx <= x2; xx++)
 		{
-			for(int yy = y1; yy <= y2; yy++)
+			for (int yy = y1; yy <= y2; yy++)
 			{
 				// System.out.println("Teste: " + xx + ", " + yy);
 				short bits = collisionMap[xx][yy];
-				if(bits == 0)
-					continue;
-				if(bits == -1)
-					return false;
+				if(bits == 0) continue;
+				if(bits == -1) return false;
 
 				int cs = getTileSize() / 4;
 				Rectangle cell = new Rectangle(cs, cs);
@@ -342,8 +315,7 @@ public class GameMap extends BaseWorld implements Plugin
 					{
 						cell.x = xx * getTileSize() + (i % 4) * cs;
 						cell.y = yy * getTileSize() + (i / 4) * cs;
-						if(rect.intersects(cell))
-							return false;
+						if(rect.intersects(cell)) return false;
 					}
 				}
 			}
@@ -361,8 +333,7 @@ public class GameMap extends BaseWorld implements Plugin
 	 */
 	public short isTilePassable(int x, int y)
 	{
-		if(!isValid(x * getTileSize(), y * getTileSize()))
-			return -1;
+		if (!isValid(x * getTileSize(), y * getTileSize())) return -1;
 
 		return collisionMap[x][y];
 	}
@@ -377,8 +348,7 @@ public class GameMap extends BaseWorld implements Plugin
 	 */
 	public boolean isPassable(int x, int y)
 	{
-		if(!isValid(x, y))
-			return false;
+		if(!isValid(x, y)) return false;
 
 		return collisionMap[x / getTileSize()][y / getTileSize()] == 0;
 	}
@@ -390,27 +360,6 @@ public class GameMap extends BaseWorld implements Plugin
 		super.follow(objectID, viewID);
 	}
 
-	// public CuinaObject getScrollTarget()
-	// {
-	// return scrollTarget;
-	// }
-	//
-	// public void setScrollTarget(CuinaObject scrollTarget)
-	// {
-	// System.out.println("setScrollTarget: " + scrollTarget);
-	// this.scrollTarget = scrollTarget;
-	//
-	// updateView();
-	//
-	// // if (scrollTarget.getModel() != null)
-	// // {
-	// // scrollTarget.getModel().setPosition(scrollTarget.getX() -
-	// getScrollX(),
-	// // scrollTarget.getY() - getScrollY(),
-	// // scrollTarget.getZ());
-	// // }
-	// }
-
 	public CuinaObject getArea(int key)
 	{
 		return areas.get(key);
@@ -420,50 +369,22 @@ public class GameMap extends BaseWorld implements Plugin
 	{
 		return areas;
 	}
-
-	// public int addArea(CuinaObject area)
-	// {
-	// if (area.getID() == -1)
-	// area.setID(autoAreaID++);
-	// else
-	// {
-	// if (area.getID() <= autoAreaID) autoAreaID = area.getID() + 1;
-	// }
-	// areas.put(area.getID(), area);
-	// cs.updatePosition(area);
-	// return area.getID();
-	// }
-
+	
 	@Override
 	public boolean addObject(CuinaObject obj)
 	{
-		if(super.addObject(obj))
+		if (super.addObject(obj))
 		{
-			// System.out.println("Neues Objekt (" + obj.getID() + ") " +
-			// obj.getName() + ": " + obj.getX() + ", " + obj.getY());
 			cs.updatePosition(obj);
 			obj.testTriggers(OBJECT_CREATE, obj.getID(), obj);
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
-
-	// public boolean testTriggers(CuinaObject obj, Event event, int value,
-	// CuinaObject other)
-	// {
-	// boolean result = false;
-	// for (Trigger trigger : obj.getTriggers())
-	// {
-	// if (trigger.test(event, value)) trigger.run();
-	// }
-	// return result;
-	// }
 
 	@Override
 	public void removeObject(CuinaObject obj)
 	{
-		// System.out.println("lösche Objekt (" + obj.getID() + ") " +
-		// obj.getName() + ": " + obj.getX() + ", " + obj.getY());
 		super.removeObject(obj);
 		cs.removeObject(obj);
 	}
@@ -471,15 +392,19 @@ public class GameMap extends BaseWorld implements Plugin
 	@Override
 	public void update()
 	{
-		if((map == null) || isFreezed())
-			return;
+		if((map == null) || isFreezed()) return;
 
 		mapInterpreter.update();
 		// update = true;
 		if(!mapInterpreter.isRunning())
 		{
 			super.update();
-
+			for (Integer key : getObjectIDs())
+			{
+				CuinaObject obj = getObject(key);
+				obj.setZ(obj.getY());
+			}
+			
 			areas.lock();
 			for(Integer key : areas.keySet())
 			{
@@ -492,8 +417,7 @@ public class GameMap extends BaseWorld implements Plugin
 	@Override
 	public void postUpdate()
 	{
-		if(map == null)
-			return;
+		if(map == null) return;
 
 		updateView();
 		DebugPanel.update();
@@ -501,37 +425,16 @@ public class GameMap extends BaseWorld implements Plugin
 
 	public void updateView()
 	{
-		if(map == null)
-			return;
-
-		// if (scrollTarget != null)
-		// {
-		// scrollTo((int) scrollTarget.getX(), (int) scrollTarget.getY(),
-		// tileset.getTileSize());
-		// }
+		if(map == null) return;
 
 		tilemap.update();
 		super.postUpdate();
-		// for (Panorama p : panoramas)
-		// {
-		// if (p != null)
-		// p.setOffset(getScrollX(), getScrollY());
-		// }
 	}
 
 	public void setVisible(boolean value)
 	{
 		visible = value;
 		tilemap.setVisible(value);
-		// Model model;
-		// for(Integer key : getObjects().keySet())
-		// {
-		// model = getObject(key).getModel();
-		// if (model != null)
-		// {
-		// model.setVisible(visible);
-		// }
-		// }
 	}
 
 	public boolean isVisible()

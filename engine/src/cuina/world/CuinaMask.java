@@ -1,6 +1,7 @@
 package cuina.world;
 
-import java.awt.Rectangle;
+import cuina.util.Rectangle;
+
 import java.io.Serializable;
 
 public interface CuinaMask extends Serializable
@@ -18,7 +19,7 @@ public interface CuinaMask extends Serializable
 	 * Gibt die Hülle relativ zur Welt zurück.
 	 * @return Kollisions-Hülle.
 	 */
-	public Rectangle getBox();
+	public Rectangle getRectangle();
 	public boolean intersects(CuinaMask other);
 	public boolean[][] getPixelData();
 	

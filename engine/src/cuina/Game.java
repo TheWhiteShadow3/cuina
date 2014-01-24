@@ -519,25 +519,25 @@ public final class Game
 	/**
 	 * Gibt die aktuelle Spiel-Szene zurück.
 	 * <p>
-	 * Gibt das Selbe wie wie <code>Game.Global.get("Scene")</code> zurück.
+	 * Gibt das Selbe wie wie <pre>Game.Global.get(Scene.INSTANCE_KEY)</pre> zurück.
 	 * </p>
 	 * @return aktuelle Spiel-Szene.
 	 */
 	public static Scene getScene()
 	{
-		return (Scene) getContext(GLOBAL).get("Scene");
+		return getContext(GLOBAL).<Scene>get(Scene.INSTANCE_KEY);
 	}
 	
 	/**
 	 * Gibt die aktuelle Spielwelt zurück.
 	 * <p>
-	 * Gibt das Selbe wie <code>Game.Session.get("World")</code> zurück.
+	 * Gibt das Selbe wie <pre>Game.getContext(SESSION).get(CuinaWorld.INSTANCE_KEY)</pre> zurück.
 	 * </p>
 	 * @return Die Spielwelt
 	 */
 	public static CuinaWorld getWorld()
 	{
-		return (CuinaWorld) getContext(SESSION).get("World");
+		return getContext(SESSION).<CuinaWorld>get(CuinaWorld.INSTANCE_KEY);
 	}
 	
 	/**
@@ -546,7 +546,7 @@ public final class Game
 	 */
 	public static void setWorld(CuinaWorld world)
 	{
-		getContext(SESSION).set("World", world);
+		getContext(SESSION).set(CuinaWorld.INSTANCE_KEY, world);
 	}
 	
 	/**

@@ -158,12 +158,8 @@
         </theme>
         <theme name="resizeHandle" ref="-defaults"/>
         <theme name="borderlayout" ref="-defaults">
-        	<param name="hgap">
-				<int>0</int>
-	        </param>
-	        <param name="vgap">
-				<int>0</int>
-	        </param>
+        	<param name="hgap"><int>0</int></param>
+	        <param name="vgap"><int>0</int></param>
         </theme>
     </theme>
 
@@ -316,9 +312,16 @@
 		<theme name="text" ref="textarea">
 			<param name="font"><font>black</font></param>
 		</theme>
-		<theme name="menu" ref="menu">
+		<theme name="menu" ref="frame">
+			<param name="animation">
+				<map>
+					<param name="color"><color>#FFADD8E6</color></param>
+					<param name="duration"><int>1000</int></param>
+				</map>
+			</param>
 			<param name="hGap"><int>0</int></param>
 			<param name="vGap"><int>8</int></param>
+			<theme name="menuitem" ref="button"/>
 		</theme>
 	</theme>
 </themes>

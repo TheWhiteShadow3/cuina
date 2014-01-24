@@ -182,6 +182,8 @@ public final class ResourceManager
 	 */
 	public static BufferedImage loadImage(String fileName) throws LoadingException
 	{
+		if (fileName == null) return null;
+		
 		Resource res = getResource(KEY_GRAPHICS, fileName);
 		if (res == null)
 		{

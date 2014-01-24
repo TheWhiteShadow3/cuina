@@ -116,37 +116,37 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 	@Override
 	public float getX()
 	{
-		return getPosition().x;
+		return pos.x;
 	}
 
 	@Override
 	public void setX(float x)
 	{
-		getPosition().x = x;
+		pos.x = x;
 	}
 
 	@Override
 	public float getY()
 	{
-		return getPosition().y;
+		return pos.y;
 	}
 
 	@Override
 	public void setY(float y)
 	{
-		getPosition().y = y;
+		pos.y = y;
 	}
 
 	@Override
 	public float getZ()
 	{
-		return (int)getPosition().z;
+		return (int) pos.z;
 	}
 
 	@Override
 	public void setZ(float z)
 	{
-		getPosition().z = z;
+		pos.z = z;
 	}
 
 	@Override

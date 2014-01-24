@@ -17,9 +17,8 @@ import cuina.plugin.LifeCycle;
 import cuina.plugin.Plugin;
 import cuina.rpg.Player;
 import cuina.util.LoadingException;
+import cuina.util.Rectangle;
 import cuina.util.Vector;
-
-import java.awt.Rectangle;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -27,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 /**
  * Klasse für diverse Tests
  */
+@SuppressWarnings("deprecation")
 @ForScene(name="TestConfiguration", scenes="Mapp")
 public class TestConfiguration implements Plugin, LifeCycle
 {

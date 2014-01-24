@@ -8,10 +8,10 @@ import cuina.graphics.Graphics;
 import cuina.graphics.View;
 import cuina.plugin.LifeCycle;
 import cuina.plugin.LifeCycleAdapter;
+import cuina.util.Rectangle;
 import cuina.world.CuinaObject;
 import cuina.world.CuinaWorld;
 
-import java.awt.Rectangle;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

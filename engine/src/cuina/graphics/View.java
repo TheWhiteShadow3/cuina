@@ -2,9 +2,8 @@ package cuina.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import cuina.util.Rectangle;
 import cuina.world.CuinaObject;
-
-import java.awt.Rectangle;
 
 public class View
 {

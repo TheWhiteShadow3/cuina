@@ -175,8 +175,7 @@ public class Menu extends CuinaWidget
 				c++;
 			}
 		}
-		if (y > getHeight())
-			setInnerSize(getInnerWidth(), y);
+		setInnerSize(getInnerWidth(), y - getInnerY());
 //		requestKeyboardFocus();
 	}
 

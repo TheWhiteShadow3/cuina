@@ -15,12 +15,16 @@ public abstract class AbstractGraphic implements Graphic
 	transient Image 	image;
 	private int 		depth;
 	
-	private boolean		visible = true;
+	public boolean		visible = true;
 	
 	protected Transformation matrix;
 	
 	private int 		modelID;
+<<<<<<< Updated upstream
+	public boolean		useGenList = false;
+=======
 	private boolean		cached = false;
+>>>>>>> Stashed changes
 	
 	private GraphicContainer container;
 
@@ -67,17 +71,7 @@ public abstract class AbstractGraphic implements Graphic
 	{
 		this.visible = visible;
 	}
-
-	public boolean isCached()
-	{
-		return cached;
-	}
-
-	public void setCached(boolean cached)
-	{
-		this.cached = cached;
-	}
-
+	
 	@Override
 	public void draw()
 	{
@@ -88,7 +82,7 @@ public abstract class AbstractGraphic implements Graphic
 			if (image == null) return;
 		}
 
-		if (!cached) transformAndRender(matrix);
+		if (!useGenList) transformAndRender(matrix);
 		else
 		{
 			if (modelID == 0)

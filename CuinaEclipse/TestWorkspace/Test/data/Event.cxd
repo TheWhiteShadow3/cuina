@@ -1,7 +1,5 @@
-<cuina.database.DataTable name="Event" type="cuina.eventx.CommandList">´
+<cuina.database.DataTable name="Event" type="cuina.eventx.CommandList">
   <cuina.eventx.CommandList>
-     <key>test</key>
-    <name>Test</name>
     <commands>
       <cuina.eventx.Command>
         <target>STATIC:cuina.map.MapUtil</target>
@@ -20,7 +18,7 @@
         <target>SCENE:Message</target>
         <name>setFaceImage</name>
         <args>
-        	<string>faces/Reimu smile.png</string>
+          <string>faces/Reimu smile.png</string>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
@@ -28,7 +26,7 @@
         <target>SCENE:Message</target>
         <name>setName</name>
         <args>
-        	<string>???</string>
+          <string>???</string>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
@@ -36,7 +34,7 @@
         <target>SCENE:Message</target>
         <name>showMessage</name>
         <args>
-        	<string>&lt;span class=&quot;yellow&quot;&gt;Reimu&lt;/span&gt;&lt;br/&gt;My name is &lt;b&gt;Reimu&lt;/b&gt; and I am new here.</string>
+          <string>&lt;span class=&quot;yellow&quot;&gt;Reimu&lt;/span&gt;&lt;br/&gt;My name is &lt;b&gt;Reimu&lt;/b&gt; and I am new here.</string>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
@@ -44,15 +42,15 @@
         <target>SCENE:Message</target>
         <name>setName</name>
         <args>
-        	<string>Rosa</string>
+          <string>Rosa</string>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
       <cuina.eventx.Command>
         <target>SCENE:Message</target>
         <name>showMessage</name>
-         <args>
-        	<string>I don&apos;t wearing &lt;span class=&quot;rosa&quot;&gt;panties&lt;/span&gt; today because it&apos;s so hot.</string>
+        <args>
+          <string>I don&apos;t wearing &lt;span class=&quot;rosa&quot;&gt;panties&lt;/span&gt; today because it&apos;s so hot.</string>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
@@ -80,20 +78,35 @@
         <target>SCENE:Message</target>
         <name>showMessage</name>
         <args>
-        	<string>But it would still be nice if you are not constantly staring at my &lt;i&gt;pussy&lt;/i&gt;.&lt;img src=&quot;herz.png&quot; align=&quot;bottom&quot;/&gt;</string>
+          <string>But it would still be nice if you are not constantly staring at my &lt;i&gt;pussy&lt;/i&gt;.&lt;img src=&quot;herz.png&quot; align=&quot;bottom&quot;/&gt;</string>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>SCENE:Message</target>
+        <name>showChoise</name>
+        <args>
+          <string-array>
+            <string>pantsu!</string>
+            <string>pantsu!!</string>
+            <string>pantsu!!!</string>
+            <string>pantsu!!!!</string>
+          </string-array>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
     </commands>
-  </cuina.eventx.CommandList>
-   <cuina.eventx.CommandList>
-    <commands/>
-    <key>beispiel_event</key>
-    <name>Beispiel Event</name>
+    <key>test</key>
+    <name>Test</name>
   </cuina.eventx.CommandList>
   <cuina.eventx.CommandList>
     <commands/>
     <key>ssaasassd</key>
     <name>ssaasassd</name>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <commands/>
+    <key>beispiel_event</key>
+    <name>Beispiel Event</name>
   </cuina.eventx.CommandList>
 </cuina.database.DataTable>
