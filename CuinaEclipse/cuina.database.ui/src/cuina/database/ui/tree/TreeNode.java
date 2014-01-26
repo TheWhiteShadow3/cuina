@@ -4,6 +4,8 @@ import cuina.database.DataTable;
 import cuina.database.NamedItem;
 import cuina.database.ui.internal.tree.TreeGroup;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 
 public interface TreeNode extends IAdaptable, NamedItem
@@ -30,5 +32,5 @@ public interface TreeNode extends IAdaptable, NamedItem
 	
 	public boolean hasChildren();
 	
-	public TreeNode[] getChildren();
+	public List<TreeNode> getChildren();
 }

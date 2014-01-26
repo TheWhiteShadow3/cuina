@@ -1,18 +1,18 @@
 package cuina.editor.eventx.internal;
 
+import cuina.editor.eventx.internal.tree.CommandTree;
+
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-import cuina.eventx.CommandList;
-
 public class FlowContentOutlinePage extends ContentOutlinePage
 {
-	private CommandList list;
+	private CommandTree tree;
 
-	public void setInput(CommandList list)
+	public void setInput(CommandTree tree)
 	{
-		this.list = list;
+		this.tree = tree;
 	}
 	
 	@Override
@@ -20,9 +20,9 @@ public class FlowContentOutlinePage extends ContentOutlinePage
 	{
 		super.createControl(parent);
 		TreeViewer viewer = getTreeViewer();
-		viewer.setContentProvider(new FlowContentProvider(null));
-		viewer.setLabelProvider(new FlowLabelProvider(null));
+		viewer.setContentProvider(new FlowOutlineProvider());
+		viewer.setLabelProvider(new FlowLabelProvider(tree.getLibrary()));
 		viewer.addSelectionChangedListener(this);
-		viewer.setInput(list);
+		viewer.setInput(tree);
 	}
 }

@@ -21,8 +21,8 @@ Die Datenbank ermöglicht das serialisieren von Java-Objekten im Dateisystem.
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="1" maxOccurs="unbounded">
-            <element ref="database"/>
+         <choice>
+            <element ref="database" minOccurs="1" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -53,7 +53,8 @@ Die Datenbank ermöglicht das serialisieren von Java-Objekten im Dateisystem.
 
    <element name="database">
       <complexType>
-         <choice minOccurs="1" maxOccurs="unbounded">
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="validator"/>
          </choice>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -90,6 +91,28 @@ Geeignet ist z.B. der vollständige Klaseenname.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="validator">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":cuina.database.DatabaseObjectValidator"/>
                </appinfo>
             </annotation>
          </attribute>

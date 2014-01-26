@@ -57,7 +57,7 @@ public class FunctionLabelProvider extends LabelProvider implements ITableLabelP
 		{
 			if (columnIndex > 0) return null;
 			
-			return ((Category) element).name;
+			return ((Category) element).label;
 		}
 		if (element instanceof FunctionEntry)
 		{

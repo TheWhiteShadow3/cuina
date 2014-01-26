@@ -60,10 +60,12 @@ public class DataTable<E extends DatabaseObject> implements NamedItem, Serializa
 	{
 		put(obj.getKey(), obj);
 	}
+	
 	public void put(String key, E obj)
 	{
 		nullCheck(key);
-
+		if (data.containsKey(key)) throw new NullPointerException("Key '" + key + "' already exists.");
+		
 		obj.setKey(key);
 		data.put(key, obj);
 	}
@@ -96,7 +98,7 @@ public class DataTable<E extends DatabaseObject> implements NamedItem, Serializa
 	public void update(String key, E obj)
 	{
 		nullCheck(key);
-		if (!data.containsKey(key)) throw new NullPointerException("No entry with key: " + key);
+		if (!data.containsKey(key)) throw new NullPointerException("Key '" + key + "' does not exists.");
 
 		obj.setKey(key);
 		data.put(key, obj);

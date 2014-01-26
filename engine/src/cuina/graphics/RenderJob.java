@@ -6,7 +6,7 @@ import org.lwjgl.util.Color;
 
 /**
  * Rendert Zeichenaufträge. GL-Zugriffe können nicht im Event-Thread durchgeführt werden.
- * Deher wird lediglich ein RenderJob erstellt, der später im Game-Thread ausgeführt wird.
+ * Daher wird lediglich ein RenderJob erstellt, der später im Game-Thread ausgeführt wird.
  * @author TheWhiteShadow
  */
 public class RenderJob
@@ -18,8 +18,9 @@ public class RenderJob
 	private static final int RECT_FILL 		= 4;
 	private static final int IMAGE 			= 5;
 	private static final int TEXT 			= 6;
+	private static final int VIEW 			= 7;
 	
-	private Image owner;
+	private final Image owner;
 	private Color color;
 //	private Font font;
 	private int blendMode;
@@ -29,8 +30,7 @@ public class RenderJob
 	private int y1;
 	private int x2;
 	private int y2;
-	private Image image;
-	private String text;
+	private Object data;
 	
 	private RenderJob(Image owner)
 	{
@@ -48,6 +48,15 @@ public class RenderJob
 		return job;
 	}
 	
+	public static RenderJob addView(Image owner, View view)
+	{
+		RenderJob job = new RenderJob(owner);
+		job.type = VIEW;
+		job.data = view;
+		Graphics.renderJobs.add(job);
+		return job;
+	}
+	
 	public static RenderJob addText(Image owner, int x, int y, int width, String text, int align)
 	{
 		RenderJob job = new RenderJob(owner);
@@ -56,7 +65,7 @@ public class RenderJob
 		job.y1 = y;
 		job.x2 = width;
 		job.y2 = align;
-		job.text = text;
+		job.data = text;
 		Graphics.renderJobs.add(job);
 		return job;
 	}
@@ -67,7 +76,7 @@ public class RenderJob
 		job.type = IMAGE;
 		job.x1 = x;
 		job.y1 = y;
-		job.image = image;
+		job.data = image;
 		Graphics.renderJobs.add(job);
 		return job;
 	}
@@ -100,24 +109,45 @@ public class RenderJob
 	{
 		if (Thread.currentThread() != Graphics.getGraphicThread()) return;
 		
-//		System.out.println("Render Job");
 		Texture tex = owner.getTexture();
 		if (tex == null) return;
-//		owner.modelID = 0;
 		
 		Graphics.bindFBO(tex);
 		Graphics.setShader(null);
 		Graphics.bindShader();
+		
+		if (type == VIEW)
+		{
+			renderView();
+			return;
+		}
+		prepareViewport(tex);
+		
 		switch(type)
 		{
 			case CLEAR: glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); break;
-			case POINT: break; //TODO: Point-Implementation
+			case POINT: renderPoint(); break;
 			case LINE: renderLine(); break;
 			case RECT_OUTLINE: renderOutlinedRect(); break;
 			case RECT_FILL: renderFilledRect(); break;
 			case IMAGE: renderImage(); break;
 			case TEXT: renderText(); break;
 		}
+	}
+	
+	private void prepareViewport(Texture tex)
+	{
+		glViewport(0, 0, tex.getSourceWidth(), tex.getSourceHeight());
+		
+		GLCache.setMatrix(GL_PROJECTION);
+		glLoadIdentity();
+
+		// left, right, bottom, top, Zfar, Znear
+		glOrtho(0, tex.getSourceWidth(), tex.getSourceHeight(), 0, -500, 500);
+		glDisable(GL_DEPTH_TEST);
+		
+		GLCache.setMatrix(GL_MODELVIEW);
+		glLoadIdentity();
 	}
 
 	@Deprecated
@@ -138,6 +168,20 @@ public class RenderJob
 //		}
 	}
 
+	private void renderPoint()
+	{
+        glDisable(GL_TEXTURE_2D);
+        
+        GLCache.setBlendMode(blendMode);
+        GLCache.setColor(color);
+        
+		glBegin(GL_POINT);
+        {
+            glVertex2i(x1, y1);
+        }
+        glEnd();
+	}
+	
 	private void renderImage()
 	{
 		Image.IMAGE_MATRIX.clear();
@@ -145,7 +189,7 @@ public class RenderJob
 		Image.IMAGE_MATRIX.setScale(1f, -1f);
 		
 		Image.IMAGE_MATRIX.pushTransformation();
-		Image.renderImage(image);
+		Image.renderImage((Image) data);
 		Image.IMAGE_MATRIX.popTransformation();
 	}
 	
@@ -158,8 +202,8 @@ public class RenderJob
         
         glBegin(GL_LINES);
         {
-            glVertex2i(x1, Graphics.getHeight()-y1);
-            glVertex2i(x2, Graphics.getHeight()-y2);
+            glVertex2i(x1, y1);
+            glVertex2i(x2, y2);
         }
         glEnd();
         
@@ -176,17 +220,17 @@ public class RenderJob
         
         glBegin(GL_LINES);
         {
-            glVertex2i(x1, Graphics.getHeight()-y1);
-            glVertex2i(x2, Graphics.getHeight()-y1);
+            glVertex2i(x1, y1);
+            glVertex2i(x2, y1);
             
-            glVertex2i(x2, Graphics.getHeight()-y1);
-            glVertex2i(x2, Graphics.getHeight()-y2);
+            glVertex2i(x2, y1);
+            glVertex2i(x2, y2);
             
-            glVertex2i(x1, Graphics.getHeight()-y2);
-            glVertex2i(x2, Graphics.getHeight()-y2);
+            glVertex2i(x1, y2);
+            glVertex2i(x2, y2);
             
-            glVertex2i(x1, Graphics.getHeight()-y1);
-            glVertex2i(x1, Graphics.getHeight()-y2);
+            glVertex2i(x1, y1);
+            glVertex2i(x1, y2);
         }
         glEnd();
         
@@ -195,8 +239,6 @@ public class RenderJob
 	
 	private void renderFilledRect()
 	{
-		int h = Graphics.getHeight();
-		
         glDisable(GL_TEXTURE_2D);
         
         GLCache.setBlendMode(blendMode);
@@ -204,14 +246,23 @@ public class RenderJob
         
         glBegin(GL_QUADS);
         {
-			glVertex2f(x1, h-y1);
-			glVertex2f(x1, h-y2);
-			glVertex2f(x2, h-y2);
-			glVertex2f(x2, h-y1);
+        	glVertex2f(x1, y1);
+			glVertex2f(x1, y2);
+			glVertex2f(x2, y2);
+			glVertex2f(x2, y1);
         }
         glEnd();
         
         glEnable(GL_TEXTURE_2D);
+	}
+	
+	private void renderView()
+	{
+		View view = (View) data;
+		Texture tex = owner.getTexture();
+		
+		view.port.set(0, 0, tex.getSourceWidth(), tex.getSourceHeight());
+		view.draw();
 	}
 
 	@Override

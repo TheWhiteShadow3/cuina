@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.swt.graphics.Image;
@@ -184,6 +185,12 @@ public final class DatabasePlugin extends Plugin
 		return getDescriptor(getTableNameFromFile(file));
 	}
 	
+	public static IFile getTableFile(DataTable table)
+	{
+		Path path = new Path(table.getFileName());
+		return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+	}
+	
 //	public static <E extends DatabaseObject> DatabaseDescriptor<E> getDescriptor(Class<E> clazz)
 //	{
 //		if (plugin == null) throw new IllegalStateException(MSG_SERVICE_CLOSED);
@@ -238,7 +245,7 @@ public final class DatabasePlugin extends Plugin
 		}
 	}
 	
-	public static boolean isDataFile(IFile file)
+	static DataTable<?> tryLoad(IFile file)
 	{
 		if (plugin == null) throw new IllegalStateException(MSG_SERVICE_CLOSED);
 		
@@ -246,10 +253,15 @@ public final class DatabasePlugin extends Plugin
 		IFolder f = project.getProject().getFolder( loadDataPath(project));
 		if (file.getParent().equals(f) && !file.getName().startsWith(DatabasePlugin.META_DATA_FILE)) try
 		{
-			if (getDatabase(project).loadTable(file) != null) return true;
+			return getDatabase(project).loadTable(file);
 		}
 		catch (ResourceException e) { /* fail */ }
-		return false;
+		return null;
+	}
+	
+	public static boolean isDataFile(IFile file)
+	{
+		return tryLoad(file) != null;
 	}
 	
 	private void addProjectHook()
@@ -269,6 +281,18 @@ public final class DatabasePlugin extends Plugin
 						Image image = descriptor.getImage();
 						if (image != null) image.dispose();
 						databaseTypes.remove(project.getName());
+					}
+				}
+				else if (event.getResource() instanceof IFile)
+				{
+					IFile file = (IFile) event.getResource();
+					if (event.getType() == IResourceChangeEvent.PRE_DELETE)
+					{
+						DataTable<?> table = tryLoad(file);
+						if (table != null)
+						{
+							table.getDatabase().fireTableDeleted(table);
+						}
 					}
 				}
 			}

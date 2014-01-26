@@ -6,6 +6,9 @@ import cuina.database.ui.tree.DataNode;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class AbstractDataNode implements DataNode
 {
 	transient protected TreeDataNode dataRoot;
@@ -86,21 +89,9 @@ public abstract class AbstractDataNode implements DataNode
 	}
 
 	@Override
-	public TreeNode[] getChildren()
+	public List<TreeNode> getChildren()
 	{
-		return null;
-//		Object data = getData();
-//		if (data == null) return null;
-//		
-//		Object[] childData = cp.getChildren(data);
-//		TreeNode[] children = new TreeNode[childData.length];
-//		for(int i = 0; i < childData.length; i++)
-//		{
-//			children[i] = new FixDataNode(getDataRoot(), childData[i]);
-//			children[i].setParent(this);
-//		}
-//		
-//		return children;
+		return Collections.EMPTY_LIST;
 	}
 
 	@Override

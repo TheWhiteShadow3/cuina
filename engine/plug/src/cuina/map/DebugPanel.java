@@ -154,19 +154,16 @@ public class DebugPanel
 		for(Integer key : map.getObjectIDs())
 		{
 			object = map.getObject(key);
-			CollisionBox box = (CollisionBox) object.getExtension("box");
+			CollisionBox box = (CollisionBox) object.getExtension(CollisionBox.EXTENSION_KEY);
 			if (box != null)
 			{
-				createCMaskSprite(object);
+				createCMaskSprite(object, box);
 			}
 		}
 	}
 	
-	private void createCMaskSprite(CuinaObject object)
+	private void createCMaskSprite(CuinaObject object, CollisionBox box)
 	{
-//		Rectangle box = object.getMask().getBox();
-		CollisionBox box = (CollisionBox) object.getExtension("box");
-		if (box == null) return;
 		Rectangle bounds = box.getBounds();
 		Sprite sprite = new DebugSprite();
 //		sprite.ox = -bounds.x;
@@ -203,12 +200,12 @@ public class DebugPanel
 		{
 			object = map.getObject(key);
 			sprite = objectSprites.get(key);
-			CollisionBox box = (CollisionBox) object.getExtension("box");
+			CollisionBox box = (CollisionBox) object.getExtension(CollisionBox.EXTENSION_KEY);
 			if (box != null)
 			{
 				if (sprite == null)
 				{
-					createCMaskSprite(object);
+					createCMaskSprite(object, box);
 					return;
 				}
 				

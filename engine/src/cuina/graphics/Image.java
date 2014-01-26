@@ -15,8 +15,8 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import static org.lwjgl.opengl.GL13.glMultiTexCoord2f;
 
 import cuina.graphics.transform.Transform2D;
+import cuina.util.Rectangle;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -275,7 +275,7 @@ public class Image
 	{
 //		if (x == this.x && y == this.y && width == this.width && height == this.height) return;
 		
-		rect.setBounds(x, y, width, height);
+		rect.set(x, y, width, height);
 //		if (modelID != 0) GL11.glDeleteLists(modelID, 1);
 //		modelID = 0;
 	}

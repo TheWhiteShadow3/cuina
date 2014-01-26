@@ -1,6 +1,5 @@
 package cuina.editor.eventx.internal;
 
-import cuina.database.DatabaseObject;
 import cuina.database.ui.AbstractDatabaseEditorPart;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.eventx.internal.FlowContentProvider.Item;
@@ -29,7 +28,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
-public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPropertySheetPageContributor, IAdaptable, CommandEditorContext
+public class FlowEditor extends AbstractDatabaseEditorPart<CommandList> implements
+		ITabbedPropertySheetPageContributor, IAdaptable, CommandEditorContext
 {
 	private Shell shell;
 	private CommandList list;
@@ -95,7 +95,7 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 			if (outlinePage == null)
 			{
 				outlinePage = new FlowContentOutlinePage();
-				outlinePage.setInput(list);
+				outlinePage.setInput(tree);
 			}
 			return outlinePage;
 		}
@@ -103,11 +103,11 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 	}
 
 	@Override
-	protected void init(DatabaseObject obj)
+	protected void init(CommandList list)
 	{
-		this.list = (CommandList) obj;
+		this.list = list;
 		this.library = getCuinaProject().getService(CommandLibrary.class);
-		this.tree = new CommandTree(list, library);
+		this.tree = new CommandTree(getTableFile(), list, library);
 	}
 
 	@Override
@@ -131,7 +131,7 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 	
 	@Override
 	public CuinaProject getCuinaProject()
-	{
+	{	// Mache die Methode public.
 		return super.getCuinaProject();
 	}
 	
@@ -191,4 +191,18 @@ public class FlowEditor extends AbstractDatabaseEditorPart implements ITabbedPro
 		viewer.refresh();
 		setDirty(true);
 	}
+
+//	private void validate(Command[] commands)
+//	{
+//		for (Command cmd : commands)
+//		{
+//			FunctionEntry func = library.getFunction(cmd);
+//			if (func == null)
+//			{
+//				IMarker marker = DatabasePlugin.getTableFile(table).createMarker(IMarker.PROBLEM);
+//				marker.setAttribute(IMarker.LOCATION, tdn.getKey());
+//				marker.getAttribute(IMarker.MESSAGE, "Objekt existiert nicht in der Tabelle.");
+//			}
+//		}
+//	}
 }

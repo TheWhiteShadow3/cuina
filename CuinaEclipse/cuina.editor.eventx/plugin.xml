@@ -12,6 +12,10 @@
             editorID="cuina.editor.eventx.CommandEditor"
             image="icons/event.png"
             name="Event">
+         <validator
+               class="cuina.editor.eventx.internal.FlowValidator"
+               id="cuina.editor.eventx.FlowValidator">
+         </validator>
       </database>
    </extension>
    <extension

@@ -2,15 +2,18 @@ package cuina.transition;
 
 import cuina.Game;
 import cuina.eventx.EventMethod;
+import cuina.graphics.GLCache;
 import cuina.graphics.Graphics;
 import cuina.graphics.Image;
 import cuina.graphics.Images;
 import cuina.graphics.Sprite;
+import cuina.graphics.View;
 import cuina.plugin.ForGlobal;
 import cuina.plugin.LifeCycle;
 import cuina.plugin.Plugin;
 import cuina.world.CuinaWorld;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Color;
 import org.lwjgl.util.ReadableColor;
 
@@ -38,7 +41,7 @@ public class Transition implements Plugin, LifeCycle
 	{
 		sprite = new TransitionSprite();
 		sprite.setVisible(false);
-		sprite.setDepth(100);
+		sprite.setDepth(1000);
 	}
 
 	@Override
@@ -66,7 +69,6 @@ public class Transition implements Plugin, LifeCycle
 	public boolean fadeOut(int duration, int flags)
 	{
 		this.flags = FADE_OUT | flags;
-		sprite.setColor(Image.COLOR_TRANSPARENT, 0);
 		sprite.setColor(Color.BLACK, duration);
 		System.out.println("Start fade out. Frames: + " + duration);
 		
@@ -94,8 +96,6 @@ public class Transition implements Plugin, LifeCycle
 	public void colorize(ReadableColor color, int duration)
 	{
 		flags = COLORIZE;
-		// TODO: Start-Farbe ist immer Transparent. Fürht zu Sprüngen, wenn bereits eine Farbe gesetzt ist.
-		sprite.setColor(Image.COLOR_TRANSPARENT, 0);
 		sprite.setColor(color, duration);
 	}
 	
@@ -111,7 +111,7 @@ public class Transition implements Plugin, LifeCycle
 		if (world != null) world.setFreeze(false);
 	}
 	
-	class TransitionSprite extends Sprite
+	static class TransitionSprite extends Sprite
 	{
 		private static final long serialVersionUID = -2672794989820109178L;
 		
@@ -121,8 +121,7 @@ public class Transition implements Plugin, LifeCycle
 
 		public TransitionSprite()
 		{
-			super(null);
-			refresh();
+			super(createImage());
 		}
 		
 		public boolean isFading()
@@ -142,15 +141,22 @@ public class Transition implements Plugin, LifeCycle
 				
 				getImage().getColor().set((int) red, (int) green, (int) blue, (int) alpha);
 				setVisible(alpha > 0);
-//				System.out.println("[TransitionSprite] Fade-Color: " + getImage().getColor());
+				System.out.println("[TransitionSprite] Fade-Color: " + getImage().getColor());
 			}
 		}
 
 		@Override
 		public void refresh()
 		{
-			setImage( Images.createImage(Graphics.getWidth(), Graphics.getHeight()) );
-			getImage().clear(Color.WHITE);
+			setImage(createImage());
+		}
+		
+		private static Image createImage()
+		{
+			Image image = Images.createImage(Graphics.getWidth()+100, Graphics.getHeight()+100);
+			image.clear(ReadableColor.WHITE);
+			image.setColor(Image.COLOR_TRANSPARENT);
+			return image;
 		}
 		
 		public void setColor(ReadableColor color, int duration)
@@ -167,6 +173,15 @@ public class Transition implements Plugin, LifeCycle
 				blue = c.getBlue();
 				alpha = c.getAlpha();
 			}
+		}
+
+		@Override
+		protected void render(Image image)
+		{
+			View view = Graphics.getCurrentView();
+			GLCache.setMatrix(GL11.GL_MODELVIEW);
+			GL11.glTranslatef(view.x, view.y, 0);
+			super.render(image);
 		}
 	}
 	

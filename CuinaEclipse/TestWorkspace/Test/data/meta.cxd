@@ -67,12 +67,9 @@
     <string>cuina.database.ui.tree.Event</string>
     <root>
       <node key="test"/>
-      <node key="wwasadd"/>
-      <node key="ssaassa"/>
-      <node key="jnbrt"/>
-      <node key="dfsf"/>
       <node key="dsaa"/>
       <node key="ssaasassd"/>
+      <node key="beispiel_event"/>
     </root>
   </entry>
 </map>

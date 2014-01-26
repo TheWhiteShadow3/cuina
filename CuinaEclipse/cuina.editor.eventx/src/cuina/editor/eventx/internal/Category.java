@@ -6,14 +6,14 @@ import java.util.List;
 
 public class Category
 {
-//	public final String id;
-	public String name;
+	public final String id;
+	public String label;
 	final List<FunctionEntry> functions = new ArrayList<FunctionEntry>();
 	
-	public Category(String name)
+	public Category(String id, String label)
 	{
-//		this.id = id;
-		this.name = name;
+		this.id = id;
+		this.label = label;
 	}
 	
 	public FunctionEntry getFunction(String target, String name)

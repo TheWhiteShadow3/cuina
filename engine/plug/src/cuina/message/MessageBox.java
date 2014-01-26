@@ -172,11 +172,7 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 			history.add(builder.toString());
 		}
 		System.out.println("[MessageBox] Auswahl: " + index);
-		/*
-		 * TODO: Interpreter muss mehrere Blöcke überspringen können.
-		 * Ein switch oder so währe auch nicht verkehrt.
-		 */
-//		interpreter.skipBlock();
+		interpreter.setSwitchValue(index);
 		
 		index = -1;
 		choises = null;

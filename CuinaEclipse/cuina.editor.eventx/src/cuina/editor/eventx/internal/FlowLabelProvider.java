@@ -1,7 +1,9 @@
 package cuina.editor.eventx.internal;
 
+import cuina.database.NamedItem;
 import cuina.editor.eventx.internal.FlowContentProvider.Item;
 import cuina.editor.eventx.internal.prefs.EventPreferences;
+import cuina.eventx.Argument;
 import cuina.eventx.Command;
 
 import java.lang.reflect.Array;
@@ -10,11 +12,13 @@ import java.util.HashMap;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 
 public class FlowLabelProvider extends LabelProvider implements IColorProvider
 {
 	private static String INDENT;
 
+	private Image errorImage;
 	private HashMap<String, Color> colors = new HashMap<String, Color>();
 	
 	static
@@ -29,9 +33,21 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 	public FlowLabelProvider(CommandLibrary library)
 	{
 		this.library = library;
+		this.errorImage = EventPlugin.loadImage("error.png");
 	}
 	
-	
+	@Override
+	public Image getImage(Object element)
+	{
+		if (element instanceof Item)
+		{
+			Item item = (Item) element;
+			
+			if (item.type == Item.COMMAND && !item.node.isValid()) return errorImage;
+		}
+		return null;
+	}
+
 	@Override
 	public String getText(Object element)
 	{
@@ -61,11 +77,7 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 				for (int i = 0; i < cmd.args.length; i++)
 				{
 					if (i > 0) builder.append(", ");
-					Object arg = cmd.args[i];
-					if (arg.getClass().isArray())
-						appendArray(builder, arg);
-					else
-						builder.append(arg);
+					appendArgument(builder, cmd.args[i]);
 				}
 				builder.append(')');
 			}
@@ -75,17 +87,22 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 		return super.getText(element);
 	}
 	
+	private void appendArgument(StringBuilder builder, Object arg)
+	{
+		if (arg.getClass().isArray())		appendArray(builder, arg);
+		else if (arg instanceof Argument)	builder.append("Argument ").append(((Argument) arg).index);
+		else if (arg instanceof NamedItem)	builder.append(((NamedItem) arg).getName());
+		else if (arg instanceof String)		builder.append('"').append((String) arg).append('"');
+		else								builder.append(arg.toString());
+	}
+	
 	private void appendArray(StringBuilder builder, Object array)
 	{
 		builder.append('[');
 		for (int i = 0, n = Array.getLength(array); i < n; i++)
 		{
 			if (i > 0) builder.append(", ");
-			Object arg = Array.get(array, i);
-			if (arg.getClass().isArray())
-				appendArray(builder, arg);
-			else
-				builder.append(arg);
+			appendArgument(builder, Array.get(array, i));
 		}
 		builder.append(']');
 	}
@@ -129,6 +146,7 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 	@Override
 	public void dispose()
 	{
+		errorImage.dispose();
 		for (Color c : colors.values()) c.dispose();
 		super.dispose();
 	}

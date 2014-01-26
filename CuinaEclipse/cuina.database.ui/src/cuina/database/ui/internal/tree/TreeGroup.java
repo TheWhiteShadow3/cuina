@@ -8,6 +8,8 @@ import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -16,7 +18,7 @@ public class TreeGroup implements TreeNode
 	transient private TreeGroup parent;
     transient protected TreeRoot root;
     private String name;
-    private ArrayList<TreeNode> children = new ArrayList<TreeNode>();
+    private ArrayList<TreeNode> children;
 
     public TreeGroup(String name)
     {
@@ -58,21 +60,25 @@ public class TreeGroup implements TreeNode
 
 	public void addChild(TreeNode node, int index)
 	{
-		if (index == -1) index = getChildren0().size();
-		getChildren0().add(index, node);
+		if (children == null) children = new ArrayList<TreeNode>(8);
+		if (index == -1) index = children.size();
+		children.add(index, node);
 		node.setParent(this);
 	}
 
 	public void removeChild(TreeNode node)
 	{
-		getChildren0().remove(node);
+		if (children == null) return;
+		
+		children.remove(node);
 		node.setParent(null);
 	}
 
 	@Override
 	public void remove()
 	{
-		for (TreeNode node : getChildren0()) node.remove();
+//		if (children != null)
+//			for (TreeNode node : children) node.remove();
 
 		if (parent == null) return;
 		parent.removeChild(this);
@@ -101,13 +107,17 @@ public class TreeGroup implements TreeNode
 		if (newParent == null) throw new NullPointerException("newParent must not be null.");
 		
 		TreeGroup copy = newParent.addGroup(getName());
-		for (TreeNode node : getChildren0())
+		if (children == null) return;
+		
+		for (TreeNode node : children)
 			node.copy(copy);
 	}
 
 	public TreeGroup getChildGroup(String name)
 	{
-		for (int i = 0; i < getChildren0().size(); i++)
+		if (children == null) return null;
+		
+		for (int i = 0; i < children.size(); i++)
 		{
 			TreeNode child = children.get(i);
 			if ((child instanceof TreeGroup) && ((TreeGroup) child).getName().equals(name)) return (TreeGroup) child;
@@ -136,9 +146,11 @@ public class TreeGroup implements TreeNode
 	}
 
 	@Override
-	public TreeNode[] getChildren()
+	public List<TreeNode> getChildren()
 	{
-		return getChildren0().toArray(new TreeNode[children.size()]);
+		if (children == null) return Collections.EMPTY_LIST;
+				
+		return Collections.unmodifiableList(children);
 	}
 
 	@Override
@@ -192,19 +204,12 @@ public class TreeGroup implements TreeNode
 		if (this.parent == null) return false;
 		return (this.parent == parent) ? true : this.parent.isDescendant(parent);
 	}
-	
-	private ArrayList<TreeNode> getChildren0()
-	{
-		if (children == null)
-		{
-			children = new ArrayList<TreeNode>();
-		}
-		return children;
-	}
-	
+
 	public int indexOf(TreeNode child)
 	{
-		return getChildren0().indexOf(child);
+		if (children == null) return -1;
+		
+		return children.indexOf(child);
 	}
 
 	@Override

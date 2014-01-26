@@ -33,7 +33,7 @@ public class Activator extends AbstractUIPlugin
 
 	// The shared instance
 	private static Activator plugin;
-	private Map<String, LayerDefinition> layerDefinitions = new HashMap<String, LayerDefinition>();
+	private Map<String, LayerDefinition> layerDefinitions;
 
 	/**
 	 * The constructor
@@ -51,8 +51,6 @@ public class Activator extends AbstractUIPlugin
 	{
 		super.start(context);
 		plugin = this;
-		
-		registrateLayers();
 	}
 
 	private void registrateLayers()
@@ -60,6 +58,7 @@ public class Activator extends AbstractUIPlugin
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().
 				getConfigurationElementsFor(LAYERS_EXTENSION_POINT);
 
+		this.layerDefinitions = new HashMap<String, LayerDefinition>();
 		for (IConfigurationElement conf : elements) try
 		{
 			LayerDefinition def = new LayerDefinition(conf);
@@ -73,6 +72,11 @@ public class Activator extends AbstractUIPlugin
 	
 	public static Map<String, LayerDefinition> getLayerDefinitions()
 	{
+		if (plugin.layerDefinitions == null)
+		{
+			plugin.registrateLayers();
+		}
+		
 		return Collections.unmodifiableMap(plugin.layerDefinitions);
 	}
 

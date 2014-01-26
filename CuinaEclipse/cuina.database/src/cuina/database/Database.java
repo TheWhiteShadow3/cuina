@@ -125,7 +125,7 @@ public class Database
 		return table;
 	}
 	
-	public void saveTable(DataTable table) throws ResourceException
+	public boolean saveTable(DataTable<?> table) throws ResourceException
 	{
 		if (table.getFileName() == null)
 		{
@@ -134,7 +134,12 @@ public class Database
 		}
 		IPath path = new Path(table.getFileName());
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		
+		DatabaseObjectValidator validator = DatabasePlugin.getDescriptor(table.getName()).getValidator();
+		if (!validator.validate(file, table)) return false;
+		
 		SerializationManager.save(table, file);
+		return true;
 	}
 	
 	public void saveMetaData() throws ResourceException
@@ -165,6 +170,11 @@ public class Database
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	void fireTableDeleted(DataTable<?> table)
+	{
+		cache.remove(table.getName());
 	}
 	
 	public <E extends DatabaseObject> DataTable<E> createNewTable(String name)

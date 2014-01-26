@@ -13,6 +13,7 @@ public class CommandNode
 	private Command command;
 	private CommandNode parent;
 	private List<CommandNode> children;
+	private boolean valid = true;
 	
 	CommandNode() {}
 	
@@ -69,5 +70,15 @@ public class CommandNode
 		if (command == null) return null;
 		
 		return tree.getLibrary().getFunction(command);
+	}
+
+	public void setValid(boolean value)
+	{
+		this.valid = value;
+	}
+
+	public boolean isValid()
+	{
+		return valid;
 	}
 }

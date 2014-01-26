@@ -1,8 +1,7 @@
 package cuina.graphics;
 
 import cuina.util.LoadingException;
-
-import java.awt.Rectangle;
+import cuina.util.Rectangle;
 
 public class PictureSprite extends Sprite
 {

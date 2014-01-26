@@ -70,9 +70,9 @@ public class Interpreter implements Serializable
 	}
 	
 	private static final Map<String, FunctionAccessor> FUNCTIONS = new HashMap<String, FunctionAccessor>();
-	private static final Map<String, Object> VARIABLES = new HashMap<String, Object>();
 	private static final ThreadLocal<Interpreter> CONTEXT_INSTANCE = new ThreadLocal<Interpreter>();
 	
+	private final Map<String, Object> variables = new HashMap<String, Object>();
 	private final Config EXPRESSION_CONFIG;
 	
 	private CommandList list;
@@ -80,6 +80,7 @@ public class Interpreter implements Serializable
 	private boolean run;
 	private int waitCount;
 	private Object[] setupArgs;
+	private int switchValue;
 	
 	static
 	{
@@ -328,6 +329,20 @@ public class Interpreter implements Serializable
 		}
 	}
 	
+	public void setSwitchValue(int value)
+	{
+		this.switchValue = value;
+	}
+	
+	public void skipBlocks(int count)
+	{
+		while(count > 0)
+		{
+			skipBlock();
+			count--;
+		}
+	}
+	
 	public void skipBlock()
 	{
 		Command[] commands = list.commands;
@@ -342,12 +357,14 @@ public class Interpreter implements Serializable
 	{
 		switch(cmd.name)
 		{
+			case "if":
+			case "while":	handleCondition((String) cmd.args[0]); break;
 			case "set":		setVariable((String) cmd.args[0], cmd.args[1]); break;
 			case "get":		getVariable((String) cmd.args[0]); break;
 			case "wait":	waitCount = (int) cmd.args[0]; break;
 			case "skip":	skipCommands((int) cmd.args[0]); break;
-			case "if":		handleCondition((String) cmd.args[0]); break;
-			case "while":	handleCondition((String) cmd.args[0]); break;
+			case "case":	handleCase((int) cmd.args[0]); break;
+			case "switch":	switchValue = (int) cmd.args[0]; break;
 			case "goto":	setIndex((int) cmd.args[0] - 1); break;
 			case "stop":	run = false; break;
 			default: throw new NullPointerException("Interne Funktion '" + cmd.name + "' ist nicht definiert.");
@@ -356,21 +373,23 @@ public class Interpreter implements Serializable
 	
 	private void getVariable(String name)
 	{
-		VARIABLES.get(name);
+		variables.get(name);
 	}
 
 	private void setVariable(String name, Object value)
 	{
 		if (name.charAt(0) == '$') throw new IllegalArgumentException("Variable-Name must not start with $");
-		VARIABLES.put(name, value);
+		variables.put(name, value);
 	}
 
 	private void handleCondition(String expression)
 	{
-		if (!new Expression(expression, EXPRESSION_CONFIG).resolve().asBoolean())
-		{
-			skipBlock();
-		}
+		if (!new Expression(expression, EXPRESSION_CONFIG).resolve().asBoolean()) skipBlock();
+	}
+	
+	private void handleCase(int value)
+	{
+		if (switchValue != value) skipBlock();
 	}
 	
 	public boolean isRunning()
@@ -407,7 +426,7 @@ public class Interpreter implements Serializable
 					case "$argument": return setupArgs[(int) args[0].asLong()];
 				}
 			}
-			return VARIABLES.get(name);
+			return variables.get(name);
 		}
 	}
 }

@@ -108,11 +108,13 @@ public class FlowContentProvider implements IStructuredContentProvider
 		FunctionEntry func = library.getFunction(cmd);
 		if (func != null)
 		{
-			switch(func.category.name)
+			if (func.category.id == null)
+				return EventPreferences.CMDLINE_COLOR_CONTROL;
+			
+			switch(func.category.id)
 			{
-				case "Demo": return EventPreferences.CMDLINE_COLOR_FUNCTION;
-				case "Message": return EventPreferences.CMDLINE_COLOR_FUNCTION;
-				case "Default": return EventPreferences.CMDLINE_COLOR_CONTROL;
+				case "cuina.eventx.category.Demo": return EventPreferences.CMDLINE_COLOR_FUNCTION;
+				case "cuina.eventx.category.Messages": return EventPreferences.CMDLINE_COLOR_FUNCTION;
 			}
 		}
 		return EventPreferences.CMDLINE_COLOR_DEFAULT;

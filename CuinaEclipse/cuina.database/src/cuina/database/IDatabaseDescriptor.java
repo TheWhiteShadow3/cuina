@@ -14,4 +14,6 @@ public interface IDatabaseDescriptor<E extends DatabaseObject>
 	public Image getImage();
 	
 	public String getEditorID();
+
+	public DatabaseObjectValidator getValidator();
 }

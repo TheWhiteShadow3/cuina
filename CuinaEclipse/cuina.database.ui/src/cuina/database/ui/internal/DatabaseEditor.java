@@ -18,9 +18,12 @@ import cuina.editor.core.CuinaProject;
 import cuina.resource.ResourceException;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -34,13 +37,12 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
-public class DatabaseEditor extends EditorPart implements TreeListener
+public class DatabaseEditor extends EditorPart implements IPropertyListener, TreeListener
 {
 	private DataTable<?> table;
 	private String key;
@@ -48,10 +50,14 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 	private TreeDataNode currentLeaf;
 	private boolean dirty;
 	private boolean update;
-	private IEditorPart editor;
+	private Composite editorBlock;
+	private EditorPart editor;
+	private boolean editorCreated;
 	
 	private void setDirty(boolean value)
 	{
+		if (dirty == value) return;
+		
 		this.dirty = value;
 		firePropertyChange(PROP_DIRTY);
 	}
@@ -60,23 +66,16 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 	public void doSave(IProgressMonitor monitor)
 	{
 		editor.doSave(monitor);
-		
-		try
-		{
-			table.getDatabase().saveMetaData();
-			setDirty(false);
-		}
-		catch (ResourceException e)
-		{
-			e.printStackTrace();
-		}
+		setDirty(editor.isDirty());
 		viewer.refresh();
 	}
 
 	@Override
 	public void doSaveAs()
 	{
-		doSave(null);
+		editor.doSaveAs();
+		setDirty(editor.isDirty());
+		viewer.refresh();
 	}
 
 	@Override
@@ -85,42 +84,51 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 		setSite(site);
 		setInput(input);
 		readInput(input);
-		initPage();
+		loadEditor();
 	}
 
-	private void initPage() throws PartInitException
+	private void loadEditor() throws PartInitException
 	{
-		if (table == null)
+		try
 		{
 			IDatabaseDescriptor<?> descriptor = DatabasePlugin.getDescriptor(table.getName());
 			if (descriptor.getEditorID() != null)
 			{
-				IEditorReference[] refs = getSite().getPage().findEditors(null,
-						descriptor.getEditorID(), IWorkbenchPage.MATCH_ID);
-				if (refs.length > 0)
+		        IConfigurationElement[] elements = Platform.getExtensionRegistry().
+		        		getConfigurationElementsFor("org.eclipse.ui.editors");
+				for(IConfigurationElement conf : elements)
 				{
-					editor = refs[0].getEditor(true);
-					if (editor != null) return;
+					if (conf.getAttribute("id").equals(descriptor.getEditorID()))
+					{
+						setEditor((EditorPart) conf.createExecutableExtension("class"));
+						return;
+					}
 				}
 			}
-			
-			return;
 		}
-		
-		throw new PartInitException(
-				new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Editor could not be created."));
+		catch (Exception e)
+		{
+			throwPartInitException(e);
+		}
+	}
+	
+	private void setEditor(EditorPart editor)
+	{
+		Assert.isNotNull(editor);
+		this.editor = editor;
+		editor.addPropertyListener(this);
 	}
 
 	@Override
 	public boolean isDirty()
 	{
-		return dirty;
+		return dirty & editor.isDirty();
 	}
 
 	@Override
 	public boolean isSaveAsAllowed()
 	{
-		return false;
+		return editor.isSaveAsAllowed();
 	}
 
 	@Override
@@ -128,7 +136,7 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 	{
 		SashForm splitter = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
 		createNavigator(splitter);
-		createEditor(splitter);
+		createEditorBlock(splitter);
 		splitter.setWeights(new int[] {25, 75});
 	
 		String metaKey = TreeNode.TREE_META_KEY + '.' + table.getName();
@@ -173,24 +181,21 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 		});
 	}
 	
-	private void createEditor(Composite parent)
+	private void createEditorBlock(Composite parent)
 	{
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new FillLayout());
-		
-		editor.createPartControl(composite);
+		this.editorBlock = new Composite(parent, SWT.NONE);
+		editorBlock.setLayout(new FillLayout());
 	}
 	
 	private TreeDataNode findFirstLeaf(TreeGroup group)
 	{
-		TreeNode[] children = group.getChildren();
-		for (int i = 0; i < children.length; i++)
+		for (TreeNode child : group.getChildren())
 		{
-			if (children[i] instanceof TreeDataNode)
-				return (TreeDataNode) children[i];
+			if (child instanceof TreeDataNode)
+				return (TreeDataNode) child;
 			
-			if (children[i] instanceof TreeGroup)
-				return findFirstLeaf((TreeGroup) children[i]);
+			if (child instanceof TreeGroup)
+				return findFirstLeaf((TreeGroup) child);
 		}
 		return null;
 	}
@@ -203,17 +208,7 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 		DatabaseObject obj = (currentLeaf == null) ? null : currentLeaf.getData();
 		if (obj != null)
 		{
-			update = true;
-			try
-			{
-				editor.init(getEditorSite(), new DatabaseInput(table, key));
-				setPartName(editor.getTitle());
-			}
-			catch (PartInitException e)
-			{
-				e.printStackTrace();
-			}
-			update = false;
+			initEditor(new DatabaseInput(table, key));
 		}
 		else
 		{	// Ungültiger Schlüssel im Tree
@@ -236,7 +231,27 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 		}
 	}
 	
-	private void readInput(IEditorInput input)
+	private void initEditor(IEditorInput input)
+	{
+		update = true;
+		try
+		{
+			editor.init(getEditorSite(), input);
+			if (!editorCreated)
+			{
+				editorCreated = true;
+				editor.createPartControl(editorBlock);
+				editorBlock.layout(true, true);
+			}
+		}
+		catch (PartInitException e)
+		{
+			e.printStackTrace();
+		}
+		update = false;
+	}
+
+	private void readInput(IEditorInput input) throws PartInitException
 	{
 		if (input instanceof DatabaseInput)
 		{
@@ -249,7 +264,6 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 			IFile file = (IFile) input.getAdapter(IFile.class);
 			if (file == null) return;
 			
-			setPartName(file.getName());
 			try
 			{
 				CuinaProject cuinaProject = CuinaCore.getCuinaProject(file.getProject());
@@ -257,9 +271,15 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 			}
 			catch (ResourceException e)
 			{
-				e.printStackTrace();
+				throwPartInitException(e);
 			}
 		}
+	}
+	
+	private void throwPartInitException(Exception cause) throws PartInitException
+	{
+		throw new PartInitException(
+				new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Editor could not be created.", cause));
 	}
 
 	@Override
@@ -342,5 +362,15 @@ public class DatabaseEditor extends EditorPart implements TreeListener
 	{
 		if (editor != null) editor.dispose();
 		super.dispose();
+	}
+
+	@Override
+	public void propertyChanged(Object source, int propId)
+	{
+		switch(propId)
+		{
+			case IEditorPart.PROP_TITLE: setPartName(editor.getPartName()); break;
+			case IEditorPart.PROP_DIRTY: setDirty(dirty | editor.isDirty()); break;
+		}
 	}
 }

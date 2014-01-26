@@ -16,6 +16,7 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 	private Image image;
 	private IConfigurationElement configuration;
 	private String editorID;
+	private DatabaseObjectValidator validator;
 	
 	public DatabaseDescriptor(String name, Class<E> dataClass)
 	{
@@ -40,6 +41,12 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 		} catch(Exception e) { e.printStackTrace(); }
 
 		this.editorID = conf.getAttribute("editorID");
+		
+		IConfigurationElement[] children = conf.getChildren("validator");
+		if (children.length == 1)
+		{
+			this.validator = (DatabaseObjectValidator) children[0].createExecutableExtension("class");
+		}
 	}
 	
 	@Override
@@ -80,5 +87,11 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 	public void setEditorID(String editorID)
 	{
 		this.editorID = editorID;
+	}
+
+	@Override
+	public DatabaseObjectValidator getValidator()
+	{
+		return validator;
 	}
 }

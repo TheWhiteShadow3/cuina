@@ -2,9 +2,16 @@ package cuina.database.ui.tree;
 
 import cuina.database.DataTable;
 import cuina.database.Database;
+import cuina.database.DatabasePlugin;
 import cuina.database.ui.internal.tree.TreeDataNode;
 import cuina.database.ui.internal.tree.TreeGroup;
 import cuina.resource.ResourceException;
+
+import org.eclipse.core.internal.resources.Marker;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 public class TreeRoot extends TreeGroup
 {
@@ -79,5 +86,48 @@ public class TreeRoot extends TreeGroup
 		Database db = table.getDatabase();
 		db.setMetaData(key, this);
 		db.saveMetaData();
+	}
+	
+	public void validate()
+	{
+		if (table == null) return;
+		
+		validateChildren(this);
+	}
+	
+	private void validateChildren(TreeGroup group)
+	{
+		for (TreeNode child : group.getChildren())
+		{
+			if (child instanceof TreeGroup)
+				validateChildren((TreeGroup) child);
+			
+			if (child instanceof TreeDataNode)
+			{
+				TreeDataNode tdn = (TreeDataNode) child;
+				Object data = tdn.getData();
+				if (data == null)
+				{
+					IFile file = DatabasePlugin.getTableFile(table);
+					try
+					{
+						IMarker[] markers = file.findMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
+						for (IMarker m : markers)
+						{
+							
+						}
+						
+						IMarker marker = file.createMarker(IMarker.PROBLEM);
+						marker.setAttribute(IMarker.LOCATION, tdn.getKey());
+						marker.setAttribute(IMarker.MESSAGE,
+								"Objekt '" + tdn.getKey() + "' existiert nicht in der Tabelle.");
+					}
+					catch (CoreException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 }

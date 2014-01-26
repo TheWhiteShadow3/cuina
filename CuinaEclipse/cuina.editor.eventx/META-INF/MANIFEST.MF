@@ -14,6 +14,7 @@ Require-Bundle: cuina.database,
  org.eclipse.ui.views.properties.tabbed,
  cuina.editor.core,
  cuina.buildins,
- cuina.editor.ui
+ cuina.editor.ui,
+ org.eclipse.core.resources
 Export-Package: cuina.eventx
 Bundle-ActivationPolicy: lazy

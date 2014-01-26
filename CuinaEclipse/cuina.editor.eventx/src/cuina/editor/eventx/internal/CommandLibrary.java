@@ -90,7 +90,7 @@ public class CommandLibrary
 //		{
 //			e.printStackTrace();
 //		}
-		defaultCategory = new Category("Default");
+		defaultCategory = new Category(null, "Default");
 		categories.put(null, defaultCategory);
 		
 		loadInternalFunctions();
@@ -99,14 +99,14 @@ public class CommandLibrary
 
 	private void loadCommandDefinitions()
 	{
-        IConfigurationElement[] elements;
-        elements = Platform.getExtensionRegistry().getConfigurationElementsFor(CATEGORY_EXENSION);
+        IConfigurationElement[] elements = Platform.getExtensionRegistry().
+        		getConfigurationElementsFor(CATEGORY_EXENSION);
         
         for (IConfigurationElement conf : elements) try
         {
         	String id = conf.getAttribute("id");
         	String label = conf.getAttribute("label");
-        	Category category = new Category(label);
+        	Category category = new Category(id, label);
         	categories.put(id, category);
         }
     	catch (Exception e)

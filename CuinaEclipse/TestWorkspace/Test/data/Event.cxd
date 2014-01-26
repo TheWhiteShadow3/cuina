@@ -58,7 +58,7 @@
         <target>GLOBAL:Transition</target>
         <name>colorize</name>
         <args>
-          <int>255</int>
+          <int>176</int>
           <int>0</int>
           <int>127</int>
           <int>64</int>
@@ -101,12 +101,12 @@
   </cuina.eventx.CommandList>
   <cuina.eventx.CommandList>
     <commands/>
-    <key>ssaasassd</key>
-    <name>ssaasassd</name>
+    <key>beispiel_event</key>
+    <name>Beispiel Event</name>
   </cuina.eventx.CommandList>
   <cuina.eventx.CommandList>
     <commands/>
-    <key>beispiel_event</key>
-    <name>Beispiel Event</name>
+    <key>ssaasassd</key>
+    <name>ssaasassd</name>
   </cuina.eventx.CommandList>
 </cuina.database.DataTable>

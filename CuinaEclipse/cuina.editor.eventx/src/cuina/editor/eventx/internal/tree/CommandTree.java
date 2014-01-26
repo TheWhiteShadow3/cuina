@@ -7,13 +7,20 @@ import cuina.eventx.CommandList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+
 public class CommandTree extends CommandNode
 {
 	private CommandList list;
 	private CommandLibrary library;
+	private IFile file;
 	
-	public CommandTree(CommandList list, CommandLibrary library)
+	public CommandTree(IFile file, CommandList list, CommandLibrary library)
 	{
+		this.file = file;
 		this.list = list;
 		this.library = library;
 		createTree();
@@ -24,14 +31,35 @@ public class CommandTree extends CommandNode
 		int indent = 0;
 		CommandNode parent = this;
 		CommandNode lastNode = null;
-		for(Command cmd : list.commands)
+		List<CommandNode> nodes = new ArrayList<CommandNode>();
+		for(int i = 0; i < list.commands.length; i++)
 		{
+			Command cmd = list.commands[i];
+			
 			if (cmd.indent > indent) parent = lastNode;
 			if (cmd.indent < indent) parent = parent.getParent();
 			indent = cmd.indent;
 			
 			lastNode = new CommandNode(this, parent, cmd);
+			nodes.add(lastNode);
 			parent.addChild(lastNode);
+		}
+		
+		try
+		{
+			IMarker[] markers = file.findMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
+			for(IMarker m : markers)
+			{
+				if (!list.getKey().equals(m.getAttribute(IMarker.LOCATION))) continue;
+
+				Integer i = (Integer) m.getAttribute("index");
+				if (i != null)
+					nodes.get(i).setValid(false);
+			}
+		}
+		catch (CoreException e)
+		{
+			e.printStackTrace();
 		}
 	}
 	

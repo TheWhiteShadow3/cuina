@@ -60,6 +60,7 @@ public class DataContentProvider implements ITreeContentProvider
 			if (root != null)
 			{
 				root.setTable(table);
+				root.validate();
 			}
 			else
 			{
@@ -75,7 +76,7 @@ public class DataContentProvider implements ITreeContentProvider
 		}
 		return root;
 	}
-	
+
 	private Database getDatabase(IFile file)
 	{
 		return CuinaCore.getCuinaProject(file.getProject()).getService(Database.class);
@@ -93,7 +94,6 @@ public class DataContentProvider implements ITreeContentProvider
 		if (parent instanceof TreeNode)
 		{
 			TreeNode node = (TreeNode) parent;
-			TreeNode[] children = node.getChildren();
 //			if (children == null)
 //			{
 //				Object[] childElements = findChildren(node.data);
@@ -104,7 +104,7 @@ public class DataContentProvider implements ITreeContentProvider
 //				}
 //				node.children = children;
 //			}
-			return children;
+			return node.getChildren().toArray();
 		}
 		// parent ist ein Wurzel-Element
 		if (parent instanceof DataTable)
@@ -122,33 +122,6 @@ public class DataContentProvider implements ITreeContentProvider
 		else
 			return new Object[] { root };
 	}
-	
-//	private Object[] findChildren(Object element)
-//	{
-//		try
-//		{
-//			if (element instanceof TreeGroup)
-//			{
-//				return ((TreeGroup) element).getChildren();
-//			}
-//			else if (element instanceof IFolder)
-//			{
-//				return ((IFolder) element).members();
-//			}
-//			
-//			Object obj = element;
-//			if (element instanceof TreeLeaf)
-//				obj = ((TreeLeaf) element).getData();
-//			
-//			if (obj instanceof TreeItem)
-//			{
-//				Object[] children = ((TreeItem) obj).getChildren(root);
-//				if (children != null) return children;
-//			}
-//		}
-//		catch(CoreException e) {}
-//		return EMPTY;
-//	}
 
 	@Override
 	public Object getParent(Object element)

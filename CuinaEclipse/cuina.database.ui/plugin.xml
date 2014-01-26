@@ -5,7 +5,7 @@
       <editor
             class="cuina.database.ui.internal.DatabaseEditor"
             default="true"
-            extensions="cxd, cxdz"
+            extensions="cxd, cjd"
             icon="icons/data.png"
             id="cuina.editor.editors.DatabaseEditor"
             name="Database Editor">

@@ -12,11 +12,16 @@ import cuina.database.ui.internal.tree.TreeDataNode;
 import cuina.database.ui.internal.tree.TreeGroup;
 import cuina.database.ui.tree.TreeNode;
 import cuina.database.ui.tree.TreeRoot;
+import cuina.resource.ResourceException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -46,6 +51,8 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -57,103 +64,123 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class DatabaseUtil
 {
 	private static IWorkbenchAdapter sharedWorkbenchAdapter;
-	
-	private DatabaseUtil()
-	{}
 
-    /**
-     * Gibt eine Liste der Element-Namen aus der Auswahl zurück. Die Liste ist
-     * durch Zeilenumbrüchen getrennt.
-     * 
-     * @param selection
-     *            Auswahl
-     * @return Auswahl-Liste
-     */
-    public static String getTextRepresentation(ISelection selection)
-    {
-        StringBuilder builder = new StringBuilder();
-        if (selection instanceof StructuredSelection)
-        {
-            Object[] elements = ((StructuredSelection) selection).toArray();
-            for (int i = 0; i < elements.length; i++)
-            {
-                if (i > 0) builder.append("\n");
-                if (elements[i] instanceof NamedItem)
-                    builder.append(((NamedItem) elements[i]).getName());
-                else
-                {
-                    IWorkbenchAdapter adapter = (IWorkbenchAdapter) getAdapter(elements[i], IWorkbenchAdapter.class);
-                    if (adapter != null)
-                        builder.append(adapter.getLabel(elements[i]));
-                    else
-                        builder.append(elements[i].toString());
-                }
-            }
-        }
-        return builder.toString();
-    }
-    
-    public static Object getAdapter(Object sourceObject, Class<IWorkbenchAdapter> adapterType)
-    {
-        Assert.isNotNull(adapterType);
-        if (sourceObject == null) return null;
-        if (adapterType.isInstance(sourceObject)) return sourceObject;
- 
-        if (sourceObject instanceof IAdaptable)
-        {
-            IAdaptable adaptable = (IAdaptable) sourceObject;
- 
-            Object result = adaptable.getAdapter(adapterType);
-            if (result != null)
-            {
-                // Sanity-check
-                Assert.isTrue(adapterType.isInstance(result));
-                return result;
-            }
-        }
-        return null;
-    }
- 
-    /**
-     * Gibt einen WorkbenchAdapter für Cuina Datenbank-Elemente zurück.
-     * @return WorkbenchAdapter für Cuina Datenbank-Elemente.
-     */
-    public static IWorkbenchAdapter getWorkbenchAdapter()
-    {
-    	if (sharedWorkbenchAdapter == null)
-    	{
-    		sharedWorkbenchAdapter = new IWorkbenchAdapter()
-	        {
-	            private DataContentProvider contentProvider = new DataContentProvider();
-	            private DataLabelProvider labelProvider = new DataLabelProvider();
-	            
-	            @Override
-	            public Object[] getChildren(Object o)
-	            {
-	                return contentProvider.getElements(o);
-	            }
-	 
-	            @Override
-	            public Object getParent(Object o)
-	            {
-	                return contentProvider.getParent(o);
-	            }
-	            
-	            @Override
-	            public ImageDescriptor getImageDescriptor(Object object)
-	            {
-	                return ImageDescriptor.createFromImage(labelProvider.getImage(object));
-	            }
-	 
-	            @Override
-	            public String getLabel(Object o)
-	            {
-	                return labelProvider.getText(o);
-	            }
-	        };
-    	}
-        return sharedWorkbenchAdapter;
-    }
+	private DatabaseUtil() {}
+
+	/**
+	 * Gibt eine Liste der Element-Namen aus der Auswahl zurück. Die Liste ist durch Zeilenumbrüchen getrennt.
+	 * 
+	 * @param selection
+	 *            Auswahl
+	 * @return Auswahl-Liste
+	 */
+	public static String getTextRepresentation(ISelection selection)
+	{
+		StringBuilder builder = new StringBuilder();
+		if (selection instanceof StructuredSelection)
+		{
+			Object[] elements = ((StructuredSelection) selection).toArray();
+			for (int i = 0; i < elements.length; i++)
+			{
+				if (i > 0) builder.append("\n");
+				if (elements[i] instanceof NamedItem)
+					builder.append(((NamedItem) elements[i]).getName());
+				else
+				{
+					IWorkbenchAdapter adapter = (IWorkbenchAdapter) getAdapter(elements[i], IWorkbenchAdapter.class);
+					if (adapter != null)
+						builder.append(adapter.getLabel(elements[i]));
+					else
+						builder.append(elements[i].toString());
+				}
+			}
+		}
+		return builder.toString();
+	}
+
+	public static Object getAdapter(Object sourceObject, Class<IWorkbenchAdapter> adapterType)
+	{
+		Assert.isNotNull(adapterType);
+		if (sourceObject == null) return null;
+		if (adapterType.isInstance(sourceObject)) return sourceObject;
+
+		if (sourceObject instanceof IAdaptable)
+		{
+			IAdaptable adaptable = (IAdaptable) sourceObject;
+
+			Object result = adaptable.getAdapter(adapterType);
+			if (result != null)
+			{
+				// Sanity-check
+				Assert.isTrue(adapterType.isInstance(result));
+				return result;
+			}
+		}
+		return null;
+	}
+
+	public static List<IMarker> getDatabaseMarker(DataTable<?> table, String key)
+	{
+		List<IMarker> list = new ArrayList<IMarker>();
+		try
+		{
+			IMarker[] markers = DatabasePlugin.getTableFile(table).
+					findMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
+			for (IMarker m : markers)
+			{
+				if (!key.equals(m.getAttribute(IMarker.LOCATION))) continue;
+
+				list.add(m);
+			}
+		}
+		catch (CoreException e)
+		{
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	/**
+	 * Gibt einen WorkbenchAdapter für Cuina Datenbank-Elemente zurück.
+	 * 
+	 * @return WorkbenchAdapter für Cuina Datenbank-Elemente.
+	 */
+	public static IWorkbenchAdapter getWorkbenchAdapter()
+	{
+		if (sharedWorkbenchAdapter == null)
+		{
+			sharedWorkbenchAdapter = new IWorkbenchAdapter()
+			{
+				private DataContentProvider contentProvider = new DataContentProvider();
+				private DataLabelProvider labelProvider = new DataLabelProvider();
+
+				@Override
+				public Object[] getChildren(Object o)
+				{
+					return contentProvider.getElements(o);
+				}
+
+				@Override
+				public Object getParent(Object o)
+				{
+					return contentProvider.getParent(o);
+				}
+
+				@Override
+				public ImageDescriptor getImageDescriptor(Object object)
+				{
+					return ImageDescriptor.createFromImage(labelProvider.getImage(object));
+				}
+
+				@Override
+				public String getLabel(Object o)
+				{
+					return labelProvider.getText(o);
+				}
+			};
+		}
+		return sharedWorkbenchAdapter;
+	}
 
 	public static ActionProvider getDefaultActions(StructuredViewer viewer)
 	{
@@ -389,9 +416,9 @@ public class DatabaseUtil
 				
 				private int getIndex(TreeNode node)
 				{
-					TreeNode[] children = node.getParent().getChildren();
+					List<TreeNode> children = node.getParent().getChildren();
 					int i;
-					for (i = 0; children[i] != node; i++); // no body
+					for (i = 0; children.get(i) != node; i++); // no body
 					return i;
 				}
 			});
@@ -412,17 +439,39 @@ public class DatabaseUtil
 					IDatabaseDescriptor<?> descriptor = DatabasePlugin.getDescriptor(table.getName());
 					if (descriptor.getEditorID() == null) return;
 					
-					String key = node.getData().getKey();
-					DatabaseInput input = new DatabaseInput(table, key);
-				    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				    
-				    try
+					DatabaseObject data = node.getData();
+					if (data != null)
 					{
-						page.openEditor(input, descriptor.getEditorID());
+						String key = data.getKey();
+						DatabaseInput input = new DatabaseInput(table, key);
+					    IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					    
+					    try
+						{
+							page.openEditor(input, descriptor.getEditorID());
+						}
+						catch (PartInitException e)
+						{
+							e.printStackTrace();
+						}
 					}
-					catch (PartInitException e)
-					{
-						e.printStackTrace();
+					else
+					{	// Ungültiger Schlüssel im Tree
+						Shell shell = viewer.getControl().getShell();
+						MessageBox msg = new MessageBox(shell, SWT.ICON_ERROR | SWT.YES | SWT.NO);
+						msg.setText("invalid Key");
+						msg.setMessage("Der Schlüssel '" + node.getKey() +
+								"' existiert nicht in der Tabelle.\nSoll der Schlüssel gelöscht werden?");
+						if (msg.open() == SWT.YES) try
+						{
+							node.remove();
+							viewer.refresh();
+							table.getDatabase().saveMetaData();
+						}
+						catch (ResourceException e)
+						{
+							e.printStackTrace();
+						}
 					}
 				}
 			};
@@ -458,7 +507,7 @@ public class DatabaseUtil
 					if (parent == null) parent = root;
 					try
 					{
-						DatabaseObject obj = (DatabaseObject) root.getTable().getElementClass().newInstance();
+						DatabaseObject obj = root.getTable().getElementClass().newInstance();
 						obj.setKey(root.getTable().createAviableKey(name));
 						obj.setName(name);
 						TreeDataNode node = parent.addObject(obj);
