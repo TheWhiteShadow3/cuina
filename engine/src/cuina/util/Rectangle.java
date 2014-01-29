@@ -20,23 +20,20 @@ public class Rectangle implements Serializable
 	public int width;
 	public int height;
 	
-    public Rectangle()
-    {
-        this(0, 0, 0, 0);
-    }
-    
-    public Rectangle(Rectangle r)
-    {
-        this(r.x, r.y, r.width, r.height);
-    }
-    
-    public Rectangle(int x, int y, int width, int height)
-    {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-    }
+	public Rectangle() {}
+
+	public Rectangle(Rectangle r)
+	{
+		this(r.x, r.y, r.width, r.height);
+	}
+
+	public Rectangle(int x, int y, int width, int height)
+	{
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
 
 	public Rectangle(int width, int height)
 	{
@@ -234,9 +231,11 @@ public class Rectangle implements Serializable
 		return out;
 	}
 	
+	/// TODO: Implementieren, so dass Objekte gegeneinander bewegt werden können ohne zu Kollidieren.
 	public int dist(Rectangle r)
 	{
-		return 0;
+		throw new UnsupportedOperationException("Nicht implementiert");
+//		return 0;
 	}
 	
     public boolean isEmpty()

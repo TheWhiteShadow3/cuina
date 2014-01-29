@@ -100,7 +100,7 @@ public final class Game
 	private Context sessionContext;
 	private Context sceneContext;
 	
-	final ArrayList<GameListener> listeners = new ArrayList<GameListener>();
+	private final ArrayList<GameListener> listeners = new ArrayList<GameListener>();
 	
 	/**
 	 * Erzeugt die Spielinstanz.

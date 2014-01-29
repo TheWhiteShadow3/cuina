@@ -17,6 +17,9 @@ import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 import cuina.resource.ResourceException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,6 +34,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
@@ -41,6 +45,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
+import org.osgi.framework.Bundle;
 
 public class DatabaseEditor extends EditorPart implements IPropertyListener, TreeListener
 {
@@ -51,8 +56,9 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 	private boolean dirty;
 	private boolean update;
 	private Composite editorBlock;
-	private EditorPart editor;
-	private boolean editorCreated;
+	private Map<String, EditorEntry> editors = new HashMap<String, EditorEntry>();
+	private EditorPart currentEditor;
+	private Class<EditorPart> editorClass;
 	
 	private void setDirty(boolean value)
 	{
@@ -65,16 +71,20 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 	@Override
 	public void doSave(IProgressMonitor monitor)
 	{
-		editor.doSave(monitor);
-		setDirty(editor.isDirty());
+		dirty = false;
+		for(EditorEntry entry : editors.values())
+		{
+			entry.editor.doSave(monitor);
+			dirty |= entry.editor.isDirty();
+		}
+		setDirty(dirty);
 		viewer.refresh();
 	}
 
 	@Override
 	public void doSaveAs()
 	{
-		editor.doSaveAs();
-		setDirty(editor.isDirty());
+		currentEditor.doSaveAs();
 		viewer.refresh();
 	}
 
@@ -100,7 +110,9 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 				{
 					if (conf.getAttribute("id").equals(descriptor.getEditorID()))
 					{
-						setEditor((EditorPart) conf.createExecutableExtension("class"));
+						Bundle plugin = Platform.getBundle(conf.getContributor().getName());
+						
+						this.editorClass = (Class<EditorPart>) plugin.loadClass(conf.getAttribute("class"));
 						return;
 					}
 				}
@@ -112,23 +124,28 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 		}
 	}
 	
-	private void setEditor(EditorPart editor)
+	private EditorEntry getEditorEntry(DatabaseInput input)
 	{
-		Assert.isNotNull(editor);
-		this.editor = editor;
-		editor.addPropertyListener(this);
+		EditorEntry entry = editors.get(input.getKey());
+		if (entry == null)
+		{
+			entry = new EditorEntry(editorBlock, input);
+			Assert.isNotNull(entry);
+			editors.put(input.getKey(), entry);
+		}
+		return entry;
 	}
 
 	@Override
 	public boolean isDirty()
 	{
-		return dirty & editor.isDirty();
+		return dirty & currentEditor.isDirty();
 	}
 
 	@Override
 	public boolean isSaveAsAllowed()
 	{
-		return editor.isSaveAsAllowed();
+		return currentEditor.isSaveAsAllowed();
 	}
 
 	@Override
@@ -184,7 +201,7 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 	private void createEditorBlock(Composite parent)
 	{
 		this.editorBlock = new Composite(parent, SWT.NONE);
-		editorBlock.setLayout(new FillLayout());
+		editorBlock.setLayout(new StackLayout());
 	}
 	
 	private TreeDataNode findFirstLeaf(TreeGroup group)
@@ -208,6 +225,7 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 		DatabaseObject obj = (currentLeaf == null) ? null : currentLeaf.getData();
 		if (obj != null)
 		{
+			this.key = currentLeaf.getKey();
 			initEditor(new DatabaseInput(table, key));
 		}
 		else
@@ -231,23 +249,15 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 		}
 	}
 	
-	private void initEditor(IEditorInput input)
+	private void initEditor(DatabaseInput input)
 	{
 		update = true;
-		try
-		{
-			editor.init(getEditorSite(), input);
-			if (!editorCreated)
-			{
-				editorCreated = true;
-				editor.createPartControl(editorBlock);
-				editorBlock.layout(true, true);
-			}
-		}
-		catch (PartInitException e)
-		{
-			e.printStackTrace();
-		}
+		
+		System.out.println("[DatabaseEditor] Aktiviere Editor für " + input.getKey());
+		EditorEntry entry = getEditorEntry(input);
+		this.currentEditor = entry.editor;
+		entry.activate();
+		
 		update = false;
 	}
 
@@ -351,6 +361,7 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 		{
 			if (currentLeaf == node)
 			{
+				editors.remove(currentLeaf.getKey()).dispose();
 				changeElement(null);
 				break;
 			}
@@ -360,7 +371,7 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 	@Override
 	public void dispose()
 	{
-		if (editor != null) editor.dispose();
+		for (EditorEntry entry : editors.values()) entry.dispose();
 		super.dispose();
 	}
 
@@ -369,8 +380,51 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 	{
 		switch(propId)
 		{
-			case IEditorPart.PROP_TITLE: setPartName(editor.getPartName()); break;
-			case IEditorPart.PROP_DIRTY: setDirty(dirty | editor.isDirty()); break;
+			case IEditorPart.PROP_TITLE: setPartName(currentEditor.getPartName()); break;
+			case IEditorPart.PROP_DIRTY: setDirty(dirty | currentEditor.isDirty()); break;
+		}
+	}
+	
+	private class EditorEntry
+	{
+		public EditorPart editor;
+		
+		private Composite parent;
+		private Composite control;
+		
+		public EditorEntry(Composite parent, DatabaseInput input)
+		{
+			try
+			{
+				this.editor = editorClass.newInstance();
+				editor.init(getEditorSite(), input);
+				
+				this.parent = parent;
+				this.control = new Composite(parent, SWT.NONE);
+				control.setLayout(new FillLayout());
+				editor.createPartControl(control);
+				editor.addPropertyListener(DatabaseEditor.this);
+				
+				activate();
+			}
+			catch (InstantiationException | IllegalAccessException | PartInitException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		public void dispose()
+		{
+			editor.removePropertyListener(DatabaseEditor.this);
+			editor.dispose();
+			control.dispose();
+		}
+
+		public void activate()
+		{
+			((StackLayout) parent.getLayout()).topControl = control;
+			parent.layout(true, true);
+//			parent.getParent().l
 		}
 	}
 }

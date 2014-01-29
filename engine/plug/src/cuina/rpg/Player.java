@@ -4,9 +4,9 @@ import cuina.Game;
 import cuina.event.Event;
 import cuina.input.DirectionalControl;
 import cuina.input.Input;
-import cuina.map.CollisionBox;
 import cuina.movement.Driver;
 import cuina.movement.Motor;
+import cuina.world.CuinaMask;
 import cuina.world.CuinaObject;
 import cuina.world.CuinaWorld;
 
@@ -54,15 +54,15 @@ public class Player implements Driver
 		handleCollisions();
 	}
 	
-	private CollisionBox getCollisionBox()
+	private CuinaMask getCollisionMask()
 	{
 		CuinaObject object = motor.getObject();
-		return (CollisionBox) object.getExtension(CollisionBox.EXTENSION_KEY);
+		return (CuinaMask) object.getExtension(CuinaMask.EXTENSION_KEY);
 	}
 	
 	private void handleDebugMovement()
 	{
-		CollisionBox box = getCollisionBox();
+		CuinaMask box = getCollisionMask();
 		if (box == null) return;
 		
 		box.setThrough(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT));
@@ -70,14 +70,14 @@ public class Player implements Driver
 	
 	private void handleCollisions()
 	{
-		CollisionBox box = getCollisionBox();
+		CuinaMask box = getCollisionMask();
 		if (box == null) return;
 		
 		CuinaWorld world = Game.getWorld();
 		if (Input.isPressed(CONTROL_ACTION) && (world == null || !world.isFreezed()))
 		{
-			CuinaObject other = box.testRelativePosition(motor.getDX(2), motor.getDY(2));
-			if (other != null && other instanceof CuinaObject)
+			CuinaObject other = box.testRelativePosition(motor.getDX(2), motor.getDY(2), 0);
+			if (other != null)
 			{
 				CuinaObject self = motor.getObject();
 				other.testTriggers(ACTION_BY_PLAYER, self.getID(), self);

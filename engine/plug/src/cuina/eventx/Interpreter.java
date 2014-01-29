@@ -24,6 +24,11 @@ public class Interpreter implements Serializable
 
 	public static enum ContextType { INTERNAL, GLOBAL, SESSION, SCENE, STATIC, ARGUMENT }
 	
+	/**
+	 * Ein Result-Objekt kann neben dem eigentlichen Rückgabewert
+	 * noch eine Reihe an Informationen für den Interpreter beinhalten.
+	 * @author TheWhiteShadow
+	 */
 	public static class Result
 	{
 		/**
@@ -46,8 +51,15 @@ public class Interpreter implements Serializable
 		public int skip;
 		/** Stopt den Interpreter. */
 		public boolean stop;
+		/** Der Rückgabewert. Kann als Interpreter-Variable $result abgefragt werden. */
+		public Object value;
 		
 		public Result() {};
+		
+		public Result(Object value)
+		{
+			this.value = value;
+		}
 		
 		public Result(int wait, int skip, boolean stop)
 		{
@@ -69,6 +81,8 @@ public class Interpreter implements Serializable
 		}
 	}
 	
+	private static final String INSTANCE_KEY = "Interpreter";
+	
 	private static final Map<String, FunctionAccessor> FUNCTIONS = new HashMap<String, FunctionAccessor>();
 	private static final ThreadLocal<Interpreter> CONTEXT_INSTANCE = new ThreadLocal<Interpreter>();
 	
@@ -81,6 +95,7 @@ public class Interpreter implements Serializable
 	private int waitCount;
 	private Object[] setupArgs;
 	private int switchValue;
+	private Object resultValue;
 	
 	static
 	{
@@ -90,6 +105,29 @@ public class Interpreter implements Serializable
 		}
 	}
 	
+	/**
+	 * Gibt den globalen Interpreter zurück.
+	 * @return der globale Interpreter oder <code>null</code>, wenn nicht gesetzt.
+	 */
+	public static Interpreter getGlobalInterpreter()
+	{
+		return Game.getContext(Context.GLOBAL).get(INSTANCE_KEY);
+	}
+
+	/**
+	 * Setzt den globalen Interpreter.
+	 * @param instance neuer globaler Interpreter.
+	 */
+	public static void setGlobalInterpreter(Interpreter instance)
+	{
+		Game.getContext(Context.GLOBAL).set(INSTANCE_KEY, instance);
+	}
+
+	/**
+	 * Erzeugt einen neuen Interpreter.
+	 * Wenn es bisher keinen globalen Interpreter gibt,
+	 * wird die neue Instanz als globaler Interpreter gesetzt.
+	 */
 	public Interpreter()
 	{
 		EXPRESSION_CONFIG = new Config();
@@ -97,7 +135,11 @@ public class Interpreter implements Serializable
 				Config.BooleanBehavor.NON_ZERO_NUMBERS |
 				Config.BooleanBehavor.NON_EMPTY_STRINGS;
 		EXPRESSION_CONFIG.nullBehavor = Config.NullBehavor.TO_FALSE;
-		EXPRESSION_CONFIG.resolver = new EventNameResolver();
+		EXPRESSION_CONFIG.resolver = new ResolverImpl();
+		
+		
+		if (getGlobalInterpreter() == null)
+			setGlobalInterpreter(this);
 	}
 
 	private static void findMethods(Class clazz, Annotation[] annotations)
@@ -259,8 +301,10 @@ public class Interpreter implements Serializable
 
 				run = !result.stop;
 				waitCount = result.wait;
+				this.resultValue = result.value;
 				if (result.skip != 0) skipCommands(result.skip);
 			}
+			else this.resultValue = obj;
 		}
 		catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 		{
@@ -280,8 +324,10 @@ public class Interpreter implements Serializable
 			Object arg = args[i];
 			if (arg instanceof Argument)
 				result[i] = setupArgs[((Argument) arg).index];
+			else if (arg instanceof Variable)
+				result[i] = getVariable(((Variable) arg).name);
 			else
-				result[i] = args[i];
+				result[i] = arg;
 		}
 		return result;
 	}
@@ -371,9 +417,39 @@ public class Interpreter implements Serializable
 		}
 	}
 	
-	private void getVariable(String name)
+	private Object getInternalVariable(String name)
 	{
-		variables.get(name);
+		try
+		{
+			if (name.startsWith("$argument"))
+			{
+				if ("$argument.length".equals(name)) return setupArgs.length;
+				int index = Integer.parseInt(name.substring(9));
+				if (setupArgs.length > index)
+					return setupArgs[index];
+			}
+			else switch(name)
+			{
+				case "$index": return index;
+				case "$result": return resultValue;
+			}
+		}
+		catch(Exception e) {}
+		return null;
+	}
+	
+	private Object getVariable(String name)
+	{
+		Object result = null;
+		if (name.charAt(0) == '$')
+			result = getInternalVariable(name);
+		else
+			result = variables.get(name);
+		
+		if (result == null)
+			Logger.log(Interpreter.class, Logger.WARNING, "Variable '" + name + "' does not exists.");
+		
+		return result;
 	}
 
 	private void setVariable(String name, Object value)
@@ -412,21 +488,12 @@ public class Interpreter implements Serializable
 		if (list != null) run = true;
 	}
 	
-	private class EventNameResolver implements Resolver
+	private class ResolverImpl implements Resolver
 	{
 		@Override
 		public Object resolve(String name, tws.expression.Argument[] args) throws EvaluationException
 		{
-			if (name.charAt(0) == '$')
-			{
-				switch(name)
-				{
-					case "$index": return index;
-					case "$argument.length": return setupArgs.length;
-					case "$argument": return setupArgs[(int) args[0].asLong()];
-				}
-			}
-			return variables.get(name);
+			return getVariable(name);
 		}
 	}
 }

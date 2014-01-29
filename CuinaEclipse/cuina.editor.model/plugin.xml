@@ -16,7 +16,7 @@
          point="org.eclipse.ui.propertyPages">
       <page
             category="cuina.object.ExtensionPage"
-            class="cuina.editor.model.properties.ModelPropertyPage"
+            class="cuina.editor.model.internal.properties.ModelPropertyPage"
             id="cuina.editor.model.ModelPropertyPage"
             name="Model">
          <enabledWhen>
@@ -26,6 +26,13 @@
             </test>
          </enabledWhen>
       </page>
+   </extension>
+   <extension
+         point="cuina.object.extensionTypes">
+      <object_extension
+            class="cuina.editor.model.internal.ModelExtensionEditor"
+            name="cuina.editor.model.Model">
+      </object_extension>
    </extension>
 
 </plugin>

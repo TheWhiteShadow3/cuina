@@ -31,6 +31,10 @@ public interface Graphic extends Serializable
 	
 	/**
 	 * Stellt die Grafiken nach einer Neu-Initialisierung wieder her.
+	 * <p>
+	 * Grafik-Elemete sind generell serialisierbar.
+	 * Um nach dem Deserialisieren die Verbindung zum OpenGL-Kontext wieder her zu stellen, wird diese Methode 
+	 * </p>
 	 */
 	public void refresh();
 	

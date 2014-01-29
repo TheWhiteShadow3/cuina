@@ -134,15 +134,24 @@ public class CollisionSystem implements Serializable
 		Logger.log(CollisionSystem.class, Logger.DEBUG, "Kollisions-System initialisiert.");
 	}
 	
-	public CuinaObject testCollision(Rectangle rect, CuinaObject self)
+//	public CuinaObject testCollision(CuinaObject self)
+//	{
+//		CuinaMask box = getBoxFrom(self);
+//		if (box == null) return null;
+//		
+//		return testCollision(self, box.getRectangle());
+//	}
+	
+	public CuinaObject testCollision(CuinaMask self)
 	{
-		if (rect == null) return null;
+		if (self == null) return null;
 		// finde relevante Bereiche
-		for(CollisionArea area : getAreas(rect))
+		for(CollisionArea area : getAreas(self.getRectangle()))
 		{	// teste alle Objekte innerhalb dieses Bereichs
 			for(CuinaObject other : area.objects.values())
 			{
-				if (other != self && getBoxFrom(other).getRectangle().intersects(rect))
+				CuinaMask otherMask = getBoxFrom(other);
+				if (otherMask != null && otherMask != self && self.intersects(otherMask))
 				{
 //					System.out.println("Kollision: " + object.getID() + " und " + otherObj.getID());
 					return other;

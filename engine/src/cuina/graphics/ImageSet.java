@@ -96,7 +96,7 @@ public class ImageSet implements Serializable
 			images[x][y] = new Image(texture, x * cw, y * ch, cw, ch);
 		}
 	}
-	
+
 	public void addTexture(Texture texture, int mixMode)
 	{
 		for(int x=0; x < xCount; x++)

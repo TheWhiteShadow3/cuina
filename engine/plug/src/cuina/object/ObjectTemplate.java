@@ -2,8 +2,6 @@ package cuina.object;
 
 import cuina.database.DatabaseObject;
 
-import java.io.IOException;
-
 public class ObjectTemplate implements DatabaseObject
 {
 	private static final long	serialVersionUID	= 4006961914581064448L;
@@ -50,7 +48,7 @@ public class ObjectTemplate implements DatabaseObject
 		return name;
 	}
 	
-	public ObjectData createNewObject(int id) throws IOException
+	public ObjectData createNewObject(int id)
 	{
 		ObjectData obj = new ObjectData();
 		obj.id 			= id;

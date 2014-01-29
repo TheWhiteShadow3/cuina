@@ -1,4 +1,4 @@
-package cuina.editor.model.properties;
+package cuina.editor.model.internal.properties;
 
 import java.util.ArrayList;
 

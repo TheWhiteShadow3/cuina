@@ -40,10 +40,6 @@ public class GameMap extends BaseWorld implements Plugin
 	public static final Event OBJECT_CREATE = Event.getEvent("cuina.map.object.Create");
 	/** Prüft den Trigger jenden Frame automatisch. */
 	public static final Event OBJECT_UPDATE = Event.getEvent("cuina.map.object.Update");
-	/** Prüft den Trigger bei passiver Kollision mit Objekt. */
-	public static final Event TOUCHED_BY_OBJECT = Event.getEvent("cuina.map.object.TouchedByObject");
-	/** Prüft den Trigger bei aktiver Kollision mit Objekt. */
-	public static final Event OBJECT_TOUCH = Event.getEvent("cuina.map.object.Touch");
 	/** Prüft den Trigger bei betreten einer Karten-Region. */
 	public static final Event ENTERS_AREA = Event.getEvent("cuina.map.object.EntersArea");
 
@@ -66,6 +62,7 @@ public class GameMap extends BaseWorld implements Plugin
 		Game.setWorld(this);
 	}
 
+	@EventMethod
 	public void load(String key)
 	{
 		if(map != null)
@@ -169,17 +166,11 @@ public class GameMap extends BaseWorld implements Plugin
 			// src.id += 100000;
 			// }
 		}
-		mapInterpreter = new Interpreter();
-		Game.getContext(Context.SESSION).set("Interpreter", mapInterpreter);
-		// mapInterpreter.setup(Database.<CommandList>get("Event", "test"));
-		// EventExecuter.init();
-		// EventExecuter.runEvent(Database.<Event>get("Event",
-		// "test").getCode());
-		// for(Integer key : map.areas.keySet())
-		// {
-		// obj = new MapObject(map.areas.get(key));
-		// addArea(obj);
-		// }
+		mapInterpreter = Interpreter.getGlobalInterpreter();
+		if (mapInterpreter == null)
+		{
+			mapInterpreter = new Interpreter();
+		}
 
 		// WeatherEffects weather = new WeatherEffects(-100, -100, 840, 680);
 		// Game.getScene().setObject("Weather", weather);

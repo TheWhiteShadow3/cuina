@@ -1,6 +1,8 @@
 package cuina.object;
 
+import cuina.graphics.PictureSprite;
 import cuina.graphics.Sprite;
+import cuina.util.LoadingException;
 import cuina.world.CuinaModel;
 
 public class StaticModel implements CuinaModel
@@ -8,6 +10,18 @@ public class StaticModel implements CuinaModel
 	private static final long serialVersionUID = 905794968107081868L;
 	
 	private Sprite sprite;
+
+	public StaticModel(String imageName)
+	{
+		try
+		{
+			this.sprite = new PictureSprite(imageName);
+		}
+		catch (LoadingException e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void refresh()

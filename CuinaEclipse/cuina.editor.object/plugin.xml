@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="cuina.object.extensionTypes" name="Object Extension Types" schema="schema/cuina.object.extensionTypes.exsd"/>
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
@@ -42,6 +43,15 @@
             image="icons/template.png"
             name="Template">
       </database>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            default="false"
+            icon="icons/template.png"
+            id="cuina.editor.object.TemplateEditor"
+            name="Template Editor">
+      </editor>
    </extension>
 
 </plugin>

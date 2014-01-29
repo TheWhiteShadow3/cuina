@@ -3,6 +3,10 @@ package cuina.graphics;
 import cuina.util.LoadingException;
 import cuina.util.Rectangle;
 
+/**
+ * Das PictureSprite erzeugt eine Grafik aus einer Bild-Datei.
+ * @author TheWhiteShadow
+ */
 public class PictureSprite extends Sprite
 {
 	private static final long	serialVersionUID	= 2560146525182670076L;

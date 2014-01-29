@@ -36,4 +36,9 @@ public class Images
 	{
 		return new Image(TextureLoader.getInstance().getTexture(width, height, flags));
 	}
+	
+	public static Image createSubImage(Image image, int x, int y, int width, int height)
+	{
+		return new Image(image, x, y, width, height);
+	}
 }

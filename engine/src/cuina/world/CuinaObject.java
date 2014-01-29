@@ -4,6 +4,7 @@ package cuina.world;
 import cuina.database.NamedItem;
 import cuina.event.Event;
 import cuina.event.Trigger;
+import cuina.plugin.Upgradeable;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Set;
  * Das Interface für Spielobjekte.
  * @author TheWhiteShadow
  */
-public interface CuinaObject extends Serializable, NamedItem
+public interface CuinaObject extends Serializable, Upgradeable, NamedItem
 {
 	/**
 	 * Gibt die ID des Objekts zurück.
@@ -44,8 +45,11 @@ public interface CuinaObject extends Serializable, NamedItem
 	public boolean 	removeTrigger(Trigger trigger);
 	public List<Trigger> getTriggers();
 	
+	@Override
 	public Set<String> 	getExtensionKeys();
+	@Override
 	public void 	addExtension(String key, Object ext);
+	@Override
 	public Object 	getExtension(String key);
 	
 	public void 	update();

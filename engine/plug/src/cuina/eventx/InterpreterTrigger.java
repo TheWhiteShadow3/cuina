@@ -1,14 +1,14 @@
 package cuina.eventx;
 
-import cuina.Context;
-import cuina.Game;
+import cuina.Logger;
 import cuina.event.Event;
 import cuina.event.Trigger;
 
 /**
  * Ein Trigger für den Interpreter.
  * <p>
- * Per Default sucht der Trigger den Interpreter im SessionKontext unter "Interpreter".
+ * Per Default wird die globale Instanz des Interpreters benutzt
+ * welche im globalen Kontext unter "Interpreter" liegt.
  * </p>
  * @author TheWhiteShadow
  */
@@ -33,7 +33,11 @@ public class InterpreterTrigger implements Trigger
 	@Override
 	public void run(Object... args)
 	{
-		Game.getContext(Context.SESSION).<Interpreter>get("Interpreter").setup(key, args);
+		Interpreter interpreter = Interpreter.getGlobalInterpreter();
+		if (interpreter != null)
+			interpreter.setup(key, args);
+		else
+			Logger.log(InterpreterTrigger.class, Logger.ERROR, "Can not run trigger. Global interpreter is null.");
 	}
 
 	public void setEvent(Event event)

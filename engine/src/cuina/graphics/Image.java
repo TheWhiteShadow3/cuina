@@ -59,9 +59,7 @@ public class Image
 
 	public static final Transform2D IMAGE_MATRIX = new Transform2D();
 	
-	/** The texture that stores the image for this sprite */
 	private Texture texture;
-	
 	private List<MultiTexture> multiTextures;
 	
 //	Koordinaten in der Textur
@@ -69,61 +67,7 @@ public class Image
 //	private Font font = Graphics.getDefaultFont();
 	private Color color = new Color(Graphics.getDefaultColor());
 
-//	private Rectangle2D.Float texRect = new Rectangle2D.Float(0, 0, 1, 1);
-	
 	private int blendMode = COMPOSITE_NORMAL;
-
-//	public Image(String fileName) throws LoadingException
-//	{
-//		this.rawImage = ResourceManager.loadImage(fileName);
-//		this.width = rawImage.getWidth();
-//		this.height = rawImage.getHeight();
-//		setRect(0, 0, rawImage.getWidth(), rawImage.getHeight());
-//
-//		loadTexture(fileName);
-//	}
-//
-//	public Image(String fileName, Rectangle rect) throws LoadingException
-//	{
-//		this.rawImage = ResourceManager.loadImage(fileName);
-//		this.width = rawImage.getWidth();
-//		this.height = rawImage.getHeight();
-//		setRect(rect);
-//
-//		loadTexture(fileName);
-//	}
-	
-//	public Image(int width, int height) throws LoadingException
-//	{
-//		this.texture = TextureLoader.getInstance().getTexture(width, height);
-//		texture.addUseCount();
-//		this.x = 0;
-//		this.y = 0;
-//		this.width = texture.getSourceWidth();
-//		this.height = texture.getSourceHeight();
-//	}
-//	
-//	public Image(BufferedImage rawImage) throws LoadingException
-//	{
-//		this.rawImage = ResourceManager.loadImage(fileName);
-//		this.texture = TextureLoader.getInstance().getTexture(rawImage, fileName);
-//		texture.addUseCount();
-//		this.x = 0;
-//		this.y = 0;
-//		this.width = texture.getSourceWidth();
-//		this.height = texture.getSourceHeight();
-//	}
-//	
-//	public Image(String fileName, int x, int y, int width, int height) throws LoadingException
-//	{
-//		this.rawImage = ResourceManager.loadImage(fileName);
-//		this.texture = TextureLoader.getInstance().getTexture(rawImage, fileName);
-//		texture.addUseCount();
-//		this.x = x;
-//		this.y = y;
-//		this.width = width;
-//		this.height = height;
-//	}
 
 	protected Image(Texture texture, int x, int y, int width, int height)
 	{
@@ -139,6 +83,12 @@ public class Image
 		this(texture, 0, 0, texture.getSourceWidth(), texture.getSourceHeight());
 	}
 	
+	protected Image(Image image, int x, int y, int width, int height)
+	{
+		this(image.texture, x, y, width, height);
+		this.multiTextures = image.multiTextures;
+	}
+
 	public void addTexture(Texture texture, int mixMode)
 	{
 		if (multiTextures == null)

@@ -2,6 +2,7 @@ package cuina.object;
 
 import cuina.Game;
 import cuina.Logger;
+import cuina.event.Event;
 import cuina.graphics.GraphicContainer;
 import cuina.graphics.GraphicSet;
 import cuina.graphics.Graphics;
@@ -20,6 +21,11 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 {
 	private static final long serialVersionUID = 1L;
 
+	/** Prüft den Trigger bei passiver Kollision mit Objekt. */
+	public static final Event TOUCHED_BY_OBJECT = Event.getEvent("cuina.map.object.TouchedByObject");
+	/** Prüft den Trigger bei aktiver Kollision mit Objekt. */
+	public static final Event OBJECT_TOUCH = Event.getEvent("cuina.map.object.Touch");
+	
 	private static final String WORLD_GRAPHIC_CONTAINER_KEY = "cuina.world";
 	
 	private int width;

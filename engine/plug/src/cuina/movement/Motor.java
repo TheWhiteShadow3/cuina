@@ -291,7 +291,7 @@ public class Motor extends LifeCycleAdapter implements CuinaMotor
             // Prüfe Kollisions-Maske
             newX = (x + dx);
             newY = (y + dy);
-            if (box.move(newX, newY, true))
+            if (box.move(newX, newY, 0, true))
             {
                 object.setX(x + dx);
                 object.setY(y + dy);
@@ -304,7 +304,7 @@ public class Motor extends LifeCycleAdapter implements CuinaMotor
                 {
                     newX = x;
                     newY = (y + dy);
-                    if (box.move(newX, newY, false))
+                    if (box.move(newX, newY, 0, false))
                     {
                         object.setY(y + dy);
                         moving = true;
@@ -312,7 +312,7 @@ public class Motor extends LifeCycleAdapter implements CuinaMotor
                     }
                     newX = (x + dx);
                     newY = y;
-                    if (box.move(newX, newY, false))
+                    if (box.move(newX, newY, 0, false))
                     {
                         object.setX(x + dx);
                         moving = true;
