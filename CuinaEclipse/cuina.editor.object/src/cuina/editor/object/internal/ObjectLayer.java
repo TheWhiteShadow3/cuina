@@ -57,7 +57,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelectionListener, SelectionListener
 {
 	public static final String LAYER_NAME = "cuina.map.ObjectLayer";
-	public static final String ACTION_SELECTION = "cuina.editor.object.objects.selectionAction";
+	public static final String OBJECT_ACTION = "cuina.editor.object.objects.selectionAction";
 	
 	/**
 	 * Eine Grafik, die verwendet wird,
@@ -476,7 +476,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		}
 		else
 		{
-			editor.setActiveLayer(ObjectLayer.this);
+			editor.setActiveTool(OBJECT_ACTION);
 			
 			cursorTemplate = template;
 			setSelection(new StructuredSelection(template.sourceObject));
@@ -599,8 +599,18 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		{
 			Selection s = event.manager.getSelection();
 			ObjectData objData = (ObjectData) s.getData();
-			objData.x = event.mouseEvent.x;
-			objData.y = event.mouseEvent.y;
+			
+			if ((event.mouseEvent.stateMask & SWT.MOD1) != 0)
+			{
+				int gs = editor.getGridSize();
+				objData.x = event.mouseEvent.x / gs * gs;
+				objData.y = event.mouseEvent.y / gs * gs;
+			}
+			else
+			{
+				objData.x = event.mouseEvent.x;
+				objData.y = event.mouseEvent.y;
+			}
 		}
 	}
 
@@ -745,7 +755,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 	@Override
 	public void deactivated()
 	{
-		// TODO Auto-generated method stub
-		
+		cursorTemplate = null;
+		setSelection(StructuredSelection.EMPTY);
 	}
 }

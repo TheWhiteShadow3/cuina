@@ -4,7 +4,6 @@ import cuina.editor.map.ITerrainEditor;
 import cuina.editor.map.MapEvent;
 import cuina.editor.map.TerrainLayer;
 import cuina.editor.map.TileSelection;
-import cuina.editor.map.internal.EditorActionManager;
 import cuina.editor.map.internal.TileFactory;
 import cuina.editor.map.internal.TileFactory.AutotileSet;
 import cuina.editor.map.internal.TileSelectionMode;
@@ -532,20 +531,15 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	 */
 	public void setTileSourceData(TileSelection tiles)
 	{
-		sourceLayer = tiles;
+		if (sourceLayer == tiles) return;
 		
-		if (currentTool == DRAWMODE_NONE)
+		sourceLayer = tiles;
+		if (currentTool == DRAWMODE_NONE || editor.getActiveLayer() != this)
 		{
 			System.out.println("[TileMapLayer] Zeichenmodus (durch Quell-Daten): DRAWMODE_PENCIL");
-			EditorActionManager actionManager = editor.getActionManager();
-			actionManager.activate(ACTION_PENCIL);
+			editor.setActiveTool(ACTION_PENCIL);
 		}
-		
-		if (currentTool == DRAWMODE_PENCIL)
-		{
-			tileSelectionMode.setSize(
-					sourceLayer.getWidth() * tileset.getTileSize(), sourceLayer.getHeight() * tileset.getTileSize());
-		}
+		initTool();
 	}
 
 	private void setTempLayer(int x0, int y0, int width, int height)
@@ -573,7 +567,7 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	{
 		if(selection instanceof TileSelection)
 		{
-			editor.setActiveLayer(TileMapLayer.this);
+			
 			setTileSourceData((TileSelection) selection);
 		}
 	}
@@ -682,5 +676,8 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	}
 
 	@Override
-	public void deactivated() {}
+	public void deactivated()
+	{
+		this.currentTool = DRAWMODE_NONE;
+	}
 }

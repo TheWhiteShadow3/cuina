@@ -8,17 +8,17 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 public class ObjectLayerContributor extends EditorActionBarContributor
-{
+{	
 	@Override
 	public void contributeToToolBar(IToolBarManager manager)
 	{
 		EditorToolAction selectionAction = new EditorToolAction(
-				ObjectLayer.ACTION_SELECTION, ObjectLayer.LAYER_NAME, IAction.AS_RADIO_BUTTON)
+				ObjectLayer.OBJECT_ACTION, ObjectLayer.LAYER_NAME, IAction.AS_RADIO_BUTTON)
 		{
 			@Override
-			public void activate() {}
+			public void activate() { /* Wir wollen nur die Ebene aktivieren. */ }
 		};
-		selectionAction.setId(ObjectLayer.ACTION_SELECTION);
+		selectionAction.setId(ObjectLayer.OBJECT_ACTION);
 		selectionAction.setImageDescriptor(Activator.getImageDescriptor("object.png"));
 		
 		manager.appendToGroup(ITerrainEditor.TOOLBAR_TOOLS, selectionAction);

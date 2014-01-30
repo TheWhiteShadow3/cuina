@@ -161,13 +161,13 @@ public class CollisionBox extends CollisionMask
 	
 	private boolean testPixelCollision(Rectangle intersection, CuinaMask other)
 	{
-		if (!(other instanceof CollisionBox)) return true;
+		if (!(other instanceof CollisionBox) || pixelData == null) return true;
 		
 		boolean[][] otherData = ((CollisionBox) other).getPixelData();
 		if (otherData == null) return true;
 		
-		intersection.x -=  this.box.x;
-		intersection.y -=  this.box.y;
+		intersection.x -= this.box.x;
+		intersection.y -= this.box.y;
 		int ox = other.getRectangle().x - this.box.x;
 		int oy = other.getRectangle().y - this.box.y;
 		int maxX = intersection.x + intersection.width;
@@ -176,8 +176,7 @@ public class CollisionBox extends CollisionMask
 		for(int x = intersection.x; x < maxX; x++)
 		for(int y = intersection.y; y < maxY; y++)
 		{
-			if ((pixelData == null || pixelData[x][y]) &&
-				(otherData[x-ox][y-oy])) return true;
+			if (pixelData[x][y] && otherData[x-ox][y-oy]) return true;
 		}
 		return false;
 	}

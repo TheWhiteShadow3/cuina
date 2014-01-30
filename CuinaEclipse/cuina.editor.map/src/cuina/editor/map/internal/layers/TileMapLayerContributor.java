@@ -1,10 +1,8 @@
 package cuina.editor.map.internal.layers;
 
 import cuina.editor.map.EditorToolAction;
-import cuina.editor.map.IManagedContributor;
 import cuina.editor.map.ITerrainEditor;
 import cuina.editor.map.internal.Activator;
-import cuina.editor.map.internal.EditorActionManager;
 import cuina.map.Map;
 
 import org.eclipse.jface.action.Action;
@@ -16,39 +14,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
-public class TileMapLayerContributor extends EditorActionBarContributor implements IManagedContributor
+public class TileMapLayerContributor extends EditorActionBarContributor
 {
 	private TileMapLayerAction pencilAction;
 	private TileMapLayerAction rectAction;
 	private TileMapLayerAction elliAction;
 	private TileMapLayerAction fillAction;
-	private EditorActionManager actionManager;
-	
-//	private static final String STATE_TOOL = "cuina.editor.map.tilemap.Tool";
-//	private static final String STATE_RASTER = "cuina.editor.map.tilemap.Raster";
-//	private static final String STATE_DIM = "cuina.editor.map.tilemap.Dim";
-//	private static final String STATE_FADE = "cuina.editor.map.tilemap.Fade";
-
-//	@Override
-//	public void setActiveEditor(IEditorPart targetEditor)
-//	{
-////		EditorState state = ((ITerrainEditor) targetEditor).getEditorState();
-////		int tool = (Integer) state.getValue("cuina.editor.map.tilemap.tool");
-////		switch(tool)
-////		{
-////			case TileMapLayer.DRAWMODE_NONE: 
-////		}
-//		
-//		
-//		//TODO: Ich brauche Eine Möglichekt den Anzeige-Zustand von einem Editor auf einen anderen zu übertragen.
-//		
-//	}
-
-	@Override
-	public void setActionManager(EditorActionManager actionManager)
-	{
-		this.actionManager = actionManager;
-	}
 	
 	@Override
 	public void contributeToToolBar(IToolBarManager manager)
@@ -100,11 +71,6 @@ public class TileMapLayerContributor extends EditorActionBarContributor implemen
 		fillAction.setText("Filler");
 		fillAction.setToolTipText("Aktiviert den Ausfüll Zeichenmodus.");
 		fillAction.setImageDescriptor(Activator.getImageDescriptor("filler.png"));
-
-		actionManager.addAction(pencilAction);
-		actionManager.addAction(rectAction);
-		actionManager.addAction(elliAction);
-		actionManager.addAction(fillAction);
 		
 		manager.appendToGroup(ITerrainEditor.TOOLBAR_TOOLS, pencilAction);
 		manager.appendToGroup(ITerrainEditor.TOOLBAR_TOOLS, rectAction);

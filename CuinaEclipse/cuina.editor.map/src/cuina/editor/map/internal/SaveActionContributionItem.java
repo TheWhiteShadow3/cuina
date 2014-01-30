@@ -1,5 +1,6 @@
 package cuina.editor.map.internal;
 
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.jface.action.Action;
@@ -44,13 +45,15 @@ import org.eclipse.swt.widgets.Widget;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * <p>
- * Die Klasse stammt aus der Version 3.7, da dort noch keine injektion-Scheiße fabriziert wurde und
+ * <i>Anmerkung von <b>TheWhiteShadow</b>:</i><br>
+ * Diese Klasse stellt sicher, dass eclipse keine Scheiße mit dem ActionContributionItem anstellt.
+ * Die Klasse stammt ursprünglich aus der Version 3.7, da dort noch keine injektion-Scheiße fabriziert, und
  * der Aufruf nicht an nutzlose Proxi-Klassen deligiert wurde.
  * P.S. eclipse sucks.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ActionContributionItem extends ContributionItem {
+public class SaveActionContributionItem extends ContributionItem {
  
 	/**
 	 * Mode bit: Show text on tool items or buttons, even if an image is
@@ -162,7 +165,7 @@ public class ActionContributionItem extends ContributionItem {
 	 * @param action
 	 *            the action
 	 */
-	public ActionContributionItem(IAction action) {
+	public SaveActionContributionItem(IAction action) {
 		super(action.getId());
 		this.action = action;
 	}
@@ -196,10 +199,10 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof ActionContributionItem)) {
+		if (!(o instanceof SaveActionContributionItem)) {
 			return false;
 		}
-		return action.equals(((ActionContributionItem) o).action);
+		return action.equals(((SaveActionContributionItem) o).action);
 	}
 
 	/**
@@ -695,19 +698,13 @@ public class ActionContributionItem extends ContributionItem {
 	}
 
 	/**
-	 * Returns <code>true</code> if this item is allowed to enable,
-	 * <code>false</code> otherwise.
+	 * Gibt immer <code>true</code> zurück.
 	 * 
-	 * @return if this item is allowed to be enabled
-	 * @since Cuina
+	 * @return true
+	 * @since 2.0
 	 */
-	protected boolean isEnabledAllowed() {
-		// Gibt immer true zurück.
-//		if (getParent() == null) {
-//			return true;
-//		}
-//		Boolean value = getParent().getOverrides().getEnabled(this);
-//		return (value == null) ? true : value.booleanValue();
+	protected boolean isEnabledAllowed()
+	{
 		return true;
 	}
 

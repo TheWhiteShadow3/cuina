@@ -84,6 +84,7 @@ public class TerrainPanel extends AbstractSelectionPanel
 	public void setActiveLayer(ViewLayer layer)
 	{
 		int index = layers.indexOf(layer);
+		
 		System.out.println("[TerrainPanel] Layer(" + index + "): " + layer);
 //		if (index == -1) return;
 

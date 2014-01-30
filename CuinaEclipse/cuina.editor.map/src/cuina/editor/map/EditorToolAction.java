@@ -19,11 +19,12 @@ public abstract class EditorToolAction extends Action
 	@Override
 	public void run()
 	{
-		execute(!isChecked());
+		execute(isChecked());
 	}
 	
 	public void execute(boolean activate)
 	{
+		setChecked(activate);
 		this.editor = (ITerrainEditor) Workbench.getInstance().
 				getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		if (editor == null) return;
@@ -37,11 +38,9 @@ public abstract class EditorToolAction extends Action
 		}
 		else
 		{
-			System.out.println("deactivate " + getId());
+			System.out.println("[EditorToolAction] deactivate " + getId());
 			deactivate();
 		}
-//		if (getListeners().length == 0) System.out.println("Kein Schwein interessiert der Button.");
-		setChecked(activate);
 	}
 	
 	public ITerrainEditor getEditor()

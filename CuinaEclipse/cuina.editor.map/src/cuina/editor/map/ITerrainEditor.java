@@ -1,7 +1,6 @@
 package cuina.editor.map;
  
 import cuina.editor.core.CuinaProject;
-import cuina.editor.map.internal.EditorActionManager;
 import cuina.editor.ui.selection.SelectionManager;
 import cuina.editor.ui.selection.SelectionMode;
 import cuina.editor.ui.selection.SpanSelectionMode;
@@ -40,6 +39,8 @@ public interface ITerrainEditor
 	 * @return Das Tileset der Karte.
 	 */
 	public Tileset getTileset();
+	
+	public int getGridSize();
 
 	/**
 	 * Gibt ein Rechteck mit der Position und Größe der Karte auf der Zeichenfläche zurück.
@@ -79,7 +80,9 @@ public interface ITerrainEditor
 
 	public void setRasterVisible(boolean showRaster);
 
-	public EditorActionManager getActionManager();
-
 	public TerrainLayer getLayerByName(String layerName);
+
+	public String getActiveTool();
+
+	public void setActiveTool(String toolID);
 }

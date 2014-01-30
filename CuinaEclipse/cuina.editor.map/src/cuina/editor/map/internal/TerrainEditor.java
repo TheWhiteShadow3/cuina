@@ -208,19 +208,27 @@ public class TerrainEditor extends EditorPart implements
 	{
 		this.showRaster = showRaster;
 	}
-//
-//	public void setEditorState(EditorState editorState)
-//	{
-//		this.editorState = editorState;
-//	}
-//
-//	@Override
-//	public EditorState getEditorState()
-//	{
-//		return editorState;
-//	}
 	
-//	public EditorActionBarContributor getActionBarContributor()
+	@Override
+	public int getGridSize()
+	{
+		//XXX: Momentan noch Hard codiert.
+		return getTileset().getTileSize() / 2;
+	}
+	
+	@Override
+	public void setActiveTool(String toolID)
+	{
+		MapEditorActionBarContributor c = (MapEditorActionBarContributor) getEditorSite().getActionBarContributor();
+		c.setActiveTool(toolID);
+	}
+	
+	@Override
+	public String getActiveTool()
+	{
+		MapEditorActionBarContributor c = (MapEditorActionBarContributor) getEditorSite().getActionBarContributor();
+		return c.getActiveTool();
+	}
 
 	@Override
 	public void addListener(int eventType, Listener listener)
@@ -449,7 +457,19 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public void setActiveLayer(TerrainLayer layer)
 	{
+		if (getSite().getPage().getActiveEditor() != this)
+		{
+			System.out.println("[TerrainEditor] frage Fokus an.");
+			getSite().getPage().activate(this);
+		}
+		
+		TerrainLayer oldLayer = panel.getActiveLayer();
+		if (oldLayer == layer) return;
+		
+		if (oldLayer != null) oldLayer.deactivated();
+		
 		panel.setActiveLayer(layer);
+		if (layer != null) layer.activated();
 	}
 
 	@Override
@@ -484,13 +504,6 @@ public class TerrainEditor extends EditorPart implements
 			System.out.println("Undo-History Event: " + event);
 			panel.refresh();
 		}
-	}
-
-	@Override
-	public EditorActionManager getActionManager()
-	{
-		MapEditorActionBarContributor c = (MapEditorActionBarContributor) getEditorSite().getActionBarContributor();
-		return c.getActionManager();
 	}
 
 	@Override
