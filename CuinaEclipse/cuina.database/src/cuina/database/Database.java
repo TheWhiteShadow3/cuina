@@ -136,7 +136,7 @@ public class Database
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		
 		DatabaseObjectValidator validator = DatabasePlugin.getDescriptor(table.getName()).getValidator();
-		if (!validator.validate(file, table)) return false;
+		if (validator != null && !validator.validate(file, table)) return false;
 		
 		SerializationManager.save(table, file);
 		return true;

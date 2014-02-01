@@ -19,9 +19,13 @@ public abstract class EditorToolAction extends Action
 	@Override
 	public void run()
 	{
-		execute(isChecked());
+		int style = getStyle();
+		if (style == AS_CHECK_BOX || style == AS_RADIO_BUTTON)
+			execute(isChecked());
+		else
+			execute(true);
 	}
-	
+
 	public void execute(boolean activate)
 	{
 		setChecked(activate);
@@ -42,17 +46,17 @@ public abstract class EditorToolAction extends Action
 			deactivate();
 		}
 	}
-	
-	public ITerrainEditor getEditor()
+
+	protected ITerrainEditor getEditor()
 	{
 		return editor;
 	}
 	
-	public TerrainLayer getLayer()
+	protected TerrainLayer getLayer()
 	{
 		return layer;
 	}
 	
-	public abstract void activate();
-	public void deactivate() {}
+	protected abstract void activate();
+	protected void deactivate() {}
 }

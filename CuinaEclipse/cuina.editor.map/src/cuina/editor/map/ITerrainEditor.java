@@ -13,6 +13,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.opengl.GLCanvas;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IEditorSite;
  
 public interface ITerrainEditor
 {
@@ -60,14 +61,38 @@ public interface ITerrainEditor
 	 */
 	public SelectionManager getSelectionManager();
 
+	/**
+	 * Gibt das Cuina-Projekt zurück.
+	 * @return Das Cuina-Projekt.
+	 */
 	public CuinaProject getProject();
 
-	public Image loadImage(GLCanvas context, String imageName) throws ResourceException;
+	/**
+	 * Ladet ein GL-Image aus dem Projekt im Editor-Kontext.
+	 * @param imageName Ressourcen-Name der Datei.
+	 * @return Das GL-Image.
+	 * @throws ResourceException
+	 */
+	public Image loadImage(String imageName) throws ResourceException;
 
+	/**
+	 * Setzt die aktive Ebene.
+	 * @param layer Die neue aktive Ebene.
+	 */
 	public void setActiveLayer(TerrainLayer layer);
 
+	/**
+	 * Gibt die aktive Ebene zurück.
+	 * @return Die aktive Ebene.
+	 */
 	public TerrainLayer getActiveLayer();
 
+	/**
+	 * Meldet, dass sich die Karte verändert hat.
+	 * @param source
+	 * @param props
+	 * @see MapEvent
+	 */
 	public void fireMapChanged(Object source, int props);
 
 	public void addOperation(IUndoableOperation op);
@@ -76,6 +101,11 @@ public interface ITerrainEditor
 
 	public void removeListener(int eventType, Listener listener);
 
+	/*
+	 * XXX: Was macht diese Methode hier eigentlich?
+	 * Solle die nicht im TilemapLayer, wo das Raster auch gezeichnet wird?
+	 * @return
+	 */
 	public boolean isRasterVisible();
 
 	public void setRasterVisible(boolean showRaster);
@@ -85,4 +115,11 @@ public interface ITerrainEditor
 	public String getActiveTool();
 
 	public void setActiveTool(String toolID);
+	
+    /**
+     * Gibt die Seite für den Editor zurück.
+     * Der Wert kann <code>null</code> sein, wenn der Editor noch nicht inizialisiert ist.
+     * @return Die Editor Seite oder <code>null</code>, wenn der Editor noch nicht inizialisiert ist.
+     */
+	public IEditorSite getEditorSite();
 }

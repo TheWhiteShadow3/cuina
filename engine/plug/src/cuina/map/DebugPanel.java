@@ -4,6 +4,7 @@ import cuina.graphics.Graphics;
 import cuina.graphics.Image;
 import cuina.graphics.Images;
 import cuina.graphics.Sprite;
+import cuina.util.LoadingException;
 import cuina.util.Rectangle;
 import cuina.world.CuinaObject;
 
@@ -258,6 +259,7 @@ public class DebugPanel
 		Graphics.disposeGraphics(mapAreaSprites);
 		Graphics.disposeGraphics(CSAreaSprites);
 		cMaskImage.dispose();
+		cMaskImage = null;
 	}
 	
 	private static class DebugSprite extends Sprite
@@ -286,10 +288,13 @@ public class DebugPanel
 			
 			getImage().setColor(color);
 			int maskSize = ts / 4;
+			
 			for(int i = 0; i < 16; i++)
 			{
 				if ((bits & (1 << i)) != 0)
-					getImage().drawRect((i % 4) * maskSize, (i / 4) * maskSize, maskSize, maskSize, fill);
+					getImage().drawRect(
+							(i % 4) * maskSize, (i / 4) * maskSize,
+							maskSize, maskSize, fill);
 			}
 		}
 		

@@ -157,11 +157,11 @@ public class Tileset implements DatabaseObject
 	
 	public void resizeTileset(int size)
 	{
-		if (passages != null && size + 1 == passages.length) return;
-		passages 	= Arrays.copyOf(passages, size + 1);
-		priorities 	= Arrays.copyOf(priorities, size + 1);
-		tileFlags 	= Arrays.copyOf(tileFlags, size + 1);
-		terrainTags = Arrays.copyOf(terrainTags, size + 1);
+		if (passages != null && size == passages.length) return;
+		passages 	= Arrays.copyOf(passages, size);
+		priorities 	= Arrays.copyOf(priorities, size);
+		tileFlags 	= Arrays.copyOf(tileFlags, size);
+		terrainTags = Arrays.copyOf(terrainTags, size);
 	}
 
 	@Override

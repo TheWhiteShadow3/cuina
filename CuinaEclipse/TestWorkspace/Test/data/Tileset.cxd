@@ -4,7 +4,7 @@
     <name>Schule_Innen</name>
     <tileSize>32</tileSize>
     <tilesetName>tilesets\Schule_Innen.png</tilesetName>
-    <backgroundName/>
+    <backgroundName></backgroundName>
     <BackSpeedX>0</BackSpeedX>
     <BackSpeedY>0</BackSpeedY>
     <autotiles>
@@ -65,25 +65,41 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
+      <short>-1</short>
+      <short>-1</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
+      <short>-1</short>
+      <short>-1</short>
       <short>4369</short>
+      <short>-30584</short>
+      <short>-1</short>
+      <short>-1</short>
       <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
+      <short>-1</short>
       <short>0</short>
       <short>-30584</short>
       <short>4369</short>
+      <short>-30584</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>255</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
+      <short>-1</short>
+      <short>-1</short>
+      <short>-1</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>-1</short>
+      <short>-1</short>
+      <short>-1</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -103,17 +119,17 @@
       <short>0</short>
     </passages>
     <priorities>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</priorities>
+AAAAAAkJCQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</priorities>
     <tileFlags>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</tileFlags>
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</tileFlags>
     <terrainTags>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</terrainTags>
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</terrainTags>
   </cuina.map.Tileset>
   <cuina.map.Tileset>
     <key>Schule</key>
     <name>Schule</name>
     <tileSize>32</tileSize>
-    <tilesetName>tilesets\Schule2.png</tilesetName>
+    <tilesetName>tilesets\Schule.png</tilesetName>
     <backgroundName>backgrounds\BlueSky.jpg</backgroundName>
     <BackSpeedX>0</BackSpeedX>
     <BackSpeedY>0</BackSpeedY>

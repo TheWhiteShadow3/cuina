@@ -1,5 +1,6 @@
 package cuina.graphics;
 
+import cuina.Logger;
 import cuina.util.IntList;
 
 import java.util.ArrayList;
@@ -161,8 +162,9 @@ abstract class AbstractGraphicContainer implements GraphicContainer
 				e.draw();
 			}
 			catch(Exception ex)
-			{	// kein Exception-Handler, da Dauerfehlermeldung
-				ex.printStackTrace();
+			{
+				// Wirf nur ne Warnung.
+				Logger.log(getClass(), Logger.WARNING, ex);
 			}
 			else
 				elements.remove(i--);

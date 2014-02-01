@@ -15,6 +15,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -22,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
-public class TilesetView extends ViewPart implements EditorContextChangeListener
+public class TilesetView extends ViewPart implements EditorContextChangeListener, KeyListener
 {
 	public static final String VIEW_ID = "cuina.editor.map.TilsetView";
 	
@@ -47,9 +50,10 @@ public class TilesetView extends ViewPart implements EditorContextChangeListener
 		}
 		CuinaCore.getDefault().addEditorContextChangeListener(this);
 		getSite().setSelectionProvider(panel);
+		panel.getGLCanvas().addKeyListener(this);
 		makeActions();
 	}
-	
+
 	private void makeActions()
 	{
 		editAction = new Action("Editieren", IAction.AS_PUSH_BUTTON)
@@ -86,11 +90,13 @@ public class TilesetView extends ViewPart implements EditorContextChangeListener
 		if (this.editor == editor) return;
 		
 		this.editor = editor;
-		if (editor == null)
-		{
-			return;
-		}
+		refresh();
+	}
 
+	private void refresh()
+	{
+		if (editor == null) return;
+		
 		this.tileset = editor.getTileset();
 		panel.setTileset(tileset, editor.getProject());
 	}
@@ -103,4 +109,17 @@ public class TilesetView extends ViewPart implements EditorContextChangeListener
 		else
 			setEditor(null);
 	}
+
+	@Override
+	public void keyPressed(KeyEvent ev)
+	{
+		if (ev.keyCode == SWT.F5)
+		{
+			refresh();
+			return;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent ev) {}
 }

@@ -47,11 +47,9 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -102,37 +100,16 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		this.editor = editor;
 		this.map = editor.getMap();
 		this.DEFAULT_GRAPHIC = new DefaultObjectGraphic();
-		this.moveSelectionMode = new MoveSelectionMode(editor.getGLCanvas());
 		this.followSelectionMode = new FollowSelectionMode();
+		this.moveSelectionMode = new MoveSelectionMode(editor.getGLCanvas());
+		
 		editor.getSelectionManager().addSelectionListener(this);
-		
+		editor.getEditorSite().getPage().addSelectionListener(this);
 		createContextMenu();
-		
-		// XXX: Eclipse Indigo Service Release 2 creates an active page too late,
-		// getActivePage() returns null - consequently it throws a null pointer exception
-		// workaround: run this in Display thread 
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if (page != null)
-		{
-			page.addSelectionListener(this);
-		}
-		else
-		{
-			System.out.println("[TileMapLayer] Info: Run \"getActivePage() returns null\" workaround to register SelectionListener");
-			Display.getDefault().asyncExec(new SelectionRunnable());
-		}
 	}
 
-	// class for "getActivePage() returns null" workaround
-	private class SelectionRunnable implements Runnable
-	{
-		@Override
-		public void run()
-		{
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			page.addSelectionListener(ObjectLayer.this);
-		}
-	}
+	@Override
+	public void refresh() {}
 	
 	private void createContextMenu()
 	{

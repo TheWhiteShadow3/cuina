@@ -14,6 +14,9 @@ import cuina.gl.Image;
 import cuina.gl.PaintListener;
 import cuina.map.Tileset;
 import cuina.resource.ResourceException;
+import cuina.resource.ResourceManager;
+import cuina.resource.ResourceProvider;
+import cuina.resource.ResourceManager.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.ViewPart;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.util.Color;
 
 public class AutotileView extends ViewPart implements EditorContextChangeListener, Listener
@@ -97,7 +101,7 @@ public class AutotileView extends ViewPart implements EditorContextChangeListene
 			if (tileset == null) return;
 			loadAutotiles();
 		}
-		panel.refresh();
+		panel.redraw();
 	}
 	
 	private void loadAutotiles()
@@ -117,9 +121,12 @@ public class AutotileView extends ViewPart implements EditorContextChangeListene
 			validNames.add(autoTileNames[i]);
 			try
 			{
-				imageList.add(editor.loadImage(panel.getGLCanvas(), autoTileNames[i]));
+				Resource res = editor.getProject().getService(ResourceProvider.class).
+							getResource(ResourceManager.KEY_GRAPHICS, autoTileNames[i]);
+				String pathName = res.getPath().toString();
+				imageList.add(new Image(panel.getGLCanvas(), pathName));
 			}
-			catch (ResourceException e)
+			catch (ResourceException | LWJGLException e)
 			{
 				e.printStackTrace();
 			}
@@ -211,7 +218,7 @@ public class AutotileView extends ViewPart implements EditorContextChangeListene
 
 			tileSelection = (TileSelection) selection;
 			fireSelectionChanged();
-			panel.refresh();
+			panel.redraw();
 		}
 
 		protected void fireSelectionChanged()

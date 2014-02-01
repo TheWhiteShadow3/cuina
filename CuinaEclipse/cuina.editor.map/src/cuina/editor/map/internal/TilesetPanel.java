@@ -85,7 +85,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 	public void setViewMode(int viewMode)
 	{
 		this.viewMode = viewMode;
-		refresh();
+		redraw();
 	}
 
 	public int getTileCount()
@@ -121,7 +121,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 			this.image = null;
 			setViewSize(tileset.getTileSize(), tileset.getTileSize());
 		}
-		refresh();
+		redraw();
 	}
 	
 	/**
@@ -223,7 +223,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 	private int getIndex(int x, int y)
 	{
 		int index = x + y * getGridWidth() + 1;
-		if (index >= tileCount)
+		if (index > tileCount)
 			return -1;
 		else
 			return index;
@@ -301,13 +301,13 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 
 	
 	@Override
-	public void refresh()
+	public void redraw()
 	{
 		if (tileset == null || fireEvent) return;
 		
 		if (image != null)
 		{
-			this.tileCount = image.getWidth() / tileset.getTileSize() * image.getHeight() / tileset.getTileSize() + 1;
+			this.tileCount = image.getWidth() / tileset.getTileSize() * image.getHeight() / tileset.getTileSize();
 			if (tileCount > tileset.getPassages().length + 1)
 			{
 				tileset.resizeTileset(tileCount);
@@ -317,7 +317,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 			this.tileCount = tileset.getPassages().length + 1;
 		
 		TILEVIEW_SELECTION_MODE.setGridSize(tileset.getTileSize());
-		super.refresh();
+		super.redraw();
 	}
 
 	protected void paintBackground(GC gc)
@@ -487,7 +487,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 		{
 			event.manager.clearSeletionMode();
 		}
-		refresh();
+		redraw();
 	}
 
 	@Override

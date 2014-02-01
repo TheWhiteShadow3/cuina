@@ -60,6 +60,15 @@ public class TerrainPanel extends AbstractSelectionPanel
 			}
 		});
 	}
+	
+	public void refreshLayers()
+	{
+		for (TerrainLayer layer : layers)
+		{
+			layer.refresh();
+		}
+		redraw();
+	}
 
 	protected void paintLayers(GC gc)
 	{
@@ -90,7 +99,7 @@ public class TerrainPanel extends AbstractSelectionPanel
 
 		activeIndex = index;
 		getSelectionManager().clearSeletionMode();
-		refresh();
+		redraw();
 	}
 
 	public void showContextMenu(IMenuManager manager, Point point)

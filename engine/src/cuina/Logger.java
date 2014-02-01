@@ -111,7 +111,7 @@ public final class Logger
 		if (fileStream == null || Game.isDebug()) log(module, level, message, console);
 
 		if (fileStream != null) error.printStackTrace(fileStream);
-		else error.printStackTrace(console);
+		if (fileStream == null || Game.isDebug()) error.printStackTrace(console);
 
 		if (level >= ERROR && Graphics.isInitialized())
 		{

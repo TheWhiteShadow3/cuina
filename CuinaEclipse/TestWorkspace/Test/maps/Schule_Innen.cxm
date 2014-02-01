@@ -66,7 +66,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>70</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -82,7 +82,35 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>45</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>71</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>71</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>71</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>71</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>71</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>71</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>53</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -98,7 +126,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>70</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -114,35 +142,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -162,16 +162,16 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>2</short>
+      <short>47</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>47</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -202,7 +202,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -223,19 +223,15 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
+      <short>87</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>95</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -263,6 +259,10 @@
       <short>0</short>
       <short>0</short>
       <short>1</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -283,19 +283,15 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
+      <short>88</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>96</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -323,6 +319,10 @@
       <short>0</short>
       <short>0</short>
       <short>1</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -335,10 +335,14 @@
       <short>0</short>
       <short>0</short>
       <short>30</short>
-      <short>0</short>
+      <short>56</short>
       <short>0</short>
       <short>0</short>
       <short>38</short>
+      <short>64</short>
+      <short>0</short>
+      <short>0</short>
+      <short>72</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -347,11 +351,7 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -382,7 +382,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -395,10 +395,14 @@
       <short>0</short>
       <short>0</short>
       <short>30</short>
-      <short>0</short>
+      <short>56</short>
       <short>0</short>
       <short>0</short>
       <short>38</short>
+      <short>64</short>
+      <short>0</short>
+      <short>0</short>
+      <short>72</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -407,11 +411,7 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -442,7 +442,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -463,19 +463,15 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
+      <short>87</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>95</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -503,6 +499,10 @@
       <short>0</short>
       <short>0</short>
       <short>1</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -523,19 +523,15 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
+      <short>88</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>96</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -554,15 +550,19 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>71</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>71</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>71</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>79</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -590,15 +590,15 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>2</short>
+      <short>63</short>
+      <short>0</short>
+      <short>0</short>
+      <short>71</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
+      <short>53</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -626,7 +626,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>2</short>
+      <short>47</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -650,19 +650,19 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>2</short>
+      <short>47</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>47</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>63</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
+      <short>53</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -718,12 +718,12 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>47</short>
+      <short>80</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -778,12 +778,12 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>48</short>
+      <short>80</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -830,11 +830,19 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>2</short>
+      <short>48</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>48</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>61</short>
+      <short>0</short>
+      <short>0</short>
+      <short>54</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -842,27 +850,19 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
+      <short>77</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -890,7 +890,15 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>2</short>
+      <short>61</short>
+      <short>0</short>
+      <short>0</short>
+      <short>69</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>54</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -914,15 +922,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -943,19 +943,15 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
+      <short>87</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>95</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -983,6 +979,10 @@
       <short>0</short>
       <short>0</short>
       <short>1</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -1003,19 +1003,15 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
+      <short>88</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>96</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -1043,6 +1039,10 @@
       <short>0</short>
       <short>0</short>
       <short>1</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -1055,10 +1055,14 @@
       <short>0</short>
       <short>0</short>
       <short>30</short>
-      <short>0</short>
+      <short>56</short>
       <short>0</short>
       <short>0</short>
       <short>38</short>
+      <short>64</short>
+      <short>0</short>
+      <short>0</short>
+      <short>72</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -1067,11 +1071,7 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -1102,7 +1102,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -1115,10 +1115,14 @@
       <short>0</short>
       <short>0</short>
       <short>30</short>
-      <short>0</short>
+      <short>56</short>
       <short>0</short>
       <short>0</short>
       <short>38</short>
+      <short>64</short>
+      <short>0</short>
+      <short>0</short>
+      <short>72</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -1127,11 +1131,7 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -1162,7 +1162,7 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -1183,19 +1183,15 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
+      <short>87</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>95</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -1223,6 +1219,10 @@
       <short>0</short>
       <short>0</short>
       <short>1</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -1243,19 +1243,15 @@
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
+      <short>88</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
+      <short>96</short>
       <short>0</short>
       <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>2</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -1283,6 +1279,10 @@
       <short>0</short>
       <short>0</short>
       <short>1</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>78</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
@@ -1302,16 +1302,16 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>2</short>
+      <short>48</short>
+      <short>0</short>
+      <short>0</short>
+      <short>0</short>
+      <short>48</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
       <short>2</short>
-      <short>0</short>
-      <short>0</short>
-      <short>0</short>
-      <short>1</short>
-      <short>0</short>
+      <short>62</short>
       <short>0</short>
       <short>0</short>
       <short>1</short>
@@ -1342,35 +1342,35 @@
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>46</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>69</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>
-      <short>1</short>
+      <short>54</short>
       <short>0</short>
       <short>0</short>
       <short>0</short>

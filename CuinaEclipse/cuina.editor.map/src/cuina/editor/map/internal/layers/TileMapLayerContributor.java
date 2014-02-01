@@ -122,13 +122,7 @@ public class TileMapLayerContributor extends EditorActionBarContributor
 		@Override
 		public void activate()
 		{
-			getLayer().setDimFade(false);
-		}
-
-		@Override
-		public void deactivate()
-		{
-			getLayer().setDimFade(true);
+			getLayer().toogleDimFade();
 		}
 	}
 	
@@ -160,7 +154,7 @@ public class TileMapLayerContributor extends EditorActionBarContributor
 		}
 
 		@Override
-		public TileMapLayer getLayer()
+		protected TileMapLayer getLayer()
 		{
 			return (TileMapLayer) super.getLayer();
 		}

@@ -105,11 +105,59 @@
           name="maps">
     </directory>
  </extension>
- <!--extension
+ <extension
+       point="org.eclipse.ui.menus">
+    <menuContribution
+          allPopups="false"
+          locationURI="menu:org.eclipse.ui.main.menu">
+       <menu
+             id="cuina.editor.map.Map"
+             label="Karte">
+          <visibleWhen>
+             <with
+                   variable="activeEditorId">
+                <equals
+                      value="cuina.editor.map.MapEditor">
+                </equals>
+             </with>
+          </visibleWhen>
+          <command
+                commandId="cuina.editor.map.tools.Resize"
+                label="Kartengröße..."
+                style="push">
+          </command>
+          <command
+                commandId="cuina.editor.map.tools.Shift"
+                label="Verschieben"
+                style="push">
+          </command>
+          <separator
+                name="cuina.editor.map.tools.TileTools"
+                visible="true">
+          </separator>
+          <command
+                commandId="cuina.editor.map.tools.InsertRow"
+                label="Zeilen einfügen"
+                style="push">
+          </command>
+          <command
+                commandId="cuina.editor.map.tools.InsertColumn"
+                label="Spalten einfügen"
+                style="push">
+          </command>
+       </menu>
+    </menuContribution>
+ </extension>
+ <extension
        point="org.eclipse.ui.commands">
     <command
-          defaultHandler="cuina.editor.map.internal.ToolSelectionHandler"
-          description="Wählt ein Editor-Werkzeug aus."
+          defaultHandler="cuina.editor.map.internal.MapToolsHandler"
+          description="Ändert die Größe der Karte."
+          id="cuina.editor.map.tools.Resize"
+          name="Map Resize">
+    </command>
+ </extension>
+ <!--extension     description="Wählt ein Editor-Werkzeug aus."
           id="cuina.editor.map.tool"
           name="Werkzeug">
        <commandParameter

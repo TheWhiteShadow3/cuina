@@ -7,6 +7,8 @@ import cuina.gl.Image;
 import cuina.map.Tileset;
 import cuina.resource.ResourceException;
 
+import java.util.Objects;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Point;
@@ -24,8 +26,10 @@ import org.eclipse.swt.graphics.Rectangle;
  */
 public class BackgroundLayer implements TerrainLayer
 {
+	private ITerrainEditor editor;
 	private Rectangle rect;
 	private int tileSize;
+	private String imageName;
 	private Image backgroundImage;
 
 	@Override
@@ -43,7 +47,13 @@ public class BackgroundLayer implements TerrainLayer
 	@Override
 	public void install(ITerrainEditor editor)
 	{
-//		this.editor = editor;
+		this.editor = editor;
+		refresh();
+	}
+
+	@Override
+	public void refresh()
+	{
 		this.rect = editor.getViewBounds();
 		
 		Tileset tileset = editor.getTileset();
@@ -51,9 +61,11 @@ public class BackgroundLayer implements TerrainLayer
 		
 		try
 		{
-			String bgNanme = tileset.getBackgroundName();
-			if (bgNanme != null && bgNanme.length() > 0)
-				backgroundImage = editor.loadImage(editor.getGLCanvas(), bgNanme);
+			if (Objects.equals(this.imageName, tileset.getBackgroundName())) return;
+			
+			this.imageName = tileset.getBackgroundName();
+			if (imageName != null && imageName.length() > 0)
+				backgroundImage = editor.loadImage(imageName);
 		}
 		catch (ResourceException e)
 		{

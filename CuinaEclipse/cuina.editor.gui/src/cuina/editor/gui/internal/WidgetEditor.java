@@ -174,7 +174,7 @@ public class WidgetEditor extends AbstractDatabaseEditorPart implements ISelecti
 			Widget widget = viewer.getWidget(node);
 			sm.addSelection(widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight());
 		}
-		viewer.refresh();
+		viewer.redraw();
 	}
 
 	@Override

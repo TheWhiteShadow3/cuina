@@ -105,11 +105,8 @@ public class TileMaskPanel extends Canvas implements MouseListener, MouseMoveLis
 		else
 			newData = tileset.getPassages()[id];
 		
-		if (newData != maskData)
-		{
-			maskData = newData;
-			redraw();
-		}
+		maskData = newData;
+		redraw();
 	}
 
 	public short getMaskData()

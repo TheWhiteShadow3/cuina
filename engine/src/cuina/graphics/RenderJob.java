@@ -142,8 +142,15 @@ public class RenderJob
 		GLCache.setMatrix(GL_PROJECTION);
 		glLoadIdentity();
 
+		/*
+		 *  Da der Y-Wert nach oben zeigt, wird das Bild vertikal gespiegelt.
+		 *  Beim Zeichnen auf eine Textur darf keine Spieglung erfolgen.
+		 *  Daher sind bottom und top vertauscht.
+		 *  Culling muss aus sein, da hierbei die Normalen falsch rum zeigen.
+		 */
 		// left, right, bottom, top, Zfar, Znear
-		glOrtho(0, tex.getSourceWidth(), tex.getSourceHeight(), 0, -500, 500);
+		glOrtho(0, tex.getSourceWidth(), 0, tex.getSourceHeight(), -500, 500);
+		glDisable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST);
 		
 		GLCache.setMatrix(GL_MODELVIEW);
@@ -185,8 +192,7 @@ public class RenderJob
 	private void renderImage()
 	{
 		Image.IMAGE_MATRIX.clear();
-		Image.IMAGE_MATRIX.setPosition(x1, Graphics.getHeight()-y1);
-		Image.IMAGE_MATRIX.setScale(1f, -1f);
+		Image.IMAGE_MATRIX.setPosition(x1, y1);
 		
 		Image.IMAGE_MATRIX.pushTransformation();
 		Image.renderImage((Image) data);
@@ -195,65 +201,65 @@ public class RenderJob
 	
 	private void renderLine()
 	{
-        glDisable(GL_TEXTURE_2D);
-        
-        GLCache.setBlendMode(blendMode);
-        GLCache.setColor(color);
-        
-        glBegin(GL_LINES);
-        {
-            glVertex2i(x1, y1);
-            glVertex2i(x2, y2);
-        }
-        glEnd();
-        
-        glEnable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);
+
+		GLCache.setBlendMode(blendMode);
+		GLCache.setColor(color);
+
+		glBegin(GL_LINES);
+		{
+			glVertex2i(x1, y1);
+			glVertex2i(x2, y2);
+		}
+		glEnd();
+
+		glEnable(GL_TEXTURE_2D);
 	}
-	
+
 	private void renderOutlinedRect()
 	{
 		x1++; y1++;
-        glDisable(GL_TEXTURE_2D);
-        
-        GLCache.setBlendMode(blendMode);
-        GLCache.setColor(color);
-        
-        glBegin(GL_LINES);
-        {
-            glVertex2i(x1, y1);
-            glVertex2i(x2, y1);
-            
-            glVertex2i(x2, y1);
-            glVertex2i(x2, y2);
-            
-            glVertex2i(x1, y2);
-            glVertex2i(x2, y2);
-            
-            glVertex2i(x1, y1);
-            glVertex2i(x1, y2);
-        }
-        glEnd();
-        
-        glEnable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);
+
+		GLCache.setBlendMode(blendMode);
+		GLCache.setColor(color);
+
+		glBegin(GL_LINES);
+		{
+			glVertex2i(x1, y1);
+			glVertex2i(x2, y1);
+
+			glVertex2i(x2, y1);
+			glVertex2i(x2, y2);
+
+			glVertex2i(x1, y2);
+			glVertex2i(x2, y2);
+
+			glVertex2i(x1, y1);
+			glVertex2i(x1, y2);
+		}
+		glEnd();
+
+		glEnable(GL_TEXTURE_2D);
 	}
 	
 	private void renderFilledRect()
 	{
-        glDisable(GL_TEXTURE_2D);
-        
-        GLCache.setBlendMode(blendMode);
+		glDisable(GL_TEXTURE_2D);
+
+		GLCache.setBlendMode(blendMode);
 		GLCache.setColor(color);
-        
-        glBegin(GL_QUADS);
-        {
-        	glVertex2f(x1, y1);
+
+		glBegin(GL_QUADS);
+		{
+			glVertex2f(x1, y1);
 			glVertex2f(x1, y2);
 			glVertex2f(x2, y2);
 			glVertex2f(x2, y1);
-        }
-        glEnd();
-        
-        glEnable(GL_TEXTURE_2D);
+		}
+		glEnd();
+
+		glEnable(GL_TEXTURE_2D);
 	}
 	
 	private void renderView()

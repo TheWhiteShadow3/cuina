@@ -66,13 +66,13 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 		tileset.setBackgroundName(backgroundButton.getResourceName());
 		tileset.setTileSize(tileSizeButton.getSelection());
 		
-		int dif = tilesetPanel.getTileCount() - tileset.getPassages().length;
+		int dif = tilesetPanel.getTileCount() - tileset.getPassages().length + 1;
 		if (dif != 0)
 		{
 			if (dif > 0 || showWarning("Das Daten-Array ist größer als die Feldanzahl.\n" +
 					"Soll das Daten-Array unwiederruflich verkleinert werden?\n"))
 			{
-				tileset.resizeTileset(tilesetPanel.getTileCount());
+				tileset.resizeTileset(tilesetPanel.getTileCount() + 1);
 			}
 		}
 		return true;
@@ -284,7 +284,7 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 			flagList.clearTilesetField();
 		}
 		maskPanel.setTileID(id);
-		tilesetPanel.refresh();
+		tilesetPanel.redraw();
 		
 		update = false;
 	}
@@ -404,6 +404,7 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 			int id = tiles.get(x, y);
 			passages[id] = p;
 		}
+		setDirty(true);
 		updateTileData();
 	}
 	
@@ -420,6 +421,7 @@ public class TilesetEditor extends AbstractDatabaseEditorPart implements ISelect
 			int id = tiles.get(x, y);
 			data[id] = p;
 		}
+		setDirty(true);
 		updateTileData();
 	}
 

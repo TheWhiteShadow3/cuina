@@ -13,6 +13,7 @@ import cuina.editor.ui.selection.Selection;
 import cuina.editor.ui.selection.SelectionEvent;
 import cuina.editor.ui.selection.SelectionListener;
 import cuina.editor.ui.selection.SelectionManager;
+import cuina.editor.ui.selection.SpanSelectionMode;
 import cuina.gl.Image;
 import cuina.gl.LWJGL;
 import cuina.map.Map;
@@ -42,6 +43,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -159,15 +161,19 @@ public class TerrainEditor extends EditorPart implements
 				project = CuinaCore.getCuinaProject(file.getProject());
 
 			this.map = (Map) SerializationManager.load(file, Map.class.getClassLoader());
-
-			Database db = project.getService(Database.class);
-			tileset = db.<Tileset> loadTable("Tileset").get(map.tilesetKey);
+			loadTileset();
 		}
 		catch(ResourceException e)
 		{
 			throw new PartInitException("Read editor input faild!", e);
 		}
 		setPartName(input.getName());
+	}
+	
+	private void loadTileset() throws ResourceException
+	{
+		Database db = project.getService(Database.class);
+		this.tileset = db.<Tileset> loadTable("Tileset").get(map.tilesetKey);
 	}
 
 	private IFile getMapFile(DatabaseInput dbInput) throws ResourceException
@@ -266,7 +272,7 @@ public class TerrainEditor extends EditorPart implements
 			l.mapChanged(event);
 		}
 
-		panel.refresh();
+		panel.redraw();
 	}
 
 	@Override
@@ -313,6 +319,14 @@ public class TerrainEditor extends EditorPart implements
 			@Override
 			public void updateSelection(SelectionEvent event)
 			{
+				if ((event.mouseEvent.stateMask & SWT.MOD1) != 0)
+				{
+					((SpanSelectionMode) CURSOR_SELECTION_MODE).setGridSize(getGridSize());
+				}
+				else
+				{
+					((SpanSelectionMode) CURSOR_SELECTION_MODE).setGridSize(1);
+				}
 //				if(exclusiveLayer) return;
 				// List<ViewLayer> layers = panel.getLayers();
 				//
@@ -439,13 +453,13 @@ public class TerrainEditor extends EditorPart implements
 	}
 
 	@Override
-	public Image loadImage(GLCanvas context, String imageName) throws ResourceException
+	public Image loadImage(String imageName) throws ResourceException
 	{
 		Resource res = project.getService(ResourceProvider.class).getResource(ResourceManager.KEY_GRAPHICS, imageName);
 
 		try
 		{
-			return new Image(context, res.getPath().toString());
+			return new Image(panel.getGLCanvas(), res.getPath().toString());
 		}
 		catch(LWJGLException e)
 		{
@@ -502,27 +516,41 @@ public class TerrainEditor extends EditorPart implements
 		if (event.getOperation() instanceof MapOperation)
 		{
 			System.out.println("Undo-History Event: " + event);
-			panel.refresh();
+			panel.redraw();
 		}
 	}
 
 	@Override
-	public void menuDetected(MenuDetectEvent e)
+	public void menuDetected(MenuDetectEvent ev)
 	{
-		menuPoint = panel.toControl(e.x, e.y);
+		menuPoint = panel.toControl(ev.x, ev.y);
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e)
+	public void keyPressed(KeyEvent ev)
 	{
+		if (ev.keyCode == SWT.F5)
+		{
+			try
+			{
+				loadTileset();
+				panel.refreshLayers();
+			}
+			catch (ResourceException e)
+			{
+				e.printStackTrace();
+			}
+			return;
+		}
+		
 		TerrainLayer layer = getActiveLayer();
 		if (layer == null) return;
 
-		layer.keyActionPerformed(e);
+		layer.keyActionPerformed(ev);
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e)
+	public void keyReleased(KeyEvent ev)
 	{
 	}
 }

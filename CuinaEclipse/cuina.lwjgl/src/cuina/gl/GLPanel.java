@@ -9,7 +9,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.opengl.GLCanvas;
@@ -65,7 +64,7 @@ public class GLPanel
 		return canvas;
 	}
 	
-	public void refresh()
+	public void redraw()
 	{
 		canvas.redraw();
 	}

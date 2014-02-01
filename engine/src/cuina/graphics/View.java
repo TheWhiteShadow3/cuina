@@ -96,13 +96,14 @@ public class View
 			if (Math.abs(diffX) > threshold)
 			{
 				tx += (diffX < 0) ? threshold : -threshold;
-				this.x = Math.max(border.x, Math.min(tx, border.width - width));
 			}
 			if (Math.abs(diffY) > threshold)
 			{
 				ty += (diffY < 0) ? threshold : -threshold;
-				this.y = Math.max(border.y, Math.min(ty, border.height - height));
 			}
+			
+			this.x = Math.max(border.x, Math.min(tx, border.width - width));
+			this.y = Math.max(border.y, Math.min(ty, border.height - height));
 		}
 	}
 }

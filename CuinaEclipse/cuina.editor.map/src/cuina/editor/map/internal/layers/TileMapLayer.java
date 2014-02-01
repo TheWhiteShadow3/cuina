@@ -32,11 +32,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.util.Color;
 
@@ -146,6 +143,34 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		dimLayers = value;
 		fadeLayers = value;
 		editor.getGLCanvas().redraw();
+	}
+
+	@Override
+	public void install(final ITerrainEditor editor)
+	{
+		this.editor = editor;
+		this.map = editor.getMap();
+		refresh();
+
+		editor.getSelectionManager().addSelectionListener(this);
+		editor.getEditorSite().getPage().addSelectionListener(this);
+	}
+
+	@Override
+	public void refresh()
+	{
+		this.tileset = editor.getTileset();
+		tileSelectionMode.setTileSize(tileset.getTileSize());
+		loadAutotiles();
+
+		try
+		{
+			this.tilesetImage = editor.loadImage(tileset.getTilesetName());
+		}
+		catch(ResourceException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void paintTiles(GC gc, boolean useTempLayer)
@@ -258,48 +283,6 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 		}
 	}
 
-	@Override
-	public void install(final ITerrainEditor editor)
-	{
-		this.editor = editor;
-
-		this.map = editor.getMap();
-		this.tileset = editor.getTileset();
-		tileSelectionMode.setTileSize(tileset.getTileSize());
-		loadAutotiles();
-
-		try
-		{
-			tilesetImage = editor.loadImage(editor.getGLCanvas(), tileset.getTilesetName());
-		}
-		catch(ResourceException e)
-		{
-			e.printStackTrace();
-		}
-
-		editor.getSelectionManager().addSelectionListener(this);
-		// addMouseHandling();
-
-		// XXX: Eclipse Indigo Service Release 2 creates an active page too
-		// late,
-		// getActivePage() returns null - consequently it throws a null pointer
-		// exception
-		// workaround: run this in Display thread
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if(page != null)
-		{
-			page.addSelectionListener(this);
-		}
-		else
-		{
-			System.out
-					.println("[TileMapLayer] Info: Run \"getActivePage() returns null\" workaround to register SelectionListener");
-			Display.getDefault().asyncExec(new SelectionRunnable(this));
-		}
-
-		sourceLayer = new TileSelection(1);
-	}
-
 	private Action createTileSelectionAction(final Point p)
 	{
 		return new Action("Tile aufnehmen")
@@ -318,24 +301,6 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 				setTileSourceData(new TileSelection(id + 1));
 			}
 		};
-	}
-
-	// class for "getActivePage() returns null" workaround
-	private class SelectionRunnable implements Runnable
-	{
-		ISelectionListener listener = null;
-
-		public SelectionRunnable(ISelectionListener listener)
-		{
-			this.listener = listener;
-		}
-
-		@Override
-		public void run()
-		{
-			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-			page.addSelectionListener(listener);
-		}
 	}
 
 	private void loadAutotiles()
@@ -567,7 +532,6 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 	{
 		if(selection instanceof TileSelection)
 		{
-			
 			setTileSourceData((TileSelection) selection);
 		}
 	}

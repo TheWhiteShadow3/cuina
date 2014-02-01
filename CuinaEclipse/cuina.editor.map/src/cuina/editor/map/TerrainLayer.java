@@ -66,6 +66,8 @@ public interface TerrainLayer extends ViewLayer
 	
 	public void keyActionPerformed(KeyEvent ev);
 	
+	public void refresh();
+	
 	public void activated();
 	
 	public void deactivated();

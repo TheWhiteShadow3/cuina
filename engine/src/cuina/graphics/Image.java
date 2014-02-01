@@ -430,10 +430,15 @@ public class Image
 	
 	/**
 	 * Zeichnet das angegebenen Image in seiner natürlichen Größe.
+	 * <p>
+	 * Falls das Image disposed wurde, passiert nichts.
+	 * </p>
 	 * @param image
 	 */
 	public static void renderImage(Image image)
 	{
+		if (image.texture == null) return;
+		
 		GraphicUtil.set3DView(false);
 		if (image.multiTextures != null)
 		{

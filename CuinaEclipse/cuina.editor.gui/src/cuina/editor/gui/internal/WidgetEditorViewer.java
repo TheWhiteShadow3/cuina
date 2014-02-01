@@ -64,7 +64,7 @@ public class WidgetEditorViewer extends AbstractSelectionPanel
 
 		treeEditor.addWidgetTreeEditorListener(getWidgetTreeEditorListener());
 		addWidgetRecursively(null, treeEditor.getWidgetTree().root);
-		refresh();
+		redraw();
 	}
 
 	public WidgetTreeEditorListener getWidgetTreeListener()
@@ -271,14 +271,14 @@ public class WidgetEditorViewer extends AbstractSelectionPanel
 		public void widgetAdded(WidgetTreeEditor treeEditor, WidgetNode parentNode, WidgetNode node)
 		{
 			addWidgetRecursively(parentNode, node);
-			refresh();
+			redraw();
 		}
 	
 		@Override
 		public void widgetRemoved(WidgetTreeEditor treeEditor, WidgetNode parentNode, WidgetNode node)
 		{
 			removeWidgetRecursively(node);
-			refresh();
+			redraw();
 		}
 	
 		@Override
@@ -288,7 +288,7 @@ public class WidgetEditorViewer extends AbstractSelectionPanel
 			Widget widget = getWidget(node);
 			factory.reapply(widget, node);
 			widget.invalidateLayout();
-			refresh();
+			redraw();
 		}
 	}
 	
