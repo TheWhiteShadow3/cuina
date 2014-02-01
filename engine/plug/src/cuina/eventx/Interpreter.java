@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,19 +82,66 @@ public class Interpreter implements Serializable
 		}
 	}
 	
+	static class Setup implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+		
+		public CommandList list;
+		public Object[] args;
+		public int index;
+		public Setup parent;
+		
+		public Setup(Setup parent, String eventKey, Object[] args)
+		{
+			this(parent, Database.<CommandList>get("Event", eventKey), args);
+		}
+		
+		public Setup(Setup parent, CommandList list, Object[] args)
+		{
+			this.parent = parent;
+			this.list = list;
+			this.args = args;
+			this.index = -1;
+		}
+		
+		public Object getArgument(int index)
+		{
+			if (index < 0 || index >= args.length)
+			{
+				throw new IndexOutOfBoundsException("Argument '" + index + "' does not exist.");
+			}
+				
+			return args[index];
+		}
+		
+		public int getArgumentCount()
+		{
+			return args.length;
+		}
+		
+		public boolean isFinished()
+		{
+			return index >= list.commands.length;
+		}
+		
+		public Command getCommand()
+		{
+			if (isFinished()) return null;
+			return list.commands[index];
+		}
+	}
+	
 	private static final String INSTANCE_KEY = "Interpreter";
 	
 	private static final Map<String, FunctionAccessor> FUNCTIONS = new HashMap<String, FunctionAccessor>();
 	private static final ThreadLocal<Interpreter> CONTEXT_INSTANCE = new ThreadLocal<Interpreter>();
 	
-	private final Map<String, Object> variables = new HashMap<String, Object>();
-	private final Config EXPRESSION_CONFIG;
+	private final Map<String, Object> variables;
+	private final Config expressionConfig;
 	
-	private CommandList list;
-	private int index;
+	private Setup setup;
 	private boolean run;
 	private int waitCount;
-	private Object[] setupArgs;
 	private int switchValue;
 	private Object resultValue;
 	
@@ -122,7 +170,7 @@ public class Interpreter implements Serializable
 	{
 		Game.getContext(Context.GLOBAL).set(INSTANCE_KEY, instance);
 	}
-
+	
 	/**
 	 * Erzeugt einen neuen Interpreter.
 	 * Wenn es bisher keinen globalen Interpreter gibt,
@@ -130,12 +178,14 @@ public class Interpreter implements Serializable
 	 */
 	public Interpreter()
 	{
-		EXPRESSION_CONFIG = new Config();
-		EXPRESSION_CONFIG.booleanBehavor =
+		this.variables = new HashMap<String, Object>();
+		
+		expressionConfig = new Config();
+		expressionConfig.booleanBehavor =
 				Config.BooleanBehavor.NON_ZERO_NUMBERS |
 				Config.BooleanBehavor.NON_EMPTY_STRINGS;
-		EXPRESSION_CONFIG.nullBehavor = Config.NullBehavor.TO_FALSE;
-		EXPRESSION_CONFIG.resolver = new ResolverImpl();
+		expressionConfig.nullBehavor = Config.NullBehavor.TO_FALSE;
+		expressionConfig.resolver = new ResolverImpl();
 		
 		
 		if (getGlobalInterpreter() == null)
@@ -176,32 +226,27 @@ public class Interpreter implements Serializable
 	
 	public int getArgumentCount()
 	{
-		return setupArgs.length;
+		return setup.getArgumentCount();
 	}
 	
 	public Object getArgument(int index)
 	{
-		return setupArgs[index];
+		return setup.getArgument(index);
 	}
 
 	public int getIndex()
 	{
-		return index;
+		return setup.index;
 	}
 
 	public void setIndex(int index)
 	{
-		this.index = index;
+		this.setup.index = index;
 	}
 
 	public CommandList getList()
 	{
-		return list;
-	}
-	
-	public void setArguments(Object... args)
-	{
-		this.setupArgs = args;
+		return setup != null ? setup.list : null;
 	}
 
 	public void setup(String eventKey, Object... args)
@@ -211,90 +256,97 @@ public class Interpreter implements Serializable
 	
 	public void setup(CommandList list, Object... args)
 	{
-		this.list = list;
-		this.index = -1;
+		this.setup = new Setup(null, list, args);
 		this.run = true;
-		this.setupArgs = args;
 	}
 	
 	public void update()
 	{
 		if (!run) return;
 		
-		waitCount--;
-		if (waitCount > 0) return;
-
-		while (run)
+		if (waitCount > 0)
 		{
-			index++;
-			if (index >= list.commands.length)
-			{
-				run = false;
-				return;
-			}
-			
-			Command cmd = getCommand();
-			if (cmd == null) throw new NullPointerException("Command-list contains null.");
-
-			callMethod(cmd);
-			if (!run || waitCount > 0) break;
-		}
-	}
-	
-	private Command getCommand()
-	{
-		if (index >= list.commands.length) return null;
-		return list.commands[index];
-	}
-	
-	private void callMethod(Command cmd)
-	{
-		int seperator = cmd.target.lastIndexOf(':');
-		ContextType context;
-		String contextName = null;
-		if (seperator != -1)
-		{
-			context = ContextType.valueOf(cmd.target.substring(0, seperator));
-			contextName = cmd.target.substring(seperator+1);
-		}
-		else
-			context = ContextType.valueOf(cmd.target);
-		
-		if (context == ContextType.INTERNAL)
-		{
-			handleSpecialCommands(cmd);
+			waitCount--;
 			return;
 		}
-		
-		FunctionAccessor fa;
-		Object instance = null;
-		if (context == ContextType.STATIC)
-		{
-			fa = FUNCTIONS.get(contextName + ':' + cmd.name);
-		}
-		else
-		{
-			String name = cmd.name;
-			switch(context)
-			{
-				case GLOBAL: instance = Game.getContext(Context.GLOBAL).get(contextName); break;
-				case SESSION: instance = Game.getContext(Context.SESSION).get(contextName); break;
-				case SCENE: instance = Game.getContext(Context.SCENE).get(contextName); break;
-				case ARGUMENT: instance = setupArgs[Integer.parseInt(contextName)]; break;
-			}
-			if (instance == null) throw new NullPointerException(
-						"Target-Instance '" + contextName + "' in Context '" + context + "' do not exists.");
 
-			String functionName = instance.getClass().getName() + ':' + name;
-			fa =  FUNCTIONS.get(functionName);
+		CONTEXT_INSTANCE.set(this);
+		while (true)
+		{
+			setup.index++;
+			if (isFinished())
+			{
+				if (setup.parent != null)
+				{
+					setup = setup.parent;
+					continue;
+				}
+				
+				run = false;
+				break;
+			}
+				
+			Command cmd = setup.getCommand();
+			callCommand(cmd);
+			
+			if (!run || waitCount > 0) break;
 		}
-		if (fa == null)
-			throw new NullPointerException("Funktion für '" + cmd.name + "' wurde nicht gefunden.");
+		CONTEXT_INSTANCE.set(null);
+	}
+	
+	private void callCommand(Command cmd)
+	{
+		Logger.log(Interpreter.class, Logger.DEBUG, "Execute: " + cmd);
 		
 		try
 		{
-			CONTEXT_INSTANCE.set(this);
-			Object obj = invokeMethode(fa.method, instance, cmd.args);
+			if (cmd == null) throw new InterpreterException(setup, cmd, "Command is null.");
+			
+			int seperator = cmd.target.lastIndexOf(':');
+			ContextType context;
+			String contextName = null;
+			if (seperator != -1)
+			{
+				context = ContextType.valueOf(cmd.target.substring(0, seperator));
+				contextName = cmd.target.substring(seperator+1);
+			}
+			else
+				context = ContextType.valueOf(cmd.target);
+			
+			if (context == ContextType.INTERNAL)
+			{
+				handleSpecialCommands(cmd);
+				return;
+			}
+			
+			FunctionAccessor fa;
+			Object instance = null;
+			if (context == ContextType.STATIC)
+			{
+				fa = FUNCTIONS.get(contextName + ':' + cmd.name);
+			}
+			else
+			{
+				String name = cmd.name;
+				switch(context)
+				{
+					case GLOBAL: instance = Game.getContext(Context.GLOBAL).get(contextName); break;
+					case SESSION: instance = Game.getContext(Context.SESSION).get(contextName); break;
+					case SCENE: instance = Game.getContext(Context.SCENE).get(contextName); break;
+					case ARGUMENT: instance = setup.getArgument(Integer.parseInt(contextName)); break;
+				}
+				if (instance == null) throw new InterpreterException(setup, cmd, 
+							"Target-Instance '" + contextName + "' in Context '" + context + "' do not exists.");
+	
+				String functionName = instance.getClass().getName() + ':' + name;
+				fa =  FUNCTIONS.get(functionName);
+			}
+		
+			if (fa == null)
+				throw new InterpreterException(setup, cmd, "Function for '" + cmd.name + "' was not found.");
+			
+			Object obj = invokeMethode(cmd, fa.method, instance, resolveArguments(cmd.args));
+			
 			if (obj instanceof Result)
 			{
 				Result result = (Result) obj;
@@ -306,70 +358,68 @@ public class Interpreter implements Serializable
 			}
 			else this.resultValue = obj;
 		}
-		catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+		catch (InterpreterException e)
 		{
 			Logger.log(Interpreter.class, Logger.ERROR, e);
+			run = false;
 		}
-		finally
+		catch (Exception e)
 		{
-			CONTEXT_INSTANCE.set(null);
+			Logger.log(Interpreter.class, Logger.ERROR, new InterpreterException(setup, cmd, e.getMessage()));
+			run = false;
 		}
 	}
 	
 	private Object[] resolveArguments(Object[] args)
 	{
-		Object[] result = new Object[args.length];
-		for(int i = 0; i < args.length; i++)
+		return resolveArguments(args, 0);
+	}
+	
+	private Object[] resolveArguments(Object[] args, int start)
+	{
+		Object[] result = new Object[args.length - start];
+		System.arraycopy(args, start, result, 0, result.length);
+		for (int i = 0; i < result.length; i++)
 		{
-			Object arg = args[i];
+			Object arg = result[i];
 			if (arg instanceof Argument)
-				result[i] = setupArgs[((Argument) arg).index];
+				result[i] = setup.getArgument( ((Argument) arg).index );
 			else if (arg instanceof Variable)
 				result[i] = getVariable(((Variable) arg).name);
-			else
-				result[i] = arg;
 		}
 		return result;
 	}
 	
-//	private Object[] convertToArray(Method method, Object args)
-//	{
-//		// Sonderfall, wenn das Argument ein Array ist.
-//		if (args.getClass().isArray())
-//		{
-//			// Überprüfe, ob als Argument kein ein Array verlangt wird.
-//			Class[] params = method.getParameterTypes();
-//			if ( !(params.length == 1 && params[0].isArray()) )
-//			{
-//				// Konvertiere Die Argumente in ein Objekt-Array.
-//				int length = Array.getLength(args);
-//				Object[] array = new Object[length];
-//				for(int i = 0; i < length; i++)
-//				{
-//					array[i] = Array.get(args, i);
-//				}
-//				return array;
-//			}
-//		}
-//		return new Object[] {args};
-//	}
-	
-	private Object invokeMethode(Method method, Object obj, Object[] args)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
+	private Object invokeMethode(Command cmd, Method method, Object obj, Object[] args) throws InterpreterException
 	{
-		return method.invoke(obj, resolveArguments(args));
+		try
+		{
+			return method.invoke(obj, args);
+		}
+		catch(IllegalArgumentException e)
+		{
+			throw new InterpreterException(setup, cmd, getTypeExceptionMessage(e, method, args));
+		}
+		catch(InvocationTargetException e)
+		{
+			throw new InterpreterException(setup, cmd, e.getCause());
+		}
+		catch(Exception e)
+		{
+			throw new InterpreterException(setup, cmd, e);
+		}
 	}
 	
 	private void skipCommands(int count)
 	{
-		Command[] commands = list.commands;
-		int level = commands[index].indent;
+		Command[] commands = setup.list.commands;
+		int level = commands[setup.index].indent;
 		int sign = (count >= 0) ? +1 : -1;
 		while(count != 0)
 		{
-			if (commands[index+sign].indent <= level)
+			if (commands[setup.index+sign].indent <= level)
 			{
-				index += sign;
+				setup.index += sign;
 				count -= sign;
 			}
 		}
@@ -391,11 +441,11 @@ public class Interpreter implements Serializable
 	
 	public void skipBlock()
 	{
-		Command[] commands = list.commands;
-		int level = commands[index].indent;
-		while(commands[index+1].indent > level)
+		Command[] commands = setup.list.commands;
+		int level = commands[setup.index].indent;
+		while(commands[setup.index+1].indent > level)
 		{
-			index++;
+			setup.index++;
 		}
 	}
 	
@@ -413,24 +463,30 @@ public class Interpreter implements Serializable
 			case "switch":	switchValue = (int) cmd.args[0]; break;
 			case "goto":	setIndex((int) cmd.args[0] - 1); break;
 			case "stop":	run = false; break;
-			default: throw new NullPointerException("Interne Funktion '" + cmd.name + "' ist nicht definiert.");
+			case "call":	callEvent((String) cmd.args[0], cmd.args); break;
+			default: throw new NullPointerException("Internal function '" + cmd.name + "' is not defined.");
 		}
 	}
 	
+	private void callEvent(String eventKey, Object[] args)
+	{
+		this.setup = new Setup(setup, eventKey, resolveArguments(args, 1));
+	}
+
 	private Object getInternalVariable(String name)
 	{
 		try
 		{
 			if (name.startsWith("$argument"))
 			{
-				if ("$argument.length".equals(name)) return setupArgs.length;
+				if ("$argument.length".equals(name)) return setup.getArgumentCount();
 				int index = Integer.parseInt(name.substring(9));
-				if (setupArgs.length > index)
-					return setupArgs[index];
+				if (setup.getArgumentCount() > index)
+					return setup.getArgument(index);
 			}
 			else switch(name)
 			{
-				case "$index": return index;
+				case "$index": return setup.index;
 				case "$result": return resultValue;
 			}
 		}
@@ -460,7 +516,7 @@ public class Interpreter implements Serializable
 
 	private void handleCondition(String expression)
 	{
-		if (!new Expression(expression, EXPRESSION_CONFIG).resolve().asBoolean()) skipBlock();
+		if (!new Expression(expression, expressionConfig).resolve().asBoolean()) skipBlock();
 	}
 	
 	private void handleCase(int value)
@@ -471,6 +527,11 @@ public class Interpreter implements Serializable
 	public boolean isRunning()
 	{
 		return run;
+	}
+	
+	public boolean isFinished()
+	{
+		return setup != null && setup.isFinished();
 	}
 
 	public void setWaitCount(int frames)
@@ -485,7 +546,30 @@ public class Interpreter implements Serializable
 	
 	public void start()
 	{
-		if (list != null) run = true;
+		if (setup != null) run = true;
+	}
+	
+	private String getTypeExceptionMessage(Exception e, Method method, Object[] args)
+			throws InterpreterException
+	{
+		StringBuilder builder = new StringBuilder(e.getMessage());
+		builder.append('\n');
+		
+		builder.append("\tExpected Types: ");
+		Class<?>[] paramTypes = method.getParameterTypes();
+		String[] types = new String[paramTypes.length];
+		for (int i = 0; i < types.length; i++)
+			types[i] = paramTypes[i].getName();
+		
+		builder.append(Arrays.toString(types)).append('\n');
+		builder.append("\tCalled Types:   ");
+		types = new String[args.length];
+		for (int i = 0; i < types.length; i++)
+			types[i] = args[i].getClass().getName();
+		
+		builder.append(Arrays.toString(types)).append('\n');
+		
+		return builder.toString();
 	}
 	
 	private class ResolverImpl implements Resolver

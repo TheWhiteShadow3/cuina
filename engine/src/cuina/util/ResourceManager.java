@@ -187,6 +187,8 @@ public final class ResourceManager
 		Resource res = getResource(KEY_GRAPHICS, fileName);
 		if (res == null)
 		{
+			Logger.log(ResourceManager.class, Logger.WARNING,
+					"Image-Resource '" + fileName + "' not found. Default-Image is used.");
 			if (DEFAULT_ICON == null)
 			{
 				DEFAULT_ICON = loadImageFromJar("CE_Icon32.png");

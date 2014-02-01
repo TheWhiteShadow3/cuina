@@ -5,12 +5,8 @@
         <target>STATIC:cuina.map.MapUtil</target>
         <name>turnToTarget</name>
         <args>
-          <cuina.eventx.Argument>
-            <index>0</index>
-          </cuina.eventx.Argument>
-          <cuina.eventx.Argument>
-            <index>1</index>
-          </cuina.eventx.Argument>
+          <cuina.eventx.Argument><index>0</index></cuina.eventx.Argument>
+          <cuina.eventx.Argument><index>1</index></cuina.eventx.Argument>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
@@ -100,9 +96,129 @@
     <name>Test</name>
   </cuina.eventx.CommandList>
   <cuina.eventx.CommandList>
-    <commands/>
-    <key>beispiel_event</key>
-    <name>Beispiel Event</name>
+    <key>open_door</key>
+    <name>Öffne Tür</name>
+    <commands>
+    	<cuina.eventx.Command>
+        <target>STATIC:cuina.map.MapUtil</target>
+        <name>setAnimation</name>
+        <args>
+           <cuina.eventx.Argument><index>0</index></cuina.eventx.Argument>
+           <int>-1</int>
+           <int>1</int>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>INTERNAL</target>
+        <name>wait</name>
+				<args>
+          <int>10</int>
+        </args>
+      </cuina.eventx.Command>
+    	<cuina.eventx.Command>
+        <target>STATIC:cuina.map.MapUtil</target>
+        <name>setAnimation</name>
+        <args>
+           <cuina.eventx.Argument><index>0</index></cuina.eventx.Argument>
+           <int>-1</int>
+           <int>2</int>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>INTERNAL</target>
+        <name>wait</name>
+				<args>
+          <int>10</int>
+        </args>
+      </cuina.eventx.Command>
+    	<cuina.eventx.Command>
+        <target>STATIC:cuina.map.MapUtil</target>
+        <name>setAnimation</name>
+        <args>
+           <cuina.eventx.Argument><index>0</index></cuina.eventx.Argument>
+           <int>-1</int>
+           <int>3</int>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>INTERNAL</target>
+        <name>wait</name>
+				<args>
+          <int>20</int>
+        </args>
+      </cuina.eventx.Command>
+    </commands>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <key>left_door_out</key>
+    <name>Linke Tür draußen</name>
+    <commands>
+    	<cuina.eventx.Command>
+        <target>INTERNAL</target>
+        <name>call</name>
+        <args>
+          <string>open_door</string>
+          <cuina.eventx.Argument><index>0</index></cuina.eventx.Argument>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+    	<cuina.eventx.Command>
+        <target>SESSION:World</target>
+        <name>load</name>
+        <args>
+          <string>Schule_Innen</string>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>STATIC:cuina.map.MapUtil</target>
+        <name>setObjectPosition</name>
+        <args>
+           <cuina.eventx.Argument><index>1</index></cuina.eventx.Argument>
+          <float>368</float>
+          <float>384</float>
+					<float>90</float>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+    </commands>
+  </cuina.eventx.CommandList>
+  <cuina.eventx.CommandList>
+    <key>right_door_out</key>
+    <name>Linke Tür draußen</name>
+    <commands>
+    	<cuina.eventx.Command>
+        <target>INTERNAL</target>
+        <name>call</name>
+        <args>
+          <string>open_door</string>
+          <cuina.eventx.Argument><index>0</index></cuina.eventx.Argument>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+    	<cuina.eventx.Command>
+        <target>SESSION:World</target>
+        <name>load</name>
+        <args>
+          <string>Schule_Innen</string>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>STATIC:cuina.map.MapUtil</target>
+        <name>setObjectPosition</name>
+        <args>
+          <cuina.eventx.Argument><index>1</index></cuina.eventx.Argument>
+          <float>400</float>
+          <float>384</float>
+					<float>90</float>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+    </commands>
   </cuina.eventx.CommandList>
   <cuina.eventx.CommandList>
     <commands/>

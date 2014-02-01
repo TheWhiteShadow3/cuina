@@ -210,11 +210,11 @@ public class ImageSet implements Serializable
 	
 	public void dispose()
 	{
-		for (int i = sprites.size()-1; i >= 0; i--)
+		for (int i = 0; i < sprites.size(); i++)
 		{
-			sprites.get(i).dispose();
+			sprites.get(i).dispose0();
 		}
-		sprites.clear(); // Sollte bereits der Fall sein.
+		sprites.clear();
 		for(int x=0; x < xCount; x++)
 			for(int y=0; y < yCount; y++)
 			{
@@ -283,8 +283,13 @@ public class ImageSet implements Serializable
 		@Override
 		public void dispose()
 		{
-			super.dispose();
+			dispose0();
 			set.sprites.remove(this);
+		}
+		
+		private void dispose0()
+		{
+			super.dispose();
 		}
 	}
 }

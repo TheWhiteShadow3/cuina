@@ -45,7 +45,8 @@ public class Player implements Driver
 		DirectionalControl c = (DirectionalControl) Input.getControl(CONTROL_MOVE);
 		if (c != null)
 		{
-			motor.setDirection(c.getDirection());
+			float dir = c.getDirection();
+			if (dir != -1) motor.setDirection(dir);
 			float speed = 1.5f * c.getValue();
 			if (Input.isDown(CONTROL_RUN)) speed *= 2;
 			motor.setSpeed(speed);

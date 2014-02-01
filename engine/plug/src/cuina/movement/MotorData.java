@@ -18,7 +18,7 @@ public class MotorData implements Serializable, Instantiable
 	public Object createInstance(CuinaObject obj) throws Exception
 	{
 		Motor motor = new Motor(obj, speed, friction, direction);
-		if (driver != null)
+		if (driver != null && driver.length() > 0)
 		{
 			motor.setDriver((Driver) Class.forName(driver).newInstance());
 		}

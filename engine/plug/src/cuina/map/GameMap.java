@@ -67,28 +67,14 @@ public class GameMap extends BaseWorld implements Plugin
 	{
 		if(map != null)
 		{
-			// DebugPanel.dispose();
-			// if (cs != null) cs.destroy();
-			// if (tilemap != null) tilemap.dispose();
-			// CuinaObject obj;
-			// Iterator<Integer> itr = getObjects().keySet().iterator();
-			// while(itr.hasNext())
-			// {
-			// Integer id = itr.next();
-			// // ignoriere Persistend-Objekte
-			// if (id > 100000) continue;
-			// obj = getObject(id);
-			// if (obj.getModel() != null) obj.getModel().dispose();
-			// itr.remove();
-			// }
-			// areas.clear();
-			map = null;
+			dispose();
 		}
-		File file = new File(Game.getRootPath() + File.separator + "maps", key + ".cxmz");
+		File file = new File(Game.getRootPath() + File.separator + "maps", key + ".cjm");
 		if(!file.exists())
 			file = new File(Game.getRootPath() + File.separator + "maps", key + ".cxm");
 		this.map = (Map) Database.loadData(file);
 		initMap();
+		postUpdate();
 	}
 
 	public void initMap()
@@ -102,9 +88,13 @@ public class GameMap extends BaseWorld implements Plugin
 		tilemap.setPriorities(tileset.getPriorities());
 		tilemap.setData(map.data);
 
-		panoramas[0] = new Panorama(tileset.getBackgroundName());
-		panoramas[0].setSpeedX(tileset.getBackSpeedX());
-		panoramas[0].setSpeedY(tileset.getBackSpeedX());
+		String backgroundName = tileset.getBackgroundName();
+		if (backgroundName != null && backgroundName.length() > 0)
+		{
+			panoramas[0] = new Panorama(backgroundName);
+			panoramas[0].setSpeedX(tileset.getBackSpeedX());
+			panoramas[0].setSpeedY(tileset.getBackSpeedX());
+		}
 
 		// lightMap = new MapSprite();
 		// try
@@ -151,10 +141,9 @@ public class GameMap extends BaseWorld implements Plugin
 		// Objekte laden
 		// HashMap<Integer, cuina.data.MapObject> objects = map.objects;
 		// MapObject obj;
-		for(Integer key : map.objects.keySet())
+		for(Object data : map.objects)
 		{
-			ObjectData src = (ObjectData) map.objects.get(key);
-			addObject(new BaseObject(src));
+			addObject(new BaseObject((ObjectData) data));
 			/*
 			 * XXX Kleiner Workaround um eine Persistent-ID zu erzeugen.
 			 * NOTE: Wegen Änderungen an der Objekt-Datenklasse nicht mehr
@@ -175,7 +164,7 @@ public class GameMap extends BaseWorld implements Plugin
 		// WeatherEffects weather = new WeatherEffects(-100, -100, 840, 680);
 		// Game.getScene().setObject("Weather", weather);
 		// weather.initRain(0.5F);
-		Logger.log(GameMap.class, Logger.INFO, "Map erstellt mit " + getObjectCount() + " Objekten");
+		Logger.log(GameMap.class, Logger.INFO, "Map created with " + getObjectCount() + " objects");
 
 		if(Game.isDebug())
 		{
@@ -282,7 +271,7 @@ public class GameMap extends BaseWorld implements Plugin
 	 */
 	public boolean isPassable(Rectangle rect)
 	{
-		if (!isValid(rect)) return false;
+		if (!contains(rect)) return false;
 
 		int x1 = (rect.x) / getTileSize();
 		int y1 = (rect.y) / getTileSize();
@@ -324,7 +313,7 @@ public class GameMap extends BaseWorld implements Plugin
 	 */
 	public short isTilePassable(int x, int y)
 	{
-		if (!isValid(x * getTileSize(), y * getTileSize())) return -1;
+		if (!contains(x * getTileSize(), y * getTileSize())) return -1;
 
 		return collisionMap[x][y];
 	}
@@ -339,7 +328,7 @@ public class GameMap extends BaseWorld implements Plugin
 	 */
 	public boolean isPassable(int x, int y)
 	{
-		if(!isValid(x, y)) return false;
+		if(!contains(x, y)) return false;
 
 		return collisionMap[x / getTileSize()][y / getTileSize()] == 0;
 	}
@@ -383,7 +372,7 @@ public class GameMap extends BaseWorld implements Plugin
 	@Override
 	public void update()
 	{
-		if((map == null) || isFreezed()) return;
+		if (map == null || isFreezed()) return;
 
 		mapInterpreter.update();
 		// update = true;
@@ -441,6 +430,14 @@ public class GameMap extends BaseWorld implements Plugin
 			cs.destroy();
 		if(tilemap != null)
 			tilemap.dispose();
+		for (int i = 0; i < panoramas.length; i++)
+		{
+			if (panoramas[i] != null)
+			{
+				panoramas[i].dispose();
+				panoramas[i] = null;
+			}
+		}
 		if(map != null)
 		{
 			super.dispose();

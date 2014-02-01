@@ -257,4 +257,10 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 	{
 		return id >= PERSISTENT_OFFSET;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "Object(" + id + ") '" + name + '\'';
+	}
 }

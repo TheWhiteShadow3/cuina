@@ -1,12 +1,13 @@
 package cuina.map;
 
+import cuina.database.KeyReference;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
-
-import cuina.database.KeyReference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Rasterbasiertes Spielfeld mit Terraininformationen.
@@ -38,9 +39,9 @@ public class Map implements Serializable
 	/** 3D-Array mit den IDs der einzelnen Felder. */
 	transient public short[][][] data;
 	/** Spielobjekte auf der Karte. */
-	public HashMap<Integer, Object> objects;
-	public HashMap<Integer, Object> areas;
-	public HashMap<Integer, Object> paths;
+	public List<Object> objects;
+	public List<Object> areas;
+	public List<Object> paths;
 	// Referenz zur Tileset-Datenbank
 	@KeyReference(name="Tileset")
 	public String tilesetKey = "";
@@ -51,10 +52,11 @@ public class Map implements Serializable
 		this.width = width;
 		this.height = height;
 		this.data = new short[width][height][LAYERS];
-		this.objects = new HashMap<Integer, Object>();
-		this.areas = new HashMap<Integer, Object>();
-		this.paths = new HashMap<Integer, Object>();
+		this.objects = new ArrayList<Object>();
+		this.areas = new ArrayList<Object>();
+		this.paths = new ArrayList<Object>();
 	}
+
 
 	public String getKey()
 	{

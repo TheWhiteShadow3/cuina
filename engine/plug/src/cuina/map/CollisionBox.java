@@ -140,7 +140,6 @@ public class CollisionBox extends CollisionMask
 	{
 		useTempPosition(x, y);
 		
-		System.out.println("[CollisionBox] testPosition");
 		CuinaObject cObject = GameMap.getInstance().getCollisionSystem().testCollision(this);
 
 		clearTempOffset();

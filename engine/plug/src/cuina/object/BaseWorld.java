@@ -17,6 +17,10 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Eine vollständige Implementierung der CuinaWorld.
+ * @author TheWhiteShadow
+ */
 public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 {
 	private static final long serialVersionUID = 1L;
@@ -28,10 +32,7 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	
 	private static final String WORLD_GRAPHIC_CONTAINER_KEY = "cuina.world";
 	
-	private int width;
-	private int height;
-//	private int scrollX = 0;
-//	private int scrollY = 0;
+	private Rectangle bounds = new Rectangle();
 	
 	private boolean freeze;
 	private final ConcurrentHashMap<Integer, CuinaObject> objects =
@@ -56,6 +57,8 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	@Override
 	public void update()
 	{
+		if (isFreezed()) return;
+		
 		for (CuinaObject obj : objects.values())
 		{
 			obj.update();
@@ -98,7 +101,7 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	@Override
 	public int getAvilableID()
 	{
-		return aviableID;
+		return aviableID++;
 	}
 
 	@Override
@@ -162,23 +165,33 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	@Override
 	public int getWidth()
 	{
-		return width;
+		return bounds.width;
 	}
 
 	public void setWidth(int width)
 	{
-		this.width = width;
+		bounds.width = width;
 	}
 
 	@Override
 	public int getHeight()
 	{
-		return height;
+		return bounds.height;
 	}
 
 	public void setHeight(int height)
 	{
-		this.height = height;
+		bounds.height = height;
+	}
+	
+	/**
+	 * Gibt eine Referenz auf die Grenzhülle der Welt zurück.
+	 * Änderungen an dem Rechteck spiegel sich auf die Grenzhülle der Welt wieder.
+	 * @return Referenz auf die Grenzhülle der Welt.
+	 */
+	public Rectangle getBounds()
+	{
+		return bounds;
 	}
 	
 	public void follow(int objectID)
@@ -192,40 +205,49 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 		if (obj != null)
 		{
 			View view = Graphics.VIEWS.get(viewID);
-			view.border = new Rectangle(getWidth(), getHeight());
+			view.border = bounds;
 			view.target = obj;
 		}
 	}
-
+	
 	/**
-	 * Prüft, ob die Position auf der Karte gültig ist. Wird auch in
-	 * <code>isPassable</code> geprüft, daher ist ein direkter Aufruf meißt unnötig.
-	 * 
-	 * @param x
-	 *            X-Position in Pixel
-	 * @param y
-	 *            Y-Position in Pixel
+	 * Gibt an, ob das übergebene Objekt ein Mitglied dieser Welt ist.
+	 * @param object
+	 * @return <code>true</code>, wenn das Objekt dieser Welt angehört, andernfalls <code>false</code>.
 	 */
-	public boolean isValid(int x, int y)
+	public boolean isMemberOf(CuinaObject object)
 	{
-		return (x >= 0 && y >= 0 && x < width && y < height);
+		Spirit spirit = (Spirit) object.getExtension(SPIRIT_KEY);
+		return spirit != null;
 	}
 
 	/**
-	 * Prüft, ob das Rechteck auf der Karte gültig ist. Wird auch in
-	 * <code>isPassable</code> geprüft, daher ist ein direkter Aufruf meißt unnötig.
+	 * Prüft, ob die Position innerhalb der Welt liegt.
+	 * 
+	 * @param x
+	 *            X-Position
+	 * @param y
+	 *            Y-Position
+	 */
+	public boolean contains(int x, int y)
+	{
+		return bounds.contains(x, y);
+	}
+
+	/**
+	 * Prüft, ob das Rechteck innerhalb der Welt liegt.
 	 * 
 	 * @param rect
-	 *            Kartenbereich in Pixel
+	 *            Kartenbereich
 	 */
-	public boolean isValid(Rectangle rect)
+	public boolean contains(Rectangle rect)
 	{
-		return (rect.x >= 0 && rect.y >= 0 && rect.x + rect.width <= width && rect.y + rect.height <= height);
+		return bounds.contains(rect);
 	}
 	
 	/**
 	 * Der Geist ist eine Erweiterung eines Objekts, der es mit der Welt verbindet.
-	 * Nur solange ein Objekt einen Geist hat, ist es mit der Welt verdunden.
+	 * Nur solange ein Objekt einen Geist hat, ist es mit der Welt verbunden.
 	 * Stirbt ein Objekt, bringt der Geist es aus der Welt.
 	 * @author TheWhiteShadow
 	 */

@@ -28,6 +28,8 @@ import cuina.resource.ResourceException;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -213,7 +215,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		if (map == null) return;
 		
 		List<Object> selectedObjects = selection.toList();
-		for (Object obj : map.objects.values())
+		for (Object obj : map.objects)
 		{
 			if (selectedObjects.contains(obj)) continue;
 			
@@ -296,7 +298,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 	
 	private ObjectData getObject(int x, int y)
 	{
-		for (Object obj : map.objects.values())
+		for (Object obj : map.objects)
 		{
 			if (obj instanceof ObjectData)
 			{
@@ -450,7 +452,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 	{
 		List<ObjectData> list = new ArrayList<ObjectData>();
 		
-		for (Object obj : map.objects.values())
+		for (Object obj : map.objects)
 		{
 			if (obj instanceof ObjectData)
 			{
@@ -494,12 +496,22 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 	{
 		if (map == null) throw new NullPointerException("map is null.");
 		
-		int i = 1;
-		while(map.objects.containsKey(i))
+		List<ObjectData> data = (List<ObjectData>) (List<?>) map.objects;
+		Collections.sort(data, new Comparator<ObjectData>()
 		{
-			i++;
+			@Override
+			public int compare(ObjectData o1, ObjectData o2)
+			{
+				return o1.id - o2.id;
+			}
+		});
+		int id = 1;
+		for (int i = 0; i < data.size(); i++)
+		{
+			if (data.get(i).id != id) break;
+			id++;
 		}
-		return i;
+		return id;
 	}
 	
 	private ObjectData createNewObject(ObjectTemplate template)
@@ -534,7 +546,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 			if (event.mouseEvent.button == 1)
 			{
 				ObjectData obj = createNewObject(cursorTemplate);
-				map.objects.put(obj.id, obj);
+				map.objects.add(obj);
 				ObjectSavePoint undoPoint = new ObjectSavePoint(ObjectSavePoint.DELETE, obj, obj.x, obj.y);
 				ObjectSavePoint redoPoint = new ObjectSavePoint(ObjectSavePoint.CREATE, obj, obj.x, obj.y);
 				editor.addOperation(new MapOperation("Create Object", undoPoint, redoPoint));
@@ -688,7 +700,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 			switch(type)
 			{
 				case CREATE:
-					map.objects.put(obj.id, obj);
+					map.objects.add(obj);
 					break;
 				case DELETE:
 					map.objects.remove(obj.id);

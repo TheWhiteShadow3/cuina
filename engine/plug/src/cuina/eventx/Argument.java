@@ -18,4 +18,10 @@ public final class Argument implements Serializable
 	{
 		this.index = index;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "Argument " + index;
+	}
 }

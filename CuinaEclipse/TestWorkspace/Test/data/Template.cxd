@@ -103,11 +103,62 @@
 		      <string>cuina.map.object.ActionByPlayer</string>
 		    </cuina.event.Event>
 		  </event>
-            <key>open_door</key>
+            <key>left_door_out</key>
             <active>true</active>
           </cuina.eventx.InterpreterTrigger>
         </triggers>
         <templateKey>Tuer_Links</templateKey>
+      </sourceObject>
+    </cuina.object.ObjectTemplate>
+    <cuina.object.ObjectTemplate>
+      <key>Tuer_Rechts</key>
+      <name>Tür Rechts</name>
+      <sourceObject>
+        <id>-1</id>
+        <name>Tür Rechts</name>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+        <extensions>
+          <entry>
+            <string>model</string>
+            <cuina.animation.ModelData>
+              <fileName>charsets/Schultur.png</fileName>
+              <frames>4</frames>
+              <animations>4</animations>
+              <frame>1</frame>
+              <animation>0</animation>
+              <standAnimation>false</standAnimation>
+              <ox>16</ox>
+              <oy>48</oy>
+              <animator/>
+            </cuina.animation.ModelData>
+          </entry>
+          <entry>
+            <string>box</string>
+            <cuina.map.BoxData>
+              <x>-12</x>
+              <y>-16</y>
+              <width>24</width>
+              <height>32</height>
+              <through>false</through>
+              <calculationType>0</calculationType>
+              <alphaMask>0</alphaMask>
+            </cuina.map.BoxData>
+          </entry>
+        </extensions>
+        <triggers>
+          <cuina.eventx.InterpreterTrigger>
+		  <event serialization="custom">
+		    <cuina.event.Event>
+		      <string>cuina.map.object.ActionByPlayer</string>
+		    </cuina.event.Event>
+		  </event>
+            <key>right_door_out</key>
+            <active>true</active>
+          </cuina.eventx.InterpreterTrigger>
+        </triggers>
+        <templateKey>Tuer_Rechts</templateKey>
       </sourceObject>
     </cuina.object.ObjectTemplate>
 </cuina.database.DataTable>

@@ -52,7 +52,9 @@ public class ModelData implements Serializable, Instantiable, DatabaseObject
 		ModelImpl model = new ModelImpl(fileName, frames, animations, standAnimation);
 		model.setObject(obj);
 		model.setOffset(ox, oy);
-		if (animator != null)
+		model.setFrame(frame);
+		model.setAnimationIndex(animation);
+		if (animator != null && animator.length() > 0)
 		{
 			model.setAnimator((Animator) Class.forName(animator).newInstance());
 		}

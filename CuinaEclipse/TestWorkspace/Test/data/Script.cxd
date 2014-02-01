@@ -29,7 +29,7 @@
 		Cuina.new_scene("Map")
 		#Audio.play_bgm(1, "bgm/spring.mp3")
 		Map.load_map(&quot;schule&quot;)
-		Map.follow(1)
+		Map.follow(100001)
 		
 		#party = Java::CuinaActor::ActorGroup.new
 		#actor = Java::CuinaKs::ActorFactory.createActor("Alice", 1, 1)

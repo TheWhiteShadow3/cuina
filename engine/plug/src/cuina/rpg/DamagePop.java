@@ -1,8 +1,7 @@
 package cuina.rpg;
 
-import cuina.map.GameMap;
 import cuina.object.BaseObject;
-import cuina.world.CuinaModel;
+import cuina.object.BaseWorld;
 
 import java.awt.Font;
 
@@ -24,7 +23,7 @@ public class DamagePop extends BaseObject
 		this.object = object;
 //		model = new DamagePopModel(String.valueOf(value));
 		addExtension("Model", model);
-		GameMap.getInstance().addObject(this);
+		BaseWorld.getInstance().addObject(this);
 	}
 
 	public DamagePopModel getModel()
@@ -39,7 +38,7 @@ public class DamagePop extends BaseObject
 		if (duration <= 0)
 		{
 //			model.dispose();
-			GameMap.getInstance().removeObject(this);
+			BaseWorld.getInstance().removeObject(this);
 		}
 	}
 	

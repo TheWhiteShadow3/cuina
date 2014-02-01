@@ -4,7 +4,7 @@
     <name>Schule_Innen</name>
     <tileSize>32</tileSize>
     <tilesetName>tilesets\Schule_Innen.png</tilesetName>
-    <backgroundName></backgroundName>
+    <backgroundName/>
     <BackSpeedX>0</BackSpeedX>
     <BackSpeedY>0</BackSpeedY>
     <autotiles>

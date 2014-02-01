@@ -72,8 +72,15 @@ public class Database
 			{
 				DataTable<?> table = (DataTable<?>)loadData(file);
 				if (table == null) continue;
+				String name = getDatabaseName(file);
+				if (data.containsKey(name))
+				{
+					Logger.log(Database.class, Logger.WARNING,
+							"Dublicate table: " + table.getElementClass().getSimpleName());
+					continue;
+				}
 				Logger.log(Database.class, Logger.DEBUG, "load table: " + table.getElementClass().getSimpleName());
-				data.put(getDatabaseName(file), table);
+				data.put(name, table);
 			}
 		}
 		Logger.log(Database.class, Logger.INFO, data.size() + " tables loaded.");
@@ -171,7 +178,7 @@ public class Database
 		{
 			return db.get(key);
 		}
-		Logger.log(ImageSet.class, Logger.ERROR, "Spieldaten " + dbName + ": " + key + " nicht gefunden!");
+		Logger.log(ImageSet.class, Logger.ERROR, "Gamedata " + dbName + ": " + key + " not found!");
 		return null;
 	}
 	
