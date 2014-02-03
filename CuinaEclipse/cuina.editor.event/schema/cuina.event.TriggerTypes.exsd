@@ -79,6 +79,16 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="editorClass" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":ITriggerEditor"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

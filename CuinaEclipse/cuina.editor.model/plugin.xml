@@ -30,7 +30,7 @@
    <extension
          point="cuina.object.extensionTypes">
       <object_extension
-            class="cuina.editor.model.internal.ModelExtensionEditor"
+            editorClass="cuina.editor.model.internal.ModelExtensionEditor"
             name="cuina.editor.model.Model">
       </object_extension>
    </extension>

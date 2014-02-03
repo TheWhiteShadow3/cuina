@@ -36,12 +36,8 @@ public class GameMap extends BaseWorld implements Plugin
 	public static final Event MAP_START = Event.getEvent("cuina.map.Start");
 	public static final Event MAP_UPDATE = Event.getEvent("cuina.map.Update");
 	public static final Event MAP_EXIT = Event.getEvent("cuina.map.Exit");
-	/** Prüft den Trigger automatisch, sobald das Objekt erstellt wurde. */
-	public static final Event OBJECT_CREATE = Event.getEvent("cuina.map.object.Create");
-	/** Prüft den Trigger jenden Frame automatisch. */
-	public static final Event OBJECT_UPDATE = Event.getEvent("cuina.map.object.Update");
-	/** Prüft den Trigger bei betreten einer Karten-Region. */
-	public static final Event ENTERS_AREA = Event.getEvent("cuina.map.object.EntersArea");
+//	/** Prüft den Trigger bei betreten einer Karten-Region. */
+//	public static final Event ENTERS_AREA = Event.getEvent("cuina.map.object.EntersArea");
 
 	private Map map;
 	private SaveHashMap<Integer, CuinaObject> areas = new SaveHashMap<Integer, CuinaObject>();
@@ -73,7 +69,8 @@ public class GameMap extends BaseWorld implements Plugin
 		if(!file.exists())
 			file = new File(Game.getRootPath() + File.separator + "maps", key + ".cxm");
 		this.map = (Map) Database.loadData(file);
-		initMap();
+		
+		if (map != null) initMap();
 		postUpdate();
 	}
 
@@ -141,19 +138,13 @@ public class GameMap extends BaseWorld implements Plugin
 		// Objekte laden
 		// HashMap<Integer, cuina.data.MapObject> objects = map.objects;
 		// MapObject obj;
-		for(Object data : map.objects)
+		for(Object obj : map.objects)
 		{
-			addObject(new BaseObject((ObjectData) data));
-			/*
-			 * XXX Kleiner Workaround um eine Persistent-ID zu erzeugen.
-			 * NOTE: Wegen Änderungen an der Objekt-Datenklasse nicht mehr
-			 * gültig
-			 * Muss später im Editor gemacht werden.
-			 */
-			// if (src. != null && src.motor.motorType == 3)
-			// {
-			// src.id += 100000;
-			// }
+			if (!(obj instanceof ObjectData)) continue;
+			
+			ObjectData data = (ObjectData) obj;
+			if (getObject(data.id) == null)
+				addObject(new BaseObject(data));
 		}
 		mapInterpreter = Interpreter.getGlobalInterpreter();
 		if (mapInterpreter == null)
@@ -356,7 +347,6 @@ public class GameMap extends BaseWorld implements Plugin
 		if (super.addObject(obj))
 		{
 			cs.updatePosition(obj);
-			obj.testTriggers(OBJECT_CREATE, obj.getID(), obj);
 			return true;
 		}
 		return false;

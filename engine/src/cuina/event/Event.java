@@ -28,27 +28,6 @@ public final class Event implements Serializable, NamedItem
 		
 		ALWAYS = getEvent("always");
 		NEVER = getEvent("never");
-		
-//		Database.getXMLSerilizer().registerConverter(new SingleValueConverter()
-//		{
-//			@Override
-//			public boolean canConvert(Class type)
-//			{
-//				return type == Event.class;
-//			}
-//
-//			@Override
-//			public String toString(Object obj)
-//			{
-//				return ((Event) obj).getName();
-//			}
-//
-//			@Override
-//			public Object fromString(String str)
-//			{
-//				return Event.getEvent(str);
-//			}
-//		});
 	}
 	
 	private String name;
@@ -68,6 +47,7 @@ public final class Event implements Serializable, NamedItem
 		if (event == null)
 		{
 			event = new Event(name);
+			event.addToCache();
 		}
 		return event;
 	}
@@ -75,7 +55,6 @@ public final class Event implements Serializable, NamedItem
 	private Event(String name)
 	{
 		this.name = name;
-		addToCache();
 	}
 	
 	private void addToCache()

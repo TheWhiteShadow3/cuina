@@ -1,5 +1,7 @@
 package cuina.editor.ui;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.regex.Pattern;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -7,9 +9,32 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Eine Klasse, die alle Arten von Zahlen validieren kann.
+ * @author TheWhiteShadow
+ */
 public class NumberValidator implements VerifyListener, ICellEditorValidator
 {
-    private static final Pattern PATTERN = Pattern.compile("^[-+]?[0-9]{0,10}([.][0-9]{0,6})?(e[+-]?[0-9]{1,2})?$");  
+    private static final Pattern PATTERN = Pattern.compile("^[-+]?[0-9]{0,10}([.][0-9]{0,6})?(e[+-]?[0-9]{1,2})?$");
+    private Class<?> type;
+    
+    /**
+     * Erstellt einen neuen NumberValidator mit folgendem regulärem Ausdruck als Validator:
+     * <pre>^[-+]?[0-9]{0,10}([.][0-9]{0,6})?(e[+-]?[0-9]{1,2})?$</pre>
+     */
+    public NumberValidator()
+    {
+    	this(null);
+    }
+    
+    /**
+     * Erstellt einen neuen NumberValidator mit der angegebenen Datentyp-Klasse.
+     * @param type Klasse des Datentyps.
+     */
+    public NumberValidator(Class<?> type)
+    {
+    	this.type = type;
+    }
     
 	@Override
 	public void verifyText(VerifyEvent e)
@@ -31,33 +56,27 @@ public class NumberValidator implements VerifyListener, ICellEditorValidator
 		return "Value is invalid!";
 	}
 	
-	private boolean validate(String input)
+	private boolean validate(String value)
 	{
-//		char[] chars = new char[input.length()];
-//		input.getChars(0, chars.length, chars, 0);
-
-//		Text text = (Text) e.getSource();
-//
-//		if ((",".equals(input) || ".".equals(input)) && input.indexOf(',') >= 0)
-//		{
-//			return false;
-//		}
-//
-//		for (int i = 0; i < chars.length; i++)
-//		{
-//			if (!(('0' <= chars[i] && chars[i] <= '9') ||
-//				chars[i] == '_' || chars[i] == '.' || chars[i] == ',' || chars[i] == '-'))
-//			{
-//				return false;
-//			}
-//
-//			if (chars[i] == ',') chars[i] = '.';
-//		}
-//
-//		e.text = new String(chars);
-
-//		final String oldS = text.getText();
-//		String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
-		return PATTERN.matcher(input).matches();
+		if (value == null) throw new NullPointerException();
+		
+		if (type == null) return PATTERN.matcher(value).matches();
+		try
+		{
+			if (type == byte.class || type == Byte.class) Byte.parseByte(value);
+			else if (type == short.class || type == Short.class) Short.parseShort(value);
+			else if (type == int.class || type == Integer.class) Integer.parseInt(value);
+			else if (type == long.class || type == Long.class) Long.parseLong(value);
+			else if (type == float.class || type == Float.class) Float.parseFloat(value);
+			else if (type == double.class || type == Double.class) Double.parseDouble(value);
+			else if (type == BigDecimal.class) new BigDecimal(value);
+			else if (type == BigInteger.class) new BigInteger(value);
+			else return false; // Unbekannte Zahlenklasse.
+		}
+		catch (NumberFormatException e)
+		{
+			return false;
+		}
+		return true;
 	}
 }

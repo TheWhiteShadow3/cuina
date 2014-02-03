@@ -30,6 +30,11 @@ public class InterpreterTrigger implements Trigger
         return key;
     }
 
+	public void setKey(String key)
+	{
+		this.key = key;
+	}
+	
 	@Override
 	public void run(Object... args)
 	{
@@ -49,10 +54,10 @@ public class InterpreterTrigger implements Trigger
 	{
 		this.eventArg = eventArg;
 	}
-
-	public void setKey(String key)
+	
+	public Object getEventArg()
 	{
-		this.key = key;
+		return eventArg;
 	}
 
 	public Event getEvent()
@@ -64,6 +69,11 @@ public class InterpreterTrigger implements Trigger
 	public boolean isActive()
 	{
 		return active;
+	}
+	
+	public void setActive(boolean active)
+	{
+		this.active = active;
 	}
 
 	@Override

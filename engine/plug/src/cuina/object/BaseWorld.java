@@ -25,10 +25,14 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 {
 	private static final long serialVersionUID = 1L;
 
+	/** Prüft den Trigger automatisch, sobald das Objekt erstellt wurde. */
+	public static final Event OBJECT_CREATE = Event.getEvent("cuina.object.Create");
+	/** Prüft den Trigger jenden Frame automatisch. */
+	public static final Event OBJECT_UPDATE = Event.getEvent("cuina.object.Update");
 	/** Prüft den Trigger bei passiver Kollision mit Objekt. */
-	public static final Event TOUCHED_BY_OBJECT = Event.getEvent("cuina.map.object.TouchedByObject");
+	public static final Event TOUCHED_BY_OBJECT = Event.getEvent("cuina.object.TouchedByObject");
 	/** Prüft den Trigger bei aktiver Kollision mit Objekt. */
-	public static final Event OBJECT_TOUCH = Event.getEvent("cuina.map.object.Touch");
+	public static final Event OBJECT_TOUCH = Event.getEvent("cuina.object.Touch");
 	
 	private static final String WORLD_GRAPHIC_CONTAINER_KEY = "cuina.world";
 	
@@ -44,7 +48,7 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	/**
 	 * Gibt die Instanz der Spielwelt zurück.
 	 * @return Die Instanz der Spielwelt.
-	 * @throws ClassCastException Wenn die Spielwelt kein Instanz von BaseWorld ist.
+	 * @throws ClassCastException Wenn die Spielwelt keine Instanz von BaseWorld ist.
 	 */
 	public static BaseWorld getInstance()
 	{
@@ -119,8 +123,14 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 			return false;
 		}
 
-        aviableID = Math.min(aviableID, obj.getID() + 1);
+        if (obj.getID() == aviableID) do
+    	{
+    		aviableID++;
+    	}
+    	while(!objects.containsKey(aviableID));
+    		
 		obj.addExtension(SPIRIT_KEY, new Spirit(this, obj));
+		obj.testTriggers(OBJECT_CREATE, null, obj);
 		return true;
 	}
 
@@ -212,13 +222,13 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	
 	/**
 	 * Gibt an, ob das übergebene Objekt ein Mitglied dieser Welt ist.
-	 * @param object
+	 * @param object Das Objekt, welches geprüft werden soll.
 	 * @return <code>true</code>, wenn das Objekt dieser Welt angehört, andernfalls <code>false</code>.
 	 */
 	public boolean isMemberOf(CuinaObject object)
 	{
-		Spirit spirit = (Spirit) object.getExtension(SPIRIT_KEY);
-		return spirit != null;
+		// Diese Methode sollte schneller gehen, als zu gucken, ob das Objket in der Liste steht.
+		return object.getExtension(SPIRIT_KEY) != null;
 	}
 
 	/**

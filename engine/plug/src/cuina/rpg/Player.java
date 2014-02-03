@@ -15,7 +15,7 @@ import org.lwjgl.input.Keyboard;
 public class Player implements Driver
 {
 	/** Prüft den Trigger bei Kollision + Aktions-Taste mit einem Spieler. */
-	public static final Event ACTION_BY_PLAYER = Event.getEvent("cuina.map.object.ActionByPlayer");
+	public static final Event ACTION_BY_PLAYER = Event.getEvent("cuina.rpg.ActionByPlayer");
 	
 	public static boolean INPUT_8 = false;
 	
@@ -81,7 +81,7 @@ public class Player implements Driver
 			if (other != null)
 			{
 				CuinaObject self = motor.getObject();
-				other.testTriggers(ACTION_BY_PLAYER, self.getID(), self);
+				other.testTriggers(ACTION_BY_PLAYER, self.getID(), other, self);
 			}
 		}
 	}

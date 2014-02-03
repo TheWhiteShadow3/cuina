@@ -4,113 +4,10 @@
       <height>37</height>
       <width>26</width>
       <areas/>
-      <key>schule</key>
+      <key>Schule</key>
       <objects>
         <cuina.object.ObjectData>
-          <id>1</id>
-          <name>Tür Links</name>
-          <x>400</x>
-          <y>304</y>
-          <z>0</z>
-          <extensions>
-            <entry>
-              <string>model</string>
-              <cuina.animation.ModelData>
-                <fileName>charsets/Schultur.png</fileName>
-                <frames>4</frames>
-                <animations>4</animations>
-                <frame>0</frame>
-                <animation>0</animation>
-                <standAnimation>false</standAnimation>
-                <ox>16</ox>
-                <oy>48</oy>
-                <animator/>
-              </cuina.animation.ModelData>
-            </entry>
-            <entry>
-              <string>box</string>
-              <cuina.map.BoxData>
-                <x>-12</x>
-                <y>-16</y>
-                <width>24</width>
-                <height>32</height>
-                <through>false</through>
-                <calculationType>0</calculationType>
-                <alphaMask>0</alphaMask>
-              </cuina.map.BoxData>
-            </entry>
-          </extensions>
-          <triggers>
-            <cuina.eventx.InterpreterTrigger>
-              <event serialization="custom">
-                <cuina.event.Event>
-                  <string>cuina.map.object.ActionByPlayer</string>
-                </cuina.event.Event>
-              </event>
-              <key>left_door_out</key>
-              <active>true</active>
-            </cuina.eventx.InterpreterTrigger>
-          </triggers>
-          <templateKey>Tuer_Links</templateKey>
-        </cuina.object.ObjectData>
-        <cuina.object.ObjectData>
-          <id>2</id>
-          <name>Rosa</name>
-          <x>331</x>
-          <y>414</y>
-          <z>0</z>
-          <extensions>
-            <entry>
-              <string>model</string>
-              <cuina.animation.ModelData>
-                <fileName>charsets/chara_reimu.png</fileName>
-                <frames>4</frames>
-                <animations>4</animations>
-                <frame>0</frame>
-                <animation>0</animation>
-                <standAnimation>false</standAnimation>
-                <ox>16</ox>
-                <oy>48</oy>
-                <animator>cuina.rpg.CharacterAnimator</animator>
-              </cuina.animation.ModelData>
-            </entry>
-            <entry>
-              <string>motor</string>
-              <cuina.movement.MotorData>
-                <speed>0.0</speed>
-                <direction>270.0</direction>
-                <friction>0.0</friction>
-                <driver>cuina.rpg.CharacterDriver</driver>
-              </cuina.movement.MotorData>
-            </entry>
-            <entry>
-              <string>box</string>
-              <cuina.map.BoxData>
-                <x>-12</x>
-                <y>-16</y>
-                <width>24</width>
-                <height>16</height>
-                <through>false</through>
-                <calculationType>0</calculationType>
-                <alphaMask>1</alphaMask>
-              </cuina.map.BoxData>
-            </entry>
-          </extensions>
-          <triggers>
-            <cuina.eventx.InterpreterTrigger>
-              <event serialization="custom">
-                <cuina.event.Event>
-                  <string>cuina.map.object.ActionByPlayer</string>
-                </cuina.event.Event>
-              </event>
-              <key>test</key>
-              <active>true</active>
-            </cuina.eventx.InterpreterTrigger>
-          </triggers>
-          <templateKey>Rosa</templateKey>
-        </cuina.object.ObjectData>
-        <cuina.object.ObjectData>
-          <id>100001</id>
+          <id>1000001</id>
           <name>Alice</name>
           <x>256</x>
           <y>424</y>
@@ -147,7 +44,6 @@
                 <width>24</width>
                 <height>16</height>
                 <through>false</through>
-                <calculationType>0</calculationType>
                 <alphaMask>1</alphaMask>
               </cuina.map.BoxData>
             </entry>
@@ -156,50 +52,33 @@
           <templateKey></templateKey>
         </cuina.object.ObjectData>
         <cuina.object.ObjectData>
+          <id>1</id>
+          <name>Tür Links</name>
+          <x>400</x>
+          <y>304</y>
+          <z>0</z>
+        	<extensions/>
+          <triggers/>
+          <templateKey>Tuer_Links</templateKey>
+        </cuina.object.ObjectData>
+        <cuina.object.ObjectData>
+          <id>2</id>
+          <name>Rosa</name>
+          <x>331</x>
+          <y>414</y>
+          <z>0</z>
+          <extensions/>
+          <triggers/>
+          <templateKey>Rosa</templateKey>
+        </cuina.object.ObjectData>
+        <cuina.object.ObjectData>
           <id>3</id>
           <name>Tür Rechts</name>
           <x>432</x>
           <y>304</y>
           <z>0</z>
-          <extensions>
-            <entry>
-              <string>model</string>
-              <cuina.animation.ModelData>
-                <fileName>charsets/Schultur.png</fileName>
-                <frames>4</frames>
-                <animations>4</animations>
-                <frame>1</frame>
-                <animation>0</animation>
-                <standAnimation>false</standAnimation>
-                <ox>16</ox>
-                <oy>48</oy>
-                <animator/>
-              </cuina.animation.ModelData>
-            </entry>
-            <entry>
-              <string>box</string>
-              <cuina.map.BoxData>
-                <x>-12</x>
-                <y>-16</y>
-                <width>24</width>
-                <height>32</height>
-                <through>false</through>
-                <calculationType>0</calculationType>
-                <alphaMask>0</alphaMask>
-              </cuina.map.BoxData>
-            </entry>
-          </extensions>
-          <triggers>
-            <cuina.eventx.InterpreterTrigger>
-              <event serialization="custom">
-                <cuina.event.Event>
-                  <string>cuina.map.object.ActionByPlayer</string>
-                </cuina.event.Event>
-              </event>
-              <key>right_door_out</key>
-              <active>true</active>
-            </cuina.eventx.InterpreterTrigger>
-          </triggers>
+          <extensions/>
+          <triggers/>
           <templateKey>Tuer_Rechts</templateKey>
         </cuina.object.ObjectData>
       </objects>

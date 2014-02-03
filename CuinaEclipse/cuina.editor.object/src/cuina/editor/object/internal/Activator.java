@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -18,8 +23,12 @@ public class Activator extends AbstractUIPlugin
 	// The plug-in ID
 	public static final String PLUGIN_ID = "cuina.editor.object"; //$NON-NLS-1$
 
+	private static final String EXTENSION_TYPES = "ciona.object.extensionTypes";
+
 	// The shared instance
 	private static Activator plugin;
+	
+	public static List<ExtensionDescriptor> descriptors;
 
 	/**
 	 * The constructor
@@ -60,6 +69,28 @@ public class Activator extends AbstractUIPlugin
 	public static Activator getDefault()
 	{
 		return plugin;
+	}
+	
+	public static List<ExtensionDescriptor> getExtensionDescriptors()
+	{
+		if (descriptors == null)
+		{
+			descriptors = new ArrayList<ExtensionDescriptor>();
+			
+			IConfigurationElement[] elements = Platform.getExtensionRegistry().
+					getConfigurationElementsFor(EXTENSION_TYPES);
+
+			for (IConfigurationElement conf : elements) try
+			{
+				descriptors.add(new ExtensionDescriptor(conf));
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		return Collections.unmodifiableList(descriptors);
 	}
 
 	/**

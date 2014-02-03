@@ -114,20 +114,11 @@ public class CollisionBox extends CollisionMask
 		}
 		else
 		{
-			impactObject = map.getCollisionSystem().testCollision(this);
-			if (impactObject != null)
+			CuinaObject other = map.getCollisionSystem().testCollision(this);
+			if (testObject(other, useTrigger))
 			{
-				CollisionBox targetBox = (CollisionBox) impactObject.getExtension(EXTENSION_KEY);
-				if (useTrigger)
-				{
-					impactObject.testTriggers(GameMap.TOUCHED_BY_OBJECT, object.getID(), impactObject, object);
-					object.testTriggers(GameMap.OBJECT_TOUCH, impactObject.getID(), object, impactObject);
-				}
-				if (!through && !targetBox.isThrough())
-				{
-					clearTempOffset();
-					return false;
-				}
+				clearTempOffset();
+				return false;
 			}
 		}
 		map.getCollisionSystem().updatePosition(object);

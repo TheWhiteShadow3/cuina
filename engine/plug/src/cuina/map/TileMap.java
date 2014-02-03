@@ -165,7 +165,7 @@ public class TileMap implements Serializable
 				}
 				sprite.setX(x * tileSize);
 				sprite.setY(y * tileSize);
-				if (priorities != null && priorities.length > id)
+				if (priorities.length > id && priorities[id] != 0)
 				{
 					sprite.setDepth((int) sprite.getY() + priorities[id] * (tileSize + 1));
 				}
@@ -198,28 +198,32 @@ public class TileMap implements Serializable
 		
 		int id;
 		Sprite sprite;
-		for(int x = 0; x < data.length; x++)
-		for(int y = 0; y < data[0].length; y++)
-		for(int z = 0; z < data[0][0].length; z++)
+		for (int x = 0; x < data.length; x++)
+		for (int y = 0; y < data[0].length; y++)
+		for (int z = 0; z < data[0][0].length; z++)
 		{
 			id = data[x][y][z];
-			sprite = sprites[x][y][z];
-			if (sprite != null && id > 0)
+			if (id > Tileset.AUTOTILES_OFFSET)
 			{
+				sprite = sprites[x][y][z];
+				if (sprite == null) continue;
 //				sprite.setX(x * tileSize);
 //				sprite.setY(y * tileSize);
-				if (id < 30000) // TODO: Implementiere Priorität für Autotiles
-				{
-					sprite.setDepth((int)sprite.getY() + priorities[id] * (tileSize + 1));
-				}
-				else
+//				if (id < 30000 && priorities.length > id) // TODO: Implementiere Priorität für Autotiles
+//				{
+//					if (priorities[id] == 0)
+//						sprite.setDepth(0);
+//					else
+//						sprite.setDepth((int) sprite.getY() + priorities[id] * (tileSize + 1));
+//				}
+//				else
 				{
 					int autotileID = (id - 30000);
 					int frame = atFrame % autotileSets[autotileID / 48].length;
 					ImageSet.setImage(sprite, autotileSets[autotileID / 48][frame],
 							(autotileID % 48) % imageSet.getXCount(),
 							(autotileID % 48) / imageSet.getXCount());
-					sprite.setDepth((int)sprite.getY());
+					sprite.setDepth((int) sprite.getY());
 				}
 			}
 		}

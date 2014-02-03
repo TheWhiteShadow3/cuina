@@ -204,5 +204,13 @@
             name="EventX Editor">
       </page>
    </extension>
+   <extension
+         point="cuina.event.TriggerTypes">
+      <trigger
+            class="cuina.eventx.InterpreterTrigger"
+            description="Startet ein Interpreter-Event."
+            name="Interpreter">
+      </trigger>
+   </extension>
 
 </plugin>

@@ -7,7 +7,6 @@ import cuina.database.ui.internal.tree.TreeDataNode;
 import cuina.database.ui.internal.tree.TreeGroup;
 import cuina.resource.ResourceException;
 
-import org.eclipse.core.internal.resources.Marker;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -97,6 +96,7 @@ public class TreeRoot extends TreeGroup
 	
 	private void validateChildren(TreeGroup group)
 	{
+		TREE_LOOP:
 		for (TreeNode child : group.getChildren())
 		{
 			if (child instanceof TreeGroup)
@@ -114,7 +114,8 @@ public class TreeRoot extends TreeGroup
 						IMarker[] markers = file.findMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
 						for (IMarker m : markers)
 						{
-							
+							if (m.getAttribute(IMarker.LOCATION).equals(tdn.getKey()))
+								continue TREE_LOOP;
 						}
 						
 						IMarker marker = file.createMarker(IMarker.PROBLEM);

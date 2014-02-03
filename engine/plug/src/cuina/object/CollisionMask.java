@@ -110,22 +110,22 @@ public class CollisionMask implements CuinaMask
 	@Override
 	public boolean move(float x, float y, float z, boolean useTrigger)
 	{
-		impactObject = testAbsolutePosition((int) x, (int) y, (int) z);
-		if (impactObject != null)
+		return !testObject(testAbsolutePosition((int) x, (int) y, (int) z), useTrigger);
+	}
+	
+	public boolean testObject(CuinaObject other, boolean useTrigger)
+	{
+		if (other == null) return false;
+		
+		this.impactObject = other;
+		CuinaMask otherMask = (CuinaMask) impactObject.getExtension(EXTENSION_KEY);
+		
+		if (useTrigger)
 		{
-			CuinaMask targetBox = (CuinaMask) impactObject.getExtension(EXTENSION_KEY);
-			if (useTrigger)
-			{
-				impactObject.testTriggers(BaseWorld.TOUCHED_BY_OBJECT, object.getID(), impactObject, object);
-				object.testTriggers(BaseWorld.OBJECT_TOUCH, impactObject.getID(), object, impactObject);
-			}
-			if (!through && !targetBox.isThrough())
-			{
-				return false;
-			}
+			impactObject.testTriggers(BaseWorld.TOUCHED_BY_OBJECT, object.getID(), impactObject, object);
+			object.testTriggers(BaseWorld.OBJECT_TOUCH, impactObject.getID(), object, impactObject);
 		}
-
-		return true;
+		return !(through || otherMask.isThrough());
 	}
 	
 	@Override

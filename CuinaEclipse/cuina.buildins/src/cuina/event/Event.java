@@ -40,6 +40,7 @@ public final class Event implements Serializable
 		if (event == null)
 		{
 			event = new Event(name);
+			event.addToCache();
 		}
 		return event;
 	}
@@ -47,7 +48,6 @@ public final class Event implements Serializable
 	private Event(String name)
 	{
 		this.name = name;
-		addToCache();
 	}
 	
 	private void addToCache()

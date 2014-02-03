@@ -18,9 +18,9 @@ import java.util.Set;
 
 public class BaseObject implements Serializable, Upgradeable, CuinaObject
 {
-	public static final int PERSISTENT_OFFSET = 100000;
-	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -5435193188062906672L;
+
+	public static final int PERSISTENT_OFFSET = 1_000_000;
 	
 	private int id = -1;
 	private String name;
@@ -174,10 +174,7 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 		{
 			if (trigger.isActive() && trigger.test(event, eventArg))
 			{
-				Object[] newArgs = new Object[callArgs.length + 1];
-				newArgs[0] = this;
-				System.arraycopy(callArgs, 0, newArgs, 1, callArgs.length);
-				trigger.run(newArgs);
+				trigger.run(callArgs);
 			}
 		}
 	}
@@ -215,6 +212,15 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 	{
 		return extensions.keySet();
 	}
+	
+	public void removeExtension(String key)
+	{
+		Object obj = extensions.remove(key);
+		if (obj instanceof LifeCycle)
+		{
+			((LifeCycle) obj).dispose();
+		}
+	}
 
 	@Override
 	public void update()
@@ -223,6 +229,7 @@ public class BaseObject implements Serializable, Upgradeable, CuinaObject
 		{
 			ext.update();
 		}
+		testTriggers(BaseWorld.OBJECT_UPDATE, null, this);
 	}
 
 	@Override

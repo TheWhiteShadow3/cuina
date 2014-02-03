@@ -28,8 +28,8 @@
 	def newGame(game)
 		Cuina.new_scene("Map")
 		#Audio.play_bgm(1, "bgm/spring.mp3")
-		Map.load_map(&quot;schule&quot;)
-		Map.follow(100001)
+		Map.load_map(&quot;Schule&quot;)
+		Map.follow(1000001)
 		
 		#party = Java::CuinaActor::ActorGroup.new
 		#actor = Java::CuinaKs::ActorFactory.createActor("Alice", 1, 1)

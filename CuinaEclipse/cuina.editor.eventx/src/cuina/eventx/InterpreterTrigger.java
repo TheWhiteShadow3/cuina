@@ -7,7 +7,8 @@ import cuina.event.Trigger;
 /**
  * Ein Trigger für den Interpreter.
  * <p>
- * Per Default sucht der Trigger den Interpreter im SessionKontext unter "Interpreter".
+ * Per Default wird die globale Instanz des Interpreters benutzt
+ * welche im globalen Kontext unter "Interpreter" liegt.
  * </p>
  * @author TheWhiteShadow
  */
@@ -29,10 +30,15 @@ public class InterpreterTrigger implements Trigger
         return key;
     }
 
+	public void setKey(String key)
+	{
+		this.key = key;
+	}
+	
 	@Override
 	public void run(Object... args)
 	{
-		// Dummy
+		// dummy
 	}
 
 	public void setEvent(Event event)
@@ -44,10 +50,10 @@ public class InterpreterTrigger implements Trigger
 	{
 		this.eventArg = eventArg;
 	}
-
-	public void setKey(String key)
+	
+	public Object getEventArg()
 	{
-		this.key = key;
+		return eventArg;
 	}
 
 	public Event getEvent()
@@ -55,21 +61,20 @@ public class InterpreterTrigger implements Trigger
 		return event;
 	}
 
-	public Object getEventArg()
-	{
-		return eventArg;
-	}
-
 	@Override
 	public boolean isActive()
 	{
 		return active;
 	}
+	
+	public void setActive(boolean active)
+	{
+		this.active = active;
+	}
 
 	@Override
 	public boolean test(Event event, Object arg)
 	{
-		return (isActive() && this.event.equals(event) &&
-				(eventArg == null || eventArg.equals(arg)));
+		return (this.event.equals(event) && (eventArg == null || eventArg.equals(arg)));
 	}
 }

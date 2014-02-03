@@ -1,11 +1,12 @@
 package cuina.map;
 
+import cuina.animation.Model;
 import cuina.graphics.Graphics;
 import cuina.graphics.Image;
 import cuina.graphics.Images;
 import cuina.graphics.Sprite;
-import cuina.util.LoadingException;
 import cuina.util.Rectangle;
+import cuina.world.CuinaModel;
 import cuina.world.CuinaObject;
 
 import java.util.HashMap;
@@ -21,7 +22,6 @@ public class DebugPanel
 	private GameMap map;
 	private Sprite[][] mapSprites;
 	private final HashMap<Integer, Sprite> objectSprites = new HashMap<Integer, Sprite>();
-	private final HashMap<Integer, Sprite> mapAreaSprites = new HashMap<Integer, Sprite>();
 	private Sprite[] CSAreaSprites;
 	
 	private static int tileSize;
@@ -52,69 +52,10 @@ public class DebugPanel
 		tileSize = map.getTileSize();
 		
 		createCollisionMap();
-		createCollisionMask();
 		createCollisionAreas();
-		createMapAreas();
+		createObjects();
 		
 		update0();
-	}
-	
-	private void createMapAreas()
-	{
-		for(Integer key : map.getAreas().keySet())
-		{
-			createMapAreaSprite(map.getArea(key));
-		}
-	}
-	
-	private void createCollisionAreas()
-	{
-		CSAreaSprites = new Sprite[map.getCollisionSystem().areaCount()];
-		
-		for(int i = 0; i < CSAreaSprites.length; i++)
-		{
-			createCollisionAreaSprite(i);
-		}
-	}
-	
-	private void createMapAreaSprite(CuinaObject area)
-	{
-		CollisionBox box = (CollisionBox) area.getExtension("Box");
-		if (box == null) return;
-		
-		Rectangle bounds = box.getBounds();
-		Sprite sprite = new DebugSprite(bounds.width, bounds.height, new Color(255, 255, 0, 128), true);
-		sprite.setOX(-area.getX());
-		sprite.setOY(-area.getY());
-//		sprite.setX(area.getX() - map.getScrollX());
-//		sprite.setX(area.getY() - map.getScrollY());
-		sprite.setX(area.getX());
-		sprite.setX(area.getY());
-		sprite.setDepth(999);
-		mapAreaSprites.put(area.getID(), sprite);
-	}
-	
-	private void createCollisionAreaSprite(int index)
-	{
-		Rectangle rect = map.getCollisionSystem().getArea(index);
-		Sprite sprite = new DebugSprite(rect.width, rect.height, new Color(255, 0, 0), false);
-		sprite.setOX(-rect.x);
-		sprite.setOY(-rect.y);
-//		sprite.setX(-map.getScrollX());
-//		sprite.setX(-map.getScrollY());
-		sprite.setDepth(1000);
-		CSAreaSprites[index] = sprite;
-	}
-
-	private static Image getCollisionImage()
-	{
-		if (cMaskImage == null)
-		{
-			cMaskImage = Images.createImage(tileSize, tileSize);
-			cMaskImage.setColor(new Color(0, 0, 0, 176));
-			cMaskImage.drawRect(0, 0, cMaskImage.getWidth(), cMaskImage.getHeight(), true);
-		}
-		return cMaskImage;
 	}
 	
 	private void createCollisionMap()
@@ -131,15 +72,10 @@ public class DebugPanel
 				short s = map.isTilePassable(x, y);
 				if (s == 0) continue;
 				if (s == -1)
-				{
 					sprite = new DebugSprite();
-				}
 				else
-				{
 					sprite = new DebugSprite(map, s);
-				}
-//				sprite.setX(x * map.getTileSize() - map.getScrollX());
-//				sprite.setY(y * map.getTileSize() - map.getScrollY());
+				
 				sprite.setX(x * map.getTileSize());
 				sprite.setY(y * map.getTileSize());
 				sprite.setDepth((int)sprite.getY() + 1);
@@ -149,33 +85,84 @@ public class DebugPanel
 		}
 	}
 	
-	private void createCollisionMask()
+	private void createObjects()
 	{
-		CuinaObject object;
-		for(Integer key : map.getObjectIDs())
+		for (Integer key : map.getObjectIDs())
 		{
-			object = map.getObject(key);
+			CuinaObject object = map.getObject(key);
 			CollisionBox box = (CollisionBox) object.getExtension(CollisionBox.EXTENSION_KEY);
-			if (box != null)
-			{
-				createCMaskSprite(object, box);
-			}
+			if (box == null) continue;
+			
+			createObjectSprite(object, box);
 		}
 	}
 	
-	private void createCMaskSprite(CuinaObject object, CollisionBox box)
+	private void createObjectSprite(CuinaObject object, CollisionBox box)
 	{
 		Rectangle bounds = box.getBounds();
-		Sprite sprite = new DebugSprite();
-//		sprite.ox = -bounds.x;
-//		sprite.oy = -bounds.y;
-//		sprite.x = box.x - map.getScrollX();
-//		sprite.y = box.y - map.getScrollY();
-//		sprite.z = sprite.y + map.getTileSize();
-		sprite.setZoomX((bounds.width) / (float)cMaskImage.getWidth());
-		sprite.setZoomY((bounds.height) / (float)cMaskImage.getHeight());
+		if (bounds.isEmpty()) return;
+		
+		Color color;
+		Model model = (Model) object.getExtension(CuinaModel.EXTENSION_KEY);
+		if (model != null)
+			color = new Color(0, 0, 0, 176);
+		else
+			color = new Color(255, 255, 0, 176);
+		
+		Sprite sprite = new DebugSprite(bounds.width, bounds.height, color, true);
+//		sprite.setOX(-object.getX());
+//		sprite.setOY(-object.getY());
+		sprite.setX(object.getX());
+		sprite.setY(object.getY());
+		sprite.setDepth(999);
 		objectSprites.put(object.getID(), sprite);
 	}
+	
+	private void createCollisionAreas()
+	{
+		CSAreaSprites = new Sprite[map.getCollisionSystem().areaCount()];
+		
+		for(int i = 0; i < CSAreaSprites.length; i++)
+		{
+			createCollisionAreaSprite(i);
+		}
+	}
+	
+	private void createCollisionAreaSprite(int index)
+	{
+		Rectangle rect = map.getCollisionSystem().getArea(index);
+		Sprite sprite = new DebugSprite(rect.width, rect.height, new Color(255, 0, 0), false);
+		sprite.setOX(-rect.x);
+		sprite.setOY(-rect.y);
+		sprite.setDepth(1000);
+		CSAreaSprites[index] = sprite;
+	}
+
+	private static Image getCollisionImage()
+	{
+		if (cMaskImage == null)
+		{
+			cMaskImage = Images.createImage(tileSize, tileSize);
+			cMaskImage.setColor(new Color(0, 0, 0, 176));
+			cMaskImage.drawRect(0, 0, cMaskImage.getWidth(), cMaskImage.getHeight(), true);
+		}
+		return cMaskImage;
+	}
+
+//	private void createCMaskSprite(CuinaObject object, CollisionBox box, Color color)
+//	{
+//		Rectangle bounds = box.getBounds();
+//		Sprite sprite = new DebugSprite();
+//		sprite.getImage().setColor(color);
+////		sprite.ox = -bounds.x;
+////		sprite.oy = -bounds.y;
+////		sprite.x = box.x - map.getScrollX();
+////		sprite.y = box.y - map.getScrollY();
+////		sprite.z = sprite.y + map.getTileSize();
+//		sprite.setZoomX((bounds.width) / (float)cMaskImage.getWidth());
+//		sprite.setZoomY((bounds.height) / (float)cMaskImage.getHeight());
+//		objectSprites.put(object.getID(), sprite);
+//	}
 	
 	private void update0()
 	{
@@ -200,21 +187,19 @@ public class DebugPanel
 		for(Integer key : map.getObjectIDs())
 		{
 			object = map.getObject(key);
-			sprite = objectSprites.get(key);
 			CollisionBox box = (CollisionBox) object.getExtension(CollisionBox.EXTENSION_KEY);
-			if (box != null)
+			if (box == null) continue;
+			
+			sprite = objectSprites.get(key);
+			if (sprite == null)
 			{
-				if (sprite == null)
-				{
-					createCMaskSprite(object, box);
-					return;
-				}
-				
-				Rectangle bounds = box.getRectangle();
-				sprite.setX(bounds.x);
-				sprite.setY(bounds.y);
-				sprite.setDepth((int) sprite.getY() + map.getTileSize());
+				createObjectSprite(object, box);
+				continue;
 			}
+			Rectangle bounds = box.getRectangle();
+			sprite.setX(bounds.x);
+			sprite.setY(bounds.y);
+			sprite.setDepth((int) sprite.getY() + map.getTileSize());
 		}
 		
 		Iterator<Integer> itr = objectSprites.keySet().iterator();
@@ -256,7 +241,6 @@ public class DebugPanel
 		map = null;
 		Graphics.disposeGraphics(mapSprites);
 		Graphics.disposeGraphics(objectSprites);
-		Graphics.disposeGraphics(mapAreaSprites);
 		Graphics.disposeGraphics(CSAreaSprites);
 		cMaskImage.dispose();
 		cMaskImage = null;

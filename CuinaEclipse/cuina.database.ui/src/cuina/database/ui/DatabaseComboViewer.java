@@ -34,6 +34,12 @@ public class DatabaseComboViewer<E extends DatabaseObject> extends ComboViewer
 		return (E) obj;
 	}
 	
+	public void setSelectedElement(Object obj)
+	{
+		if (obj == null) obj = NULL;
+		setSelection(new StructuredSelection(obj));
+	}
+	
 	public void setSelection(DataTable<E> table, String key)
 	{
 		setTable(table);

@@ -40,7 +40,6 @@
               <width>24</width>
               <height>16</height>
               <through>false</through>
-              <calculationType>0</calculationType>
               <alphaMask>1</alphaMask>
             </cuina.map.BoxData>
           </entry>
@@ -49,7 +48,7 @@
           <cuina.eventx.InterpreterTrigger>
 		  <event serialization="custom">
 		    <cuina.event.Event>
-		      <string>cuina.map.object.ActionByPlayer</string>
+		      <string>cuina.rpg.ActionByPlayer</string>
 		    </cuina.event.Event>
 		  </event>
             <key>test</key>
@@ -91,7 +90,6 @@
               <width>24</width>
               <height>32</height>
               <through>false</through>
-              <calculationType>0</calculationType>
               <alphaMask>0</alphaMask>
             </cuina.map.BoxData>
           </entry>
@@ -100,10 +98,10 @@
           <cuina.eventx.InterpreterTrigger>
 		  <event serialization="custom">
 		    <cuina.event.Event>
-		      <string>cuina.map.object.ActionByPlayer</string>
+		      <string>cuina.rpg.ActionByPlayer</string>
 		    </cuina.event.Event>
 		  </event>
-            <key>left_door_out</key>
+            <key>door_outside</key>
             <active>true</active>
           </cuina.eventx.InterpreterTrigger>
         </triggers>
@@ -142,7 +140,6 @@
               <width>24</width>
               <height>32</height>
               <through>false</through>
-              <calculationType>0</calculationType>
               <alphaMask>0</alphaMask>
             </cuina.map.BoxData>
           </entry>
@@ -151,10 +148,10 @@
           <cuina.eventx.InterpreterTrigger>
 		  <event serialization="custom">
 		    <cuina.event.Event>
-		      <string>cuina.map.object.ActionByPlayer</string>
+		      <string>cuina.rpg.ActionByPlayer</string>
 		    </cuina.event.Event>
 		  </event>
-            <key>right_door_out</key>
+            <key>door_outside</key>
             <active>true</active>
           </cuina.eventx.InterpreterTrigger>
         </triggers>

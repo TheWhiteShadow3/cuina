@@ -1,33 +1,25 @@
-package cuina.database.ui.properties;
+package cuina.editor.ui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ICellEditorValidator;
+import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class BeanPropertyDescriptor extends PropertyDescriptor
 {
-	private Object bean;
 	private Method setter;
 	private Method getter;
 	
-	public BeanPropertyDescriptor(Object beanObj, String attribut, String displayName)
+	public BeanPropertyDescriptor(Class<?> beanClass, String attribut, String displayName)
+			throws NoSuchMethodException, SecurityException
 	{
 		super(attribut, displayName);
-		this.bean = beanObj;
-		Class c = bean.getClass();
-		try
-		{
-			this.getter = getGetter(c, attribut);
-			this.setter = getSetter(c, attribut, getter.getReturnType());
-		}
-		catch (NoSuchMethodException | SecurityException e)
-		{
-			e.printStackTrace();
-		}
+		this.getter = getGetter(beanClass, attribut);
+		this.setter = getSetter(beanClass, attribut, getter.getReturnType());
 	}
 
 	public Method getSetter()
@@ -39,39 +31,56 @@ public class BeanPropertyDescriptor extends PropertyDescriptor
 	{
 		return getter;
 	}
+	
+	public Object getValue(Object object)
+	{
+		try
+		{
+			return getter.invoke(object);
+		}
+		catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void setValue(Object object, Object value)
+	{
+		try
+		{
+			setter.invoke(object, value);
+		}
+		catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public CellEditor createPropertyEditor(Composite parent)
 	{
-		Class type = getter.getReturnType();
+		final Class type = getter.getReturnType();
 		if (!type.isPrimitive() && type != String.class) return null;
 		
+		if (type == boolean.class) return new CheckboxCellEditor(parent);
+		
 		TextCellEditor editor = new TextCellEditor(parent);
-		if (type == String.class)
-			return editor;
-		if (type == int.class || type == long.class)
-			editor.setValidator(new ICellEditorValidator()
-			{
-				@Override
-				public String isValid(Object value)
-				{
-					if (value == null) return "value is null!";
-					if (!(value instanceof String)) return null;
-					String txt = (String) value;
-					try
-					{
-						Double.parseDouble(txt);
-					}
-					catch (NumberFormatException e)
-					{
-						return value + " is not valid!";
-					}
-					return null;
-				}
-			});
+		if (type == String.class) return editor;
+		
+		if (isNumeric(type))
+		{
+			editor.setValidator(new NumberValidator(type));
+		}
 		return editor;
 	}
 	
+	private boolean isNumeric(Class type)
+	{
+		return (type == byte.class || type == short.class || type == int.class ||
+				type == long.class || type == float.class || type == double.class);
+	}
+
 	private Method getSetter(Class c, String field, Class type) throws NoSuchMethodException, SecurityException
 	{
 		return c.getMethod("set" + getUpperName(field), type);

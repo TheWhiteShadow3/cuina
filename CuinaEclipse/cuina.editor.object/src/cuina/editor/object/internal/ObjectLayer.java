@@ -493,9 +493,12 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 	
 	private ObjectData createNewObject(ObjectTemplate template)
 	{
-		ObjectData obj	= ObjectUtil.clone(template.sourceObject);
+		ObjectData obj	= new ObjectData();
 		obj.id			= getAvailableID();
 		obj.templateKey = template.getKey();
+		obj.x = template.sourceObject.x;
+		obj.y = template.sourceObject.y;
+
 		return obj;
 	}
 	

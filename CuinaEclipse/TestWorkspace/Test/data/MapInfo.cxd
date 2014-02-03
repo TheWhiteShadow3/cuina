@@ -1,6 +1,10 @@
 <cuina.database.DataTable name="MapInfo" type="cuina.map.MapInfo">
 	<cuina.map.MapInfo>
-    	<key>schule</key>
+    	<key>Schule</key>
     	<name>Schule</name>
-  	</cuina.map.MapInfo>
+	</cuina.map.MapInfo>
+	<cuina.map.MapInfo>
+    	<key>Schule_Innen</key>
+    	<name>Schule Innen</name>
+	</cuina.map.MapInfo>
 </cuina.database.DataTable>

@@ -7,4 +7,8 @@ Bundle-Vendor: Cuina
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: cuina.editor.ui,
  org.eclipse.ui,
- cuina.buildins
+ cuina.buildins,
+ cuina.editor.core
+Import-Package: org.eclipse.core.runtime;version="3.4.0",
+ org.eclipse.ui.views.properties
+Export-Package: cuina.editor.event

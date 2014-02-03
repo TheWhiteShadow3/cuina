@@ -5,7 +5,40 @@
       <width>24</width>
       <areas/>
       <key>Schule_Innen</key>
-      <objects/>
+      <objects>
+      <cuina.object.ObjectData>
+          <id>1</id>
+          <name>Tür Innen</name>
+          <x>352</x>
+          <y>432</y>
+          <z>0</z>
+          <extensions>
+            <entry>
+              <string>box</string>
+              <cuina.map.BoxData>
+                <x>0</x>
+                <y>0</y>
+                <width>64</width>
+                <height>16</height>
+                <through>true</through>
+                <alphaMask>0</alphaMask>
+              </cuina.map.BoxData>
+            </entry>
+          </extensions>
+          <triggers>
+	          <cuina.eventx.InterpreterTrigger>
+					  <event serialization="custom">
+					    <cuina.event.Event>
+					      <string>cuina.object.TouchedByObject</string>
+					    </cuina.event.Event>
+					  </event>
+	            <key>door_inside</key>
+	            <active>true</active>
+	          </cuina.eventx.InterpreterTrigger>
+          </triggers>
+          <templateKey></templateKey>
+        </cuina.object.ObjectData>
+      </objects>
       <paths/>
       <tilesetKey>Schule_Innen</tilesetKey>
     </default>

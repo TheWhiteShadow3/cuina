@@ -48,6 +48,8 @@ public class EventPlugin extends AbstractUIPlugin
 	public void start(BundleContext context) throws Exception
 	{
 		super.start(context);
+		
+		
 	}
 
 	/*
