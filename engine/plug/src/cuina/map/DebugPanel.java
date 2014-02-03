@@ -110,11 +110,9 @@ public class DebugPanel
 			color = new Color(255, 255, 0, 176);
 		
 		Sprite sprite = new DebugSprite(bounds.width, bounds.height, color, true);
-//		sprite.setOX(-object.getX());
-//		sprite.setOY(-object.getY());
 		sprite.setX(object.getX());
 		sprite.setY(object.getY());
-		sprite.setDepth(999);
+		sprite.setDepth(800);
 		objectSprites.put(object.getID(), sprite);
 	}
 	
@@ -134,7 +132,7 @@ public class DebugPanel
 		Sprite sprite = new DebugSprite(rect.width, rect.height, new Color(255, 0, 0), false);
 		sprite.setOX(-rect.x);
 		sprite.setOY(-rect.y);
-		sprite.setDepth(1000);
+		sprite.setDepth(900);
 		CSAreaSprites[index] = sprite;
 	}
 

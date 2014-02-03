@@ -111,7 +111,7 @@ public class Panorama extends Sprite
 		this.x -= speedX;
 		this.y -= speedY;
 		
-		View view = Graphics.getCurrentView();
+		View view = View.getCurrent();
 		float width  = image.getWidth()  * zoomX;
 		float height = image.getHeight() * zoomY;
 		float realX  = ((this.x + view.x) * scrollFactor) / width;

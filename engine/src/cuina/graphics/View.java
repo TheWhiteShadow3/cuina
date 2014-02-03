@@ -7,6 +7,8 @@ import cuina.world.CuinaObject;
 
 public class View
 {
+	transient private static View currentView;
+	
 	public int x;
 	public int y;
 	public int width;
@@ -46,6 +48,11 @@ public class View
 	
 	public void draw()
 	{
+		draw(false, false);
+	}
+	
+	public void draw(boolean flipH, boolean flipV)
+	{
 		if (!visible) return;
 		
 		glViewport(port.x, port.y, port.width, port.height);
@@ -63,17 +70,22 @@ public class View
 		else
 		{
 			// left, right, bottom, top, Zfar, Znear
-			glOrtho(x, x + width, y + height, y, -500, 500);
+			if (flipV)
+				glOrtho(x, x + width, y, y + height, -500, 500);
+			else
+				glOrtho(x, x + width, y + height, y, -500, 500);
 			glDisable(GL_DEPTH_TEST);
 		}
 		
 		GLCache.setMatrix(GL_MODELVIEW);
 		glLoadIdentity();
 
+		currentView = this;
 		if (graphic != null)
 			graphic.draw();
 		else
 			Graphics.GraphicManager.draw();
+		currentView = null;
 	}
 	
 	public void scroll()
@@ -105,5 +117,19 @@ public class View
 			this.x = Math.max(border.x, Math.min(tx, border.width - width));
 			this.y = Math.max(border.y, Math.min(ty, border.height - height));
 		}
+	}
+	
+	/**
+	 * Gibt den aktuellen View zurück, der gezeichnet wird.
+	 * <p>
+	 * Die Methode gibt nur innerhalb der Zeichenroutine im aktuellen Thread ein View-Objekt zurück.
+	 * Außerhalb davon ist der Rückgabewert immer <code>null</code>.
+	 * </p>
+	 * @return Der aktuelle View.
+	 */
+	public static View getCurrent()
+	{
+		if (Graphics.getGraphicThread() != Thread.currentThread()) return null;
+		return currentView;
 	}
 }

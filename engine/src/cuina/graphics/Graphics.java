@@ -72,7 +72,6 @@ public final class Graphics
 	transient private static Shader renderShader;
 	transient private static Shader currentShader;
 	transient private static Thread graphicThread;
-	transient private static View currentView;
 		
 	private Graphics() {}
 	
@@ -243,7 +242,7 @@ public final class Graphics
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		
-		glEnable(GL_CULL_FACE);
+//		glEnable(GL_CULL_FACE);
 		
 		// Setze Funktionen
 		glAlphaFunc(GL_GREATER, 0f);
@@ -442,10 +441,8 @@ public final class Graphics
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		for (View view : VIEWS)
 		{
-			currentView = view;
 			view.draw();
 		}
-		currentView = null;
 	    
 //		GraphicManager.draw();
 //		D3D.set3DView(true);
@@ -461,20 +458,6 @@ public final class Graphics
 //        GL11.glPopMatrix();
 		
 		Display.update();
-	}
-	
-	/**
-	 * Gibt den aktuellen View zurück, der gezeichnet wird.
-	 * <p>
-	 * Die Methode gibt nur innerhalb der Zeichenroutine im aktuellen Thread ein View-Objekt zurück.
-	 * Außerhalb davon ist der Rückgabewert immer <code>null</code>.
-	 * </p>
-	 * @return Der aktuelle View.
-	 */
-	public static View getCurrentView()
-	{
-		if (graphicThread != Thread.currentThread()) return null;
-		return currentView;
 	}
 	
 	public static Graphics getInstance()

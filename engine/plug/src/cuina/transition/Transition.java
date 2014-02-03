@@ -2,6 +2,7 @@ package cuina.transition;
 
 import cuina.Game;
 import cuina.eventx.EventMethod;
+import cuina.eventx.Interpreter.Result;
 import cuina.graphics.GLCache;
 import cuina.graphics.Graphics;
 import cuina.graphics.Image;
@@ -25,12 +26,14 @@ public class Transition implements Plugin, LifeCycle
 	
 	transient private TransitionSprite sprite;
 	
-	public static final int NONE  		= 0;
-	public static final int FREEZE_WORLD = 1;
+	public static final int NONE  			= 0;
+	public static final int WAIT			= 1;
+	public static final int FREEZE_WORLD 	= 2;
 	
-	private static final int FADE_IN  	= 2;
-	private static final int FADE_OUT  	= 4;
-	private static final int COLORIZE  	= 8;
+	private static final int FADE_IN  		= 4;
+	private static final int FADE_OUT  		= 8;
+	private static final int FADE_SCREEN  	= 16;
+	private static final int COLORIZE  		= 32;
 	
 	private int flags;
 
@@ -66,25 +69,50 @@ public class Transition implements Plugin, LifeCycle
 		sprite.dispose();
 	}
 	
-	public boolean fadeOut(int duration, int flags)
+	@EventMethod
+	public Result fadeOut(int duration, int flags)
 	{
 		this.flags = FADE_OUT | flags;
-		sprite.setColor(Color.BLACK, duration);
+		
+		if ((flags & FADE_SCREEN) != 0)
+		{
+			sprite.setColor(Color.WHITE, 0);
+			createScreenShot(0);
+			this.flags |= WAIT;
+			duration = 1;
+		}
+		else
+		{
+			sprite.setColor(Color.BLACK, duration);
+		}
 		System.out.println("Start fade out. Frames: + " + duration);
 		
-		if ((flags & FREEZE_WORLD) != 0) stopWorld();
-		return true;
+		return getInterpreterResult(duration, this.flags);
 	}
 	
-	public boolean fadeIn(int duration, int flags)
+	@EventMethod
+	public Result fadeIn(int duration, int flags)
 	{
 		this.flags = FADE_IN | flags;
-		sprite.setColor(Color.BLACK, 0);
+//		sprite.setColor(Color.BLACK, 0);
 		sprite.setColor(Image.COLOR_TRANSPARENT, duration);
 		System.out.println("Start fade in. Frames: + " + duration);
 		
-		if ((flags & FREEZE_WORLD) != 0) stopWorld();
-		return true;
+		return getInterpreterResult(duration, this.flags);
+	}
+	
+	private Result getInterpreterResult(int duration, int flags)
+	{
+		if ((flags & WAIT) != 0)
+		{
+			return new Result(duration, 0, false);
+		}
+		else if ((flags & FREEZE_WORLD) != 0)
+		{
+			stopWorld();
+			return Result.WAIT_ONE_FRAME;
+		}
+		else return Result.DEFAULT;
 	}
 	
 	@EventMethod
@@ -109,6 +137,11 @@ public class Transition implements Plugin, LifeCycle
 	{
 		CuinaWorld world = Game.getWorld();
 		if (world != null) world.setFreeze(false);
+	}
+	
+	private void createScreenShot(int viewID)
+	{
+		sprite.getImage().drawView(viewID, 0, 0);
 	}
 	
 	static class TransitionSprite extends Sprite
@@ -153,7 +186,7 @@ public class Transition implements Plugin, LifeCycle
 		
 		private static Image createImage()
 		{
-			Image image = Images.createImage(Graphics.getWidth()+100, Graphics.getHeight()+100);
+			Image image = Images.createImage(Graphics.getWidth(), Graphics.getHeight());
 			image.clear(ReadableColor.WHITE);
 			image.setColor(Image.COLOR_TRANSPARENT);
 			return image;
@@ -178,7 +211,7 @@ public class Transition implements Plugin, LifeCycle
 		@Override
 		protected void render(Image image)
 		{
-			View view = Graphics.getCurrentView();
+			View view = View.getCurrent();
 			GLCache.setMatrix(GL11.GL_MODELVIEW);
 			GL11.glTranslatef(view.x, view.y, 0);
 			super.render(image);

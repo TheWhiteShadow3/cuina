@@ -160,7 +160,7 @@ public class WidgetContainer implements Graphic
 	{
 		if (gui != null)
 		{
-			View view = Graphics.getCurrentView();
+			View view = View.getCurrent();
 			renderer.setViewport(0, 0, view.width, view.height);
 			
 			root.update();

@@ -104,6 +104,17 @@ public class RenderJob
 		Graphics.renderJobs.add(job);
 		return job;
 	}
+
+	public static RenderJob addView(Image owner, int viewID, int x, int y)
+	{
+		RenderJob job = new RenderJob(owner);
+		job.type = VIEW;
+		job.x1 = x;
+		job.y1 = y;
+		job.data = Graphics.VIEWS.get(viewID);
+		Graphics.renderJobs.add(job);
+		return job;
+	}
 	
 	public void render()
 	{
@@ -267,8 +278,8 @@ public class RenderJob
 		View view = (View) data;
 		Texture tex = owner.getTexture();
 		
-		view.port.set(0, 0, tex.getSourceWidth(), tex.getSourceHeight());
-		view.draw();
+		view.port.set(x1, y1, tex.getSourceWidth(), tex.getSourceHeight());
+		view.draw(false, true);
 	}
 
 	@Override

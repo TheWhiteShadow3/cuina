@@ -165,6 +165,15 @@
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>GLOBAL:Transition</target>
+        <name>fadeOut</name>
+        <args>
+          <int>60</int>
+          <int>17</int>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
     	<cuina.eventx.Command>
         <target>SESSION:World</target>
         <name>load</name>
@@ -184,12 +193,30 @@
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>GLOBAL:Transition</target>
+        <name>fadeIn</name>
+        <args>
+          <int>60</int>
+          <int>0</int>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
     </commands>
   </cuina.eventx.CommandList>
   <cuina.eventx.CommandList>
     <key>door_inside</key>
     <name>Tür Innen</name>
     <commands>
+      <cuina.eventx.Command>
+        <target>GLOBAL:Transition</target>
+        <name>fadeOut</name>
+        <args>
+          <int>60</int>
+          <int>17</int>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
     	<cuina.eventx.Command>
         <target>SESSION:World</target>
         <name>load</name>
@@ -206,6 +233,15 @@
           <float>416</float>
           <float>336</float>
 					<float>270</float>
+        </args>
+        <indent>0</indent>
+      </cuina.eventx.Command>
+      <cuina.eventx.Command>
+        <target>GLOBAL:Transition</target>
+        <name>fadeIn</name>
+        <args>
+          <int>60</int>
+          <int>0</int>
         </args>
         <indent>0</indent>
       </cuina.eventx.Command>

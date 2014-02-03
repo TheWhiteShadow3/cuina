@@ -326,6 +326,13 @@ public class Image
 		RenderJob.addText(this, x, y, width, text, align);
 	}
 	
+	public void drawView(int viewID, int x, int y)
+	{
+		if (viewID == -1) return;
+		
+		RenderJob.addView(this, viewID, x, y);
+	}
+	
 	/**
 	 * Gibt die prozentuale X-Position des Bildausschnitts auf der Textur zurück.
 	 * @return prozentuale X-Position des Bildausschnitts.
