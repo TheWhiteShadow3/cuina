@@ -157,6 +157,66 @@
           name="Map Resize">
     </command>
  </extension>
+ <extension
+       point="cuina.eventx.functions">
+    <function
+          categoryID="cuina.map.category.Karte"
+          contextID="cuina.map.GameMap"
+          label="Lade Karte"
+          name="load"
+          return="void">
+       <argument
+             label="Kartenname"
+             type="id:MapInfo">
+       </argument>
+    </function>
+    <function
+          categoryID="cuina.map.category.Karte"
+          contextID="cuina.map.MapUtil"
+          description="Bewegt ein Objekt."
+          label="Bewege Objekt"
+          name="moveObject"
+          return="void">
+       <argument
+             label="Object"
+             type="cuina.world.CuinaObject">
+       </argument>
+       <argument
+             label="Richtung"
+             type="float">
+       </argument>
+       <argument
+             label="Distanz"
+             type="float">
+       </argument>
+       <argument
+             label="Umdrehen"
+             type="boolean">
+       </argument>
+    </function>
+ </extension>
+ <extension
+       point="cuina.eventx.categories">
+    <category
+          icon="icons/map.png"
+          id="cuina.map.category.Karte"
+          label="Karte">
+    </category>
+ </extension>
+ <extension
+       point="cuina.eventx.contexts">
+    <context
+          class="cuina.map.MapUtil"
+          id="cuina.map.MapUtil"
+          type="STATIC">
+    </context>
+    <context
+          class="cuina.map.GameMap"
+          id="cuina.map.GameMap"
+          name="Map"
+          type="GLOBAL">
+    </context>
+ </extension>
  <!--extension     description="Wählt ein Editor-Werkzeug aus."
           id="cuina.editor.map.tool"
           name="Werkzeug">

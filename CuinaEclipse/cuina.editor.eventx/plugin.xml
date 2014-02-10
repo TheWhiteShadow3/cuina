@@ -3,8 +3,8 @@
 <plugin>
    <extension-point id="cuina.eventx.types" name="cuina.eventx.types" schema="schema/cuina.eventx.types.exsd"/>
    <extension-point id="cuina.eventx.functions" name="cuina.eventx.functions" schema="schema/cuina.eventx.functions.exsd"/>
-   <extension-point id="cuina.eventx.contexts" name="cuina.eventx.contexts" schema="schema/cuina.eventx.contexts.exsd"/>
    <extension-point id="cuina.eventx.categories" name="cuina.eventx.categories" schema="schema/cuina.eventx.categories.exsd"/>
+   <extension-point id="cuina.eventx.contexts" name="cuina.eventx.contexts" schema="schema/cuina.eventx.contexts.exsd"/>
    <extension
          point="cuina.database.types">
       <database
@@ -91,8 +91,7 @@
             contextID="cuina.eventx.TestContext"
             description="Demo Funktion. Tut nichts und gibt es nicht einmal."
             label="Methode 1"
-            name="doThings"
-            static="false">
+            name="doThings">
          <argument
                fixed="10"
                label="Anzahl"
@@ -117,8 +116,7 @@
             description="Setzt den Namen vom Nahichtenfenster."
             label="Setze Name"
             name="setName"
-            return="void"
-            static="false">
+            return="void">
          <argument
                label="Name"
                type="string">
@@ -130,8 +128,7 @@
             description="Zeigt eine Nachicht im Nachichtenfenster an."
             label="Zeige Nachicht"
             name="showMessage"
-            return="void"
-            static="false">
+            return="void">
          <argument
                label="Text"
                type="string">
@@ -143,8 +140,7 @@
             description="Setzt den Avatar vom Nahichtenfenster "
             label="setze Avatar"
             name="setFaceImage"
-            return="void"
-            static="false">
+            return="void">
          <argument
                label="Image"
                type="string">
@@ -156,23 +152,117 @@
             description="Zeigt eine Auswahl im Nachichtenfenster an."
             label="Zeige Auswahl"
             name="showChoise"
-            return="void"
-            static="false">
+            return="void">
          <argument
                label="Auswahl"
                type="string[]">
          </argument>
       </function>
+      <function
+            categoryID="cuina.editor.eventx.Internal"
+            contextID="cuina.editor.eventx.Internal"
+            description="Wartet eine Anzahl von Frames."
+            label="Warten"
+            name="wait"
+            return="void">
+         <argument
+               label="Frame-Anzahl"
+               type="int">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.editor.eventx.Internal"
+            contextID="cuina.editor.eventx.Internal"
+            description="Überspringt eine Anzahl von Befehlen."
+            label="Überspringen"
+            name="skip"
+            return="void">
+         <argument
+               label="Befehlsanzahl"
+               type="int">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.editor.eventx.Internal"
+            contextID="cuina.editor.eventx.Internal"
+            description="Führt den nachfolgenden Block nur aus, wenn die Bedingung erfüllt ist."
+            label="Bedingung"
+            name="if"
+            return="boolean">
+         <argument
+               label="Bedingung"
+               type="string">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.editor.eventx.Internal"
+            contextID="cuina.editor.eventx.Internal"
+            description="Führt den nachfolgenden Block so lange aus, wie die Bedingung erfüllt ist."
+            label="Schleife"
+            name="while"
+            return="boolean">
+         <argument
+               label="Bedingung"
+               type="string">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.editor.eventx.Internal"
+            contextID="cuina.editor.eventx.Internal"
+            description="Springt zum angegebenen Befehl."
+            label="Springen"
+            name="goto"
+            return="void">
+         <argument
+               label="Befehl"
+               type="cmd">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.editor.eventx.Internal"
+            contextID="cuina.editor.eventx.Internal"
+            description="Hält den Interpreter an."
+            label="Stop"
+            name="stop"
+            return="void">
+      </function>
+      <function
+            categoryID="cuina.editor.eventx.Internal"
+            contextID="cuina.editor.eventx.Internal"
+            description="Ruft ein neues Ereignis auf."
+            label="Ereignis"
+            name="call"
+            return="void">
+         <argument
+               label="Event"
+               type="string">
+         </argument>
+      </function>
+      <function
+            categoryID="cuina.editor.eventx.Internal"
+            contextID="cuina.editor.eventx.Internal"
+            description="Falls das Ereignis von einem Auslöser aufgerufen wurde, wird dieser deaktiviert."
+            label="Auslöser deaktivieren"
+            name="disableTrigger"
+            return="void">
+      </function>
    </extension>
    <extension
          point="cuina.eventx.categories">
       <category
-            id="cuina.eventx.category.Demo"
-            label="Demo">
+            icon="icons/zahnrad.png"
+            id="cuina.editor.eventx.Internal"
+            label="Default">
       </category>
       <category
+            icon="icons/message.png"
             id="cuina.eventx.category.Messages"
             label="Nachichten">
+      </category>
+      <category
+            icon="icons/event.png"
+            id="cuina.eventx.category.Demo"
+            label="Demo">
       </category>
    </extension>
    <extension
@@ -189,7 +279,13 @@
             name="InterpreterTest"
             type="GLOBAL">
       </context>
+      <context
+            class="cuina.eventx.Interpreter"
+            id="cuina.editor.eventx.Internal"
+            type="INTERNAL">
+      </context>
    </extension>
+   
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
@@ -209,8 +305,10 @@
       <trigger
             class="cuina.eventx.InterpreterTrigger"
             description="Startet ein Interpreter-Event."
+            editorClass="cuina.editor.eventx.internal.EventTriggerEditor"
             name="Interpreter">
       </trigger>
    </extension>
+
 
 </plugin>

@@ -316,12 +316,4 @@ public class ScriptExecuter
 			this.args = args;
 		}
 	}
-	
-
-	
-//	private static class AutoCallEntry
-//	{
-//		public int waitTime;
-//		public ScriptCall call;
-//	}
 }

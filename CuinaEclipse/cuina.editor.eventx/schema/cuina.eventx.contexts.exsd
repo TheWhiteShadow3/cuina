@@ -48,25 +48,34 @@
    </element>
 
    <element name="context">
+      <annotation>
+         <documentation>
+            Der Kontext gibt an, wo eine Funktion gesucht werden soll.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Die eindeutige ID des Kontextes.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  Der Name des Elements im Kontext.
+Der Name muss angegeben werden, wenn es sich um keinen statischen Kontext handelt.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="type" use="required">
             <annotation>
                <documentation>
-                  
+                  Der Typ muss einem der Werte GLOBAl, SESSION, SCENE oder STATIC entsprechen.
+&lt;p&gt;
+Der Wert INTERNAL kennzeichnet interne Funktionen und kann nur in cuina.editor.eventx verwendet werden.
+&lt;/p&gt;
                </documentation>
             </annotation>
             <simpleType>
@@ -77,13 +86,17 @@
                   </enumeration>
                   <enumeration value="SCENE">
                   </enumeration>
+                  <enumeration value="STATIC">
+                  </enumeration>
+                  <enumeration value="INTERNAL">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Die Klasse, die im Kontext erwartet wird.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java"/>
@@ -128,5 +141,6 @@
          [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
+
 
 </schema>

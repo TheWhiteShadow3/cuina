@@ -50,6 +50,14 @@ module Cuina
 	end
 end
 
+module Event
+	include_package 'cuina.event'
+	
+	def self.get(event)
+		Event.getEvent(event)
+	end
+end
+
 module Graphics
 	include_package 'cuina.graphics'
 	@@view = Java::CuinaGraphics::Graphics::VIEWS
@@ -66,6 +74,14 @@ module Script
 		slc = ScriptLifeCycle.new(owner)
 		name = "JRuby_" + owner.class.to_s unless name
 		Cuina::InjectionManager.addObject(slc, name)
+	end
+end
+
+module Input
+	include_package 'cuina.input'
+	
+	def self.add_trigger(control, trigger)
+		Java::CuinaInput::Input.getControl(control).addTrigger(trigger)
 	end
 end
 

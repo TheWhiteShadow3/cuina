@@ -6,7 +6,9 @@ import cuina.input.Control.MouseButton;
 import cuina.input.DirectionalControl.DirectionalButton;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.input.Controllers;
@@ -34,6 +36,11 @@ public class Input
 	{
 		addControl(new Control("mouse.left", new MouseButton(MouseButton.MOUSE_LBUTTON) ));
 		addControl(new Control("mouse.right", new MouseButton(MouseButton.MOUSE_RBUTTON) ));
+		
+		addControl(new Control("left", new Key(Key.KEY_LEFT) ));
+		addControl(new Control("right", new Key(Key.KEY_RIGHT) ));
+		addControl(new Control("up", new Key(Key.KEY_UP) ));
+		addControl(new Control("down", new Key(Key.KEY_DOWN) ));
 		
 		addControl(new Control("c1", new Key(Key.KEY_SPACE), new ControllerButton(CONTROLLER_1, 1) ));
 		addControl(new Control("c2", new Key(Key.KEY_RETURN), new ControllerButton(CONTROLLER_1, 2) ));
@@ -81,14 +88,32 @@ public class Input
 			c.update();
 	}
 	
+	/**
+	 * Fügt ein neues Control hinzu.
+	 * @param control Das Control.
+	 */
 	public static void addControl(Control control)
 	{
 		controls.put(control.getName(), control);
 	}
 	
+	/**
+	 * Gibt das Control mit dem angegebenen Namen zurück.
+	 * @param name Name des Controls.
+	 * @return Das Control.
+	 */
 	public static Control getControl(String name)
 	{
 		return controls.get(name);
+	}
+	
+	/**
+	 * Gibt eine Liste aller registrierten Controls zurück.
+	 * @return Liste aller registrierten Controls.
+	 */
+	public static List<Control> getControls()
+	{
+		return new ArrayList<Control>(controls.values());
 	}
 	
 	public static boolean isPressed(String cntlName)

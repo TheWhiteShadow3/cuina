@@ -1,36 +1,31 @@
 package cuina.script;
 
-import cuina.event.Trigger;
+import cuina.database.KeyReference;
+import cuina.event.AbstractTrigger;
 import cuina.event.Event;
 
 /**
  * Die SkriptCall-Klasse stellt eine einfache Implementierung des Triggers für Skriptaktionen da.
  * @author TheWhiteShadow
  */
-public class ScriptTrigger implements Trigger
+public class ScriptTrigger extends AbstractTrigger
 {
 	private static final long serialVersionUID = 3920386985408427973L;
 	
-	public Event event;
-	public Object eventArg;
-	public String script;
-	public String main;
-	public boolean active = true;
+	@KeyReference(name="Script")
+	private String script;
+	private String main;
 
-	public ScriptTrigger(String script, String main)
+	public ScriptTrigger(Event event, String script, String main)
 	{
+		this(event, null, script, main);
+	}
+
+	public ScriptTrigger(Event event, Object arg, String script, String main)
+	{
+		super(event, arg);
 		this.script = script;
 		this.main = main;
-	}
-
-	public Event getEvent()
-	{
-		return event;
-	}
-
-	public Object getEventArg()
-	{
-		return eventArg;
 	}
 
 	public String getScript()
@@ -47,17 +42,5 @@ public class ScriptTrigger implements Trigger
 	public void run(Object... args)
 	{
 		// dummy
-	}
-
-	@Override
-	public boolean isActive()
-	{
-		return active;
-	}
-
-	@Override
-	public boolean test(Event event, Object arg)
-	{
-		return (this.event.equals(event) && (eventArg == null || eventArg.equals(arg)));
 	}
 }

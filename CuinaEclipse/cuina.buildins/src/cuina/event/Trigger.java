@@ -9,7 +9,9 @@ import java.io.Serializable;
  * @author TheWhiteShadow
  */
 public interface Trigger extends Serializable
-{	
+{
+	public void setActive(boolean value);
+	
 	/**
 	 * Gibt an, ob der Auslöser aktive ist und auf Ereignisse reagieren soll.
 	 * @return <code>true</code>, wenn der Auslöser aktiv ist andernfalls <code>false</code>.

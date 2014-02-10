@@ -42,15 +42,34 @@ public class Player implements Driver
 	{
 		handleDebugMovement();
 		
-		DirectionalControl c = (DirectionalControl) Input.getControl(CONTROL_MOVE);
-		if (c != null)
+//		DirectionalControl c = (DirectionalControl) Input.getControl(CONTROL_MOVE);
+//		if (c != null)
+//		{
+//			float dir = c.getDirection();
+//			if (dir != -1) motor.setDirection(dir);
+//			float speed = 1.5f * c.getValue();
+//			if (Input.isDown(CONTROL_RUN)) speed *= 2;
+//			motor.setSpeed(speed);
+//		}
+		
+		// DEBUG: Teste Platform-Fähigkeiten
+		
+		if (Input.isDown("left"))
 		{
-			float dir = c.getDirection();
-			if (dir != -1) motor.setDirection(dir);
-			float speed = 1.5f * c.getValue();
-			if (Input.isDown(CONTROL_RUN)) speed *= 2;
-			motor.setSpeed(speed);
+			motor.setDirection(180);
+			motor.setSpeedX(-3);
 		}
+		else if (Input.isDown("right"))
+		{
+			motor.setDirection(0);
+			motor.setSpeedX(3);
+		}
+		else
+		{
+			motor.setDirection(270);
+			motor.setSpeedX(0);
+		}
+		if (Input.isPressed("c1")) motor.setSpeedY(-30);
 		
 		handleCollisions();
 	}

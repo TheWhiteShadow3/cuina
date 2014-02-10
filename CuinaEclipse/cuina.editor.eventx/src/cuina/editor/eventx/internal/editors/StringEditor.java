@@ -9,6 +9,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import cuina.editor.eventx.internal.CommandEditorContext;
+
 public class StringEditor implements TypeEditor<String>
 {
 	private String value = "";
@@ -16,7 +18,7 @@ public class StringEditor implements TypeEditor<String>
 	private Button checkNull;
 
 	@Override
-	public void init(Object value)
+	public void init(CommandEditorContext context, Object value)
 	{
 		if (value != null)
 			this.value = (String) value;

@@ -1,5 +1,7 @@
 package cuina.editor.object;
 
+import java.util.HashMap;
+
 import cuina.database.DataTable;
 import cuina.database.DatabasePlugin;
 import cuina.editor.core.CuinaProject;
@@ -48,6 +50,8 @@ public class ObjectAdapter implements IAdaptable
 		
 		this.object = template != null ? template.sourceObject : object;
 		this.psysicalObject = object;
+		if (object.extensions == null)
+			object.extensions = new HashMap<String, Object>();
 	}
 
 	/**

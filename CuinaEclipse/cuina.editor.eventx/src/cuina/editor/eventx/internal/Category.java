@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
+
 public class Category
 {
 	public final String id;
 	public String label;
+	public Image image;
 	final List<FunctionEntry> functions = new ArrayList<FunctionEntry>();
 	
-	public Category(String id, String label)
+	public Category(String id, String label, Image image)
 	{
 		this.id = id;
 		this.label = label;
+		this.image = image;
 	}
 	
 	public FunctionEntry getFunction(String target, String name)

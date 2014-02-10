@@ -200,7 +200,7 @@ public class FixValueScriptTab implements CommandTab, Listener
 			stringInputField.setText("");
 			numberInputField.setSelection(0);
 			tableCombo.select(-1);
-			comboViewer.setSelection(null);
+			comboViewer.setSelectedElement(null);
 		}
 		else
 		{

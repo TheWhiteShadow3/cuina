@@ -65,18 +65,11 @@ public class TileMaskPanel extends Canvas implements MouseListener, MouseMoveLis
 
 	public void refreshImage()
 	{
-		if (image != null)
-		{
-			image.dispose();
-		}
 		if (tileset != null) try
 		{
 			image = ResourceManager.loadImage(project, tileset.getTilesetName());
 		}
-		catch (ResourceException e)
-		{
-			image = null;
-		}
+		catch (ResourceException e) {}
 		id = 0;
 		loadFieldData();
 	}

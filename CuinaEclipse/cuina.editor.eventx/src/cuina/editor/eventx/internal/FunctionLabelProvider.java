@@ -23,7 +23,11 @@ public class FunctionLabelProvider extends LabelProvider implements ITableLabelP
 	@Override
 	public Image getImage(Object element)
 	{
-		if (element instanceof FunctionEntry)
+		if (element instanceof Category)
+		{
+			return ((Category) element).image;
+		}
+		else if (element instanceof FunctionEntry)
 		{
 			FunctionEntry func = (FunctionEntry) element;
 			
@@ -59,7 +63,7 @@ public class FunctionLabelProvider extends LabelProvider implements ITableLabelP
 			
 			return ((Category) element).label;
 		}
-		if (element instanceof FunctionEntry)
+		else if (element instanceof FunctionEntry)
 		{
 			FunctionEntry func = (FunctionEntry) element;
 //			if (CommandLibrary.INTERNAL_CONTEXT.equals(func.parent.context))
@@ -82,7 +86,11 @@ public class FunctionLabelProvider extends LabelProvider implements ITableLabelP
 		for (int i = 0; i < func.argTypes.length; i++)
 		{
 			if (i > 0) builder.append(", ");
-			builder.append(func.argTypes[i].getSimpleName());
+			
+			if (func.argTypes[i] != null)
+				builder.append(func.argTypes[i]);
+			else
+				builder.append("???");
 		}
 		builder.append(')');
 		return builder.toString();

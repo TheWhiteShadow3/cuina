@@ -384,10 +384,9 @@ public final class Game
 		try
 		{
 			if (isModuleActive(MODULE_AUDIO)) AudioSystem.start();
-//			Graphics.start();
-			
-			callMainScript("start");
-			
+
+			if (isModuleActive(MODULE_SCRIPT)) initScriptListener();
+			fireEvent(GameEvent.START_GAME);
 			
 			if (isModuleActive(MODULE_LOOP)) FrameTimer.run();
 		}
@@ -413,8 +412,6 @@ public final class Game
 		this.session = new GameSession(sessionContext);
 		InjectionManager.loadContextObjects(Context.SESSION);
 		fireEvent(GameEvent.OPEN_SESSION);
-		
-		callMainScript("newGame");
 	}
 
 	public static GameSession loadGame(File file)
@@ -437,7 +434,6 @@ public final class Game
 		
 		newScene(session.sceneName);
 		fireEvent(GameEvent.SESSION_LOADED);
-		callMainScript("loadGame");
 	}
 	
 	public static boolean saveGame(File file)
@@ -458,7 +454,6 @@ public final class Game
 		Database.saveData(file, session);
 //		session.clearStack();
 		fireEvent(GameEvent.SESSION_SAVED);
-		callMainScript("saveGame");
 	}
 	
 	/**
@@ -469,21 +464,18 @@ public final class Game
 	{
 		Logger.log(Game.class, Logger.DEBUG, "close session");
 		getInstance().fireEvent(GameEvent.CLOSING_SESSION);
-		getInstance().callMainScript("endGame");
 		getInstance().setContext(Context.SESSION, null);
 		getInstance().session = null;
 	}
 	
 	/**
 	 * Beendet die Engine.
-	 * Diese Methode ruft die close-Methode des Main-Skripts auf und
-	 * delegiert dann den Aufruf an FrameTimer.stop() weiter.
+	 * Diese Methode benedet die aktuelle Session und ruft FrameTimer.stop() auf.
 	 */
 	public static void close()
 	{
 		if (getSession() != null) endGame();
 		getInstance().fireEvent(GameEvent.END_GAME);
-		if (!(Boolean) getInstance().callMainScript("close")) return;
 		
 		FrameTimer.stop();
 	}
@@ -501,19 +493,36 @@ public final class Game
 		Logger.log(Game.class, Logger.INFO, "Engine is terminated.");
 	}
 	
-	private Object callMainScript(String method)
+	private void initScriptListener()
 	{
-		if (!isModuleActive(MODULE_SCRIPT)) return null;
+		final String script = getProperty(MAIN_SCRIPT_KEY, null);
+		if (script == null) return;
 		
-		String script = getProperty(MAIN_SCRIPT_KEY, null);
-		if (script == null) return null;
-
-		Object[] args;
-		if ("start".equals(method) || "close".equals(method))
-			args = new Object[0];
-		else
-			args = new Object[] {instance.session};
-		return ScriptExecuter.executeDirect(script, method, args);
+		addGameListener(new GameListener()
+		{
+			@Override
+			public void gameStateChanged(GameEvent ev)
+			{
+				switch(ev.type)
+				{
+					case GameEvent.START_GAME:
+						ScriptExecuter.executeDirect(script, "start"); break;
+					case GameEvent.NEW_SCENE:
+						ScriptExecuter.executeDirect(script, "newScene", ev.scene); break;
+					case GameEvent.OPEN_SESSION:
+						ScriptExecuter.executeDirect(script, "newGame", ev.session); break;
+					case GameEvent.CLOSING_SESSION:
+						ScriptExecuter.executeDirect(script, "endGame", ev.session); break;
+					case GameEvent.SESSION_LOADED:
+						ScriptExecuter.executeDirect(script, "loadGame", ev.session); break;
+					case GameEvent.SESSION_SAVED:
+						ScriptExecuter.executeDirect(script, "saveGame", ev.session); break;
+					case GameEvent.END_GAME:
+						ScriptExecuter.executeDirect(script, "close"); break;
+					default: assert false : "Undefiniertes Spielevent. " + ev.type;
+				}
+			}
+		});
 	}
 	
 	/**

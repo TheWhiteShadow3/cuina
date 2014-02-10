@@ -13,11 +13,13 @@ public class ContextTarget
 		this.className = className;
 	}
 	
-	public String getTarget(boolean isStatic)
+	public String getTarget()
 	{
-		if (isStatic)
-			return "STATIC:" + className;
-		else
-			return type + ':' + name;
+		switch(type)
+		{
+			case CommandLibrary.INTERNAL_CONTEXT: return type;
+			case CommandLibrary.STATIC_CONTEXT: return type + ':' + className;
+			default: return type + ':' + name;
+		}
 	}
 }

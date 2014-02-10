@@ -1,5 +1,6 @@
 package cuina.editor.eventx.internal.editors;
 
+import cuina.editor.eventx.internal.CommandEditorContext;
 import cuina.editor.eventx.internal.CommandLibrary;
 
 import java.lang.reflect.Array;
@@ -28,10 +29,12 @@ public class ArrayEditor implements TypeEditor<Object>
 	private Handler handler;
 	private Button cmdNew;
 	private boolean update;
+	private CommandEditorContext context;
 	
 	@Override
-	public void init(Object value)
+	public void init(CommandEditorContext context, Object value)
 	{
+		this.context = context;
 		this.array = value;
 		this.length = Array.getLength(value);
 		this.elementClass = value.getClass().getComponentType();
@@ -58,10 +61,10 @@ public class ArrayEditor implements TypeEditor<Object>
 	
 	private void addEditor(int index)
 	{
-		TypeEditor<?> editor = CommandLibrary.newTypeEditor(elementClass);
+		TypeEditor<?> editor = CommandLibrary.newTypeEditor(elementClass.getName());
 		if (editor == null) throw new RuntimeException("Unsupported class '" + elementClass + "'.");
 		
-		editor.init(Array.get(array, index));
+		editor.init(context, Array.get(array, index));
 		
 		Group editorBlock = new Group(parent, SWT.NONE);
 		editorBlock.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

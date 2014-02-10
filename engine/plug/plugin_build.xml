@@ -154,7 +154,7 @@
 		<echo message="Deploy Plugin: Transition" />
 		<jar destfile="${deploy.dir}/cuina.transition.jar" includes="cuina/transition/**" basedir="${build.dir}">
 			<manifest>
-				<attribute name="Plugin-Classes" value="cuina.transition.Transition" />
+				<attribute name="Plugin-Classes" value="cuina.transition.Transition;cuina.transition.MirrorTest" />
 				<attribute name="Plugin-Version" value="1.0" />
 			</manifest>
 		</jar>

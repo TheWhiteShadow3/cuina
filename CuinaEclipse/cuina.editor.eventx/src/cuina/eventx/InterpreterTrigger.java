@@ -1,8 +1,8 @@
 package cuina.eventx;
 
 import cuina.database.KeyReference;
+import cuina.event.AbstractTrigger;
 import cuina.event.Event;
-import cuina.event.Trigger;
 
 /**
  * Ein Trigger für den Interpreter.
@@ -12,19 +12,27 @@ import cuina.event.Trigger;
  * </p>
  * @author TheWhiteShadow
  */
-public class InterpreterTrigger implements Trigger
+public class InterpreterTrigger extends AbstractTrigger
 {
 	private static final long serialVersionUID = 5744717666030330178L;
-	
-    private Event event = Event.NEVER;
-    private Object eventArg = null;
+
     /**
      * Der Key muss auf eine CommandList zeigen.
      */
-    @KeyReference(name="Event")
+	@KeyReference(name="Event")
     private String key;
-    private boolean active = true;
-
+    
+	public InterpreterTrigger(Event event)
+	{
+		super(event);
+	}
+	
+	public InterpreterTrigger(Event event, Object arg, String key)
+	{
+		super(event, arg);
+		this.key = key;
+	}
+    
     public String getKey()
     {
         return key;
@@ -39,42 +47,5 @@ public class InterpreterTrigger implements Trigger
 	public void run(Object... args)
 	{
 		// dummy
-	}
-
-	public void setEvent(Event event)
-	{
-		this.event = event;
-	}
-
-	public void setEventArg(Object eventArg)
-	{
-		this.eventArg = eventArg;
-	}
-	
-	public Object getEventArg()
-	{
-		return eventArg;
-	}
-
-	public Event getEvent()
-	{
-		return event;
-	}
-
-	@Override
-	public boolean isActive()
-	{
-		return active;
-	}
-	
-	public void setActive(boolean active)
-	{
-		this.active = active;
-	}
-
-	@Override
-	public boolean test(Event event, Object arg)
-	{
-		return (this.event.equals(event) && (eventArg == null || eventArg.equals(arg)));
 	}
 }

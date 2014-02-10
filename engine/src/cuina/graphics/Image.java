@@ -57,6 +57,8 @@ public class Image
 	 * <p>Alphafunktion: <code>src = dst</code></p> */
 	public static final int COMPOSITE_OVERLAY = 6;
 
+	public static final int COMPOSITE_TEST = 7;
+	
 	public static final Transform2D IMAGE_MATRIX = new Transform2D();
 	
 	private Texture texture;

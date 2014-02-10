@@ -69,8 +69,8 @@
       <short>-1</short>
       <short>0</short>
       <short>0</short>
-      <short>-1</short>
-      <short>-1</short>
+      <short>4095</short>
+      <short>4095</short>
       <short>4369</short>
       <short>-30584</short>
       <short>-1</short>
@@ -118,7 +118,7 @@
       <short>0</short>
       <short>0</short>
     </passages>
-    <priorities>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    <priorities>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAwEBAAAAAAAAAAAAAAAA
 AAAAAAEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</priorities>
     <tileFlags>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==</tileFlags>

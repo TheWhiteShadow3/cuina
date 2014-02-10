@@ -12,12 +12,14 @@ public class MotorData implements Serializable, Instantiable
 	public float speed = 0;
 	public float direction = 270;
 	public float friction = 0;
+	public Force force;
 	public String driver;
 	
 	@Override
 	public Object createInstance(CuinaObject obj) throws Exception
 	{
 		Motor motor = new Motor(obj, speed, friction, direction);
+		motor.setForce(force);
 		if (driver != null && driver.length() > 0)
 		{
 			motor.setDriver((Driver) Class.forName(driver).newInstance());

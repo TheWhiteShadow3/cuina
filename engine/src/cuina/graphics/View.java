@@ -26,6 +26,8 @@ public class View
 	public Rectangle border;
 	public int threshold = 32;
 	public boolean visible = true;
+	public boolean flipX;
+	public boolean flipY;
 	
 	public View()
 	{
@@ -48,11 +50,6 @@ public class View
 	
 	public void draw()
 	{
-		draw(false, false);
-	}
-	
-	public void draw(boolean flipH, boolean flipV)
-	{
 		if (!visible) return;
 		
 		glViewport(port.x, port.y, port.width, port.height);
@@ -69,11 +66,7 @@ public class View
 		}
 		else
 		{
-			// left, right, bottom, top, Zfar, Znear
-			if (flipV)
-				glOrtho(x, x + width, y, y + height, -500, 500);
-			else
-				glOrtho(x, x + width, y + height, y, -500, 500);
+			setOrtho();
 			glDisable(GL_DEPTH_TEST);
 		}
 		
@@ -88,32 +81,39 @@ public class View
 		currentView = null;
 	}
 	
+	private void setOrtho()
+	{
+		int l, r, b, t;
+		
+		if (flipX)	{ l = x + width; 	r = x; }
+		else 		{ l = x; 			r = x + width; }
+		if (flipY)	{ b = y; 			t = y + height; }
+		else 		{ b = y + height;	t = y; }
+		// left, right, bottom, top, Zfar, Znear
+		glOrtho(l, r, b, t, -500, 500);
+	}
+	
 	public void scroll()
 	{
 		if (target == null) return;
 		
 		int tx = (int) target.getX() - width / 2;
 		int ty = (int) target.getY() - height / 2;
-		
-		if (border == null)
-		{
-			this.x = tx;
-			this.y = ty;
-		}
-		else
-		{
-			int diffX = tx - x;
-			int diffY = ty - y;
+	
+		int diffX = tx - x;
+		int diffY = ty - y;
 
-			if (Math.abs(diffX) > threshold)
-			{
-				tx += (diffX < 0) ? threshold : -threshold;
-			}
-			if (Math.abs(diffY) > threshold)
-			{
-				ty += (diffY < 0) ? threshold : -threshold;
-			}
-			
+		if (Math.abs(diffX) > threshold)
+		{
+			tx += (diffX < 0) ? threshold : -threshold;
+		}
+		if (Math.abs(diffY) > threshold)
+		{
+			ty += (diffY < 0) ? threshold : -threshold;
+		}
+
+		if (border != null)
+		{
 			this.x = Math.max(border.x, Math.min(tx, border.width - width));
 			this.y = Math.max(border.y, Math.min(ty, border.height - height));
 		}

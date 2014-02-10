@@ -20,10 +20,14 @@
 		m2 = Maid.new(&quot;Anna&quot;)
 		Yuri.kiss(m1, m2)
 		puts(&quot;Hello Cuina!&quot;)
+
+		Input.add_trigger("c4", Script::ScriptTrigger.new(Input::Control::CONTROL_PRESSED, "main", "button_pressed"))
 		#Cuina.new_game()
 		OBJ_title.start
 	end
 	def loadGame(game)
+	end
+	def newScene(scene)
 	end
 	def newGame(game)
 		Cuina.new_scene("Map")
@@ -46,6 +50,11 @@
 	end
 	def close
 		return true
+	end
+	
+	def button_pressed(button)
+		return unless button.name == "c4"
+		puts "open menu"
 	end
 end
 Script_main.new

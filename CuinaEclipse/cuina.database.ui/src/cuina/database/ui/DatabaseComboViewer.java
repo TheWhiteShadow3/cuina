@@ -50,6 +50,11 @@ public class DatabaseComboViewer<E extends DatabaseObject> extends ComboViewer
 			super.setSelection(new StructuredSelection(obj));
 	}
 	
+	public void setSelection(String key)
+	{
+		setSelection(getTable(), key);
+	}
+	
 	/**
 	 * Setzt die Tabelle als Input für den Viewer.
 	 * @param table

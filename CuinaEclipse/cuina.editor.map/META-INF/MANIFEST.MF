@@ -15,10 +15,11 @@ Require-Bundle: org.eclipse.ui,
  cuina.editor.script,
  cuina.gl,
  cuina.editor.ui,
- cuina.buildins
+ cuina.buildins,
+ cuina.editor.eventx,
+ cuina.database.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: cuina.editor.map,
  cuina.editor.map.util,
  cuina.map
-Import-Package: cuina.database.ui

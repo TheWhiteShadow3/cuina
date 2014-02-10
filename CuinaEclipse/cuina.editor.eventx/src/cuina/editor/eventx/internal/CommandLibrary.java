@@ -5,17 +5,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
+import cuina.database.DatabaseObjectReference;
 import cuina.editor.core.CuinaProject;
 import cuina.editor.core.engine.EngineReference;
 import cuina.editor.eventx.internal.editors.ArrayEditor;
+import cuina.editor.eventx.internal.editors.BooleanEditor;
+import cuina.editor.eventx.internal.editors.FloatEditor;
+import cuina.editor.eventx.internal.editors.IDEditor;
 import cuina.editor.eventx.internal.editors.IntegerEditor;
 import cuina.editor.eventx.internal.editors.StringEditor;
 import cuina.editor.eventx.internal.editors.TypeEditor;
+import cuina.editor.eventx.internal.editors.UndefinedTypeEditor;
 import cuina.eventx.Command;
 
 public class CommandLibrary
@@ -23,13 +31,15 @@ public class CommandLibrary
 	public static final String GLOBAL_CONTEXT	= "GLOABL";
 	public static final String SESSION_CONTEXt	= "SESSION";
 	public static final String SCENE_CONTEXt 	= "SCENE";
-	public static final String STATIC_CONTEXT = "STATIC";
+	public static final String STATIC_CONTEXT	= "STATIC";
 	public static final String INTERNAL_CONTEXT = "INTERNAL";
 	
 	private static final String EDITOR_EXTENSION = "cuina.eventx.types";
 	private static final String FUNCTION_EXENSION = "cuina.eventx.functions";
 	private static final String CATEGORY_EXENSION = "cuina.eventx.categories";
 	private static final String CONTEXT_EXENSION = "cuina.eventx.contexts";
+	
+	private static final String INTERNAL_ID = "cuina.eventx.Internal";
 	
 	private static final Map<String, Class<TypeEditor>> typeEditors = new HashMap<String, Class<TypeEditor>>();
 	
@@ -90,23 +100,30 @@ public class CommandLibrary
 //		{
 //			e.printStackTrace();
 //		}
-		defaultCategory = new Category(null, "Default");
-		categories.put(null, defaultCategory);
 		
-		loadInternalFunctions();
+//		loadInternalFunctions();
 		loadCommandDefinitions();
 	}
 
 	private void loadCommandDefinitions()
 	{
-        IConfigurationElement[] elements = Platform.getExtensionRegistry().
-        		getConfigurationElementsFor(CATEGORY_EXENSION);
+        IConfigurationElement[] elements;
+        elements = Platform.getExtensionRegistry().getConfigurationElementsFor(CATEGORY_EXENSION);
         
         for (IConfigurationElement conf : elements) try
         {
         	String id = conf.getAttribute("id");
         	String label = conf.getAttribute("label");
-        	Category category = new Category(id, label);
+        	String imageName = conf.getAttribute("icon");
+    		Bundle plugin = Platform.getBundle(conf.getContributor().getName());
+    		Image image = null;
+    		if (imageName != null) try
+    		{
+    			image = new Image(Display.getDefault(), FileLocator.resolve(plugin.getEntry(imageName)).getPath());
+    		}
+    		catch(Exception e) { e.printStackTrace(); }
+        	
+        	Category category = new Category(id, label, image);
         	categories.put(id, category);
         }
     	catch (Exception e)
@@ -119,10 +136,14 @@ public class CommandLibrary
         for (IConfigurationElement conf : elements) try
 		{
         	String id = conf.getAttribute("id");
-        	String type = conf.getAttribute("type");
-        	String name = conf.getAttribute("name");
+        	if (contexts.containsKey(id)) throw new IllegalArgumentException("Context '" + id + "' already exists.");
         	
-//        	Class clazz = engineClassloader.loadClass();
+        	String type = conf.getAttribute("type");
+        	if (type.equals(INTERNAL_CONTEXT) && !EventPlugin.PLUGIN_ID.equals(conf.getNamespaceIdentifier()))
+        		throw new IllegalArgumentException("The context type INTERNAL can only used in cuina.eventx-Plugin.");
+        	
+        	String name = conf.getAttribute("name");
+
         	ContextTarget target = new ContextTarget(type, name, conf.getAttribute("class"));
         	contexts.put(id, target);
 		}
@@ -137,37 +158,42 @@ public class CommandLibrary
 		{
         	addFunction(conf);
 		}
-		catch (ClassNotFoundException | InvalidRegistryObjectException e)
+		catch (InvalidRegistryObjectException e)
 		{
 			e.printStackTrace();
 		}
 	}
 	
-	private void addFunction(IConfigurationElement conf) throws ClassNotFoundException, InvalidRegistryObjectException
+	private void addFunction(IConfigurationElement conf) throws InvalidRegistryObjectException
 	{
     	Category category = categories.get(conf.getAttribute("categoryID"));
     	if (category == null) category = defaultCategory;
     	
-    	ContextTarget context = contexts.get(conf.getAttribute("contextID"));
-    	if (context == null) throw new NullPointerException("Context is not defined.");
+    	String contextID = conf.getAttribute("contextID");
+    	if (INTERNAL_ID.equals(contextID) && !EventPlugin.PLUGIN_ID.equals(conf.getNamespaceIdentifier()))
+    		throw new IllegalArgumentException("The internal context can only used in cuina.eventx-Plugin.");
+    	
+    	ContextTarget context = contexts.get(contextID);
+    	if (context == null) throw new NullPointerException("Context '" + contextID + "' is not defined.");
     	
 		String name = conf.getAttribute("name");
 		if (name.isEmpty()) throw new IllegalArgumentException();
 		
 		String label = conf.getAttribute("label");
 		if (label == null) label = name;
+		
+		String description = conf.getAttribute("description");
 
 		IConfigurationElement[] childs = conf.getChildren("argument");
-		Class[] argTypes = new Class[childs.length];
+		String[] argTypes = new String[childs.length];
 		String[] argNames = new String[childs.length];
 		for (int i = 0; i < childs.length; i++)
 		{
-			argTypes[i] = getClass(childs[i].getAttribute("type"));
+			argTypes[i] = childs[i].getAttribute("type");
 			argNames[i] = childs[i].getAttribute("label");
 		}
-		boolean isStatic = Boolean.parseBoolean(conf.getAttribute("static"));
-		addFunction(new FunctionEntry(category, context.getTarget(isStatic),
-				context.className, name, label, argTypes, argNames));
+		addFunction(new FunctionEntry(category, context.getTarget(),
+				context.className, name, label, description, argTypes, argNames));
 	}
 	
 	private Class getClass(String className) throws ClassNotFoundException
@@ -190,6 +216,12 @@ public class CommandLibrary
 			Class elementClass = getClass(className.substring(0, className.length()-2));
 			return Array.newInstance(elementClass, 0).getClass();
 		}
+		if (className.startsWith("id:"))
+		{
+			return DatabaseObjectReference.class;
+		}
+		if (engineClassloader == null) return null;
+		
 		return engineClassloader.loadClass(className);
 	}
 	
@@ -198,32 +230,37 @@ public class CommandLibrary
 		return Collections.unmodifiableMap(categories);
 	}
 	
-	public static <T> TypeEditor<T> newTypeEditor(Class<T> clazz)
+	public static TypeEditor newTypeEditor(String className)
 	{
 		try
 		{
-			Class<TypeEditor> editorClass = typeEditors.get(clazz.getName());
+			Class<TypeEditor> editorClass = typeEditors.get(className);
 			if (editorClass != null)
 				return editorClass.newInstance();
-			else
-				return (TypeEditor<T>) createDefaultEditor(clazz);
 		}
 		catch (InstantiationException | IllegalAccessException e)
 		{
 			e.printStackTrace();
-			
 		}
-		return null;
+		return createDefaultEditor(className);
 	}
 	
 	
-	private static TypeEditor<?> createDefaultEditor(Class<?> clazz)
+	private static TypeEditor<?> createDefaultEditor(String className)
 	{
-		if (clazz.equals(String.class)) return new StringEditor();
-		if (clazz.equals(int.class) || clazz.equals(Integer.class)) return new IntegerEditor();
-		if (clazz.isArray()) return new ArrayEditor();
+		switch(className)
+		{
+			case "boolean": return new BooleanEditor();
+			case "string": return new StringEditor();
+			case "int": return new IntegerEditor(Integer.MAX_VALUE);
+			case "short": return new IntegerEditor(Short.MAX_VALUE);
+			case "byte": return new IntegerEditor(Byte.MAX_VALUE);
+			case "float": return new FloatEditor();
+		}
+		if (className.endsWith("[]")) return new ArrayEditor();
+		if (className.startsWith("id:")) return new IDEditor(className.substring(3));
 		
-		return null;
+		return new UndefinedTypeEditor();
 	}
 	
 //	public String getContextName(TypeEntry type)
@@ -237,13 +274,16 @@ public class CommandLibrary
 //		return types.get(contextTypes.get(address));
 //	}
 	
-	public Command createCommand(FunctionEntry function)
+	public Command createCommand(FunctionEntry function) throws ClassNotFoundException
 	{
 		Object[] args = new Object[function.argTypes.length];
 		for (int i = 0; i < function.argTypes.length; i++)
 		{
-			if (function.argTypes[i].isArray())
-				args[i] = Array.newInstance(function.argTypes[i].getComponentType(), 0);
+			String type = function.argTypes[i];
+			if (type != null && type.endsWith("[]"))
+			{
+				args[i] = Array.newInstance(getClass(type), 0);
+			}
 		}
 		return new Command(function.target, function.name, 0, args);
 	}
@@ -254,18 +294,18 @@ public class CommandLibrary
 		return functions.get(key);
 	}
 	
-	private void addInternalFunction(String name, Class<?> paramTypes, String paramNames)
-	{
-		Category category = categories.get(null);
-		addFunction(new FunctionEntry(
-				category, INTERNAL_CONTEXT, null, name, name, new Class[] {paramTypes}, new String[] {paramNames}));
-	}
-	
-	private void addInternalFunction(String name)
-	{
-		Category category = categories.get(null);
-		addFunction(new FunctionEntry(category, INTERNAL_CONTEXT, null, name, name, new Class[0], new String[0]));
-	}
+//	private void addInternalFunction(String name, String paramTypes, String paramNames)
+//	{
+//		Category category = categories.get(null);
+//		addFunction(new FunctionEntry(
+//				category, INTERNAL_CONTEXT, null, name, name, new String[] {paramTypes}, new String[] {paramNames}));
+//	}
+//	
+//	private void addInternalFunction(String name)
+//	{
+//		Category category = categories.get(null);
+//		addFunction(new FunctionEntry(category, INTERNAL_CONTEXT, null, name, name, new String[0], new String[0]));
+//	}
 	
 	private void addFunction(FunctionEntry function)
 	{
@@ -273,13 +313,13 @@ public class CommandLibrary
 		function.category.addFunktion(function);
 	}
 	
-	private void loadInternalFunctions()
-	{
-		addInternalFunction("wait", int.class, "Frames");
-		addInternalFunction("skip", int.class, "Zeilen");
-		addInternalFunction("if", String.class, "Bedingung");
-		addInternalFunction("while", String.class, "Bedingung");
-		addInternalFunction("goto", int.class, "Zeile");
-		addInternalFunction("stop");
-	}
+//	private void loadInternalFunctions()
+//	{
+//		addInternalFunction("wait", "int", "Frames");
+//		addInternalFunction("skip", "int", "Zeilen");
+//		addInternalFunction("if", "string", "Bedingung");
+//		addInternalFunction("while", "string", "Bedingung");
+//		addInternalFunction("goto", "int", "Zeile");
+//		addInternalFunction("stop");
+//	}
 }

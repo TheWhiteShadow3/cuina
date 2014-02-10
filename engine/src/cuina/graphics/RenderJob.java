@@ -279,7 +279,9 @@ public class RenderJob
 		Texture tex = owner.getTexture();
 		
 		view.port.set(x1, y1, tex.getSourceWidth(), tex.getSourceHeight());
-		view.draw(false, true);
+		view.flipY = !view.flipY;
+		view.draw();
+		view.flipY = !view.flipY;
 	}
 
 	@Override

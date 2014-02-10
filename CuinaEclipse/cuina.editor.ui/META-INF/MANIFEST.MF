@@ -12,7 +12,8 @@ Require-Bundle: cuina.editor.core,
  org.eclipse.ui.ide,
  org.eclipse.core.resources,
  cuina.gl,
- cuina.database
+ cuina.database,
+ cuina.editor.event
 Export-Package: cuina.editor.ui,
  cuina.editor.ui.prefs,
  cuina.editor.ui.selection

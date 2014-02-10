@@ -29,10 +29,11 @@
    </extension>
    <extension
          point="cuina.object.extensionTypes">
-      <object_extension
+      <extensionEditor
+      		id="model"
+      		dataClass="cuina.animation.ModelData"
             editorClass="cuina.editor.model.internal.ModelExtensionEditor"
-            name="cuina.editor.model.Model">
-      </object_extension>
+            name="cuina.animation.Model">
+      </extensionEditor>
    </extension>
-
 </plugin>

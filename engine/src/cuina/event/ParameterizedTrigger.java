@@ -33,6 +33,12 @@ public class ParameterizedTrigger implements Trigger
 	}
 
 	@Override
+	public void setActive(boolean value)
+	{
+		trigger.setActive(value);
+	}
+
+	@Override
 	public boolean isActive()
 	{
 		return trigger.isActive();

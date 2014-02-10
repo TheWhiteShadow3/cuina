@@ -8,6 +8,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: cuina.editor.object,
  cuina.resource,
  org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ cuina.editor.ui,
+ cuina.database,
+ cuina.editor.core
 Export-Package: cuina.movement
 Bundle-ActivationPolicy: lazy

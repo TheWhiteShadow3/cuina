@@ -1,21 +1,19 @@
 package cuina.graphics;
 
 import cuina.Logger;
-import cuina.util.IntList;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.lwjgl.opengl.GL11;
-
 abstract class AbstractGraphicContainer implements GraphicContainer
 {
 	private String name;
 	private transient ArrayList<GraphicReference> elements = new ArrayList<GraphicReference>();
 	private Shader shader;
-	private final IntList flags = new IntList();
+	private RenderInterceptor interceptor;
+//	private final IntList flags = new IntList();
 	
 	@Override
 	public synchronized boolean addGraphic(Graphic graphic)
@@ -144,14 +142,8 @@ abstract class AbstractGraphicContainer implements GraphicContainer
 		if (shader != null) Graphics.setShader(shader);
 		Collections.sort(elements, ZComparator.INSTANCE);
 		
-		if (flags.size() > 0)
-		{
-			GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-			for (int i = 0; i < flags.size(); i++)
-			{
-				GL11.glEnable(flags.get(i));
-			}
-		}
+		if (interceptor != null)
+			interceptor.preRender();
 		
 		Graphic e;
 		for (int i = 0; i < elements.size(); i++)
@@ -170,8 +162,8 @@ abstract class AbstractGraphicContainer implements GraphicContainer
 				elements.remove(i--);
 		}
 		
-		if (flags.size() > 0)
-			GL11.glPopAttrib();
+		if (interceptor != null)
+			interceptor.postRender();
 		
 		Graphics.setShader(tempShader);
 	}
@@ -204,20 +196,34 @@ abstract class AbstractGraphicContainer implements GraphicContainer
 		this.shader = shader;
 	}
 
-	@Override
-	public void setFlag(int glFlag, boolean value)
-	{
-		if (value)
-		{
-			if (flags.contains(glFlag)) return;
-			flags.add(glFlag);
-		}
-		else
-		{
-			flags.remove(glFlag);
-		}
-	}
 	
+	
+//	@Override
+//	public void setFlag(int glFlag, boolean value)
+//	{
+//		if (value)
+//		{
+//			if (flags.contains(glFlag)) return;
+//			flags.add(glFlag);
+//		}
+//		else
+//		{
+//			flags.remove(glFlag);
+//		}
+//	}
+
+	@Override
+	public RenderInterceptor getInterceptor()
+	{
+		return interceptor;
+	}
+
+	@Override
+	public void setInterceptor(RenderInterceptor interceptor)
+	{
+		this.interceptor = interceptor;
+	}
+
 	/**
 	 * Hüllt ein Graphic-Objekt in einen Grafik-Kontainer ein.
 	 * @param graphic Graphic, das eingehüllt werden soll.

@@ -1,23 +1,25 @@
 package cuina.event;
 
-public class DefaultTrigger implements Trigger
+/**
+ * Ein allgemeiner Trigger, der eine beliebige Aktion ausführen kann.
+ * @author TheWhiteShadow
+ */
+public abstract class AbstractTrigger implements Trigger
 {
 	private static final long serialVersionUID = 6582839276259158753L;
 
-	private final Event event;
-	private final Runnable action;
+	private Event event;
 	private Object arg;
 	private boolean active = true;
 	
-	public DefaultTrigger(Event event, Runnable action)
+	public AbstractTrigger(Event event)
 	{
-		this(event, null, action);
+		this(event, null);
 	}
 	
-	public DefaultTrigger(Event event, Object arg, Runnable action)
+	public AbstractTrigger(Event event, Object arg)
 	{
-		this.event = event;
-		this.action = action;
+		setEvent(event);
 		this.arg = arg;
 	}
 	
@@ -30,12 +32,19 @@ public class DefaultTrigger implements Trigger
 	{
 		this.arg = arg;
 	}
+	
+	public void setEvent(Event event)
+	{
+		if (event == null) throw new NullPointerException("Event is null.");
+		this.event = event;
+	}
 
 	public Event getEvent()
 	{
 		return event;
 	}
 
+	@Override
 	public void setActive(boolean active)
 	{
 		this.active = active;
@@ -54,8 +63,5 @@ public class DefaultTrigger implements Trigger
 	}
 
 	@Override
-	public void run(Object... args)
-	{
-		action.run();
-	}
+	public abstract void run(Object... args);
 }

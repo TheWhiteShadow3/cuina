@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,12 +23,12 @@ public class Activator extends AbstractUIPlugin
 	// The plug-in ID
 	public static final String PLUGIN_ID = "cuina.editor.object"; //$NON-NLS-1$
 
-	private static final String EXTENSION_TYPES = "ciona.object.extensionTypes";
+	private static final String EXTENSION_TYPES = "cuina.object.extensionTypes";
 
 	// The shared instance
 	private static Activator plugin;
 	
-	public static List<ExtensionDescriptor> descriptors;
+	public static Map<String, java.util.List<ExtensionDescriptor>> descriptors;
 
 	/**
 	 * The constructor
@@ -71,18 +71,27 @@ public class Activator extends AbstractUIPlugin
 		return plugin;
 	}
 	
-	public static List<ExtensionDescriptor> getExtensionDescriptors()
+	public static Map<String, java.util.List<ExtensionDescriptor>> getExtensionDescriptors()
 	{
 		if (descriptors == null)
 		{
-			descriptors = new ArrayList<ExtensionDescriptor>();
+			descriptors = new HashMap<String, java.util.List<ExtensionDescriptor>>();
 			
 			IConfigurationElement[] elements = Platform.getExtensionRegistry().
 					getConfigurationElementsFor(EXTENSION_TYPES);
 
 			for (IConfigurationElement conf : elements) try
 			{
-				descriptors.add(new ExtensionDescriptor(conf));
+				ExtensionDescriptor desc = new ExtensionDescriptor(conf);
+				
+				String id = desc.getID();
+				java.util.List<ExtensionDescriptor> descList = descriptors.get(id);
+				if (descList == null)
+				{
+					descList = new ArrayList<ExtensionDescriptor>();
+					descriptors.put(id, descList);
+				}
+				descList.add(desc);
 			}
 			catch (Exception e)
 			{
@@ -90,7 +99,7 @@ public class Activator extends AbstractUIPlugin
 			}
 		}
 		
-		return Collections.unmodifiableList(descriptors);
+		return descriptors;
 	}
 
 	/**

@@ -1,8 +1,6 @@
 package cuina.database;
 
 
-
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -36,10 +34,11 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 		if (name == null) name = dataClass.getSimpleName();
 		
 		String imagePath = conf.getAttribute("image");
-		if (imagePath != null)
-		try {
+		if (imagePath != null) try
+		{
 			this.image = new Image(Display.getDefault(), FileLocator.resolve(plugin.getEntry(imagePath)).getPath());
-		} catch(Exception e) { e.printStackTrace(); }
+		}
+		catch(Exception e) { e.printStackTrace(); }
 
 		this.editorID = conf.getAttribute("editorID");
 		

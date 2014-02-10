@@ -3,5 +3,16 @@
 <plugin>
    <extension-point id="cuina.event.TriggerTypes" name="Cuina Trigger Types" schema="schema/cuina.event.TriggerTypes.exsd"/>
    <extension-point id="cuina.event.EventTypes" name="Cuina Event Types" schema="schema/cuina.event.EventTypes.exsd"/>
+   <extension
+         point="cuina.event.EventTypes">
+      <event
+            descpription="Tritt niemals ein."
+            id="cuina.editor.event.Never">
+      </event>
+      <event
+            descpription="Tritt immer ein."
+            id="cuina.editor.event.Always">
+      </event>
+   </extension>
 
 </plugin>

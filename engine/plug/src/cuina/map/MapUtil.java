@@ -2,6 +2,8 @@ package cuina.map;
 
 import cuina.animation.Model;
 import cuina.eventx.EventMethod;
+import cuina.graphics.Graphics;
+import cuina.graphics.Panorama;
 import cuina.movement.Motor;
 import cuina.object.BaseObject;
 import cuina.plugin.Plugin;
@@ -47,5 +49,24 @@ public class MapUtil implements Plugin
 		Model model = (Model) obj.getExtension(Model.EXTENSION_KEY);
 		if (frame != -1) model.setFrame(frame);
 		if (animation != -1) model.setAnimationIndex(animation);
+	}
+	
+	@EventMethod
+	public static void setPanorama(int id, String fileName, 
+			float speedX, float speedY, float zoomX, float zoomY, boolean foreground)
+	{
+		Panorama panorama;
+		if (foreground)
+		{
+			panorama = new Panorama(fileName, Graphics.GraphicManager);
+			panorama.setDepth(100);
+		}
+		else
+			panorama = new Panorama(fileName);
+		panorama.setSpeedX(speedX);
+		panorama.setSpeedY(speedY);
+		panorama.setZoomX(zoomX);
+		panorama.setZoomY(zoomY);
+		GameMap.getInstance().setPanorama(id, panorama);
 	}
 }

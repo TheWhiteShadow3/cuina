@@ -1,6 +1,7 @@
 package cuina.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL14.*;
 
 import cuina.graphics.Image.MultiTexture;
 
@@ -82,6 +83,11 @@ public class GLCache
 				// GL14.glBlendEquation(GL14.GL_FUNC_ADD);
 				break;
 			case Image.COMPOSITE_OVERLAY:
+				glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+				GL14.glBlendEquation(GL14.GL_FUNC_ADD);
+				break;
+			case Image.COMPOSITE_TEST:
+//				glBlend
 				glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 				GL14.glBlendEquation(GL14.GL_FUNC_ADD);
 				break;

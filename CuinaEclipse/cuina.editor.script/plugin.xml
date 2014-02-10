@@ -134,7 +134,9 @@
    <extension
          point="cuina.event.TriggerTypes">
       <trigger
-            class="cuina.editor.script.Trigger1"
+            class="cuina.script.ScriptTrigger"
+            description="Startet ein Skript."
+            editorClass="cuina.editor.script.ScriptTriggerEditor"
             name="Skript Tigger">
       </trigger>
    </extension>

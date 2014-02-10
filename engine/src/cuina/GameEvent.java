@@ -7,23 +7,26 @@ package cuina;
  */
 public final class GameEvent
 {
+	/** Signalisiert das Starten der Engine. */
+	public static final int START_GAME  		= 1;
+	
 	/** Signalisiert das Erstellen eines Session. */
-	public static final int OPEN_SESSION 		= 1;
+	public static final int OPEN_SESSION 		= 2;
 	
 	/** Signalisiert das Speichern einer Session. */
-	public static final int SESSION_SAVED 		= 2;
+	public static final int SESSION_SAVED 		= 3;
 	
 	/** Signalisiert das Laden einer Session. */
-	public static final int SESSION_LOADED 		= 3;
+	public static final int SESSION_LOADED 		= 4;
 	
 	/** Signalisiert das Beenden einer Session. */
-	public static final int CLOSING_SESSION 	= 4;
+	public static final int CLOSING_SESSION 	= 5;
 	
-	/** Signalisiert das Wechelsn der Szene. */
-	public static final int NEW_SCENE 			= 5;
+	/** Signalisiert das Wechseln der Szene. */
+	public static final int NEW_SCENE 			= 6;
 	
 	/** Signalisiert das Herunterfahren der Engine. */
-	public static final int END_GAME 			= 6;
+	public static final int END_GAME 			= 7;
 	
 	/** Gibt den Typ des Events an. */
 	public int type;

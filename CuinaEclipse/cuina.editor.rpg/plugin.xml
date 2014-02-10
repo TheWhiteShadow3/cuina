@@ -12,15 +12,21 @@
    <extension
          point="cuina.model.Animator">
       <animator
+            name="rpg.Charakter"
+      		description="Bewegungs-Apperat für Charaktere."
             class="cuina.rpg.CharacterAnimator">
       </animator>
    </extension>
    <extension
          point="cuina.movement.Driver">
       <driver
+      		name="rpg.NPC"
+      		description="Ein nicht spielbarer Charakter."
             class="cuina.rpg.CharacterDriver">
       </driver>
       <driver
+      		name="rpg.Spieler"
+      		description="Ein spielbarer Charakter."
             class="cuina.rpg.Player">
       </driver>
    </extension>

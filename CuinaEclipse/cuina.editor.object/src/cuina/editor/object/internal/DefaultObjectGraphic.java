@@ -1,14 +1,15 @@
 package cuina.editor.object.internal;
 
-import cuina.editor.object.ObjectGraphic;
-import cuina.gl.Image;
-import cuina.resource.ResourceException;
-
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.File;
 
 import org.eclipse.swt.opengl.GLCanvas;
 import org.lwjgl.LWJGLException;
+
+import cuina.editor.object.ObjectGraphic;
+import cuina.gl.Image;
+import cuina.resource.ResourceException;
 
 public class DefaultObjectGraphic implements ObjectGraphic
 {
@@ -28,7 +29,9 @@ public class DefaultObjectGraphic implements ObjectGraphic
 		
 		if (image == null) try
 		{
-			this.image = new Image(context, "");
+			File file = Activator.getBundleFile("icons/object.png");
+			
+			this.image = new Image(context, file.getPath());
 		}
 		catch (ResourceException | LWJGLException e)
 		{

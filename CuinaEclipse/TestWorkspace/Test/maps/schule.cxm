@@ -32,8 +32,12 @@
               <cuina.movement.MotorData>
                 <speed>0.0</speed>
                 <direction>270.0</direction>
-                <friction>0.0</friction>
+                <friction>0.1</friction>
                 <driver>cuina.rpg.Player</driver>
+                <force>
+                	<value>0.5</value>
+                	<direction>270</direction>
+                </force>
               </cuina.movement.MotorData>
             </entry>
             <entry>

@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
@@ -271,7 +272,7 @@ public final class DatabasePlugin extends Plugin
 			@Override
 			public void resourceChanged(IResourceChangeEvent event)
 			{
-				if (event.getResource() instanceof IProject && event.getType() == IResourceChangeEvent.PRE_CLOSE)
+				if (event.getType() == IResourceChangeEvent.PRE_CLOSE && event.getResource() instanceof IProject)
 				{
 					IProject project = (IProject) event.getResource();
 					System.out.println("[DatabasePlugin] schließe Datenbank für Projekt: " + project.getName());
@@ -283,15 +284,31 @@ public final class DatabasePlugin extends Plugin
 						databaseTypes.remove(project.getName());
 					}
 				}
-				else if (event.getResource() instanceof IFile)
+				else if (event.getType() == IResourceChangeEvent.POST_CHANGE)
 				{
-					IFile file = (IFile) event.getResource();
-					if (event.getType() == IResourceChangeEvent.PRE_DELETE)
+					findChangedTables(event.getDelta());
+				}
+			}
+			
+			private void findChangedTables(IResourceDelta delta)
+			{
+				for (IResourceDelta projectDelta : delta.getAffectedChildren())
+				{
+					IProject project = projectDelta.getResource().getProject();
+					Database db = databases.get(CuinaCore.getCuinaProject(project));
+					if (db == null) continue;
+					
+					IResourceDelta folderDelta = delta.findMember(db.getDataPath());
+					if (folderDelta != null)
 					{
-						DataTable<?> table = tryLoad(file);
-						if (table != null)
+						for (IResourceDelta fileDelta : folderDelta.getAffectedChildren())
 						{
-							table.getDatabase().fireTableDeleted(table);
+							String name = getTableNameFromFile((IFile) fileDelta.getResource());
+							if (name != null)
+							{
+								DataTable table = db.getCache().get(name);
+								if (table != null) db.fireTableChanged(table);
+							}
 						}
 					}
 				}

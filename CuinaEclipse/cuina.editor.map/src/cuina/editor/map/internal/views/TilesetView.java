@@ -97,6 +97,7 @@ public class TilesetView extends ViewPart implements EditorContextChangeListener
 	{
 		if (editor == null) return;
 		
+		editor.refreshResources();
 		this.tileset = editor.getTileset();
 		panel.setTileset(tileset, editor.getProject());
 	}

@@ -238,6 +238,13 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		ObjectGraphic graphic = getObjectGraphic(obj);
 		
 		Image image = graphic.getImage();
+		if (image == null && graphic != DEFAULT_GRAPHIC)
+		{	// Notfallplan, wenn das Model die Grafik nicht anzeigen kann.
+			graphic = DEFAULT_GRAPHIC;
+			graphic.setGLCanvas(editor.getGLCanvas());
+			graphicCache.put(obj, graphic);
+			image = graphic.getImage();
+		}
 		if (image == null) return;
 		
 		Point offset = graphic.getOffset();
@@ -326,6 +333,8 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 	@Override
 	public void fillDefaultContextMenu(IMenuManager menu, org.eclipse.swt.graphics.Point point)
 	{
+		menu.add(createNewAction(point));
+		
 		List<ObjectData> list = getObjects(point.x, point.y, 1, 1);
 		for (ObjectData d : list)
 		{
@@ -333,6 +342,18 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		}
 	}
 
+	private Action createNewAction(final org.eclipse.swt.graphics.Point p)
+	{
+		return new Action("Objekt erstellen")
+		{
+			@Override
+			public void run()
+			{
+				createNewObject(p.x, p.y);
+			}
+		};
+	}
+	
 	@Override
 	public void dispose()
 	{
@@ -491,17 +512,33 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		return id;
 	}
 	
-	private ObjectData createNewObject(ObjectTemplate template)
+	private void createNewObject(ObjectTemplate template)
 	{
-		ObjectData obj	= new ObjectData();
-		obj.id			= getAvailableID();
+		ObjectData obj = new ObjectData();
 		obj.templateKey = template.getKey();
 		obj.x = template.sourceObject.x;
 		obj.y = template.sourceObject.y;
-
-		return obj;
+		addObject(obj);
 	}
 	
+	private void createNewObject(int x, int y)
+	{
+		ObjectData obj = new ObjectData();
+		obj.x = x;
+		obj.y = y;
+		addObject(obj);
+	}
+	
+	private void addObject(ObjectData obj)
+	{
+		obj.id = getAvailableID();
+		map.objects.add(obj);
+		ObjectSavePoint undoPoint = new ObjectSavePoint(ObjectSavePoint.DELETE, obj, obj.x, obj.y);
+		ObjectSavePoint redoPoint = new ObjectSavePoint(ObjectSavePoint.CREATE, obj, obj.x, obj.y);
+		editor.addOperation(new MapOperation("Create Object", undoPoint, redoPoint));
+		editor.fireMapChanged(this, MapEvent.PROP_OBJECTS);
+	}
+
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection)
 	{
@@ -525,12 +562,7 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		{
 			if (event.mouseEvent.button == 1)
 			{
-				ObjectData obj = createNewObject(cursorTemplate);
-				map.objects.add(obj);
-				ObjectSavePoint undoPoint = new ObjectSavePoint(ObjectSavePoint.DELETE, obj, obj.x, obj.y);
-				ObjectSavePoint redoPoint = new ObjectSavePoint(ObjectSavePoint.CREATE, obj, obj.x, obj.y);
-				editor.addOperation(new MapOperation("Create Object", undoPoint, redoPoint));
-				editor.fireMapChanged(this, MapEvent.PROP_OBJECTS);
+				createNewObject(cursorTemplate);
 			}
 			else
 			{
@@ -541,7 +573,6 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		
 		if (event.selection != null)
 		{
-			System.out.println("[ObjectLayer] change Selection-Mode");
 			event.manager.setSelectionMode(moveSelectionMode, true);
 			
 			this.savepointBeforMove = new ObjectSavePointSet();
@@ -559,7 +590,6 @@ public class ObjectLayer implements TerrainLayer, ISelectionProvider, ISelection
 		}
 		else if (event.mouseEvent.button == 1)
 		{
-			System.out.println("[ObjectLayer] change Selection-Mode");
 			event.manager.setSelectionMode(ITerrainEditor.CURSOR_SELECTION_MODE, true);
 			if ((event.mouseEvent.stateMask & SWT.SHIFT) == 0)
 			{

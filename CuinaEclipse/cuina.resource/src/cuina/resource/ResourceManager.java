@@ -1,5 +1,6 @@
 package cuina.resource;
 
+import cuina.editor.core.CuinaCore;
 import cuina.editor.core.CuinaProject;
 
 import java.net.MalformedURLException;
@@ -12,6 +13,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -112,7 +114,7 @@ public class ResourceManager
 	{
 		if (resource == null) throw new NullPointerException();
 		ImageData data = (ImageData) resource.getData();
-		if (data == null)
+		if (data == null || data.image.isDisposed())
 		{
 			data = new ImageData( resource.getPath().toString());
 			resource.setData(data);
@@ -188,7 +190,7 @@ public class ResourceManager
 			@Override
 			public void resourceChanged(IResourceChangeEvent event)
 			{
-				if (event.getResource() instanceof IProject && event.getType() == IResourceChangeEvent.PRE_CLOSE)
+				if (event.getType() == IResourceChangeEvent.PRE_CLOSE && event.getResource() instanceof IProject)
 				{
 					IProject project = (IProject) event.getResource();
 					System.out.println("[ResourceManager] dispose Resourcen für Projekt: " + project.getName());
@@ -199,7 +201,48 @@ public class ResourceManager
 						providers.remove(project);
 					}
 				}
+				
+				if (event.getType() == IResourceChangeEvent.POST_CHANGE)
+				{
+					IResourceDelta[] children = event.getDelta().getAffectedChildren();
+					for(IResourceDelta child : children)
+					{
+						IProject project = child.getResource().getProject();
+						
+//						List<IFile> files = new ArrayList<IFile>();
+//						collectImages(project, files, child);
+//						if (files.size() > 0)
+//						{
+//							ResourceProvider rp = getResourceProvider(CuinaCore.getCuinaProject(project));
+//							for(IFile file : files)
+//							{
+//								for(Directory dir : directories.values())
+//								{
+//									file.
+//									dir.getPath().
+//								}
+//								String key = file.getParent().getName() + '/' + file.getName();
+//								rp.getCache().remove(file);
+//							}
+						getResourceProvider(CuinaCore.getCuinaProject(project)).clearCache();
+//						System.out.println("[ResourceManager] lösche Cache von " + project);
+//						}
+					}
+				}
 			}
+			
+//			private void collectImages(IProject project, List<IFile> list, IResourceDelta delta)
+//			{
+//				for(IResourceDelta child : delta.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.REMOVED))
+//				{
+//					IResource res = child.getResource();
+//					if (res instanceof IFile)
+//					{
+//						list.add((IFile) res);
+//					}
+//					collectImages(project, list, child);
+//				}
+//			}
 		});
 	}
 	
@@ -213,7 +256,6 @@ public class ResourceManager
 		final private Path path;
 		private Object data;
 		boolean extern;
-		
 		
 		public Resource(Path basePath, String name)
 		{

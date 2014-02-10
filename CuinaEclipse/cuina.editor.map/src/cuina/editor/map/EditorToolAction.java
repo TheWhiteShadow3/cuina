@@ -1,6 +1,7 @@
 package cuina.editor.map;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.Workbench;
 
 public abstract class EditorToolAction extends Action
@@ -29,10 +30,10 @@ public abstract class EditorToolAction extends Action
 	public void execute(boolean activate)
 	{
 		setChecked(activate);
-		this.editor = (ITerrainEditor) Workbench.getInstance().
-				getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if (editor == null) return;
+		IEditorPart part = Workbench.getInstance().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		if (!(part instanceof ITerrainEditor)) return;
 		
+		this.editor = (ITerrainEditor) part;
 		this.layer = editor.getLayerByName(layerName);
 		if (activate)
 		{

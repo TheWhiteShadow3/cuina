@@ -17,9 +17,17 @@ Require-Bundle: org.eclipse.ui,
  cuina.editor.map,
  org.eclipse.core.resources,
  cuina.database.ui,
- cuina.buildins
-Export-Package: cuina.editor.object,
- cuina.object
+ cuina.buildins,
+ cuina.editor.event
+Export-Package: cuina.editor.object;
+  uses:="cuina.editor.core,
+   org.eclipse.core.runtime,
+   cuina.object,
+   org.eclipse.swt.opengl,
+   cuina.gl,
+   org.eclipse.ui.dialogs,
+   org.eclipse.swt.widgets",
+ cuina.object;uses:="cuina.database,cuina.world"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: cuina.editor.object.internal.Activator
 Eclipse-BuddyPolicy: dependent

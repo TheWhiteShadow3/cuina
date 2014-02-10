@@ -69,7 +69,7 @@ public class EventTriggerPropertySource implements IPropertySource
 		{
 			case "event.id": return trigger.getEvent();
 			case "eventx.key": return trigger.getKey();
-			case "eventArg": return trigger.getEventArg();
+			case "eventArg": return trigger.getArgument();
 			case "active": return trigger.isActive();
 		}
 		return null;
@@ -82,7 +82,7 @@ public class EventTriggerPropertySource implements IPropertySource
 		{
 			case "event.id": trigger.setEvent((Event) value); break;
 			case "eventx.key": trigger.setKey((String) value); break;
-			case "eventArg": trigger.setEventArg(value); break;
+			case "eventArg": trigger.setArgument(value); break;
 			case "active": trigger.setActive((boolean) value); break;
 		}
 	}

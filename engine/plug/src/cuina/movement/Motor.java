@@ -52,6 +52,26 @@ public class Motor extends LifeCycleAdapter implements CuinaMotor
 		return object;
 	}
 
+	public float getSpeedX()
+	{
+		return speedX;
+	}
+
+	public void setSpeedX(float speedX)
+	{
+		this.speedX = speedX;
+	}
+
+	public float getSpeedY()
+	{
+		return speedY;
+	}
+
+	public void setSpeedY(float speedY)
+	{
+		this.speedY = speedY;
+	}
+
 	public Driver getDriver()
 	{
 		return driver;
@@ -93,9 +113,6 @@ public class Motor extends LifeCycleAdapter implements CuinaMotor
     	float dir = getRadDirection();
         speedX = (float) (speed * +Math.cos(dir));
         speedY = (float) (speed * -Math.sin(dir));
-        
-        if (Math.abs(speedX) < 0.0001f) speedX = 0;
-        if (Math.abs(speedY) < 0.0001f) speedY = 0;
     }
     
     /**
@@ -148,6 +165,8 @@ public class Motor extends LifeCycleAdapter implements CuinaMotor
 			speedX += force.value * +Math.cos(dir);
 			speedY += force.value * -Math.sin(dir);
 		}
+		if (Math.abs(speedX) < 0.0001f) speedX = 0;
+        if (Math.abs(speedY) < 0.0001f) speedY = 0;
 		
 		if (speedX != 0 || speedY != 0) move(speedX, speedY);
 	}

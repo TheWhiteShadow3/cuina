@@ -26,6 +26,18 @@
             </test>
          </enabledWhen>
       </page>
+      <page
+            category="cuina.object.ExtensionPage"
+            class="cuina.editor.object.internal.properties.MaskPropertyPage"
+            id="cuina.editor.object.MaskPropertyPage"
+            name="Mask">
+         <enabledWhen>
+            <test
+                  property="cuina.editor.core.adapt"
+                  value="cuina.map.BoxData">
+            </test>
+         </enabledWhen>
+      </page>
    </extension>
    <extension
          point="cuina.mapeditor.layers">
@@ -57,10 +69,12 @@
    </extension>
    <extension
          point="cuina.object.extensionTypes">
-      <object_extension
-            editorClass="cuina.editor.object.internal.BoxEditor"
-            name="Box">
-      </object_extension>
+      <extensionEditor
+            dataClass="cuina.map.BoxData"
+            editorClass="cuina.editor.object.internal.MaskExtensionEditor"
+            id="box"
+            name="cuina.map.CollisionBox">
+      </extensionEditor>
    </extension>
 
 </plugin>

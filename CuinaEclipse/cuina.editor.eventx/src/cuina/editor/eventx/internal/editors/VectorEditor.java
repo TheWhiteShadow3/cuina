@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 
+import cuina.editor.eventx.internal.CommandEditorContext;
 import cuina.util.Vector;
 
 public class VectorEditor implements TypeEditor<Vector>
@@ -18,7 +19,7 @@ public class VectorEditor implements TypeEditor<Vector>
 	private Spinner inZ;
 
 	@Override
-	public void init(Object vector)
+	public void init(CommandEditorContext context, Object vector)
 	{
 		if (vector != null)
 			this.vector = (Vector) vector;

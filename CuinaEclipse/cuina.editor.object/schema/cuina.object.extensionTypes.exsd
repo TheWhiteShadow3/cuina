@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <choice>
-            <element ref="object_extension" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="extensionEditor" minOccurs="1" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,22 +47,54 @@
       </complexType>
    </element>
 
-   <element name="object_extension">
+   <element name="extensionEditor">
+      <annotation>
+         <documentation>
+            Ein Editor für eine Objekt-Erweiterung.
+         </documentation>
+      </annotation>
       <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Die  ID mit der die Erweiterung beim Objekt registriert wird.
+Pro ID kann nur jeweils eine Erweiterung bei einem Objekt registriert werden.
+&lt;p&gt;
+Für die World-API existieren bereits einige IDs:
+&lt;ul&gt;
+Model - Die grafische Anzeige des Objekts.
+Box - Die physikalische Hülle des Objekts.
+Motor - Der Bewegungapperat des Objekts.
+&lt;/ul&gt;
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Name der Erweiterung.
+Der Name gibt an um welche konkrete Erweiterung es sich handelt.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="editorClass" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Eine Klasse die &lt;b&gt;cuina.editor.object.ExtensionEditor&lt;/b&gt; implementiert und in der Lage ist die Erweiterung zu erstellen und zu bearbeiten.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":cuina.editor.object.ExtensionEditor"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="dataClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Die Erweiterungs-Klasse, die der Editor bearbeiten kann.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java"/>
                </appinfo>
             </annotation>
          </attribute>

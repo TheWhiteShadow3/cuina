@@ -56,8 +56,15 @@ public class CommandDialog extends TitleAreaDialog
 		if (func == null) throw new NullPointerException();
 		
 		this.function = func;
-		this.command = library.createCommand(func);
-		init(context);
+		try
+		{
+			this.command = library.createCommand(func);
+			init(context);
+		}
+		catch (ClassNotFoundException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -77,11 +84,8 @@ public class CommandDialog extends TitleAreaDialog
 		this.editors = new ArrayList<TypeEditor>(8);
 		for (int i = 0; i < function.argTypes.length; i++)
 		{
-			Class clazz = function.argTypes[i];
-			TypeEditor<?> editor = CommandLibrary.newTypeEditor(clazz);
-			if (editor == null) throw new RuntimeException("Unsupported class '" + clazz + "'.");
-			
-			editor.init(command.args[i]);
+			TypeEditor<?> editor = CommandLibrary.newTypeEditor(function.argTypes[i]);
+			editor.init(context, command.args[i]);
 			editors.add(editor);
 		}
 		this.editorBlocks = new Composite[editors.size()];

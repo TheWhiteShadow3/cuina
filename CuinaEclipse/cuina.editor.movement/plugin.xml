@@ -6,16 +6,25 @@
          point="org.eclipse.ui.propertyPages">
       <page
             category="cuina.object.ExtensionPage"
-            class="cuina.editor.movement.properties.MotorPropertyPage"
+            class="cuina.editor.movement.internal.properties.MotorPropertyPage"
             id="cuina.editor.movement.MotorPropertyPage"
             name="Motor">
          <enabledWhen>
             <test
                   property="cuina.editor.core.adapt"
-                  value="cuina.map.movement.MotorData">
+                  value="cuina.movement.MotorData">
             </test>
          </enabledWhen>
       </page>
+   </extension>
+   <extension
+         point="cuina.object.extensionTypes">
+      <extensionEditor
+            dataClass="cuina.movement.MotorData"
+            editorClass="cuina.editor.movement.internal.MotorExtensionEditor"
+            id="motor"
+            name="cuina.movement.Motor">
+      </extensionEditor>
    </extension>
 
 </plugin>

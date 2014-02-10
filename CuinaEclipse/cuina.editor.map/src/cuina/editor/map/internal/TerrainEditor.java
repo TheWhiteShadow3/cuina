@@ -185,6 +185,20 @@ public class TerrainEditor extends EditorPart implements
 		return SerializationManager.resolve(folder, dbInput.getKey(), "cxm");
 	}
 
+	public void refreshResources()
+	{
+		ResourceManager.getResourceProvider(getProject()).clearCache();
+		try
+		{
+			loadTileset();
+			panel.refreshLayers();
+		}
+		catch (ResourceException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public boolean isDirty()
 	{
@@ -531,15 +545,7 @@ public class TerrainEditor extends EditorPart implements
 	{
 		if (ev.keyCode == SWT.F5)
 		{
-			try
-			{
-				loadTileset();
-				panel.refreshLayers();
-			}
-			catch (ResourceException e)
-			{
-				e.printStackTrace();
-			}
+			refreshResources();
 			return;
 		}
 		

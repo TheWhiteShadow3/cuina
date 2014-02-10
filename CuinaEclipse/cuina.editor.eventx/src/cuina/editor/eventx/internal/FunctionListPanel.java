@@ -15,12 +15,12 @@ public class FunctionListPanel
 {
 	private CommandLibrary library;
 	private TreeViewer viewer;
-	private CommandEditorContext context;
+	private FlowEditor editor;
 	
-	public FunctionListPanel(CuinaProject project, CommandEditorContext context)
+	public FunctionListPanel(CuinaProject project, FlowEditor editor)
 	{
 		this.library = project.getService(CommandLibrary.class);
-		this.context = context;
+		this.editor = editor;
 	}
 	
 	public void createComponents(Composite parent)
@@ -54,13 +54,13 @@ public class FunctionListPanel
 			
 			if (item instanceof FunctionEntry)
 			{
-				CommandDialog dialog = new CommandDialog(context, (FunctionEntry) item);
+				CommandDialog dialog = new CommandDialog(editor, (FunctionEntry) item);
 				int result = dialog.open();
 				if (result == TitleAreaDialog.OK)
 				{
 					
 					System.out.println("Command erstellt: " + dialog.getCommand());
-					context.addCommand(dialog.getCommand());
+					editor.addCommand(dialog.getCommand());
 				}
 			}
 		}

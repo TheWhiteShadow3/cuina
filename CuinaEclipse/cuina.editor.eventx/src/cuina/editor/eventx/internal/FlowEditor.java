@@ -180,7 +180,11 @@ public class FlowEditor extends AbstractDatabaseEditorPart<CommandList> implemen
 		public void keyReleased(KeyEvent e) {}
 	}
 
-	@Override
+	/**
+	 * Fügt ein neuen Befehl vor der Auswahl ein.
+	 * Wenn kein Element ausgewält ist, wird der Befehl ans Ende der Liste angefügt.
+	 * @param cmd Der Befehl.
+	 */
 	public void addCommand(Command cmd)
 	{
 		CommandNode node = getSelectedNode();

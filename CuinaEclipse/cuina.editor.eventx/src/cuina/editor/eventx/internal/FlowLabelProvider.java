@@ -89,7 +89,8 @@ public class FlowLabelProvider extends LabelProvider implements IColorProvider
 	
 	private void appendArgument(StringBuilder builder, Object arg)
 	{
-		if (arg.getClass().isArray())		appendArray(builder, arg);
+		if (arg == null) builder.append("null");
+		else if (arg.getClass().isArray())		appendArray(builder, arg);
 		else if (arg instanceof Argument)	builder.append("Argument ").append(((Argument) arg).index);
 		else if (arg instanceof NamedItem)	builder.append(((NamedItem) arg).getName());
 		else if (arg instanceof String)		builder.append('"').append((String) arg).append('"');

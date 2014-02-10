@@ -4,13 +4,21 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Spinner;
 
+import cuina.editor.eventx.internal.CommandEditorContext;
+
 public class IntegerEditor implements TypeEditor<Integer>
 {
 	private int value;
 	private Spinner inValue;
-
+	private int max;
+	
+	public IntegerEditor(int max)
+	{
+		this.max = max;
+	}
+	
 	@Override
-	public void init(Object value)
+	public void init(CommandEditorContext context, Object value)
 	{
 		if (value != null)
 			this.value = (Integer) value;
@@ -21,7 +29,7 @@ public class IntegerEditor implements TypeEditor<Integer>
 	{
 //		new Label(parent, SWT.NONE).setText("Value");
 		inValue = new Spinner(parent, SWT.BORDER);
-		inValue.setValues(value, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 1, 100);
+		inValue.setValues(value, -max-1, max, 0, 1, 100);
 	}
 	
 	@Override

@@ -1,14 +1,15 @@
 package cuina.editor.event;
 
-import cuina.editor.event.internal.EventRegistry;
 import cuina.event.Event;
+
+import java.util.List;
 
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.swt.widgets.Composite;
 
 public class EventCellEditor extends ComboBoxCellEditor
 {
-	private IEventDescriptor[] descriptors;
+	private List<IEventDescriptor> descriptors;
 	
 	public EventCellEditor(Composite parent)
 	{
@@ -20,10 +21,10 @@ public class EventCellEditor extends ComboBoxCellEditor
 	
 	private String[] createItems()
 	{
-		String[] items = new String[descriptors.length];
+		String[] items = new String[descriptors.size()];
 		for (int i = 0; i < items.length; i++)
 		{
-			items[i] = descriptors[i].getID();
+			items[i] = descriptors.get(i).getID();
 		}
 		return items;
 	}
@@ -36,14 +37,14 @@ public class EventCellEditor extends ComboBoxCellEditor
 	@Override
 	protected Event doGetValue()
 	{
-		return descriptors[(Integer) super.doGetValue()].getEvent();
+		return descriptors.get((Integer) super.doGetValue()).getEvent();
 	}
 
 	@Override
 	protected void doSetValue(Object value)
 	{
-		for (int i = 0; i < descriptors.length; i++)
-			if (descriptors[i].getEvent().equals(value))
+		for (int i = 0; i < descriptors.size(); i++)
+			if (descriptors.get(i).getEvent().equals(value))
 			{
 				super.doSetValue(i);
 				return;

@@ -44,10 +44,8 @@ public class EngineReference
 		{
 			this.project = project;
 			this.prefs = Util.getProjectPreference(project);
-			/* FIXME:
-			 * Preferenzen geben immer null zurück, egal bei welchem Schlüssel.
-			 * ein sync() mit impliziertem load brachte keine Lösung.
-			 * Die Werte sind mit der entsprechenden Methode angelegt worden.
+			/*
+			 * Preferenzen werden nur geladen, wenn der Workspace aktualisiert wurde, nach dem die Preferenz-Datei angelegt wurde.
 			 */
 			this.projectPath = Paths.get(getProject().getProject().getLocation().toString());
 			this.classLoader = new EngineClassLoader(this);

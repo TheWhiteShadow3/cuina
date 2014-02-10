@@ -4,6 +4,7 @@ import cuina.Context;
 import cuina.Game;
 import cuina.Logger;
 import cuina.database.Database;
+import cuina.event.Trigger;
 import cuina.plugin.PluginManager;
 
 import java.io.Serializable;
@@ -57,11 +58,21 @@ public class Interpreter implements Serializable
 		
 		public Result() {};
 		
+		/**
+		 * Erstellt ein neues Ergebnis. 
+		 * @param value Rückgabewert der Funktion.
+		 */
 		public Result(Object value)
 		{
 			this.value = value;
 		}
 		
+		/**
+		 * Erstellt ein neues Ergebnis.
+		 * @param wait Anzahl der zu wartenden Frames.
+		 * @param skip Anzahl der zu überspringenden Zeilen. Kann negativ sein.
+		 * @param stop Hält den Interpreter an.
+		 */
 		public Result(int wait, int skip, boolean stop)
 		{
 			this.wait = wait;
@@ -144,6 +155,7 @@ public class Interpreter implements Serializable
 	private int waitCount;
 	private int switchValue;
 	private Object resultValue;
+	private Trigger trigger;
 	
 	static
 	{
@@ -247,6 +259,12 @@ public class Interpreter implements Serializable
 	public CommandList getList()
 	{
 		return setup != null ? setup.list : null;
+	}
+	
+	public void setup(InterpreterTrigger trigger, Object... args)
+	{
+		setup(trigger.getKey(), args);
+		this.trigger = trigger;
 	}
 
 	public void setup(String eventKey, Object... args)
@@ -412,17 +430,18 @@ public class Interpreter implements Serializable
 	
 	private void skipCommands(int count)
 	{
-		Command[] commands = setup.list.commands;
-		int level = commands[setup.index].indent;
-		int sign = (count >= 0) ? +1 : -1;
-		while(count != 0)
-		{
-			if (commands[setup.index+sign].indent <= level)
-			{
-				setup.index += sign;
-				count -= sign;
-			}
-		}
+		setup.index += count;
+//		Command[] commands = setup.list.commands;
+//		int level = commands[setup.index].indent;
+//		int sign = (count >= 0) ? +1 : -1;
+//		while(count != 0)
+//		{
+//			if (commands[setup.index+sign].indent <= level)
+//			{
+//				setup.index += sign;
+//				count -= sign;
+//			}
+//		}
 	}
 	
 	public void setSwitchValue(int value)
@@ -464,8 +483,15 @@ public class Interpreter implements Serializable
 			case "goto":	setIndex((int) cmd.args[0] - 1); break;
 			case "stop":	run = false; break;
 			case "call":	callEvent((String) cmd.args[0], cmd.args); break;
+			case "disableTrigger": disableTrigger(); break;
+			case "comment": break;
 			default: throw new NullPointerException("Internal function '" + cmd.name + "' is not defined.");
 		}
+	}
+	
+	private void disableTrigger()
+	{
+		if (trigger != null) trigger.setActive(false);
 	}
 	
 	private void callEvent(String eventKey, Object[] args)
@@ -488,6 +514,7 @@ public class Interpreter implements Serializable
 			{
 				case "$index": return setup.index;
 				case "$result": return resultValue;
+				case "$trigger": return trigger;
 			}
 		}
 		catch(Exception e) {}

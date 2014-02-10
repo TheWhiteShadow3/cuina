@@ -183,6 +183,9 @@ public class TestMenu extends LifeCycleAdapter
 		{
 			System.out.println("handleEvent: " + event + "; Arguments: " + Arrays.toString(args));
 		}
+
+		@Override
+		public void setActive(boolean value) {}
 	}
 
 //	@Override

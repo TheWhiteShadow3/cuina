@@ -122,4 +122,6 @@ public interface ITerrainEditor
      * @return Die Editor Seite oder <code>null</code>, wenn der Editor noch nicht inizialisiert ist.
      */
 	public IEditorSite getEditorSite();
+
+	public void refreshResources();
 }

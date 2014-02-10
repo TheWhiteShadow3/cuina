@@ -55,5 +55,9 @@ public interface GraphicContainer
 
 	public void clear();
 
-	public void setFlag(int glFlag, boolean value);
+//	public void setFlag(int glFlag, boolean value);
+
+	void setInterceptor(RenderInterceptor interceptor);
+
+	public RenderInterceptor getInterceptor();
 }

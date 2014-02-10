@@ -15,7 +15,8 @@ public class AdapterFactory implements IAdapterFactory
 	{
 		if (adapterType == ObjectGraphic.class && adaptableObject instanceof ObjectAdapter)
 		{
-			return new ModelGraphic((ObjectAdapter) adaptableObject);
+			ObjectAdapter adapter = (ObjectAdapter) adaptableObject;
+			return new ModelGraphic(adapter);
 		}
 		return null;
 	}

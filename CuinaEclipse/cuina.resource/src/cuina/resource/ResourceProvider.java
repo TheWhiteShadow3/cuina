@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IWorkspace;
@@ -129,6 +130,11 @@ public class ResourceProvider
 		for (Resource r : cache.values())
 			r.dispose();
 		cache.clear();
+	}
+	
+	Map<String, Resource> getCache()
+	{
+		return cache;
 	}
 
 	/**

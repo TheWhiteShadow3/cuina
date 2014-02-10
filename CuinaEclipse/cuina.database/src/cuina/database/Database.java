@@ -5,6 +5,7 @@ import cuina.resource.ResourceException;
 import cuina.resource.SerializationManager;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -44,9 +45,9 @@ public class Database
 		return project;
 	}
 	
-	public String getDataPath()
+	public IPath getDataPath()
 	{
-		return dataPath;
+		return project.getProject().getFullPath().append(dataPath);
 	}
 	
 //	public IPath getDatabasePath()
@@ -172,7 +173,12 @@ public class Database
 		}
 	}
 	
-	void fireTableDeleted(DataTable<?> table)
+	Map<String, DataTable> getCache()
+	{
+		return cache;
+	}
+	
+	void fireTableChanged(DataTable<?> table)
 	{
 		cache.remove(table.getName());
 	}

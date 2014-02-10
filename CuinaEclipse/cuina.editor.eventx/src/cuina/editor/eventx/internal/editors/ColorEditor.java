@@ -12,6 +12,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 
+import cuina.editor.eventx.internal.CommandEditorContext;
+
 public class ColorEditor implements TypeEditor<Color>
 {
 	private static final org.eclipse.swt.graphics.Color[] COLORS = new org.eclipse.swt.graphics.Color[4];
@@ -26,7 +28,7 @@ public class ColorEditor implements TypeEditor<Color>
 	private boolean update;
 	
 	@Override
-	public void init(Object value)
+	public void init(CommandEditorContext context, Object value)
 	{
 		if (value != null)
 			this.color = (Color) value;

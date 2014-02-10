@@ -2,7 +2,7 @@ package cuina.message;
 
 import cuina.Context;
 import cuina.Game;
-import cuina.event.Event;
+import cuina.event.AbstractTrigger;
 import cuina.event.Trigger;
 import cuina.eventx.EventMethod;
 import cuina.eventx.Interpreter;
@@ -231,22 +231,13 @@ public class MessageBox implements Plugin, LifeCycle, WidgetDescriptor
 	@SuppressWarnings("serial")
 	private Trigger getMenuTrigger()
 	{
-		return new Trigger()
+		return new AbstractTrigger(Button.BUTTON_PRESSED)
 		{
-			@Override
-			public boolean test(Event event, Object arg)
-			{
-				return (event == Button.BUTTON_PRESSED);
-			}
-			
 			@Override
 			public void run(Object... args)
 			{
 				selectionCallback((Integer) args[1]);
 			}
-			
-			@Override
-			public boolean isActive() { return true; }
 		};
 	}
 }
