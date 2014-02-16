@@ -45,7 +45,7 @@ public class CollisionBox extends CollisionMask
 	{
 		this(object, new Rectangle(cMask.x, cMask.y, cMask.width, cMask.height), cMask.through, cMask.alphaMask);
 	}
-	
+
 	private void createPixelData(int alphaLevel)
 	{
 		Object ext = object.getExtension(CuinaModel.EXTENSION_KEY);
@@ -81,74 +81,47 @@ public class CollisionBox extends CollisionMask
 	 * @param y Y-Position in Pixel.
 	 * @return <code>true</code>, wenn die angegebene Position frei ist, andernfalls <code>false</code>.
 	 */
-	public boolean isFree(int x, int y)
+	public CuinaObject getObjectOn(float x, float y)
 	{
-		useTempPosition(x, y);
-		
-		GameMap map = GameMap.getInstance();
-		if (map.isPassable(getRectangle()))
-		{
-			System.out.println("isFree");
-			if (map.getCollisionSystem().testCollision(this) == null)
-			{
-				clearTempOffset();
-				return true;
-			}
-		}
-		clearTempOffset();
-		return false;
-	}
-
-	@Override
-	public boolean move(float x, float y, float z, boolean useTrigger)
-	{
-		useTempPosition((int) x, (int) y);
-		impactObject = null;
-		Rectangle rect = getRectangle();
-		
-		GameMap map = GameMap.getInstance();
-		if (!through && !map.isPassable(rect))
-		{
-			clearTempOffset();
-			return false;
-		}
-		else
-		{
-			CuinaObject other = map.getCollisionSystem().testCollision(this);
-			if (testObject(other, useTrigger))
-			{
-				clearTempOffset();
-				return false;
-			}
-		}
-		map.getCollisionSystem().updatePosition(object);
-		clearTempOffset();
-		return true;
+		return GameMap.getInstance().getCollisionSystem().testCollision((int) x, (int) y, this);
 	}
 	
 	@Override
-	public CuinaObject testAbsolutePosition(int x, int y, int z)
+	public boolean isAbsolutePositionFree(float x, float y, float z)
 	{
-		useTempPosition(x, y);
+		impactObject = null;
+		Rectangle rect = new Rectangle(box);
+		rect.x = (int) x + bounds.x;
+		rect.y = (int) y + bounds.y;
 		
-		CuinaObject cObject = GameMap.getInstance().getCollisionSystem().testCollision(this);
-
-		clearTempOffset();
-		return cObject;
+		GameMap map = GameMap.getInstance();
+		if (through)
+		{
+			return map.contains(rect);
+		}
+		
+		if (!map.isPassable(rect))
+		{
+			return false;
+		}
+		
+		CuinaObject obj = getObjectOn((int) x, (int) y);
+		impactObject = obj;
+		return isPassable(obj);
 	}
 	
 	@Override
 	public boolean intersects(CuinaMask other)
 	{
 		if (other == null) return false;
-		Rectangle intersects = getRectangle().intersection(other.getRectangle());
+		Rectangle intersects = box.intersection(other.getRectangle());
 		if (!intersects.isEmpty())
 		{
 			return testPixelCollision(intersects, other);
 		}
 		return false;
 	}
-	
+
 	private boolean testPixelCollision(Rectangle intersection, CuinaMask other)
 	{
 		if (!(other instanceof CollisionBox) || pixelData == null) return true;
@@ -173,7 +146,7 @@ public class CollisionBox extends CollisionMask
 
 	public boolean intersects(Rectangle rect)
 	{
-		return getRectangle().intersects(rect);
+		return box.intersects(rect);
 	}
 	
 	/**
@@ -187,7 +160,7 @@ public class CollisionBox extends CollisionMask
 	
 	public void refresh()
 	{
-		GameMap.getInstance().getCollisionSystem().updatePosition(object);
+		GameMap.getInstance().getCollisionSystem().updateCollisionData(object);
 	}
 	
 	@Override

@@ -28,6 +28,7 @@ public class EventRegistry
 	
 	public static IEventDescriptor getEventDescriptor(Event event)
 	{
+		if (event == null) throw new NullPointerException("Event is null.");
 		if (events == null) registrateEvents();
 		
 		for (IEventDescriptor desc : events)
@@ -63,8 +64,9 @@ public class EventRegistry
 	
 	public static ITriggerDescriptor getTriggerDescriptor(Trigger trigger)
 	{
-		if (triggers == null) registrateEvents();
-		
+		if (trigger == null) throw new NullPointerException("Trigger is null.");
+		if (triggers == null) registrateTriggers();
+
 		for (ITriggerDescriptor desc : triggers)
 		{
 			if (desc.getTriggerClass().equals(trigger.getClass())) return desc;

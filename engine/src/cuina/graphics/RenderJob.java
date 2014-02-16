@@ -70,12 +70,13 @@ public class RenderJob
 		return job;
 	}
 	
-	public static RenderJob addImage(Image owner, int x, int y, Image image)
+	public static RenderJob addImage(Image owner, int x, int y, Image image, int flags)
 	{
 		RenderJob job = new RenderJob(owner);
 		job.type = IMAGE;
 		job.x1 = x;
 		job.y1 = y;
+		job.x2 = flags;
 		job.data = image;
 		Graphics.renderJobs.add(job);
 		return job;
@@ -204,6 +205,8 @@ public class RenderJob
 	{
 		Image.IMAGE_MATRIX.clear();
 		Image.IMAGE_MATRIX.setPosition(x1, y1);
+		if ((x2 & Image.H_FLIP) != 0) Image.IMAGE_MATRIX.sx = -1;
+		if ((x2 & Image.V_FLIP) != 0) Image.IMAGE_MATRIX.sy = -1;
 		
 		Image.IMAGE_MATRIX.pushTransformation();
 		Image.renderImage((Image) data);

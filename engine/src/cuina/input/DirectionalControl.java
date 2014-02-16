@@ -83,7 +83,7 @@ public class DirectionalControl extends Control
 	 * </p>
 	 * @param pattern Sektor-Aufteilung.
 	 * @return Sektor in dem die Richtung liegt.
-	 * @throws IllegalArgumentException Wenn die Sektor-Aufteilung ungülti ist.
+	 * @throws IllegalArgumentException Wenn die Sektor-Aufteilung ungültig ist.
 	 */
 	public int getDirectionSektor(int pattern)
 	{

@@ -1,5 +1,6 @@
 package cuina.editor.event;
 
+import cuina.editor.event.ui.ITriggerEditor;
 import cuina.event.Trigger;
 
 import org.eclipse.core.runtime.FileLocator;

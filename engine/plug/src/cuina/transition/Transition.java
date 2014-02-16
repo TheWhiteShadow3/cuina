@@ -174,7 +174,7 @@ public class Transition implements Plugin, LifeCycle
 				
 				getImage().getColor().set((int) red, (int) green, (int) blue, (int) alpha);
 				setVisible(alpha > 0);
-				System.out.println("[TransitionSprite] Fade-Color: " + getImage().getColor());
+//				System.out.println("[TransitionSprite] Fade-Color: " + getImage().getColor());
 			}
 		}
 

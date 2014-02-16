@@ -105,7 +105,7 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
 	@Override
 	public int getAvilableID()
 	{
-		return aviableID++;
+		return aviableID;
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class BaseWorld implements LifeCycle, Serializable, CuinaWorld
     	{
     		aviableID++;
     	}
-    	while(!objects.containsKey(aviableID));
+    	while(objects.containsKey(aviableID));
     		
 		obj.addExtension(SPIRIT_KEY, new Spirit(this, obj));
 		obj.testTriggers(OBJECT_CREATE, null, obj);

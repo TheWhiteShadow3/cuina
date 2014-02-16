@@ -20,7 +20,7 @@
                 <y>0</y>
                 <width>64</width>
                 <height>16</height>
-                <through>true</through>
+                <through>false</through>
                 <alphaMask>0</alphaMask>
               </cuina.map.BoxData>
             </entry>

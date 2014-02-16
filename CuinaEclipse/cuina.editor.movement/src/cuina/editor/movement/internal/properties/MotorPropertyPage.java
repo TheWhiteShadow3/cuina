@@ -5,11 +5,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import cuina.editor.core.IEditorContext;
 import cuina.editor.movement.internal.MotorExtensionEditor;
-import cuina.editor.object.IExtensionContext;
 import cuina.editor.object.ObjectPropertyPage;
 
-public class MotorPropertyPage extends ObjectPropertyPage implements IExtensionContext
+public class MotorPropertyPage extends ObjectPropertyPage implements IEditorContext
 {
 	private MotorExtensionEditor editor;
 	

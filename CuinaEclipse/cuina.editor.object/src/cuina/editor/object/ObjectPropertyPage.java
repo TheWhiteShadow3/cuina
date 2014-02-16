@@ -1,17 +1,20 @@
 package cuina.editor.object;
 
-import cuina.editor.core.CuinaProject;
-import cuina.object.ObjectData;
-import cuina.object.ObjectTemplate;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.dialogs.PropertyPage;
+
+import cuina.editor.core.CuinaProject;
+import cuina.event.Trigger;
+import cuina.object.ObjectData;
+import cuina.object.ObjectTemplate;
 
 /**
  * Die ObjectPropertyPage wird für ObjectData und ObjectTemplate -Instanzen benutzt.
  * @author TheWhiteShadow
  */
-public abstract class ObjectPropertyPage extends PropertyPage
+public abstract class ObjectPropertyPage extends PropertyPage implements IExtensionEditorContext
 {
 	private ObjectData object;
 	private ObjectTemplate template;
@@ -33,15 +36,30 @@ public abstract class ObjectPropertyPage extends PropertyPage
 		}
 	}
 	
+	@Override
 	public ObjectAdapter getObjectAdapter()
 	{
 		return (ObjectAdapter) getElement();
 	}
 	
-	public CuinaProject getProject()
+	@Override
+	public CuinaProject getCuinaProject()
 	{
 		return getObjectAdapter().getProject();
 	}
+	
+	public Object getExtension(String key)
+	{
+		return getObjectAdapter().getObject().extensions.get(key);
+	}
+
+	public List<Trigger> getTriggers()
+	{
+		return getObjectAdapter().getObject().triggers;
+	}
+	
+	@Override
+	public void fireDataChanged() {}
 	
 //	/**
 //	 * Gibt das zugrunde liegende Objekt zurück.

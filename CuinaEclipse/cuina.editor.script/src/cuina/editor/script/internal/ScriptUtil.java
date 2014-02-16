@@ -138,6 +138,11 @@ public class ScriptUtil
 		}
 	}
 	
+	public static List<DefNode> getClassMethods(RootNode root)
+	{
+		return getClassMethods(getScriptClass(root));
+	}
+	
 	public static List<DefNode> getClassMethods(ClassNode classNode)
 	{
 		ArrayList<DefNode> list = new ArrayList<DefNode>();
@@ -177,7 +182,7 @@ public class ScriptUtil
 	 * </p>
 	 * @param node Element-Konten.
 	 * 
-	 * @return
+	 * @return Vollqualifizierter Name des Ruby-Elements.
 	 */
 	public static String getFullName(final INamed node)
 	{
@@ -345,7 +350,7 @@ public class ScriptUtil
 	 * Erstellt eine Methoden-Definition aus einer Java-Methode.
 	 * Die Methoden-Signatur darf nur gültige Ruby-Bezeichner besitzen.
 	 * @param method
-	 * @return
+	 * @return Die Methoden-Definition.
 	 */
 	public static DefNode createMethode(Method method)
 	{
@@ -358,7 +363,7 @@ public class ScriptUtil
 	 * Erstellt eine Methoden-Definition mit dem angegebenen Namen und Argumenten.
 	 * @param name
 	 * @param args
-	 * @return
+	 * @return Die Methoden-Definition.
 	 */
 	public static DefNode createMethode(String name, String[] args)
 	{

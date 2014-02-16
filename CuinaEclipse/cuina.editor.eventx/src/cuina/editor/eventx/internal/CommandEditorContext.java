@@ -7,5 +7,10 @@ import cuina.editor.core.CuinaProject;
 public interface CommandEditorContext
 {
 	public Shell getShell();
+	
+	/**
+	 * Gibt das Cuina-Projekt zurück, für das der Editor agiert.
+	 * @return Das Cuina-Projekt.
+	 */
 	public CuinaProject getCuinaProject();
 }

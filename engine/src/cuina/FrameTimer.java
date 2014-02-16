@@ -128,7 +128,7 @@ public final class FrameTimer
 
 		// Frame-rate im Debug-Modus (kann erst hier ermittelt werden.)
 		if (/*Game.isDebug() && */frameTimesPos == 0)
-			Display.setTitle("FPS: " + FPS() + " - " + Game.getTitle() + ": " + scene.getName() + " (Debug-Modus)");
+			Display.setTitle("FPS: " + getFPS() + " - " + Game.getTitle() + ": " + scene.getName() + " (Debug-Modus)");
 
 		Graphics.update();
 		inFrame = false;
@@ -220,7 +220,7 @@ public final class FrameTimer
 	 * Gibt die FPS errechnet aus den letzten 5 Frame-Zyklen.
 	 * @return FPS
 	 */
-	public static int FPS()
+	public static int getFPS()
 	{
 		long times = 0;
 		for(int i = 0; i < frameTimes.length; i++)

@@ -4,14 +4,15 @@ import java.io.Serializable;
 
 
 /**
+ * Ein Rechteck.
  * @author TheWhiteShadow
  */
 public class Rectangle implements Serializable
 {
-    public static final int OUT_LEFT 	= 1;
-    public static final int OUT_TOP 	= 2;
-    public static final int OUT_RIGHT 	= 4;
-    public static final int OUT_BOTTOM 	= 8;
+	public static final int OUT_LEFT 	= 1;
+	public static final int OUT_TOP 	= 2;
+	public static final int OUT_RIGHT 	= 4;
+	public static final int OUT_BOTTOM 	= 8;
 	
 	private static final long serialVersionUID = 2107980141305868313L;
 	
@@ -51,6 +52,39 @@ public class Rectangle implements Serializable
 	public void set(Rectangle r)
 	{
 		set(r.x, r.y, r.width, r.height);
+	}
+	
+	public void add(Rectangle r)
+	{
+        long tx2 = this.width;
+        long ty2 = this.height;
+        if ((tx2 | ty2) < 0)
+        {
+            set(r.x, r.y, r.width, r.height);
+        }
+        long rx2 = r.width;
+        long ry2 = r.height;
+        if ((rx2 | ry2) < 0)
+        {
+            return;
+        }
+        int tx1 = this.x;
+        int ty1 = this.y;
+        tx2 += tx1;
+        ty2 += ty1;
+        int rx1 = r.x;
+        int ry1 = r.y;
+        rx2 += rx1;
+        ry2 += ry1;
+        if (tx1 > rx1) tx1 = rx1;
+        if (ty1 > ry1) ty1 = ry1;
+        if (tx2 < rx2) tx2 = rx2;
+        if (ty2 < ry2) ty2 = ry2;
+        tx2 -= tx1;
+        ty2 -= ty1;
+        if (tx2 > Integer.MAX_VALUE) tx2 = Integer.MAX_VALUE;
+        if (ty2 > Integer.MAX_VALUE) ty2 = Integer.MAX_VALUE;
+        set(tx1, ty1, (int) tx2, (int) ty2);
 	}
 	
 	public void setLocation(int x, int y)
@@ -231,21 +265,65 @@ public class Rectangle implements Serializable
 		return out;
 	}
 	
-	/// TODO: Implementieren, so dass Objekte gegeneinander bewegt werden können ohne zu Kollidieren.
-	public int dist(Rectangle r)
+	public int distY(Rectangle r)
 	{
-		throw new UnsupportedOperationException("Nicht implementiert");
-//		return 0;
+		int ty1 = this.y;
+		int ry1 = r.y;
+		long ty2 = ty1; ty1 += this.height;
+		long ry2 = ry1; ry2 += r.height;
+		
+		int d = (int) (ty1 < ry1 ? ry1-ty2 : ty1-ry2);
+		if (d < 0) d = 0;
+		return d;
 	}
 	
-    public boolean isEmpty()
-    {
-        return (width <= 0) || (height <= 0);
-    }
-    
-    @Override
+	public int distX(Rectangle r)
+	{
+		int tx1 = this.x;
+		int rx1 = r.x;
+		long tx2 = tx1; tx1 += this.width;
+		long rx2 = rx1; rx2 += r.width;
+
+		int d = (int) (tx1 < rx1 ? rx1-tx2 : tx1-rx2);
+		if (d < 0) d = 0;
+		return d;
+	}
+	
+	public boolean isEmpty()
+	{
+		return (width <= 0) || (height <= 0);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		result = prime * result + width;
+		result = prime * result + height;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj instanceof Rectangle)
+		{
+			Rectangle other = (Rectangle) obj;
+			return (x == other.x &&
+					y == other.y &&
+					width == other.width &&
+					height == other.height);
+		}
+		return false;
+	}
+
+	@Override
 	public String toString()
-    {
-        return "Rectangle [x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
-    }
+	{
+		return "Rectangle [x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + "]";
+	}
 }

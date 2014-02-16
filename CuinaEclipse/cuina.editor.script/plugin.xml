@@ -136,7 +136,7 @@
       <trigger
             class="cuina.script.ScriptTrigger"
             description="Startet ein Skript."
-            editorClass="cuina.editor.script.ScriptTriggerEditor"
+            editorClass="cuina.editor.script.internal.ScriptTriggerEditor"
             name="Skript Tigger">
       </trigger>
    </extension>

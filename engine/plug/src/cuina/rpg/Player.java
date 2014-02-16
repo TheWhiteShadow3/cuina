@@ -4,8 +4,10 @@ import cuina.Game;
 import cuina.event.Event;
 import cuina.input.DirectionalControl;
 import cuina.input.Input;
+import cuina.map.CollisionBox;
 import cuina.movement.Driver;
 import cuina.movement.Motor;
+import cuina.object.CollisionMask;
 import cuina.world.CuinaMask;
 import cuina.world.CuinaObject;
 import cuina.world.CuinaWorld;
@@ -26,6 +28,7 @@ public class Player implements Driver
 	public String CONTROL_RUN 		= "c3";
 	
 	private Motor motor;
+	private float playerSpeed = 1.5f;
 	
 	public Player()
 	{
@@ -42,61 +45,46 @@ public class Player implements Driver
 	{
 		handleDebugMovement();
 		
-//		DirectionalControl c = (DirectionalControl) Input.getControl(CONTROL_MOVE);
-//		if (c != null)
-//		{
-//			float dir = c.getDirection();
-//			if (dir != -1) motor.setDirection(dir);
-//			float speed = 1.5f * c.getValue();
-//			if (Input.isDown(CONTROL_RUN)) speed *= 2;
-//			motor.setSpeed(speed);
-//		}
-		
-		// DEBUG: Teste Platform-Fähigkeiten
-		
-		if (Input.isDown("left"))
+		DirectionalControl c = (DirectionalControl) Input.getControl(CONTROL_MOVE);
+		if (c != null)
 		{
-			motor.setDirection(180);
-			motor.setSpeedX(-3);
+			float dir = c.getDirection();
+			if (dir != -1) motor.setDirection(dir);
+			float cSpeed = playerSpeed * c.getValue();
+			if (Input.isDown(CONTROL_RUN)) cSpeed *= 2;
+			motor.setSpeed(cSpeed);
 		}
-		else if (Input.isDown("right"))
-		{
-			motor.setDirection(0);
-			motor.setSpeedX(3);
-		}
-		else
-		{
-			motor.setDirection(270);
-			motor.setSpeedX(0);
-		}
-		if (Input.isPressed("c1")) motor.setSpeedY(-30);
 		
 		handleCollisions();
 	}
 	
-	private CuinaMask getCollisionMask()
+	private CollisionBox getCollisionMask()
 	{
 		CuinaObject object = motor.getObject();
-		return (CuinaMask) object.getExtension(CuinaMask.EXTENSION_KEY);
+		CuinaMask mask = (CuinaMask) object.getExtension(CuinaMask.EXTENSION_KEY);
+		if (mask instanceof CollisionBox)
+			return (CollisionBox) mask;
+		else
+			return null;
 	}
 	
 	private void handleDebugMovement()
 	{
-		CuinaMask box = getCollisionMask();
-		if (box == null) return;
+		CollisionBox mask = getCollisionMask();
+		if (mask == null) return;
 		
-		box.setThrough(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT));
+		mask.setThrough(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT));
 	}
 	
 	private void handleCollisions()
 	{
-		CuinaMask box = getCollisionMask();
-		if (box == null) return;
+		CollisionBox mask = getCollisionMask();
+		if (mask == null) return;
 		
 		CuinaWorld world = Game.getWorld();
 		if (Input.isPressed(CONTROL_ACTION) && (world == null || !world.isFreezed()))
 		{
-			CuinaObject other = box.testRelativePosition(motor.getDX(2), motor.getDY(2), 0);
+			CuinaObject other = mask.getObjectOn(mask.getX() + motor.getDX(2), mask.getY() + motor.getDY(2));
 			if (other != null)
 			{
 				CuinaObject self = motor.getObject();

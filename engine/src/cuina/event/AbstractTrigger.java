@@ -39,6 +39,7 @@ public abstract class AbstractTrigger implements Trigger
 		this.event = event;
 	}
 
+	@Override
 	public Event getEvent()
 	{
 		return event;
@@ -59,7 +60,7 @@ public abstract class AbstractTrigger implements Trigger
 	@Override
 	public boolean test(Event event, Object arg)
 	{
-		return event.equals(Event.ALWAYS) || this.event.equals(event) && (this.arg == null || this.arg.equals(arg));
+		return this.event.equals(Event.ALWAYS) || this.event.equals(event) && (this.arg == null || this.arg.equals(arg));
 	}
 
 	@Override

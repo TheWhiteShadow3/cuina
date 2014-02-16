@@ -143,8 +143,7 @@ public class GameMap extends BaseWorld implements Plugin
 			if (!(obj instanceof ObjectData)) continue;
 			
 			ObjectData data = (ObjectData) obj;
-			if (getObject(data.id) == null)
-				addObject(new BaseObject(data));
+			addObject(new BaseObject(data));
 		}
 		mapInterpreter = Interpreter.getGlobalInterpreter();
 		if (mapInterpreter == null)
@@ -346,7 +345,7 @@ public class GameMap extends BaseWorld implements Plugin
 	{
 		if (super.addObject(obj))
 		{
-			cs.updatePosition(obj);
+			cs.updateCollisionData(obj);
 			return true;
 		}
 		return false;

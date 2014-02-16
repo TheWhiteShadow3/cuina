@@ -10,6 +10,8 @@ import java.io.Serializable;
  */
 public interface Trigger extends Serializable
 {
+	public Event getEvent();
+	
 	public void setActive(boolean value);
 	
 	/**

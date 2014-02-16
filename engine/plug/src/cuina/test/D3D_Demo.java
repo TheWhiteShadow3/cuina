@@ -39,6 +39,7 @@ import org.lwjgl.opengl.GL11;
  * 
  * Aktuell nicht implementiert. Kommt aber wieder
  */
+@SuppressWarnings("deprecation")
 @ForSession(name="D3D_Demo", scenes={"Mapp"})
 public class D3D_Demo extends LifeCycleAdapter implements Plugin
 {
@@ -67,7 +68,7 @@ public class D3D_Demo extends LifeCycleAdapter implements Plugin
 		return "3D-Demo";
 	}
 }
-
+@SuppressWarnings("deprecation")
 class Model3D implements CuinaModel, LifeCycle
 {
 	private static final long serialVersionUID = -3338863848877861923L;
@@ -159,6 +160,7 @@ class Model3D implements CuinaModel, LifeCycle
 		return 0;
 	}
 
+	
 	@Override
 	public void update()
 	{

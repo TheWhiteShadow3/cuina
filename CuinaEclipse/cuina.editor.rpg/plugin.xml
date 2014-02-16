@@ -30,5 +30,12 @@
             class="cuina.rpg.Player">
       </driver>
    </extension>
+   <extension
+         point="cuina.event.EventTypes">
+      <event
+            descpription="Tritt ein, wenn der Spieler vor einem Objekt die Aktionstaste drückt."
+            id="cuina.rpg.ActionByPlayer">
+      </event>
+   </extension>
 
 </plugin>

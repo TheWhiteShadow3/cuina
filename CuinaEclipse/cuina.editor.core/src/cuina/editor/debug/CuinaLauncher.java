@@ -41,9 +41,11 @@ public class CuinaLauncher extends JavaLaunchDelegate
 		{
 			this.file = getEnginePath(config).toFile();
 			
-			Attributes atts = new JarFile(file).getManifest().getMainAttributes();
+			JarFile jar = new JarFile(file);
+			Attributes atts = jar.getManifest().getMainAttributes();
 			this.mainClass = atts.getValue("Main-Class");
 			this.classPath = new String[] { file.getName() };
+			jar.close();
 		}
 		catch (Exception e)
 		{

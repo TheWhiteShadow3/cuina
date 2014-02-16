@@ -7,7 +7,8 @@ Bundle-Vendor: Cuina
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: cuina.database,
  cuina.editor.model,
- cuina.editor.movement
+ cuina.editor.movement,
+ cuina.editor.event
 Export-Package: cuina.rpg,
  cuina.rpg.actor,
  cuina.rpg.inventory

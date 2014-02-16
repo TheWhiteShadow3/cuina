@@ -7,11 +7,11 @@
          point="cuina.event.EventTypes">
       <event
             descpription="Tritt niemals ein."
-            id="cuina.editor.event.Never">
+            id="never">
       </event>
       <event
             descpription="Tritt immer ein."
-            id="cuina.editor.event.Always">
+            id="always">
       </event>
    </extension>
 

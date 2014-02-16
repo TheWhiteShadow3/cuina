@@ -142,7 +142,7 @@ public class CollisionSystem implements Serializable
 //		return testCollision(self, box.getRectangle());
 //	}
 	
-	public CuinaObject testCollision(CuinaMask self)
+	public CuinaObject testCollision(int x, int y, CuinaMask self)
 	{
 		if (self == null) return null;
 		// finde relevante Bereiche
@@ -151,7 +151,7 @@ public class CollisionSystem implements Serializable
 			for(CuinaObject other : area.objects.values())
 			{
 				CuinaMask otherMask = getBoxFrom(other);
-				if (otherMask != null && otherMask != self && self.intersects(otherMask))
+				if (otherMask != null && otherMask != self && self.intersectsOn(x, y, 0, otherMask))
 				{
 //					System.out.println("Kollision: " + object.getID() + " und " + otherObj.getID());
 					return other;
@@ -179,7 +179,7 @@ public class CollisionSystem implements Serializable
 		}
 	}
 	
-	public void updatePosition(CuinaObject object)
+	public void updateCollisionData(CuinaObject object)
 	{
 		CuinaMask box = getBoxFrom(object);
 		if (box == null) return;
@@ -218,15 +218,15 @@ public class CollisionSystem implements Serializable
 		}
 	}
 	
-	public CuinaObject[] findObjects(CollisionArea a)
+	public CuinaObject[] findObjects(Rectangle rect)
 	{
-		if (a  == null) return null;
+		if (rect  == null) return null;
 		HashSet<CuinaObject> founds = new HashSet<CuinaObject>();
 		// finde relevante Bereiche
-		for(CollisionArea area : getAreas(a))
+		for(CollisionArea area : getAreas(rect))
 		{
-			if (a.intersects(area))
-			{	// teste alle Objekte innerhalb dieses Bereichs
+//			if (rect.intersects(area))
+//			{	// teste alle Objekte innerhalb dieses Bereichs
 				CuinaObject otherObj;
 				for(Integer id : area.objects.keySet())
 				{
@@ -234,16 +234,16 @@ public class CollisionSystem implements Serializable
 					CuinaMask box = getBoxFrom(otherObj);
 					if (box == null) continue;
 					
-					if (box.getRectangle().contains(a))
+					if (box.getRectangle().contains(rect))
 					{
 						founds.add(otherObj);
 					}
 				}
-			}
-			else
-			{
-				Logger.log(CollisionSystem.class, Logger.WARNING, "Fehlerhaftes Ergebnis von CollisionSystem.getAreas()");
-			}
+//			}
+//			else
+//			{
+//				Logger.log(CollisionSystem.class, Logger.WARNING, "Fehlerhaftes Ergebnis von CollisionSystem.getAreas()");
+//			}
 		}
 		return founds.toArray(new CuinaObject[founds.size()]);
 	}
@@ -266,30 +266,16 @@ public class CollisionSystem implements Serializable
 	public CollisionArea[] getAreas(Rectangle rect)
 	{
 		int x1 =  rect.x / areaWidth;
-		int x2 = (rect.x + rect.width) / areaWidth;
+		int x2 = (rect.x + rect.width-1) / areaWidth;
 		int y1 =  rect.y / areaHeight;
-		int y2 = (rect.y + rect.height) / areaHeight;
+		int y2 = (rect.y + rect.height-1) / areaHeight;
 		
 		if (x1 < 0 || y1 < 0 || x2 >= xCount || y2 >= areas.length / xCount)
 		{
 			return new CollisionArea[0];
 		}
-	
-//		int temp;
-//		if (x1 > x2)
-//		{
-//			temp = x1;
-//			x1 = x2;
-//			x2 = temp;
-//		}
-//		if (y1 > x2)
-//		{
-//			temp = y1;
-//			y1 = y2;
-//			y2 = temp;
-//		}
-		CollisionArea[] subAreas = new CollisionArea[(x2-x1 + 1) * (y2-y1 + 1)];
 		
+		CollisionArea[] subAreas = new CollisionArea[(x2-x1 + 1) * (y2-y1 + 1)];
 		int temp = 0;
 		for(int y = y1; y <= y2; y++)
 		{
@@ -301,7 +287,7 @@ public class CollisionSystem implements Serializable
 		return subAreas;
 	}
 	
-	public boolean trace(int x1, int y1, int x2, int y2)
+	public CuinaObject trace(int x1, int y1, int x2, int y2)
 	{
 		int x, y, width, height;
 		if (x2 > x1) { x = x1; width  = x2 - x1; }
@@ -310,22 +296,19 @@ public class CollisionSystem implements Serializable
 		else 		 { y = y2; height = y1 - x2; }
 		
 		Rectangle rect = new Rectangle(x, y, width, height);
-		for (CollisionArea area : getAreas(rect))
+		CuinaObject[] objects = findObjects(rect);
+		for (CuinaObject obj : objects)
 		{
-			CuinaObject[] objects = findObjects(area);
-			for (CuinaObject obj : objects)
+			CuinaMask box = getBoxFrom(obj);
+			if (box == null) continue;
+			rect = box.getRectangle();
+			
+			if (rect.intersectsLine(x1, y1, x2, y2))
 			{
-				CuinaMask box = getBoxFrom(obj);
-				if (box == null) continue;
-				rect = box.getRectangle();
-				
-				if (rect.intersectsLine(x1, y1, x2, y2))
-				{
-					return false;
-				}
+				return obj;
 			}
 		}
-		return true;
+		return null;
 	}
 	
 	public static boolean scan(int x1, int y1, int x2, int y2, boolean useTrace)

@@ -17,6 +17,7 @@ import cuina.rpg.Player;
 
 import org.lwjgl.input.Keyboard;
 
+@SuppressWarnings("deprecation")
 public class AnimationFunctionTest
 {
 	private static BaseObject obj;

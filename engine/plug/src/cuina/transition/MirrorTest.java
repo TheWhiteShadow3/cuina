@@ -10,6 +10,7 @@ import cuina.plugin.LifeCycleAdapter;
 import cuina.plugin.Plugin;
 import cuina.util.LoadingException;
 import cuina.world.CuinaObject;
+import cuina.world.CuinaWorld;
 
 import org.lwjgl.util.Color;
 
@@ -50,15 +51,23 @@ public class MirrorTest extends LifeCycleAdapter implements Plugin
 		Image img = sprite.getImage();
 		img.clear(Image.COLOR_TRANSPARENT);
 		
-		CuinaObject obj = Game.getWorld().getObject(1_000_001);
-		Model model = (Model) obj.getExtension(Model.EXTENSION_KEY);
-		Sprite s = model.getSprite();
-		
-//		img.setColor(Color.RED);
-//		img.drawRect(0, 0, img.getWidth(), img.getHeight(), true);
-		img.setBlendMode(Image.COMPOSITE_NORMAL);
-		img.setColor(Color.WHITE);
-		img.drawImage((int) s.getX(), (int) s.getY(), s.getImage());
+//		CuinaObject obj = Game.getWorld().getObject(1_000_001);
+		CuinaWorld world = Game.getWorld();
+		for(Integer id : world.getObjectIDs())
+		{
+			CuinaObject obj = world.getObject(id);
+			Model model = (Model) obj.getExtension(Model.EXTENSION_KEY);
+			if (model == null) continue;
+			
+			Sprite s = model.getSprite();
+			
+			img.setBlendMode(Image.COMPOSITE_NORMAL);
+			img.setColor(Color.WHITE);
+			img.drawImage(
+					(int) (s.getX() - model.getOX()),
+					(int) (s.getY() - model.getOY() + model.getHeight() * 2),
+					s.getImage(), Image.V_FLIP);
+		}
 		
 		img.drawImage(0, 0, groundMask);
 		img.setBlendMode(Image.COMPOSITE_ADD);

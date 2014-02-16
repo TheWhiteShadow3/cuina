@@ -7,7 +7,7 @@ import cuina.editor.core.CuinaProject;
 
 public abstract class ExtensionEditor
 {
-	private IExtensionContext context;
+	private IExtensionEditorContext context;
 	
 	public Object getExtension(String key)
 	{
@@ -26,14 +26,14 @@ public abstract class ExtensionEditor
 	
 	protected CuinaProject getCuinaProject()
 	{
-		return getObjectAdapter().getProject();
+		return context.getCuinaProject();
 	}
 	
 	/**
 	 * Diese Methode wird vom Framework aufgerufen und sollte daher nicht manuell aufgerufen werden.
 	 * @param context Der Editor-Kontext.
 	 */
-	public void init(IExtensionContext context)
+	public void init(IExtensionEditorContext context)
 	{
 		this.context = context;
 	}

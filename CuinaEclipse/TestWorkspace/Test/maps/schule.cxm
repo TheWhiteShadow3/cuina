@@ -16,7 +16,7 @@
             <entry>
               <string>model</string>
               <cuina.animation.ModelData>
-                <fileName>charsets/Gothic-Lolita+44.png</fileName>
+                <fileName>charsets/Player+44.png</fileName>
                 <frames>4</frames>
                 <animations>4</animations>
                 <frame>0</frame>
@@ -32,12 +32,9 @@
               <cuina.movement.MotorData>
                 <speed>0.0</speed>
                 <direction>270.0</direction>
-                <friction>0.1</friction>
+                <friction>0</friction>
                 <driver>cuina.rpg.Player</driver>
-                <force>
-                	<value>0.5</value>
-                	<direction>270</direction>
-                </force>
+                <force/>
               </cuina.movement.MotorData>
             </entry>
             <entry>

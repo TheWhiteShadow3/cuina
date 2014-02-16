@@ -36,6 +36,9 @@ public class Image
 {
 	public static final Color COLOR_TRANSPARENT = new Color(0, 0, 0, 0);
 	
+	public static final int H_FLIP = 1;
+	public static final int V_FLIP = 2;
+	
 	/** Benutzt den Blendmodus, der aktuell in Open-GL eingestellt ist. Sollte nicht benutzt werden. */
 	public static final int COMPOSITE_NOCHANGE = 0;
 	/** Normaler Blendmodus überlagert die Farben entsprechend dem Alphawert.
@@ -313,7 +316,12 @@ public class Image
 
 	public void drawImage(int x, int y, Image image)
 	{	
-		RenderJob.addImage(this, x, y, image);
+		drawImage(x, y, image, 0);
+	}
+	
+	public void drawImage(int x, int y, Image image, int flags)
+	{	
+		RenderJob.addImage(this, x, y, image, flags);
 	}
 
 	public void drawString(int x, int y, String text)

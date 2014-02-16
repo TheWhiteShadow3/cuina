@@ -1,8 +1,5 @@
 package cuina.editor.movement.properties;
 
-import cuina.editor.object.ObjectPropertyPage;
-import cuina.movement.MotorData;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -11,6 +8,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
+
+import cuina.editor.object.ObjectPropertyPage;
+import cuina.movement.MotorData;
 
 public class MotorPropertyPage extends ObjectPropertyPage
 {

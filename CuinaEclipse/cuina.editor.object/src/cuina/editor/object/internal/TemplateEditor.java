@@ -1,33 +1,32 @@
 package cuina.editor.object.internal;
 
-import cuina.database.ui.AbstractDatabaseEditorPart;
-import cuina.editor.core.CuinaProject;
-import cuina.editor.event.EventRegistry;
-import cuina.editor.event.ITriggerDescriptor;
-import cuina.editor.object.ExtensionEditor;
-import cuina.editor.object.IExtensionContext;
-import cuina.editor.object.ObjectAdapter;
-import cuina.editor.ui.DefaultComboViewer;
-import cuina.editor.ui.WidgetFactory;
-import cuina.object.ObjectTemplate;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-public class TemplateEditor extends AbstractDatabaseEditorPart<ObjectTemplate>
+import cuina.database.ui.AbstractDatabaseEditorPart;
+import cuina.editor.core.CuinaProject;
+import cuina.editor.event.ITriggerDescriptor;
+import cuina.editor.object.ExtensionEditor;
+import cuina.editor.object.IExtensionEditorContext;
+import cuina.editor.object.ObjectAdapter;
+import cuina.editor.ui.DefaultComboViewer;
+import cuina.editor.ui.WidgetFactory;
+import cuina.event.Trigger;
+import cuina.object.ObjectTemplate;
+
+public class TemplateEditor extends AbstractDatabaseEditorPart<ObjectTemplate> implements IExtensionEditorContext
 {
 	private ObjectTemplate template;
 	private ObjectAdapter adapter;
@@ -35,13 +34,12 @@ public class TemplateEditor extends AbstractDatabaseEditorPart<ObjectTemplate>
 	private Text inName;
 	private TabFolder extensionFolder;
 
-	private TabItem triggerTab;
-	private Button cmdTrAdd;
-	private Button cmdTrDel;
+	private TabItem triggerTabItem;
+	private TriggerTab triggerTab;
 
 	private final ArrayList<EditorTab> extensionTabs = new ArrayList<EditorTab>();
 	private Map<String, java.util.List<ExtensionDescriptor>> descriptors;
-	private DefaultComboViewer<ITriggerDescriptor> triggerViewer;
+	DefaultComboViewer<ITriggerDescriptor> triggerCombo;
 
 	@Override
 	protected void init(ObjectTemplate template)
@@ -53,12 +51,14 @@ public class TemplateEditor extends AbstractDatabaseEditorPart<ObjectTemplate>
 	@Override
 	protected boolean applySave()
 	{
-		template.sourceObject.extensions.clear();
+		clearExtensions();
 		
 		for(EditorTab tab : extensionTabs)
 		{
 			if (!tab.applySave()) return false;
 		}
+		triggerTab.saveCurrentTrigger();
+		
 		return true;
 	}
 
@@ -86,31 +86,26 @@ public class TemplateEditor extends AbstractDatabaseEditorPart<ObjectTemplate>
 			}
 		}
 		
-		this.triggerTab = new TabItem(extensionFolder, SWT.NONE);
-		triggerTab.setText("Trigger");
+		this.triggerTabItem = new TabItem(extensionFolder, SWT.NONE);
+		triggerTabItem.setText("Trigger");
 		Composite tabPanel = new Composite(extensionFolder, SWT.NONE);
-		tabPanel.setLayout(new GridLayout(3, false));
-		triggerTab.setControl(tabPanel);
+		tabPanel.setLayout(new GridLayout(4, false));
+		triggerTabItem.setControl(tabPanel);
 		
 		createTriggerTab(tabPanel);
 	}
 	
 	private void createTriggerTab(Composite parent)
 	{
-		List list = new List(parent, SWT.V_SCROLL | SWT.BORDER);
-		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 3));
-		TemplateEditorHandler handler = new TemplateEditorHandler();
-		
-		this.cmdTrAdd = WidgetFactory.createButton(parent, "Hinzufügen", SWT.PUSH);
-		cmdTrAdd.addListener(SWT.Selection, handler);
-		
-		this.cmdTrDel = WidgetFactory.createButton(parent, "Entfernen", SWT.PUSH);
-		cmdTrDel.addListener(SWT.Selection, handler);
-		
-		this.triggerViewer = WidgetFactory.createComboViewer(
-				parent, "Typ", EventRegistry.getTriggerDescriptors(), true);
+		this.triggerTab = new TriggerTab(this);
+		triggerTab.createComponents(parent);
 	}
-	
+
+	private void clearExtensions()
+	{
+		template.sourceObject.extensions.clear();
+	}
+
 	public Object getExtension(String key)
 	{
 		Map<String, Object> extensions = template.sourceObject.extensions;
@@ -131,31 +126,42 @@ public class TemplateEditor extends AbstractDatabaseEditorPart<ObjectTemplate>
 		return extensions.put(key, value);
 	}
 
+	public List<Trigger> getTriggers()
+	{
+		return template.sourceObject.triggers;
+	}
+	
 	@Override
 	public CuinaProject getCuinaProject()
 	{
 		return super.getCuinaProject();
 	}
-
+	
+	@Override
+	public ObjectAdapter getObjectAdapter()
+	{
+		return adapter;
+	}
+	
+	@Override
+	public void fireDataChanged()
+	{
+		setDirty(true);
+	}
+	
+	@Override
+	public void setErrorMessage(String message)
+	{
+		
+	}
+	
 	@Override
 	public void setFocus()
 	{
 		inName.setFocus();
 	}
 	
-	private class TemplateEditorHandler implements Listener
-	{
-		@Override
-		public void handleEvent(Event event)
-		{
-			if (event.widget == cmdTrAdd)
-			{
-				
-			}
-		}
-	}
-	
-	private class EditorTab implements Listener, IExtensionContext
+	private class EditorTab implements Listener
 	{
 //		private String id;
 		private Composite tabPanel;
@@ -220,7 +226,7 @@ public class TemplateEditor extends AbstractDatabaseEditorPart<ObjectTemplate>
 				try
 				{
 					this.editor = (ExtensionEditor) descriptor.getEditor().newInstance();
-					editor.init(this);
+					editor.init(TemplateEditor.this);
 					editor.createComponents(editorPanel);
 				}
 				catch (InstantiationException | IllegalAccessException e)
@@ -231,24 +237,6 @@ public class TemplateEditor extends AbstractDatabaseEditorPart<ObjectTemplate>
 			tabPanel.layout(true, true);
 		}
 
-		@Override
-		public ObjectAdapter getObjectAdapter()
-		{
-			return adapter;
-		}
-		
-		@Override
-		public void fireDataChanged()
-		{
-			setDirty(true);
-		}
-		
-		@Override
-		public void setErrorMessage(String message)
-		{
-			
-		}
-		
 		@Override
 		public void handleEvent(Event event)
 		{

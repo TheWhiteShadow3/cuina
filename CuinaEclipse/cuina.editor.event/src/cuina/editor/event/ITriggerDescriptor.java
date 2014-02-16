@@ -1,6 +1,7 @@
 package cuina.editor.event;
 
 import cuina.database.NamedItem;
+import cuina.editor.event.ui.ITriggerEditor;
 import cuina.event.Trigger;
 
 import org.eclipse.swt.graphics.Image;

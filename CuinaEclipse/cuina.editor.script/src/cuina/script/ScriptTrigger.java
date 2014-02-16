@@ -27,6 +27,16 @@ public class ScriptTrigger extends AbstractTrigger
 		this.script = script;
 		this.main = main;
 	}
+	
+	public void setScript(String script)
+	{
+		this.script = script;
+	}
+
+	public void setMain(String main)
+	{
+		this.main = main;
+	}
 
 	public String getScript()
 	{

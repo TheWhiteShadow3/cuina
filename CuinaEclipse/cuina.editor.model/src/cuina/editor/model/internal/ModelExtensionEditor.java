@@ -35,7 +35,7 @@ public class ModelExtensionEditor extends ExtensionEditor implements Listener
 	private Spinner startFrameSpinner;
 	private DefaultComboViewer<AnimatorType> animatorCombo;
 	private Button standAnimation;
-	private Label imageLabel;
+	private ModelPanel modelPanel;
 	private boolean update;
 	
 	@Override
@@ -65,20 +65,20 @@ public class ModelExtensionEditor extends ExtensionEditor implements Listener
 		
 		frameCountSpinner = WidgetFactory.createSpinner(group, "Frames:");
 
-		imageLabel = new Label(group, SWT.BORDER);
-		imageLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 8));
-		imageLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		this.modelPanel = new ModelPanel(group, SWT.BORDER);
+		modelPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 8));
+		modelPanel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		aniCountSpinner = WidgetFactory.createSpinner(group, "Animationen:");
 		startFrameSpinner = WidgetFactory.createSpinner(group, "Start-Frame:");
 		startAniSpinner = WidgetFactory.createSpinner(group, "Start-Animation:");
 		standAnimation = WidgetFactory.createButton(group, "Standanimation", SWT.CHECK);
 
-		frameCountSpinner.addListener(SWT.Modify, this);
-		aniCountSpinner.addListener(SWT.Modify, this);
-		startFrameSpinner.addListener(SWT.Modify, this);
-		startAniSpinner.addListener(SWT.Modify, this);
-		standAnimation.addListener(SWT.Modify, this);
+		frameCountSpinner.addListener(SWT.Selection, this);
+		aniCountSpinner.addListener(SWT.Selection, this);
+		startFrameSpinner.addListener(SWT.Selection, this);
+		startAniSpinner.addListener(SWT.Selection, this);
+		standAnimation.addListener(SWT.Selection, this);
 		
 		addSeparator(group, 2);
 		addAnimatorData(group);
@@ -121,6 +121,16 @@ public class ModelExtensionEditor extends ExtensionEditor implements Listener
 		standAnimation.setSelection(model.standAnimation);
 		animatorCombo.setSelectedElement(AnimatorRegistry.getAnimatorTypeFromClass(model.animator));
 		
+		startFrameSpinner.setMaximum(model.frames-1);
+		startAniSpinner.setMaximum(model.animations-1);
+		
+		modelPanel.setFrames(model.frames);
+		modelPanel.setAnimations(model.animations);
+		modelPanel.setFrameIndex(model.frame);
+		modelPanel.setAnimationIndex(model.animation);
+		if (model.standAnimation)
+			modelPanel.startAnimation();
+		
 		update = false;
 	}
 	
@@ -150,6 +160,32 @@ public class ModelExtensionEditor extends ExtensionEditor implements Listener
 		if (ev.widget == cmdImage)
 			loadImage(cmdImage.getResourceName());
 		
+		if (ev.widget == frameCountSpinner)
+		{
+			int frames = frameCountSpinner.getSelection();
+			startFrameSpinner.setMaximum(frames-1);
+			modelPanel.setFrames(frames);
+		}
+		
+		if (ev.widget == aniCountSpinner)
+		{
+			int animations = aniCountSpinner.getSelection();
+			startAniSpinner.setMaximum(animations-1);
+			modelPanel.setAnimations(animations);
+		}
+		
+		if (ev.widget == startFrameSpinner)
+			modelPanel.setFrameIndex(startFrameSpinner.getSelection());
+		
+		if (ev.widget == startAniSpinner)
+			modelPanel.setAnimationIndex(startAniSpinner.getSelection());
+		
+		if (ev.widget == standAnimation)
+			if (standAnimation.getSelection())
+				modelPanel.startAnimation();
+			else
+				modelPanel.stopAnimation();
+		
 		fireDataChanged();
 	}
 
@@ -160,7 +196,7 @@ public class ModelExtensionEditor extends ExtensionEditor implements Listener
 			ResourceProvider rp = ResourceManager.getResourceProvider(getCuinaProject());
 			Resource res = rp.getResource(ResourceManager.KEY_GRAPHICS, fileName);
 			Image image = new Image(Display.getCurrent(), res.getPath().toAbsolutePath().toString());
-			imageLabel.setImage(image);
+			modelPanel.setImage(image);
 			return true;
 		}
 		catch (ResourceException e)

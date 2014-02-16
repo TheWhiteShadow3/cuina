@@ -11,4 +11,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.views,
  cuina.database
-Export-Package: cuina.editor.event
+Export-Package: cuina.editor.event,
+ cuina.editor.event.ui

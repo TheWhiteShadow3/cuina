@@ -5,11 +5,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import cuina.editor.object.IExtensionContext;
 import cuina.editor.object.ObjectPropertyPage;
 import cuina.editor.object.internal.MaskExtensionEditor;
 
-public class MaskPropertyPage extends ObjectPropertyPage implements IExtensionContext
+public class MaskPropertyPage extends ObjectPropertyPage
 {
 	private MaskExtensionEditor editor;
 	
@@ -34,7 +33,4 @@ public class MaskPropertyPage extends ObjectPropertyPage implements IExtensionCo
     {
 		return editor.performOk();
     }
-
-	@Override
-	public void fireDataChanged() {}
 }

@@ -22,6 +22,12 @@ public class ParameterizedTrigger implements Trigger
 		this.trigger = trigger;
 	}
 	
+	@Override
+	public Event getEvent()
+	{
+		return trigger.getEvent();
+	}
+	
 	public Object[] getParameters()
 	{
 		return parameters;

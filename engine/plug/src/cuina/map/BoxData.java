@@ -15,7 +15,7 @@ public class BoxData implements Instantiable, Serializable
 	public int height;
 	
 	public boolean through;
-	public int alphaMask = 1;
+	public int alphaMask;
 	
 	@Override
 	public CollisionBox createInstance(CuinaObject obj) throws Exception

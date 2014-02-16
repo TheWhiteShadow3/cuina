@@ -186,6 +186,12 @@ public class TestMenu extends LifeCycleAdapter
 
 		@Override
 		public void setActive(boolean value) {}
+
+		@Override
+		public Event getEvent()
+		{
+			return null;
+		}
 	}
 
 //	@Override

@@ -6,5 +6,5 @@ public interface CuinaMotor extends Serializable
 {
 	public static final String EXTENSION_KEY = "motor";
 	
-	void update();
+	public void update();
 }
