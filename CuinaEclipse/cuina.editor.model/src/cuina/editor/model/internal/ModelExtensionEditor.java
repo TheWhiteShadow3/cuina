@@ -45,9 +45,6 @@ public class ModelExtensionEditor extends ExtensionEditor implements Listener
 
 		addModelData(parent);
 		setValues();
-
-		// XXX: Uncool. Deaktiviert das Anwählen statt der Eingabe.
-		// if (isTemplate()) composite.setEnabled(false);
 	}
 
 	private void addSeparator(Composite parent, int rows)
@@ -64,12 +61,14 @@ public class ModelExtensionEditor extends ExtensionEditor implements Listener
 		cmdImage.addListener(SWT.Modify, this);
 		
 		frameCountSpinner = WidgetFactory.createSpinner(group, "Frames:");
+		frameCountSpinner.setMinimum(1);
 
 		this.modelPanel = new ModelPanel(group, SWT.BORDER);
 		modelPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 8));
 		modelPanel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		aniCountSpinner = WidgetFactory.createSpinner(group, "Animationen:");
+		aniCountSpinner.setMinimum(1);
 		startFrameSpinner = WidgetFactory.createSpinner(group, "Start-Frame:");
 		startAniSpinner = WidgetFactory.createSpinner(group, "Start-Animation:");
 		standAnimation = WidgetFactory.createButton(group, "Standanimation", SWT.CHECK);

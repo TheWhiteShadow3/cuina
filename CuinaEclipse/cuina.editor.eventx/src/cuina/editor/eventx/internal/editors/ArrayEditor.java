@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -19,7 +20,7 @@ import org.eclipse.swt.widgets.Listener;
 public class ArrayEditor implements TypeEditor<Object>
 {
 	private Object array;
-	private Class<?> elementClass;
+	private String elementType;
 	private int length;
 	
 	private List<Composite> editorBlocks;
@@ -32,12 +33,27 @@ public class ArrayEditor implements TypeEditor<Object>
 	private CommandEditorContext context;
 	
 	@Override
-	public void init(CommandEditorContext context, Object value)
+	public void init(CommandEditorContext context, String type, Object value)
 	{
 		this.context = context;
 		this.array = value;
 		this.length = Array.getLength(value);
-		this.elementClass = value.getClass().getComponentType();
+		if (type.endsWith("[]"))
+		{
+			this.elementType = type.substring(0, type.length()-2);
+		}
+		else
+		{
+			try
+			{
+				Class<?> arrayClass = context.getCommandLibrary().getClass(type);
+				this.elementType = arrayClass.getComponentType().getName();
+			}
+			catch (ClassNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	@Override
@@ -47,24 +63,26 @@ public class ArrayEditor implements TypeEditor<Object>
 		parent.setLayout(new GridLayout(1, false));
 		this.handler = new Handler();
 		
+		this.cmdNew = new Button(parent, SWT.PUSH);
+		cmdNew.setText("+");
+		cmdNew.addListener(SWT.Selection, handler);
+		if (elementType == null)
+			cmdNew.setEnabled(false);
+		
 		this.editorBlocks = new ArrayList<Composite>(length);
 		this.editors = new ArrayList<TypeEditor<?>>(length);
 		for (int i = 0; i < length; i++)
 		{
 			addEditor(i);
 		}
-		
-		this.cmdNew = new Button(parent, SWT.PUSH);
-		cmdNew.setText("+");
-		cmdNew.addListener(SWT.Selection, handler);
 	}
 	
 	private void addEditor(int index)
 	{
-		TypeEditor<?> editor = CommandLibrary.newTypeEditor(elementClass.getName());
-		if (editor == null) throw new RuntimeException("Unsupported class '" + elementClass + "'.");
+		TypeEditor<?> editor = CommandLibrary.newTypeEditor(elementType);
+		if (editor == null) throw new RuntimeException("Unsupported class '" + elementType + "'.");
 		
-		editor.init(context, Array.get(array, index));
+		editor.init(context, elementType, Array.get(array, index));
 		
 		Group editorBlock = new Group(parent, SWT.NONE);
 		editorBlock.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -77,7 +95,10 @@ public class ArrayEditor implements TypeEditor<Object>
 		removeButton.addListener(SWT.Selection, handler);
 		
 		Composite wrapper = new Composite(editorBlock, SWT.NONE);
+		wrapper.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		wrapper.setLayout(new FillLayout());
 		editor.createComponents(wrapper);
+
 		// Verschiebe den Neu-Knopf nach unten.
 		cmdNew.moveBelow(editorBlock);
 		
@@ -121,9 +142,11 @@ public class ArrayEditor implements TypeEditor<Object>
 			
 			if (event.widget == cmdNew)
 			{
+				Object newArray = Array.newInstance(array.getClass().getComponentType(), length+1);
+				System.arraycopy(array, 0, newArray, 0, length);
+				array = newArray;
+				addEditor(length);
 				length++;
-				array = Array.newInstance(elementClass, length);
-				addEditor(length-1);
 			}
 			else
 			{
@@ -136,10 +159,12 @@ public class ArrayEditor implements TypeEditor<Object>
 					editors.remove(i);
 					length--;
 					
+					Object newArray = Array.newInstance(array.getClass().getComponentType(), length);
 					if (length > i)
 					{
-						System.arraycopy(array, i+1, array, i, length-i);
+						System.arraycopy(array, i+1, newArray, i, length-i);
 					}
+					array = newArray;
 					refresh();
 				}
 			}

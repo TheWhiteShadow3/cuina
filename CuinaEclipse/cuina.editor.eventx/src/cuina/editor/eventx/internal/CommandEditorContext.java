@@ -13,4 +13,10 @@ public interface CommandEditorContext
 	 * @return Das Cuina-Projekt.
 	 */
 	public CuinaProject getCuinaProject();
+
+	/**
+	 * Gibt die Command-Library zurück.
+	 * @return Die Command-Library.
+	 */
+	public CommandLibrary getCommandLibrary();
 }

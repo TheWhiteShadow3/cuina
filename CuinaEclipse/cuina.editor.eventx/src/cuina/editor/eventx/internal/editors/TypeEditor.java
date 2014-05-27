@@ -11,9 +11,10 @@ public interface TypeEditor<E>
 	 * Initialisiert den Editor. Diese Methode wird kurz nach der Instanzierung aufgerufen.
 	 * Wird kein Objekt übergeben, ist der Editor veranlasst eine neue Instanz zu erstellen.
 	 * @param context Kontext des Editors.
+	 * @param type Datentyp des Objekts.
 	 * @param obj Objekt, was der Editor bearbeiten soll, oder <code>null</code>.
 	 */
-	public void init(CommandEditorContext context, Object obj);
+	public void init(CommandEditorContext context, String type, Object obj);
 	/**
 	 * Gibt das editierte Objekt zurück.
 	 * Es ist nicht zwingend erforderlich, dass das Objekt das selbe ist, was bei der initialisierung übergeben wurde.

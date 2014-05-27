@@ -19,7 +19,7 @@ public class VectorEditor implements TypeEditor<Vector>
 	private Spinner inZ;
 
 	@Override
-	public void init(CommandEditorContext context, Object vector)
+	public void init(CommandEditorContext context, String type, Object vector)
 	{
 		if (vector != null)
 			this.vector = (Vector) vector;

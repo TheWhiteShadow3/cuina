@@ -130,6 +130,12 @@ public class FlowEditor extends AbstractDatabaseEditorPart<CommandList> implemen
 	}
 	
 	@Override
+	public CommandLibrary getCommandLibrary()
+	{
+		return library;
+	}
+
+	@Override
 	public CuinaProject getCuinaProject()
 	{	// Mache die Methode public.
 		return super.getCuinaProject();

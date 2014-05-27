@@ -28,7 +28,7 @@ public class ColorEditor implements TypeEditor<Color>
 	private boolean update;
 	
 	@Override
-	public void init(CommandEditorContext context, Object value)
+	public void init(CommandEditorContext context, String type, Object value)
 	{
 		if (value != null)
 			this.color = (Color) value;

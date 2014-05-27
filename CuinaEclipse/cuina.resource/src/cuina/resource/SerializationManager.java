@@ -115,8 +115,7 @@ public class SerializationManager
 		return providers.get(extension);
 	}
 	
-	public static IFile resolve(IFolder folder, String name, String... preferredExtensions)
-			throws ResourceException
+	public static IFile resolve(IFolder folder, String name, String... preferredExtensions) throws ResourceException
 	{
 		try
 		{
@@ -125,7 +124,18 @@ public class SerializationManager
 			int matchLevel = preferredExtensions.length;
 			for (IResource r : elements)
 			{
-				if (!(r instanceof IFile && r.getName().startsWith(name))) continue;
+				if (!(r instanceof IFile)) continue;
+				
+				String filename = r.getName();
+				int dot = filename.lastIndexOf('.');
+				if (dot == -1)
+				{
+					if (preferredExtensions.length > 0 || !filename.equals(name)) continue;
+				}
+				else
+				{
+					if (!filename.substring(0, dot).equals(name)) continue;
+				}
 				
 				String ext = r.getFileExtension();
 				for(int i = 0; i < matchLevel; i++)

@@ -23,7 +23,7 @@ public class IDEditor implements TypeEditor<String>
 	}
 	
 	@Override
-	public void init(CommandEditorContext context, Object value)
+	public void init(CommandEditorContext context, String type, Object value)
 	{
 		this.context = context;
 		if (value != null)

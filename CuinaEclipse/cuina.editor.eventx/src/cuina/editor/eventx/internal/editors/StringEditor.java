@@ -16,10 +16,12 @@ public class StringEditor implements TypeEditor<String>
 	private String value = "";
 	private Text inValue;
 	private Button checkNull;
+	private String type;
 
 	@Override
-	public void init(CommandEditorContext context, Object value)
+	public void init(CommandEditorContext context, String type, Object value)
 	{
+		this.type = type;
 		if (value != null)
 			this.value = (String) value;
 	}
@@ -30,7 +32,8 @@ public class StringEditor implements TypeEditor<String>
 		parent.setLayout(new GridLayout(2, false));
 		Handler handler = new Handler();
 		
-		inValue = new Text(parent, SWT.BORDER);
+		int style = type.equals("text") ? SWT.MULTI : SWT.NONE;
+		inValue = new Text(parent, SWT.BORDER | style);
 		inValue.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		inValue.setText(value != null ? value : "");
 		

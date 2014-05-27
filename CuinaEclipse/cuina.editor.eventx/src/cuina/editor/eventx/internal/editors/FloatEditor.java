@@ -14,7 +14,7 @@ public class FloatEditor implements TypeEditor<Float>
 	private Spinner inValue;
 
 	@Override
-	public void init(CommandEditorContext context, Object value)
+	public void init(CommandEditorContext context, String type, Object value)
 	{
 		if (value != null)
 			this.value = (Float) value;

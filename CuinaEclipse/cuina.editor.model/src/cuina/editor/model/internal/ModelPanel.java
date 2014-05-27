@@ -33,16 +33,19 @@ public class ModelPanel extends Canvas
 	public void setImage(Image image)
 	{
 		this.image = image;
+		redraw();
 	}
 	
 	public void setFrames(int frames)
 	{
 		this.frames = frames;
+		redraw();
 	}
 	
 	public void setAnimations(int animations)
 	{
 		this.animations = animations;
+		redraw();
 	}
 	
 	public void startAnimation()

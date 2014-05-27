@@ -18,7 +18,7 @@ public class IntegerEditor implements TypeEditor<Integer>
 	}
 	
 	@Override
-	public void init(CommandEditorContext context, Object value)
+	public void init(CommandEditorContext context, String type, Object value)
 	{
 		if (value != null)
 			this.value = (Integer) value;

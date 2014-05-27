@@ -12,7 +12,7 @@ public class BooleanEditor implements TypeEditor<Boolean>
 	private Button inValue;
 
 	@Override
-	public void init(CommandEditorContext context, Object value)
+	public void init(CommandEditorContext context, String type, Object value)
 	{
 		if (value != null)
 			this.value = (Boolean) value;

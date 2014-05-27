@@ -196,7 +196,7 @@ public class CommandLibrary
 				context.className, name, label, description, argTypes, argNames));
 	}
 	
-	private Class getClass(String className) throws ClassNotFoundException
+	public Class getClass(String className) throws ClassNotFoundException
 	{
 		switch(className)
 		{
@@ -209,7 +209,8 @@ public class CommandLibrary
 			case "long": return long.class;
 			case "double": return double.class;
 			case "void": return void.class;
-			case "string": return String.class;
+			case "string":
+			case "text": return String.class;
 		}
 		if (className.endsWith("[]"))
 		{
@@ -251,12 +252,14 @@ public class CommandLibrary
 		switch(className)
 		{
 			case "boolean": return new BooleanEditor();
-			case "string": return new StringEditor();
+			case "string": 
+			case "text": return new StringEditor();
 			case "int": return new IntegerEditor(Integer.MAX_VALUE);
 			case "short": return new IntegerEditor(Short.MAX_VALUE);
 			case "byte": return new IntegerEditor(Byte.MAX_VALUE);
 			case "float": return new FloatEditor();
 		}
+		if (className.equals("java.lang.String")) return new StringEditor();
 		if (className.endsWith("[]")) return new ArrayEditor();
 		if (className.startsWith("id:")) return new IDEditor(className.substring(3));
 		

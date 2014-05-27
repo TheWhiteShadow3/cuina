@@ -84,8 +84,9 @@ public class CommandDialog extends TitleAreaDialog
 		this.editors = new ArrayList<TypeEditor>(8);
 		for (int i = 0; i < function.argTypes.length; i++)
 		{
-			TypeEditor<?> editor = CommandLibrary.newTypeEditor(function.argTypes[i]);
-			editor.init(context, command.args[i]);
+			String type = function.argTypes[i];
+			TypeEditor<?> editor = CommandLibrary.newTypeEditor(type);
+			editor.init(context, type, command.args[i]);
 			editors.add(editor);
 		}
 		this.editorBlocks = new Composite[editors.size()];
