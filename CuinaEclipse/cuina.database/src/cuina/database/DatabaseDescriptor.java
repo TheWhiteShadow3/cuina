@@ -1,7 +1,6 @@
 package cuina.database;
 
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.Image;
@@ -16,6 +15,7 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 	private IConfigurationElement configuration;
 	private String editorID;
 	private DatabaseObjectValidator validator;
+	public IConfigurationElement conf;
 	
 	public DatabaseDescriptor(String name, Class<E> dataClass)
 	{
@@ -25,6 +25,7 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 	
 	DatabaseDescriptor(IConfigurationElement conf) throws Exception
 	{
+		this.conf = conf;
 		Bundle plugin = Platform.getBundle(conf.getContributor().getName());
 		
 		this.configuration = conf;
@@ -36,7 +37,7 @@ public class DatabaseDescriptor<E extends DatabaseObject> implements IDatabaseDe
 		String imagePath = conf.getAttribute("image");
 		if (imagePath != null) try
 		{
-			this.image = new Image(Display.getDefault(), FileLocator.resolve(plugin.getEntry(imagePath)).getPath());
+			this.image = new Image(Display.getDefault(), plugin.getEntry(imagePath).openStream());
 		}
 		catch(Exception e) { e.printStackTrace(); }
 

@@ -60,23 +60,6 @@ public class TreeRoot extends TreeGroup
 		return table;
 	}
 	
-//	public ITreeContentProvider getContentProvider()
-//	{
-//		if (contentProvider == null)
-//		{
-//			Class clazz = DatabasePlugin.getDescriptor(table.getName()).getContentProviderClass();
-//			if (clazz != null) try
-//			{
-//				contentProvider = (ITreeContentProvider) clazz.newInstance();
-//			}
-//			catch (InstantiationException | IllegalAccessException e)
-//			{
-//				throw new RuntimeException(e);
-//			}
-//		}
-//		return contentProvider;
-//	}
-	
 	public void saveTree() throws ResourceException
 	{
 		if (table == null) throw new IllegalStateException("Tree is not attached to a Table.");

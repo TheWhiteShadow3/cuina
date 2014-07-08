@@ -1,13 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="DatabaseEditor" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="cuina.editor.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="DatabaseEditor" id="cuina.databases" name="Cuina Database"/>
+         <meta.schema plugin="cuina.editor.core" id="cuina.core.new.project.database" name="New Projekt Database"/>
       </appinfo>
       <documentation>
-         Dieser Erweiterungpunkt ermöglicht das Hinzufügen von Objekt-Typen zur Cuina Datenbank.
-Die Datenbank ermöglicht das serialisieren von Java-Objekten im Dateisystem.
+         Konfiguriert eine Datenbank-Tabelle, die beim Anlegen eines neuen Cuina Projekts erstellt werden soll.
       </documentation>
    </annotation>
 
@@ -16,13 +15,10 @@ Die Datenbank ermöglicht das serialisieren von Java-Objekten im Dateisystem.
          <appinfo>
             <meta.element />
          </appinfo>
-         <documentation>
-            Erweiterung für einen Datenbank Objekt-Typen.
-         </documentation>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="database" minOccurs="1" maxOccurs="unbounded"/>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="table"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -51,68 +47,27 @@ Die Datenbank ermöglicht das serialisieren von Java-Objekten im Dateisystem.
       </complexType>
    </element>
 
-   <element name="database">
+   <element name="table">
       <complexType>
-         <choice minOccurs="0" maxOccurs="1">
-            <element ref="validator"/>
+         <choice minOccurs="0" maxOccurs="unbounded">
          </choice>
-         <attribute name="class" type="string" use="required">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Der Name einer Klasse die &lt;b&gt;cuina.database.DatabaseObject&lt;/b&gt; implementiert.
+                  Referenz auf eine Datenbank-Tabelle.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":cuina.editor.database.DatabaseObject"/>
+                  <meta.attribute kind="identifier" basedOn="cuina.database.types/database/@name"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
+         <attribute name="template" type="string">
             <annotation>
                <documentation>
-                  Der einmalige Name des Datenbank-Typen. Der Name wird zur Identifizierung der Datenbank-Tabelle benutzt.
-Geeignet ist z.B. der vollständige Klassenname.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="image" type="string">
-            <annotation>
-               <documentation>
-                  Ein Bild, das den Objekt-Typen beschreibt.
+                  Eine Vorlage-Datei für die Tabelle.
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="editorID" type="string">
-            <annotation>
-               <documentation>
-                  Referenz auf einen Datenbank-Editor.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="validator">
-      <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":cuina.database.DatabaseObjectValidator"/>
                </appinfo>
             </annotation>
          </attribute>

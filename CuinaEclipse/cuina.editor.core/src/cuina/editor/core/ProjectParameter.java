@@ -6,10 +6,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public final class ProjectParameter implements Comparable<ProjectParameter>
 {
-	public static final String PROJECT_PARAMETER_ID = "cuina.editor.project.parameter";
+	public static final String PROJECT_PARAMETER_ID = "cuina.core.new.project.parameter";
 	
 	private final String group;
 	private final String name;
+	private final String label;
 	private final String description;
 	private final String defaultValue;
 	private final String after;
@@ -18,6 +19,7 @@ public final class ProjectParameter implements Comparable<ProjectParameter>
 	{
 		this.name = conf.getAttribute("name");
 		if (name == null) throw new NullPointerException("name is null");
+		this.label = conf.getAttribute("label");
 		this.defaultValue = conf.getAttribute("defaultValue");
 		if (name == null) throw new NullPointerException("defaultValue is null");
 		this.group = conf.getAttribute("group");
@@ -35,6 +37,11 @@ public final class ProjectParameter implements Comparable<ProjectParameter>
 		return name;
 	}
 	
+	public String getLabel()
+	{
+		return (label == null) ? name : label;
+	}
+
 	String getKey()
 	{
 		return (group == null ? "" : group) + name;

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- Build-File für die Cuina Editor Plugins -->
+
+<project name="CuinaEditorPlugins" basedir=".." default="main">
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+	
+	<!-- Properties definieren -->
+	<property name="version" value="1.0.0"/>
+	<property name="qualifier" value="tut"/>
+	
+	<property name="target" value="1.7"/>
+	<property name="source" value="1.7"/>
+	
+	<property name="build.dir" value="build"/>
+	<property name="deploy.dir" value="G:\Desktop\Cuina_Tutorial\eclipse\dropins"/>
+	
+	<target name="setup_files">
+		<delete dir="${build.dir}" />
+		<mkdir dir="${build.dir}"/>
+
+		<copy todir="${build.dir}">
+			<fileset file="${plugin_name}/META-INF/MANIFEST.MF" />
+		</copy>
+		<replace file="${build.dir}/MANIFEST.MF" token="qualifier" value="${qualifier}"/>
+		
+		<copy todir="${build.dir}/jar">
+			<fileset file="${plugin_name}/plugin.xml" />
+		</copy>
+		
+		<!-- Kopiere Klassen -->
+		<copy todir="${build.dir}/jar">
+			<fileset dir="${plugin_name}/bin" />
+		</copy>
+		
+		<!-- Kopiere Libraries -->
+		<copy todir="${build.dir}/jar/lib" failonerror="false">
+			<fileset dir="${plugin_name}/lib" excludes="*.zip" />
+		</copy>
+		
+		<!-- Kopiere Icons -->
+		<copy todir="${build.dir}/jar/icons" failonerror="false">
+			<fileset dir="${plugin_name}/icons" excludes="*.psd"/>
+		</copy>
+	</target>
+	
+	<target name="build_plugin" depends="setup_files">
+		<jar destfile="${deploy.dir}/${plugin_name}_${version}.${qualifier}.jar" basedir="${build.dir}/jar" manifest="${build.dir}/MANIFEST.MF">
+			<manifest>
+				<attribute name="Created-By" value="TheWhiteShadow" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="pre">
+		<delete dir="${deploy.dir}" />
+		<mkdir dir="${deploy.dir}"/>
+	</target>
+	
+	<target name="build_plugins" depends="pre">
+		<foreach delimiter=";" param="plugin_path" target="loop">
+			<path>
+				<dirset dir="." includes="*" excludes=".settings .metadata build deploy TestWorkspace" />
+			</path>
+		</foreach>
+	</target>
+	
+	<target name="loop" depends="">
+		<basename file="${plugin_path}" property="plugin_name"/>
+		<echo>Plugin: ${plugin_name}</echo>
+			
+		<antcall target="build_plugin" />
+	</target>
+	
+	<target name="main" depends="build_plugins">
+		<description>Cuina Editor Plugins Deployment</description>
+	</target>
+</project>

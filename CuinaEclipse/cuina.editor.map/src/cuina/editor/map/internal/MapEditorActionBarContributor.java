@@ -2,6 +2,7 @@ package cuina.editor.map.internal;
 
 import cuina.editor.map.EditorToolAction;
 import cuina.editor.map.ITerrainEditor;
+import cuina.editor.map.TerrainLayer;
 import cuina.editor.map.internal.Activator.LayerDefinition;
 
 import java.util.HashMap;
@@ -31,10 +32,10 @@ public class MapEditorActionBarContributor extends EditorActionBarContributor im
 	
 	public MapEditorActionBarContributor() {}
 	
-	public IEditorActionBarContributor getLayerActionBarContributor(String layerName)
-	{
-		return contributors.get(layerName);
-	}
+//	public IEditorActionBarContributor getLayerActionBarContributor(String layerName)
+//	{
+//		return contributors.get(layerName);
+//	}
 
 	@Override
 	public void init(IActionBars bars, IWorkbenchPage page)
@@ -117,18 +118,30 @@ public class MapEditorActionBarContributor extends EditorActionBarContributor im
     }
 	
 	@Override
-	public void setActiveEditor(IEditorPart targetEditor)
+	public void setActiveEditor(IEditorPart newEditor)
 	{
-		if (!(targetEditor instanceof TerrainEditor))
+		if (this.editor == newEditor) return;
+		
+		String currentLayer = null;
+		if (this.editor != null)
+		{
+			TerrainLayer layer = this.editor.getActiveLayer();
+			if (layer != null)
+			{
+				currentLayer = layer.getName();
+			}
+			this.editor.setActiveLayer(null);
+		}
+		if (!(newEditor instanceof TerrainEditor))
 		{
 			this.editor = null;
 			return;
 		}
-		if (this.editor == targetEditor) return;
-		
-		this.editor = (TerrainEditor) targetEditor;
+		this.editor = (TerrainEditor) newEditor;
 		for(IEditorActionBarContributor c : contributors.values())
 			c.setActiveEditor(editor);
+		
+		editor.setActiveLayer(editor.getLayerByName(currentLayer));
 	}
 
 	public String getActiveTool()

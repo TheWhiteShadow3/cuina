@@ -185,6 +185,7 @@ public class TerrainEditor extends EditorPart implements
 		return SerializationManager.resolve(folder, dbInput.getKey(), "cxm");
 	}
 
+	@Override
 	public void refreshResources()
 	{
 		ResourceManager.getResourceProvider(getProject()).clearCache();
@@ -239,15 +240,18 @@ public class TerrainEditor extends EditorPart implements
 	@Override
 	public void setActiveTool(String toolID)
 	{
-		MapEditorActionBarContributor c = (MapEditorActionBarContributor) getEditorSite().getActionBarContributor();
-		c.setActiveTool(toolID);
+		getActionBarContributor().setActiveTool(toolID);
 	}
 	
 	@Override
 	public String getActiveTool()
 	{
-		MapEditorActionBarContributor c = (MapEditorActionBarContributor) getEditorSite().getActionBarContributor();
-		return c.getActiveTool();
+		return getActionBarContributor().getActiveTool();
+	}
+	
+	private MapEditorActionBarContributor getActionBarContributor()
+	{
+		return (MapEditorActionBarContributor) getEditorSite().getActionBarContributor();
 	}
 
 	@Override
@@ -385,7 +389,7 @@ public class TerrainEditor extends EditorPart implements
 		});
 	}
 
-	public void fillActionBars(IActionBars actionBars)
+	private void fillActionBars(IActionBars actionBars)
 	{
 //		toolbarManager.add(new Separator(ITerrainEditor.TOOLBAR_VIEWOPTIONS));
 //		toolbarManager.add(new Separator(ITerrainEditor.TOOLBAR_TOOLS));

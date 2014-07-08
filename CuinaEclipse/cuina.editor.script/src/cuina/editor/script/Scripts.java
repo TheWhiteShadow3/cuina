@@ -56,9 +56,15 @@ public class Scripts extends AbstractUIPlugin
 	public void start(BundleContext context) throws Exception
 	{
 		super.start(context);
-		
-		PAGE_REQUIRED_IMAGE = loadBundleImage("req_page.png");
-		PAGE_OPTIONAL_IMAGE = loadBundleImage("opt_page.png");
+		try
+		{
+			PAGE_REQUIRED_IMAGE = loadBundleImage("req_page.png");
+			PAGE_OPTIONAL_IMAGE = loadBundleImage("opt_page.png");
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -141,9 +147,8 @@ public class Scripts extends AbstractUIPlugin
 		return null;
 	}
 	
-	private Image loadBundleImage(String name)
+	private Image loadBundleImage(String name) throws IOException
 	{
-		String pathName = getBundleFile("icons/" + name).toString();
-		return new Image(Display.getDefault(), pathName);
+		return new Image(Display.getDefault(), plugin.getBundle().getEntry("icons/" + name).openStream());
 	}
 }

@@ -43,7 +43,7 @@ public class CuinaCore extends AbstractUIPlugin
 	public static final String IMAGE_DATA_FOLDER 	= "data_folder.png";
 	public static final String IMAGE_CONFIG_FILE 	= "cuina16.png";
 
-	public static final String PROJECT_EXTENSION_ID 	= "cuina.core.project.extension";
+	public static final String PROJECT_EXTENSION_ID	= "cuina.core.project.extension";
 	
 	private static final String MSG_PLUGIN_CLOSED = "cuina-plugin is closed!"; //$NON-NLS-1$
 

@@ -77,7 +77,7 @@ public class Database
 		if (table == null)
 		{
 			IFile file = getPreferredDataFile(name);
-			if (file == null) throw new ResourceException("Database '" + name + "' not found!");
+			if (!file.exists()) throw new ResourceException("Database '" + name + "' not found!");
 			table = loadTable(file, name);
 		}
 		
@@ -88,6 +88,21 @@ public class Database
 	{
 		IFolder folder = project.getProject().getFolder(dataPath);
 		return SerializationManager.resolve(folder, name, DATA_FILE_EXTENSION);
+	}
+	
+	public boolean existTable(String name)
+	{
+		try
+		{
+			DataTable<?> table = cache.get(name);
+			if (table != null) return true;
+
+			return getPreferredDataFile(name).exists();
+		}
+		catch (ResourceException e)
+		{
+			return false;
+		}
 	}
 	
 	public <E extends DatabaseObject> DataTable<E> loadTable(IFile file) throws ResourceException
@@ -131,7 +146,7 @@ public class Database
 		if (table.getFileName() == null)
 		{
 			String name = table.getName() + "." + DATA_FILE_EXTENSION;
-			table.setRuntimeMetaData(this, dataPath + '/' + name);
+			table.setRuntimeMetaData(this, getDataPath().append(name).toString());
 		}
 		IPath path = new Path(table.getFileName());
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
@@ -165,7 +180,10 @@ public class Database
 			{
 				metaData = (HashMap<String, Object>) SerializationManager.load(metaFile, getClass().getClassLoader());
 			}
-			if (metaData == null) metaData = new HashMap<String, Object>();
+			else
+			{
+				metaData = new HashMap<String, Object>();
+			}
 		}
 		catch (ResourceException e)
 		{
@@ -183,12 +201,13 @@ public class Database
 		cache.remove(table.getName());
 	}
 	
-	public <E extends DatabaseObject> DataTable<E> createNewTable(String name)
+	public <E extends DatabaseObject> DataTable<E> createNewTable(IDatabaseDescriptor descriptor)
 	{
-		IDatabaseDescriptor descriptor = DatabasePlugin.getDescriptor(name);
-		if (descriptor == null) throw new NullPointerException("Database " + name + " is not registed!");
+		if (descriptor == null) throw new NullPointerException("descriptor is null!");
 
-		return new DataTable<E>(name, descriptor.getDataClass());
+		DataTable table = new DataTable<E>(descriptor.getName(), descriptor.getDataClass());
+		table.setRuntimeMetaData(this, null);
+		return table;
 	}
 	
 	public static String getValidKey(String str)

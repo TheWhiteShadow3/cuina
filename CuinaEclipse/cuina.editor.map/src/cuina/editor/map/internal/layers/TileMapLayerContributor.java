@@ -12,6 +12,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 public class TileMapLayerContributor extends EditorActionBarContributor
@@ -20,6 +21,7 @@ public class TileMapLayerContributor extends EditorActionBarContributor
 	private TileMapLayerAction rectAction;
 	private TileMapLayerAction elliAction;
 	private TileMapLayerAction fillAction;
+	private TileMapLayer currentLayer;
 	
 	@Override
 	public void contributeToToolBar(IToolBarManager manager)
@@ -81,6 +83,17 @@ public class TileMapLayerContributor extends EditorActionBarContributor
 		manager.appendToGroup(ITerrainEditor.TOOLBAR_VIEWOPTIONS, layerAction);
 	}
 	
+	@Override
+	public void setActiveEditor(IEditorPart targetEditor)
+	{
+		ITerrainEditor terrainEditor = (ITerrainEditor) targetEditor;
+		TileMapLayer newLayer = (TileMapLayer) terrainEditor.getLayerByName(TileMapLayer.LAYER_NAME);
+		
+//		newLayer.setTool(currentLayer.getTool());
+		
+		currentLayer = newLayer;
+	}
+
 	// Ebenenauswahl-menü
 	private class LayerDropDownAction extends TileMapLayerAction implements IMenuCreator
 	{

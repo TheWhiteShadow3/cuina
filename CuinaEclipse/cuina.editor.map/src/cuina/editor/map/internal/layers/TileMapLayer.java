@@ -617,7 +617,24 @@ public class TileMapLayer implements TerrainLayer, ISelectionListener, Selection
 			tempLayer = null;
 		}
 		addSavePoint();
-		initTool();
+		resetTool();
+//		initTool();
+	}
+
+	private void resetTool()
+	{
+		SelectionManager sh = editor.getSelectionManager();
+		switch(currentTool)
+		{
+			case DRAWMODE_RECTANGLE:
+			case DRAWMODE_ELLISPE:
+			case DRAWMODE_FILLER:
+			{
+				tileSelectionMode.setSize(tileset.getTileSize(), tileset.getTileSize());
+				sh.setSelectionMode(tileSelectionMode, true);
+				break;
+			}
+		}
 	}
 
 	@Override

@@ -5,21 +5,25 @@
          point="cuina.core.project.extension">
    </extension>
    <extension
-         id="cuina.editor.ui.new.project"
          point="org.eclipse.ui.newWizards">
       <category
             id="cuina.editor"
             name="Cuina">
       </category>
       <wizard
+            canFinishEarly="false"
             category="cuina.editor"
             class="cuina.editor.ui.internal.ProjectWizard"
             finalPerspective="cuina.editor.core.perspective"
-            icon="icons/cuina16.png"
+            hasPages="true"
+            icon="icons/project_new.png"
             id="cuina.editor.ui.new.project"
-            name="Cuina Project"
+            name="Cuina Projekt"
             project="true">
       </wizard>
+      <primaryWizard
+            id="cuina.editor.ui.new.project">
+      </primaryWizard>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">

@@ -65,7 +65,17 @@ public class DataContentProvider implements ITreeContentProvider
 			else
 			{
 				root = new TreeRoot(table);
-				root.saveTree();
+//				Display.getCurrent().asyncExec(new Runnable()
+//				{
+//					@Override
+//					public void run()
+//					{
+//						try
+//						{ root.saveTree(); }
+//						catch (ResourceException e)
+//						{ e.printStackTrace(); }
+//					}
+//				});
 			}
 //			ITreeContentProvider tcp = root.getContentProvider();
 //			if (tcp != null) tcp.inputChanged(viewer, oldTable, table);

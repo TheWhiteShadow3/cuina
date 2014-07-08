@@ -110,4 +110,19 @@
        </enabledWhen>
     </page>
  </extension>
+ <extension
+       point="org.eclipse.ui.newWizards">
+    <wizard
+          category="cuina.editor"
+          class="cuina.database.ui.internal.DatabaseWizard"
+          hasPages="true"
+          icon="icons/data.png"
+          id="cuina.database.ui.new.database"
+          name="Cuina Datenbank"
+          project="false">
+       <selection
+             class="org.eclipse.core.resources.IResource">
+       </selection>
+    </wizard>
+ </extension>
 </plugin>

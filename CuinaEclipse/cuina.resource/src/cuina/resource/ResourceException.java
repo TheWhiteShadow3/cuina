@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.eclipse.core.resources.IFile;
 
 /**
- * Fehler beim laden einer Datei.
+ * Fehler beim Zugriff auf eine Datei.
  * Enthält eine angepasste Meldung in der eingestellten Sprache.
  * @author TheWhiteShadow
  */

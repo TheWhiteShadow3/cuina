@@ -6,7 +6,8 @@
          <meta.schema plugin="cuina.editor.core" id="cuina.core.project.parameter" name="cuina.core.project.parameter"/>
       </appinfo>
       <documentation>
-         Ein Parameter für ein Cuina Projekt.
+         Ein Initialisierungs-Parameter für ein neues Cuina Projekt.
+Der Parameter wird in der &lt;i&gt;cuina.cfg&lt;/i&gt; eingetragen.
       </documentation>
    </annotation>
 
@@ -56,6 +57,16 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
@@ -86,7 +97,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="cuina.editor.project.parameter/parameter/@name"/>
+                  <meta.attribute kind="identifier" basedOn="cuina.core.new.project.parameter/parameter/@name"/>
                </appinfo>
             </annotation>
          </attribute>

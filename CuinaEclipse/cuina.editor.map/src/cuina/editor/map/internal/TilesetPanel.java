@@ -126,7 +126,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 	
 	/**
 	 * Gibt an, ob das Gitter exakt auf die Grafik passt.
-	 * @return true, wenn die Gitter-Ränder mit denen, der Graifk überreinstimmt.
+	 * @return true, wenn die Gitter-Ränder mit denen, der Grafik überreinstimmt.
 	 */
 	public boolean isGridMatchingImage()
 	{
@@ -310,7 +310,7 @@ public class TilesetPanel extends AbstractSelectionPanel implements
 			this.tileCount = image.getWidth() / tileset.getTileSize() * image.getHeight() / tileset.getTileSize();
 			if (tileCount > tileset.getPassages().length + 1)
 			{
-				tileset.resizeTileset(tileCount);
+				tileset.resizeTileset(tileCount+1);
 			}
 		}
 		else

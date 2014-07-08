@@ -115,6 +115,27 @@ public class SerializationManager
 		return providers.get(extension);
 	}
 	
+	/**
+	 * Gibt das IFile-Objekt mit der bevorzugten Dateiendung zu einer Datei zurück.
+	 * <p>
+	 * Sofern eine Datei mit dem angegebenen Namen existiert wird diese zurückgegeben.
+	 * Dabei wird die Reihenfolge der bevorzugten Endungen berücksichtigt.
+	 * </p>
+	 * <p>
+	 * Wenn keine Datei mit dem angegebenen Namen existiert,
+	 * wird eine Datei mit der ersten Endung aus der Liste zurückgegeben.
+	 * Ist die Liste leer, wird eine Datei ohne Endung zurückgegeben.
+	 * </p>
+	 * <p>
+	 * <i>Es ist nicht sicher, dass die zurückgegebene Datei existiert.
+	 * In jedem Fall ist sie niemals </i><code>null</code>.
+	 * </p>
+	 * @param folder Ordner, in dem die Datei ausgewählt werden soll.
+	 * @param name Dateiname ohne Endung.
+	 * @param preferredExtensions Liste, der bevorzugten Endungen.
+	 * @return Datei mit der bevorzugten Endung.
+	 * @throws ResourceException
+	 */
 	public static IFile resolve(IFolder folder, String name, String... preferredExtensions) throws ResourceException
 	{
 		try
@@ -130,25 +151,32 @@ public class SerializationManager
 				int dot = filename.lastIndexOf('.');
 				if (dot == -1)
 				{
-					if (preferredExtensions.length > 0 || !filename.equals(name)) continue;
+					// akzeptiere Datei ohne Ednung nur, wenn noch nichts gefunden wurde.
+					if (file == null && filename.equals(name)) file = (IFile) r;
+					continue;
 				}
-				else
+				else if (filename.substring(0, dot).equals(name))
 				{
-					if (!filename.substring(0, dot).equals(name)) continue;
-				}
-				
-				String ext = r.getFileExtension();
-				for(int i = 0; i < matchLevel; i++)
-				{
-					if (preferredExtensions[i].equals(ext))
+					String ext = r.getFileExtension();
+					for (int i = 0; i < matchLevel; i++)
 					{
-						file = (IFile) r;
-						if (i == 0) return file;
-						matchLevel = i;
-						break;
+						if (preferredExtensions[i].equals(ext))
+						{
+							file = (IFile) r;
+							if (i == 0) return file;
+							matchLevel = i;
+							break;
+						}
 					}
+					if (file == null) file = (IFile) r;
 				}
-				if(file == null) file = (IFile) r;
+			}
+			if (file == null)
+			{
+				if (preferredExtensions.length > 0)
+					file = folder.getFile(name + '.' + preferredExtensions[0]);
+				else
+					file = folder.getFile(name);
 			}
 			return file;
 		}

@@ -3,8 +3,6 @@
 <plugin>
 	<extension-point id="cuina.mapeditor.layers" name="Cuina MapEditor Layers" schema="schema/cuina.mapeditor.layers.exsd"/>
 	<extension
-       id="cuina.map.DatabaseTypes"
-       name="MapEditor DatabaseTypes"
        point="cuina.database.types">
 		<database
         class="cuina.map.MapInfo"
@@ -20,8 +18,6 @@
 		</database>
 	</extension>
  <extension
-       id="cuina.editor.map.MapEditor"
-       name="MapEditor"
        point="org.eclipse.ui.editors">
     <editor
           class="cuina.editor.map.internal.TerrainEditor"
@@ -41,8 +37,6 @@
     </editor>
  </extension>
  <extension
-       id="cuina.editor.map.MapEditor"
-       name="MapEditor Layers"
        point="cuina.mapeditor.layers">
     <layer
           class="cuina.editor.map.internal.layers.BackgroundLayer"
@@ -57,19 +51,15 @@
     </layer>
  </extension>
  <extension
-       id="cuina.editor.map.new.map"
        point="org.eclipse.ui.newWizards">
-    <category
-          id="cuina.editor"
-          name="Cuina">
-    </category>
     <wizard
           category="cuina.editor"
           class="cuina.editor.map.internal.wizard.MapWizard"
           hasPages="true"
           icon="icons/map.png"
           id="cuina.editor.map.new.map"
-          name="Cuina Map">
+          name="Cuina Karte"
+          project="false">
        <selection
              class="org.eclipse.core.resources.IResource">
        </selection>

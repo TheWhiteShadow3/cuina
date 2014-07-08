@@ -8,8 +8,8 @@ import org.eclipse.ui.IPerspectiveFactory;
 public class CuinaPerspective implements IPerspectiveFactory
 {
 	public static final String ID 			= "cuina.editor.core.perspective";
-	public static final String ID_TILESET 	= "cuina.editos.map.TilsetView";
-	public static final String ID_AUTOTILES = "cuina.editos.map.AutotileView";
+	public static final String ID_TILESET 	= "cuina.editor.map.TilsetView";
+	public static final String ID_AUTOTILES = "cuina.editor.map.AutotileView";
 
 	@Override
 	public void createInitialLayout(IPageLayout layout)
@@ -28,6 +28,7 @@ public class CuinaPerspective implements IPerspectiveFactory
 		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");
 		layout.addNewWizardShortcut("cuina.editor.ui.new.project");
 		layout.addNewWizardShortcut("cuina.editor.map.new.map");
+		layout.addNewWizardShortcut("cuina.database.ui.new.database");
 
 		layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER);
 		layout.addShowViewShortcut(ID_TILESET);

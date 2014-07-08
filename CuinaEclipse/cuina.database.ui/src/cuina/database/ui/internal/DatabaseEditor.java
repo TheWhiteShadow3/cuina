@@ -139,13 +139,13 @@ public class DatabaseEditor extends EditorPart implements IPropertyListener, Tre
 	@Override
 	public boolean isDirty()
 	{
-		return dirty & currentEditor.isDirty();
+		return dirty & ((currentEditor != null) ? currentEditor.isDirty() : false);
 	}
 
 	@Override
 	public boolean isSaveAsAllowed()
 	{
-		return currentEditor.isSaveAsAllowed();
+		return (currentEditor != null) ? currentEditor.isSaveAsAllowed() : false;
 	}
 
 	@Override
