@@ -147,6 +147,10 @@ public class WidgetContainer implements Graphic
 	{
 		String theme = descriptor.getTheme();
 		if (theme == null) theme = DEFAULT_THEME;
+		if (theme == null)
+		{
+			throw new NullPointerException("Default theme-path not defined.");
+		}
 		return ResourceManager.getResource(TWL_RESOURE_PATH, DEFAULT_THEME).getURL();
 	}
 	

@@ -50,7 +50,7 @@ public class Scene
 
 	boolean needRefresh;
 
-	public Scene(String name)
+	protected Scene(String name)
 	{
 		this.name = name;
 	}

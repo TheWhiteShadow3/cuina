@@ -1,7 +1,5 @@
 package cuina;
  
-import cuina.graphics.Graphics;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,9 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
-import org.lwjgl.opengl.Display;
 
 /**
  * Behandelt Log-Ereignisse und schreibt die in den standard Output-Stream oder in eine Logdatei, wenn vorhanden.
@@ -113,7 +110,7 @@ public final class Logger
 		if (fileStream != null) error.printStackTrace(fileStream);
 		if (fileStream == null || Game.isDebug()) error.printStackTrace(console);
 
-		if (level >= ERROR && Graphics.isInitialized())
+		if (level >= ERROR)
 		{
 			showErrorDialog(level, message);
 		}
@@ -151,23 +148,28 @@ public final class Logger
 	
 	private static void showErrorDialog(int level, String message)
 	{
+		JFrame parent = new JFrame();
+		parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
 		if (level == CRIT_ERROR)
 		{
 			JOptionPane pane = new JOptionPane(message, JOptionPane.ERROR_MESSAGE, JOptionPane.DEFAULT_OPTION);
-			JDialog dialog = pane.createDialog(Display.getParent(), "Error");
+			JDialog dialog = pane.createDialog(parent, "Error");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setAlwaysOnTop(true);
 			dialog.setVisible(true);
+			parent.dispose();
 			criticalAbort();
 		}
 		else
 		{
 			JOptionPane pane = new JOptionPane(message, JOptionPane.ERROR_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-			JDialog dialog = pane.createDialog(Display.getParent(), "Error");
+			JDialog dialog = pane.createDialog(parent, "Error");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setAlwaysOnTop(true);
 			dialog.setVisible(true);
 			Object result = pane.getValue();
+			parent.dispose();
 			
 			if (result == null || ((Integer) result).intValue() == JOptionPane.CANCEL_OPTION) criticalAbort();
 		}

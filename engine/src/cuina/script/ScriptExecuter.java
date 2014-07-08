@@ -1,6 +1,8 @@
 package cuina.script;
 
 import cuina.Game;
+import cuina.GameEvent;
+import cuina.GameListener;
 import cuina.Logger;
 import cuina.database.DataTable;
 import cuina.database.Database;
@@ -47,7 +49,10 @@ import org.jruby.runtime.builtin.IRubyObject;
 */
 public class ScriptExecuter
 {
-	public static final String SCRIPT_DB = "Script";
+	public static final String SCRIPT_DB 		= "Script";
+	
+	/** Eigenschaftsname für das Haupt-Skript. */
+	public static final String MAIN_SCRIPT_KEY	= "Main-Script";
 
 	public static final int STOPPED		= 0;
 	public static final int READY 		= 1;
@@ -87,6 +92,7 @@ public class ScriptExecuter
 			executeMainScripts();
 			loadPluginScripts();
 			loadDatabaseScripts();
+			initScriptListener();
 			
 			state = STARTED;
 			Logger.log(ScriptExecuter.class, Logger.DEBUG, "Script-loading complete.");
@@ -97,6 +103,38 @@ public class ScriptExecuter
 			state = FAILD;
 			Logger.log(ScriptExecuter.class, Logger.DEBUG, "Script-loading failed.");
 		}
+	}
+	
+	private static void initScriptListener()
+	{
+		final String script = Game.getProperty(MAIN_SCRIPT_KEY, null);
+		if (script == null) return;
+		
+		Game.addGameListener(new GameListener()
+		{
+			@Override
+			public void gameStateChanged(GameEvent ev)
+			{
+				switch(ev.type)
+				{
+					case GameEvent.START_GAME:
+						ScriptExecuter.executeDirect(script, "start"); break;
+					case GameEvent.NEW_SCENE:
+						ScriptExecuter.executeDirect(script, "newScene", ev.scene); break;
+					case GameEvent.OPEN_SESSION:
+						ScriptExecuter.executeDirect(script, "newGame", ev.session); break;
+					case GameEvent.CLOSING_SESSION:
+						ScriptExecuter.executeDirect(script, "endGame", ev.session); break;
+					case GameEvent.SESSION_LOADED:
+						ScriptExecuter.executeDirect(script, "loadGame", ev.session); break;
+					case GameEvent.SESSION_SAVED:
+						ScriptExecuter.executeDirect(script, "saveGame", ev.session); break;
+					case GameEvent.END_GAME:
+						ScriptExecuter.executeDirect(script, "close"); break;
+					default: assert false : "Undefiniertes Spielevent. " + ev.type;
+				}
+			}
+		});
 	}
 	
 	private static void executeMainScripts() throws RaiseException

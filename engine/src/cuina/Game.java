@@ -13,6 +13,10 @@
 
 package cuina;
 
+import static cuina.Context.GLOBAL;
+import static cuina.Context.SCENE;
+import static cuina.Context.SESSION;
+
 import cuina.audio.AudioSystem;
 import cuina.database.Database;
 import cuina.debug.Debugger;
@@ -37,10 +41,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import static cuina.Context.GLOBAL;
-import static cuina.Context.SESSION;
-import static cuina.Context.SCENE;
-
 /**
  * Stellt das eigentliche Spiel sowie eine Spielinstanz da.
  * Verwaltet globale Spiel-Ereignisse und beinhaltet die Spiel-Session.
@@ -54,10 +54,11 @@ public final class Game
 {	
 	private static final int MODULE_PLUGINS 	= 1;
 	private static final int MODULE_DATABASE 	= 2;
-	private static final int MODULE_SCRIPT 		= 4;
-	private static final int MODULE_GRAPHIC 	= 8;
-	private static final int MODULE_AUDIO 		= 16;
-	private static final int MODULE_LOOP 		= 32;
+	private static final int MODULE_RESSORCE 	= 4;
+	private static final int MODULE_SCRIPT 		= 8;
+	private static final int MODULE_GRAPHIC 	= 16;
+	private static final int MODULE_AUDIO 		= 32;
+	private static final int MODULE_LOOP 		= 64;
 	private static final int MODULE_ALL			= 255;
 	
 	/** Name der Ini-Datei. */
@@ -71,10 +72,6 @@ public final class Game
 	
 	/** Eigenschaftsname für den Pfad zur Grafik-Bibliothek. */
 	public static final String LWJGL_LIBRARYPATH_KEY 	= "org.lwjgl.librarypath";
-
-
-	/** Eigenschaftsname für das Haupt-Skript. */
-	public static final String MAIN_SCRIPT_KEY 			= "Main-Script";
 	
 	/** Eigenschaftsname für eine Session beim Start der Engine. */
 	public static final String CUINA_SESSION_KEY 		= "Create-Session";
@@ -87,6 +84,7 @@ public final class Game
 
 	private static Game instance;
 	private static boolean debug = false;
+	private boolean initialState = false;
 	
 	private static String gameTitle;
 	private static int modules;
@@ -129,7 +127,7 @@ public final class Game
 	 */
 	public static GameSession getSession()
 	{
-		return getInstance().session;
+		return instance.session;
 	}
 	
 	/**
@@ -161,9 +159,9 @@ public final class Game
 		Context context;
 		switch(contextType)
 		{
-			case GLOBAL: context = getInstance().globalContext; break;
-			case SESSION: context =  getInstance().sessionContext; break;
-			case SCENE: context =  getInstance().sceneContext; break;
+			case GLOBAL: context = instance.globalContext; break;
+			case SESSION: context =  instance.sessionContext; break;
+			case SCENE: context =  instance.sceneContext; break;
 			default: context = null;
 		}
 		if (context == null) throw new IllegalStateException("Context " + contextType + " is not set.");
@@ -179,9 +177,9 @@ public final class Game
 	{
 		switch(contextType)
 		{
-			case GLOBAL: return getInstance().globalContext != null;
-			case SESSION: return getInstance().sessionContext != null;
-			case SCENE:return getInstance().sceneContext != null;
+			case GLOBAL: return instance.globalContext != null;
+			case SESSION: return instance.sessionContext != null;
+			case SCENE:return instance.sceneContext != null;
 		}
 		return false;
 	}
@@ -234,7 +232,7 @@ public final class Game
 	 */
 	public static Ini getIni()
 	{
-		return getInstance().ini;
+		return instance.ini;
 	}
 	
 	/**
@@ -360,6 +358,7 @@ public final class Game
 	
 	public void initStartingState()
 	{
+		initialState = true;
 		String session = getProperty(CUINA_SESSIONPATH_KEY, null);
 		if (session != null)
 		{
@@ -384,11 +383,15 @@ public final class Game
 		try
 		{
 			if (isModuleActive(MODULE_AUDIO)) AudioSystem.start();
-
-			if (isModuleActive(MODULE_SCRIPT)) initScriptListener();
-			fireEvent(GameEvent.START_GAME);
 			
-			if (isModuleActive(MODULE_LOOP)) FrameTimer.run();
+			fireEvent(GameEvent.START_GAME);
+			if (isModuleActive(MODULE_LOOP))
+			{
+				if (Game.getScene() == null)
+					Logger.log(Game.class, Logger.WARNING, "No scene defined. Engine will terminate.");
+				else
+					FrameTimer.run();
+			}
 		}
 		catch (Throwable e)
 		{
@@ -401,7 +404,8 @@ public final class Game
 	 */
 	public static GameSession newGame()
 	{
-		getInstance().newSession();
+		checkEarlyAccess();
+		instance.newSession();
 		return getSession();
 	}
 	
@@ -414,9 +418,16 @@ public final class Game
 		fireEvent(GameEvent.OPEN_SESSION);
 	}
 
+	/**
+	 * Ladet einen zuvor gespeicherten Spielzustand.
+	 * @param file Datei, aus der der Zustand geladen werden soll.
+	 * @return die geladene Session.
+	 * @throws IllegalStateException Wenn die Methode bereits während des Startvorgangs aufgerufen wird.
+	 */
 	public static GameSession loadGame(File file)
 	{
-		getInstance().loadSession(file);
+		checkEarlyAccess();
+		instance.loadSession(file);
 		return getSession();
 	}
 	
@@ -436,9 +447,17 @@ public final class Game
 		fireEvent(GameEvent.SESSION_LOADED);
 	}
 	
+	/**
+	 * Speichert den Spielzustand.
+	 * @param file Datei, in die der Zustand gespeichert werden soll.
+	 * @return true, wenn die Session gespeichert werden konnte.
+	 * @throws NullPointerException Wenn die Session <code>null</code> ist.
+	 * @throws IllegalStateException Wenn die Methode bereits während des Startvorgangs aufgerufen wird.
+	 */
 	public static boolean saveGame(File file)
 	{
-		getInstance().saveSession(file);
+		checkEarlyAccess();
+		instance.saveSession(file);
 		return true;
 	}
 	
@@ -463,9 +482,9 @@ public final class Game
 	public static void endGame()
 	{
 		Logger.log(Game.class, Logger.DEBUG, "close session");
-		getInstance().fireEvent(GameEvent.CLOSING_SESSION);
-		getInstance().setContext(Context.SESSION, null);
-		getInstance().session = null;
+		instance.fireEvent(GameEvent.CLOSING_SESSION);
+		instance.setContext(Context.SESSION, null);
+		instance.session = null;
 	}
 	
 	/**
@@ -475,7 +494,7 @@ public final class Game
 	public static void close()
 	{
 		if (getSession() != null) endGame();
-		getInstance().fireEvent(GameEvent.END_GAME);
+		instance.fireEvent(GameEvent.END_GAME);
 		
 		FrameTimer.stop();
 	}
@@ -491,38 +510,6 @@ public final class Game
 		instance = null;
 		
 		Logger.log(Game.class, Logger.INFO, "Engine is terminated.");
-	}
-	
-	private void initScriptListener()
-	{
-		final String script = getProperty(MAIN_SCRIPT_KEY, null);
-		if (script == null) return;
-		
-		addGameListener(new GameListener()
-		{
-			@Override
-			public void gameStateChanged(GameEvent ev)
-			{
-				switch(ev.type)
-				{
-					case GameEvent.START_GAME:
-						ScriptExecuter.executeDirect(script, "start"); break;
-					case GameEvent.NEW_SCENE:
-						ScriptExecuter.executeDirect(script, "newScene", ev.scene); break;
-					case GameEvent.OPEN_SESSION:
-						ScriptExecuter.executeDirect(script, "newGame", ev.session); break;
-					case GameEvent.CLOSING_SESSION:
-						ScriptExecuter.executeDirect(script, "endGame", ev.session); break;
-					case GameEvent.SESSION_LOADED:
-						ScriptExecuter.executeDirect(script, "loadGame", ev.session); break;
-					case GameEvent.SESSION_SAVED:
-						ScriptExecuter.executeDirect(script, "saveGame", ev.session); break;
-					case GameEvent.END_GAME:
-						ScriptExecuter.executeDirect(script, "close"); break;
-					default: assert false : "Undefiniertes Spielevent. " + ev.type;
-				}
-			}
-		});
 	}
 	
 	/**
@@ -569,23 +556,25 @@ public final class Game
 	 * </ul>
 	 * @param sceneName Name der neuen Szene.
 	 * @return Die neue Szene.
+	 * @throws IllegalStateException Wenn die Methode bereits während des Startvorgangs aufgerufen wird.
 	 */
 	public static Scene newScene(String sceneName)
 	{
+		checkEarlyAccess();
 		Scene scene = null;
 		try
 		{
 			if (sceneName != null)
 			{
 				scene = new Scene(sceneName);
-				getInstance().setContext(Context.SCENE, new Context(SCENE));
+				instance.setContext(Context.SCENE, new Context(SCENE));
 			}
 			else
 			{
-				getInstance().setContext(Context.SCENE, null);
+				instance.setContext(Context.SCENE, null);
 			}
 			
-			getContext(GLOBAL).set("Scene", scene);
+			getContext(GLOBAL).set(Scene.INSTANCE_KEY, scene);
 			if (getSession() != null)
 				getSession().sceneName = sceneName;
 		}
@@ -598,22 +587,22 @@ public final class Game
 
 	public static boolean getSwitch(int index)
 	{
-		return getInstance().session.switches[index];
+		return instance.session.switches[index];
 	}
 
 	public static void setSwitch(int index, boolean value)
 	{
-		getInstance().session.switches[index] = value;
+		instance.session.switches[index] = value;
 	}
 
 	public static long getVar(int index)
 	{
-		return getInstance().session.vars[index];
+		return instance.session.vars[index];
 	}
 
 	public static void setVar(int index, long value)
 	{
-		getInstance().session.vars[index] = value;
+		instance.session.vars[index] = value;
 	}
 	
 	private static void initDebugger()
@@ -634,23 +623,38 @@ public final class Game
 			rootDirectory = System.getProperty("user.dir");
 		Logger.log(Game.class, Logger.INFO, "Project-Directory is: " + rootDirectory);
 		
-		ini = getIni(rootDirectory);
+		this.ini = loadIni(rootDirectory);
 		
 		gameTitle 	= ini.get("Game", "Title", "");
 		modules		= getProperty(CUINA_MODULE_KEY, MODULE_ALL);
 
-		String path;
-		path = ResourceManager.getResourcePath(ResourceManager.KEY_GRAPHICS);
-		checkPath(Paths.get(rootDirectory, path), ResourceManager.KEY_GRAPHICS);
-		
-		path = ResourceManager.getResourcePath(ResourceManager.KEY_AUDIO);
-		checkPath(Paths.get(rootDirectory, path), ResourceManager.KEY_AUDIO);
-		
+		if (isModuleActive(MODULE_RESSORCE)) try
+		{
+			String path;
+			path = ResourceManager.getResourcePath(ResourceManager.KEY_GRAPHICS);
+			if (path == null)
+				throw new NullPointerException("Path '" + ResourceManager.KEY_GRAPHICS + "' is null.");
+			
+			checkPath(Paths.get(rootDirectory, path), ResourceManager.KEY_GRAPHICS);
+			
+			path = ResourceManager.getResourcePath(ResourceManager.KEY_AUDIO);
+			if (path == null)
+				throw new NullPointerException("Path '" + ResourceManager.KEY_AUDIO + "' is null.");
+			
+			checkPath(Paths.get(rootDirectory, path), ResourceManager.KEY_AUDIO);
+		}
+		catch (NullPointerException | LoadingException e)
+		{
+			Logger.log(Game.class, Logger.ERROR, e);
+		}
 //		System.out.println();
-//		System.out.println("  running under Java " + System.getProperty("java.version") + " at " + System.getProperty("os.name")  + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch") + "\n");
+//		System.out.println("  running under Java " + System.getProperty("java.version") + " at " +
+//			System.getProperty("os.name")  + " " + System.getProperty("os.version") + " " +
+//			System.getProperty("os.arch") + "\n");
 		
 		//workaround for JRE 7 x64 at Linux
-		if(System.getProperty("java.version").contains("1.7") && System.getProperty("os.name").toLowerCase().contains("linux"))
+		if (System.getProperty("java.version").contains("1.7") &&
+			System.getProperty("os.name").toLowerCase().contains("linux"))
 		{
 			String osArch = System.getProperty("os.arch");
 			boolean is64bit = "amd64".equals(osArch) || "x86_64".equals(osArch);
@@ -682,23 +686,26 @@ public final class Game
 		checkPath(Paths.get(lwjglPath), "lwjgl-Library");
 	}
 	
-	private static Ini getIni(String pathname) throws LoadingException
+	private static Ini loadIni(String pathname) throws LoadingException
 	{
-		Ini ini;
 		File iniFile = new File(pathname, CONFIG_FILE);
-		checkPath(iniFile.toPath(), "Config-File");
+		if (!iniFile.exists())
+		{
+			Logger.log(Game.class, Logger.WARNING, "Config not found. Using tempoary config-file.");
+		}
+		else
+		{
+			Logger.log(Game.class, Logger.DEBUG, "Read config from " + iniFile.getAbsolutePath());
+		}
+//		checkPath(iniFile.toPath(), "Config-File");
 		try
 		{
-			Logger.log(Game.class, Logger.DEBUG, "lese Ini-Datei: " + iniFile.getAbsolutePath());
-			
-			ini = new Ini(iniFile);
+			return new Ini(iniFile);
 		}
 		catch (IOException | InvalidFileFormatException e)
 		{
 			throw new LoadingException(iniFile, e);
 		}
-
-		return ini;
 	}
 	
 	public static int getProperty(String key, int def)
@@ -758,6 +765,12 @@ public final class Game
 		if (!Files.exists(path))
 			throw new LoadingException(resourceName);
 	}
+	
+	private static void checkEarlyAccess()
+	{
+		if (!instance.initialState)
+			throw new IllegalStateException("Initial state not completed.");
+	}
 
 	/**
 	 * Startet das Spiel.<br>
@@ -778,7 +791,7 @@ public final class Game
 	{
 		startTime = System.currentTimeMillis();
 		
-		System.out.println("CuinaEngine (c) 2011-2013 by Cuina Team\n");
+		System.out.println("CuinaEngine (c) 2011-2014 by Cuina Team\n");
 		System.out.println("This is free software; you can redistribute and/or modify it");
 		System.out.println("under the terms of GNU GENERAL PUBLIC LICENSE, either version 3");
 		System.out.println("of the License, or (at your option) any later version.");
